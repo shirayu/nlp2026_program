@@ -1,3 +1,4 @@
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { forwardRef, memo } from "react";
 import { getRoomTheme, getSessionRoomNames, sessionRoomsLabel } from "../constants";
 import { formatSessionDateTime } from "../lib/date";
@@ -16,11 +17,24 @@ export const SessionCard = memo(
       data: ConferenceData;
       showAuthors: boolean;
       query: string;
+      expanded: boolean;
+      onToggleExpanded: () => void;
       onPersonClick: (id: PersonId) => void;
       onJumpToSession: (sid: SessionId) => void;
     }
   >(function SessionCard(
-    { sessionId, session, presIds, data, showAuthors, query, onPersonClick, onJumpToSession },
+    {
+      sessionId,
+      session,
+      presIds,
+      data,
+      showAuthors,
+      query,
+      expanded,
+      onToggleExpanded,
+      onPersonClick,
+      onJumpToSession,
+    },
     ref,
   ) {
     const roomTheme = getRoomTheme(getSessionRoomNames(session, data.rooms)[0] ?? "");
@@ -32,15 +46,22 @@ export const SessionCard = memo(
     })();
 
     return (
-      <section
-        ref={ref}
-        className={`rounded-xl shadow-sm ${roomTheme.surface}`}
-        style={{ contentVisibility: "auto", containIntrinsicSize: "320px" }}
-      >
+      <section ref={ref} className={`rounded-xl shadow-sm ${roomTheme.surface}`}>
         <div className={`sticky top-0 z-10 rounded-t-xl px-4 py-3 shadow-sm ${roomTheme.header}`}>
-          <h2 className={`text-sm font-semibold leading-snug ${roomTheme.title}`}>
-            <HighlightedText text={session.title || sessionId} query={query} />
-          </h2>
+          <div className="flex items-start justify-between gap-3">
+            <h2 className={`min-w-0 flex-1 text-sm font-semibold leading-snug ${roomTheme.title}`}>
+              <HighlightedText text={session.title || sessionId} query={query} />
+            </h2>
+            <button
+              type="button"
+              onClick={onToggleExpanded}
+              className={`shrink-0 rounded-full p-1 transition-colors hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-indigo-400 ${roomTheme.title}`}
+              aria-label={expanded ? ja.collapseSessionDetails : ja.expandSessionDetails}
+              aria-expanded={expanded}
+            >
+              {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </button>
+          </div>
           <p className={`mt-0.5 text-xs ${roomTheme.meta}`}>
             {formatSessionDateTime(session.date, session.start_time, session.end_time)}{" "}
             <HighlightedText text={roomLabel} query={query} />
@@ -57,23 +78,25 @@ export const SessionCard = memo(
             </p>
           )}
         </div>
-        <ul className="overflow-hidden rounded-b-xl divide-y divide-slate-200/80">
-          {presIds.length > 0 ? (
-            presIds.map((pid) => (
-              <PresentationCard
-                key={pid}
-                pid={pid}
-                data={data}
-                showAuthors={showAuthors}
-                query={query}
-                onPersonClick={onPersonClick}
-                onJumpToSession={onJumpToSession}
-              />
-            ))
-          ) : (
-            <li className="px-4 py-3 text-sm text-gray-500">{ja.noSessionData}</li>
-          )}
-        </ul>
+        {expanded && (
+          <ul className="overflow-hidden divide-y divide-slate-200/80 rounded-b-xl">
+            {presIds.length > 0 ? (
+              presIds.map((pid) => (
+                <PresentationCard
+                  key={pid}
+                  pid={pid}
+                  data={data}
+                  showAuthors={showAuthors}
+                  query={query}
+                  onPersonClick={onPersonClick}
+                  onJumpToSession={onJumpToSession}
+                />
+              ))
+            ) : (
+              <li className="px-4 py-3 text-sm text-gray-500">{ja.noSessionData}</li>
+            )}
+          </ul>
+        )}
       </section>
     );
   }),

@@ -579,6 +579,7 @@ export default function ProgramPage() {
   const [showSettings, setShowSettings] = useState(false);
   const [showInstallDialog, setShowInstallDialog] = useState(false);
   const [showAuthors, setShowAuthors] = useState(true);
+  const [sessionsExpanded, setSessionsExpanded] = useState(true);
   const [personModal, setPersonModal] = useState<PersonId | null>(null);
   const [installPromptEvent, setInstallPromptEvent] = useState<BeforeInstallPromptEvent | null>(null);
   const [installContext, setInstallContext] = useState({ isStandalone: false, isIos: false });
@@ -720,6 +721,22 @@ export default function ProgramPage() {
     mainRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  function scrollSessionToTop(sessionId: SessionId) {
+    window.requestAnimationFrame(() => {
+      sessionRefs.current[sessionId]?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  function handleToggleExpanded(sessionId: SessionId) {
+    setSessionsExpanded((value) => {
+      const nextValue = !value;
+      if (nextValue) {
+        scrollSessionToTop(sessionId);
+      }
+      return nextValue;
+    });
+  }
+
   function closeSettingsDialog() {
     setShowSettings(false);
   }
@@ -830,6 +847,8 @@ export default function ProgramPage() {
               data={data}
               showAuthors={showAuthors}
               query={trimmedQuery}
+              expanded={sessionsExpanded}
+              onToggleExpanded={() => handleToggleExpanded(sessionId)}
               onPersonClick={setPersonModal}
               onJumpToSession={handleJumpToSession}
               ref={(el) => {

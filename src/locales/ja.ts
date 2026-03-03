@@ -18,6 +18,8 @@ export const ja = {
   searchFiltered: "表示中を検索",
   searchResultScope: (scope: string) => `検索対象: ${scope}`,
   searchResultCount: (count: number) => `ヒット: ${count}件`,
+  expandSessionDetails: "セッション詳細をすべて開く",
+  collapseSessionDetails: "セッション詳細をすべて閉じる",
   openOfficialSite: "公式サイトを開く",
   openSlack: "Slack を開く",
   openXSearch: "Xで #nlp2026 の最新投稿を開く",
