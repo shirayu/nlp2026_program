@@ -1,7 +1,7 @@
 export const ja = {
-  documentTitle: "NLP2026 非公式版 予定表",
+  documentTitle: "NLP2026 予定表 (非公式版)",
   programPageTitle: "NLP2026",
-  programPageSubTitle: "非公式版 予定表",
+  programPageSubTitle: "予定表 (非公式版)",
   loading: "読み込み中...",
   noResults: "該当する発表がありません",
   allDates: "全日程",
