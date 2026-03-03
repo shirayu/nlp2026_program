@@ -1,4 +1,4 @@
-import { X as CloseIcon, Download, Globe, MapPinned, Search, Settings } from "lucide-react";
+import { ChevronDown, ChevronUp, X as CloseIcon, Download, Globe, MapPinned, Search, Settings } from "lucide-react";
 import { type SVGProps, startTransition, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { PersonModal } from "../components/PersonModal";
 import { SessionCard } from "../components/SessionCard";
@@ -228,45 +228,63 @@ function DateTabs({
   filtersDisabled,
   selectedDate,
   onSelectDate,
+  showFilters,
+  onToggleFilters,
 }: {
   allDates: string[];
   filtersDisabled: boolean;
   selectedDate: string | null;
   onSelectDate: (date: string | null) => void;
+  showFilters: boolean;
+  onToggleFilters: () => void;
 }) {
   return (
-    <div className="flex border-b border-gray-200">
-      <button
-        type="button"
-        disabled={filtersDisabled}
-        onClick={() => onSelectDate(null)}
-        className={`px-2 py-2 text-[11px] font-medium whitespace-nowrap ${
-          filtersDisabled
-            ? "cursor-not-allowed text-gray-400"
-            : selectedDate === null
-              ? "border-b-2 border-indigo-600 text-indigo-600"
-              : "text-gray-500"
-        }`}
-      >
-        {ja.allDates}
-      </button>
-      {allDates.map((date) => (
+    <div className="flex items-center gap-1 border-b border-gray-200 pr-2">
+      <div className="flex min-w-0 flex-1 overflow-x-auto">
         <button
-          key={date}
           type="button"
           disabled={filtersDisabled}
-          onClick={() => onSelectDate(date)}
+          onClick={() => onSelectDate(null)}
           className={`px-2 py-2 text-[11px] font-medium whitespace-nowrap ${
             filtersDisabled
               ? "cursor-not-allowed text-gray-400"
-              : selectedDate === date
+              : selectedDate === null
                 ? "border-b-2 border-indigo-600 text-indigo-600"
                 : "text-gray-500"
           }`}
         >
-          {formatJapaneseDate(date)}
+          {ja.allDates}
         </button>
-      ))}
+        {allDates.map((date) => (
+          <button
+            key={date}
+            type="button"
+            disabled={filtersDisabled}
+            onClick={() => onSelectDate(date)}
+            className={`px-2 py-2 text-[11px] font-medium whitespace-nowrap ${
+              filtersDisabled
+                ? "cursor-not-allowed text-gray-400"
+                : selectedDate === date
+                  ? "border-b-2 border-indigo-600 text-indigo-600"
+                  : "text-gray-500"
+            }`}
+          >
+            {formatJapaneseDate(date)}
+          </button>
+        ))}
+      </div>
+      <button
+        type="button"
+        onClick={onToggleFilters}
+        className={`shrink-0 rounded-full p-1.5 transition-colors ${
+          filtersDisabled ? "bg-gray-200 text-gray-500" : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+        }`}
+        aria-expanded={showFilters}
+        aria-controls="program-filters"
+        aria-label={showFilters ? "絞り込みをたたむ" : "絞り込みを開く"}
+      >
+        {showFilters ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+      </button>
     </div>
   );
 }
@@ -533,6 +551,7 @@ export default function ProgramPage() {
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [searchAll, setSearchAll] = useState(true);
+  const [showFilters, setShowFilters] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const [showInstallDialog, setShowInstallDialog] = useState(false);
   const [showAuthors, setShowAuthors] = useState(true);
@@ -738,28 +757,34 @@ export default function ProgramPage() {
               setSelectedDate(date);
               scrollContentToTop();
             }}
+            showFilters={showFilters}
+            onToggleFilters={() => setShowFilters((value) => !value)}
           />
-          <TimelineFilter
-            points={allTimes}
-            activeSegments={timelineSegments}
-            selectedTime={selectedTime}
-            onChange={(time) => {
-              setSelectedTime(time);
-              scrollContentToTop();
-            }}
-            onSelectNow={handleSelectNow}
-            nowEnabled={nowAvailable}
-            disabled={filtersDisabled}
-          />
-          <RoomChips
-            rooms={roomSorted}
-            selectedRoom={selectedRoom}
-            filtersDisabled={filtersDisabled}
-            onSelectRoom={(room) => {
-              setSelectedRoom(room);
-              scrollContentToTop();
-            }}
-          />
+          {showFilters && (
+            <div id="program-filters">
+              <TimelineFilter
+                points={allTimes}
+                activeSegments={timelineSegments}
+                selectedTime={selectedTime}
+                onChange={(time) => {
+                  setSelectedTime(time);
+                  scrollContentToTop();
+                }}
+                onSelectNow={handleSelectNow}
+                nowEnabled={nowAvailable}
+                disabled={filtersDisabled}
+              />
+              <RoomChips
+                rooms={roomSorted}
+                selectedRoom={selectedRoom}
+                filtersDisabled={filtersDisabled}
+                onSelectRoom={(room) => {
+                  setSelectedRoom(room);
+                  scrollContentToTop();
+                }}
+              />
+            </div>
+          )}
         </div>
       </header>
 
