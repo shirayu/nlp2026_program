@@ -10,6 +10,7 @@ import {
   getRoomTheme,
   OFFICIAL_SITE_URL,
   PROJECT_REPOSITORY_URL,
+  SLACK_URL,
   VENUE_GUIDE_URL,
   X_SEARCH_URL,
 } from "../constants";
@@ -24,6 +25,20 @@ function XBrandIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
       <path d="M18.244 2H21.5l-7.113 8.13L22.75 22h-6.547l-5.127-6.71L5.202 22H1.944l7.607-8.695L1.5 2h6.713l4.635 6.123zm-1.141 18.05h1.804L7.233 3.846H5.297z" />
+    </svg>
+  );
+}
+
+function HashIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M9 3 7.5 21M16.5 3 15 21M4 9h17M3 15h17"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -169,6 +184,15 @@ function FilterHeader({
             aria-label={ja.openOfficialSite}
           >
             <Globe className="h-5 w-5" />
+          </a>
+          <a
+            href={SLACK_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-full p-1.5 text-gray-400 transition-colors hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            aria-label={ja.openSlack}
+          >
+            <HashIcon className="h-5 w-5" />
           </a>
           <a
             href={X_SEARCH_URL}

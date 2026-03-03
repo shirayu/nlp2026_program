@@ -18,6 +18,7 @@ export const ja = {
   searchResultScope: (scope: string) => `検索対象: ${scope}`,
   searchResultCount: (count: number) => `ヒット: ${count}件`,
   openOfficialSite: "公式サイトを開く",
+  openSlack: "Slack を開く",
   openXSearch: "Xで #nlp2026 の最新投稿を開く",
   openInstallGuide: "ホーム画面への追加案内を開く",
   openDisplaySettings: "表示設定を開く",
