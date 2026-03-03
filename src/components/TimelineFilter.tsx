@@ -1,0 +1,187 @@
+import { RotateCcw } from "lucide-react";
+import { ja } from "../locales/ja";
+
+type TimelineFilterProps = {
+  points: string[];
+  activeSegments: boolean[];
+  selectedTime: string | null;
+  onChange: (time: string | null) => void;
+  onSelectNow: () => void;
+  nowEnabled: boolean;
+  disabled?: boolean;
+};
+
+function toMinutes(time: string): number {
+  const [hour, minute] = time.split(":").map(Number);
+  return hour * 60 + minute;
+}
+
+function buildTimelineMarks(points: string[], selectedTime: string | null) {
+  const maxIndex = Math.max(points.length - 1, 1);
+  const seen = new Set<string>();
+
+  return points.flatMap((time, index) => {
+    const minutes = toMinutes(time);
+    const isEndpoint = index === 0 || index === points.length - 1;
+    const isHour = minutes % 60 === 0;
+    const isHalfHour = minutes % 30 === 0;
+    const isSelected = selectedTime === time;
+
+    if (!isEndpoint && !isHour && !isHalfHour && !isSelected) {
+      return [];
+    }
+
+    if (seen.has(time)) return [];
+    seen.add(time);
+
+    return [
+      {
+        time,
+        left: (index / maxIndex) * 100,
+        label: isHour || isEndpoint ? time : null,
+        emphasized: isHour || isEndpoint || isSelected,
+      },
+    ];
+  });
+}
+
+function buildTimelineSegments(points: string[], activeSegments: boolean[]) {
+  return activeSegments.map((isActive, index) => ({
+    key: `${points[index] ?? "start"}-${points[index + 1] ?? "end"}`,
+    isActive,
+  }));
+}
+
+function TimelineActions({
+  disabled,
+  selectedTime,
+  onChange,
+  onSelectNow,
+  nowEnabled,
+}: Pick<TimelineFilterProps, "disabled" | "selectedTime" | "onChange" | "onSelectNow" | "nowEnabled">) {
+  return (
+    <div className="flex items-start justify-between gap-3">
+      <div className="flex items-center gap-2">
+        <p className="text-sm font-semibold text-slate-700">
+          {ja.timepoint} {selectedTime ?? ja.allTimes}
+        </p>
+        <button
+          type="button"
+          onClick={() => onChange(null)}
+          aria-label={ja.resetTimepoint}
+          title={ja.resetTimepoint}
+          disabled={disabled}
+          className={`inline-flex h-7 w-7 items-center justify-center rounded-full border ${
+            disabled || selectedTime === null
+              ? "border-gray-200 bg-gray-100 text-gray-400"
+              : "border-gray-300 bg-white text-gray-600"
+          }`}
+        >
+          <RotateCcw className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          onClick={onSelectNow}
+          disabled={disabled || !nowEnabled}
+          title={disabled ? undefined : nowEnabled ? ja.now : ja.nowUnavailable}
+          className={`rounded-full border px-3 py-1 text-xs font-semibold ${
+            !disabled && nowEnabled
+              ? "border-amber-300 bg-amber-50 text-amber-700"
+              : "border-gray-200 bg-gray-100 text-gray-400"
+          }`}
+        >
+          {ja.now}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function TimelineFilter({
+  points,
+  activeSegments,
+  selectedTime,
+  onChange,
+  onSelectNow,
+  nowEnabled,
+  disabled = false,
+}: TimelineFilterProps) {
+  const selectedIndex = selectedTime ? points.indexOf(selectedTime) : -1;
+  const sliderValue = selectedIndex >= 0 ? selectedIndex : 0;
+  const maxIndex = Math.max(points.length - 1, 0);
+  const thumbLeft = maxIndex === 0 ? 0 : (sliderValue / maxIndex) * 100;
+  const isUnspecified = selectedTime === null;
+  const marks = buildTimelineMarks(points, selectedTime);
+  const segments = buildTimelineSegments(points, activeSegments);
+
+  return (
+    <div className={`border-t border-gray-100 px-3 py-3 ${disabled ? "opacity-50" : ""}`}>
+      <TimelineActions
+        disabled={disabled}
+        selectedTime={selectedTime}
+        onChange={onChange}
+        onSelectNow={onSelectNow}
+        nowEnabled={nowEnabled}
+      />
+
+      {points.length > 0 ? (
+        <>
+          <div className="relative mt-3 px-1">
+            <div className="flex h-3 overflow-hidden rounded-full bg-slate-100">
+              {segments.map((segment) => (
+                <div
+                  key={segment.key}
+                  className={`h-full flex-1 ${!isUnspecified && segment.isActive ? "bg-teal-200" : "bg-slate-100"}`}
+                />
+              ))}
+            </div>
+            {marks.map((mark) => (
+              <div
+                key={mark.time}
+                className="pointer-events-none absolute top-1/2 -translate-y-1/2"
+                style={{ left: `calc(${mark.left}% - 0.5px)` }}
+              >
+                <div className={`w-px ${mark.emphasized ? "h-6 bg-slate-400" : "h-4 bg-slate-300"}`} />
+              </div>
+            ))}
+            <input
+              type="range"
+              min={0}
+              max={maxIndex}
+              step={1}
+              value={sliderValue}
+              onChange={(event) => onChange(points[Number(event.target.value)] ?? null)}
+              disabled={disabled}
+              className={`absolute inset-x-0 top-1/2 h-8 -translate-y-1/2 opacity-0 ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
+              aria-label={ja.timepoint}
+            />
+            <div
+              className={`pointer-events-none absolute top-1/2 h-5 w-5 -translate-y-1/2 rounded-full border-2 border-white shadow ${
+                selectedTime ? "bg-teal-600" : "bg-slate-400"
+              }`}
+              style={{ left: `calc(${thumbLeft}% - 10px)` }}
+            />
+          </div>
+
+          <div className="relative mt-3 h-5">
+            {marks.map((mark) =>
+              mark.label ? (
+                <span
+                  key={`${mark.time}-label`}
+                  className={`absolute top-0 -translate-x-1/2 text-[11px] ${
+                    mark.left === 0 || mark.left === 100 ? "z-10 rounded bg-gray-50 px-1" : ""
+                  } ${mark.time === selectedTime ? "font-semibold text-slate-700" : "text-gray-500"}`}
+                  style={{ left: `${mark.left}%` }}
+                >
+                  {mark.label}
+                </span>
+              ) : null,
+            )}
+          </div>
+        </>
+      ) : (
+        <p className="mt-3 text-xs text-gray-400">利用できる時点がありません</p>
+      )}
+    </div>
+  );
+}

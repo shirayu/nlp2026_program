@@ -1,0 +1,22 @@
+# Files for typos
+# Instruction:  https://github.com/marketplace/actions/typos-action#getting-started
+
+[default]
+extend-ignore-re = ["(?Rm)^.*(#|//)\\s*spellchecker:disable-line$"]
+
+[default.extend-identifiers]
+noInferrableTypes = "noInferrableTypes"
+
+[default.extend-words]
+
+[files]
+extend-exclude = [
+  'package*.json',
+  '*.csv',
+  'tmp',
+  'data',
+  'build',
+  '*.yml',
+  '*.html',
+  '*.json',
+]

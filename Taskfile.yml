@@ -1,0 +1,86 @@
+version: "3"
+
+tasks:
+  default:
+    cmds:
+      - task: install
+      - task: extract
+      - task: format
+      - task: lint
+      - task: test
+      - task: build
+
+  ci:
+    cmds:
+      - task: install
+      - task: format
+      - task: lint
+      - task: test
+      - task: build
+
+
+  install:
+    desc: "依存パッケージをインストール"
+    cmds:
+      - pnpm install
+    sources:
+      - package.json
+
+  dev:
+    desc: "開発サーバー起動"
+    cmds:
+      - pnpm exec vite
+
+  build:
+    desc: "フロントエンドをビルド"
+    cmds:
+      - pnpm exec tsc -b
+      - pnpm exec vite build
+    sources:
+      - src/**/*
+      - index.html
+      - public/**/*
+    generates:
+      - dist/**/*
+
+  test:
+    desc: "テストを実行"
+    cmds:
+      - pnpm exec vitest run
+
+  lint:
+    desc: "Biome で lint を実行"
+    cmds:
+      - pnpm exec biome check .
+
+  format:
+    desc: "Biome で整形と import 整理を実行"
+    cmds:
+      - pnpm exec biome check --write .
+
+  preview:
+    desc: "ビルド成果物をプレビュー"
+    deps:
+      - build
+    cmds:
+      - pnpm exec vite preview
+
+  clean:
+    desc: "ビルド成果物を削除"
+    cmds:
+      - rm -rf dist
+
+  extract:
+    desc: "HTMLからJSONを抽出する"
+    vars:
+      HTML: '{{.HTML | default "original_program.html"}}'
+      OUT: '{{.OUT | default "public/data.json"}}'
+      BASE_URL: '{{.BASE_URL | default "https://www.anlp.jp/proceedings/annual_meeting/2026/"}}'
+    cmds:
+      - 'python3 extract.py --html {{.HTML}} --out {{.OUT}} --base-url {{.BASE_URL}}'
+    sources:
+      - extract.py
+      - "{{.HTML}}"
+      - workshop.json
+    generates:
+      - "{{.OUT}}"

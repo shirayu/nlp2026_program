@@ -1,0 +1,533 @@
+{
+  "WS1": {
+    "title": "第2回「大規模言語モデルのファインチューニング技術と評価」",
+    "date": "2026-03-13",
+    "start_time": "9:30",
+    "end_time": "16:40",
+    "rooms": ["1F 大ホール(東)"],
+    "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html",
+    "sessions": [
+      {
+        "id": "WS1-1",
+        "title": "WS1 イントロ",
+        "start_time": "9:30",
+        "end_time": "9:45"
+      },
+      {
+        "id": "WS1-2",
+        "title": "WS1 タスク紹介 + 審査員挨拶",
+        "start_time": "9:45",
+        "end_time": "10:15"
+      },
+      {
+        "id": "WS1-3",
+        "title": "WS1 ショートプレゼン",
+        "start_time": "10:15",
+        "end_time": "11:00"
+      },
+      {
+        "id": "WS1-4",
+        "title": "WS1 自由型タスクポスター発表",
+        "start_time": "11:00",
+        "end_time": "12:15"
+      },
+      {
+        "id": "WS1-5",
+        "title": "WS1 表彰",
+        "start_time": "13:15",
+        "end_time": "13:45"
+      },
+      {
+        "id": "WS1-6",
+        "title": "WS1 タスク紹介 + 順位発表",
+        "start_time": "13:45",
+        "end_time": "14:30"
+      },
+      {
+        "id": "WS1-7",
+        "title": "WS1 オンライン参加チームのプレゼン+動画上映",
+        "start_time": "14:30",
+        "end_time": "14:50"
+      },
+      {
+        "id": "WS1-8",
+        "title": "WS1 数学タスクポスター発表",
+        "start_time": "15:05",
+        "end_time": "16:20"
+      },
+      {
+        "id": "WS1-9",
+        "title": "WS1 総評",
+        "start_time": "16:20",
+        "end_time": "16:40"
+      }
+    ]
+  },
+  "WS2": {
+    "title": "日本語言語資源の構築と利用性の向上",
+    "date": "2026-03-13",
+    "start_time": "10:05",
+    "end_time": "15:45",
+    "rooms": ["1F 大ホール(西)"],
+    "url": "https://jedworkshop.github.io/JLR2026/",
+    "sessions": [
+      {
+        "id": "WS2-1",
+        "title": "WS2 午前＜1＞ 独自日本語Webコーパス構築のための巡回クロール基盤構築",
+        "start_time": "10:05",
+        "end_time": "10:25",
+        "chair": "河原 大輔 (早稲田大)",
+        "presentations": [
+          {
+            "id": "WS2-1-1",
+            "title": "独自日本語Webコーパス構築のための巡回クロール基盤構築",
+            "authors": [{ "name": "石原 慧人", "affiliation": "SB Intuitions" }]
+          }
+        ]
+      },
+      {
+        "id": "WS2-2",
+        "title": "WS2 午前＜1＞ 番組映像を活用したマルチモーダルデータセット開発の取り組み",
+        "start_time": "10:25",
+        "end_time": "10:45",
+        "chair": "河原 大輔 (早稲田大)",
+        "presentations": [
+          {
+            "id": "WS2-2-1",
+            "title": "番組映像を活用したマルチモーダルデータセット開発の取り組み",
+            "authors": [
+              { "name": "岡田 拓也", "affiliation": "NHK" },
+              { "name": "遠藤 伶", "affiliation": "NHK" },
+              { "name": "中村 純也", "affiliation": "NHK" },
+              { "name": "田中 大", "affiliation": "NHK" },
+              { "name": "衣川 和尭", "affiliation": "NHK" },
+              { "name": "美野 秀弥", "affiliation": "NHK" },
+              { "name": "宮﨑 太郎", "affiliation": "NHK" },
+              { "name": "河合 吉彦", "affiliation": "NHK" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "WS2-3",
+        "title": "WS2 午前＜1＞ BizDocVQA：根拠領域のアノテーションによる説明可能なビジネス帳票理解の実現と評価",
+        "start_time": "10:45",
+        "end_time": "11:15",
+        "chair": "河原 大輔 (早稲田大)",
+        "presentations": [
+          {
+            "id": "WS2-3-1",
+            "title": "BizDocVQA：根拠領域のアノテーションによる説明可能なビジネス帳票理解の実現と評価",
+            "authors": [{ "name": "久保 隆宏", "affiliation": "アマゾンウェブサービスジャパン" }]
+          }
+        ]
+      },
+      {
+        "id": "WS2-4",
+        "title": "WS2 午前＜1＞ 論文に基づく歴史学知識資源の公開に向けたデータセット記述の精緻化",
+        "start_time": "11:15",
+        "end_time": "11:35",
+        "chair": "河原 大輔 (早稲田大)",
+        "presentations": [
+          {
+            "id": "WS2-4-1",
+            "title": "論文に基づく歴史学知識資源の公開に向けたデータセット記述の精緻化",
+            "authors": [{ "name": "亀田 尭宙", "affiliation": "人間文化研究機構" }]
+          }
+        ]
+      },
+      {
+        "id": "WS2-5",
+        "title": "WS2 午前＜1＞ 日本語の科学設問集の複数評価者による難易度付けと評価者間不一致の分析",
+        "start_time": "11:35",
+        "end_time": "11:45",
+        "chair": "河原 大輔 (早稲田大)",
+        "presentations": [
+          {
+            "id": "WS2-5-1",
+            "title": "日本語の科学設問集の複数評価者による難易度付けと評価者間不一致の分析",
+            "is_online": true,
+            "authors": [{ "name": "江原 遥", "affiliation": "東京学芸大" }]
+          }
+        ]
+      },
+      {
+        "id": "WS2-6",
+        "title": "WS2 午後＜1＞ 軽量な日本語報酬モデル ca-reward-3b-ja の構築と公開",
+        "start_time": "13:00",
+        "end_time": "13:20",
+        "chair": "柴田 知秀 (SB Intuitions)",
+        "presentations": [
+          {
+            "id": "WS2-6-1",
+            "title": "軽量な日本語報酬モデル ca-reward-3b-ja の構築と公開",
+            "authors": [{ "name": "三橋 亮太", "affiliation": "サイバーエージェント" }]
+          }
+        ]
+      },
+      {
+        "id": "WS2-7",
+        "title": "WS2 午後＜1＞ 日本語大規模言語モデルの推論能力向上のための強化学習データセット構築",
+        "start_time": "13:20",
+        "end_time": "13:40",
+        "chair": "柴田 知秀 (SB Intuitions)",
+        "presentations": [
+          {
+            "id": "WS2-7-1",
+            "title": "日本語大規模言語モデルの推論能力向上のための強化学習データセット構築",
+            "authors": [
+              { "name": "太田 晋", "affiliation": "東京科学大" },
+              { "name": "片山 結太", "affiliation": "東京科学大" },
+              { "name": "水木 栄", "affiliation": "東京科学大・産総研" },
+              { "name": "岡崎 直観", "affiliation": "東京科学大・産総研・NII LLMC" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "WS2-8",
+        "title": "WS2 午後＜1＞ 金融業に特化した生成AIモデルのインストラクションデータ開発プロセス",
+        "start_time": "13:40",
+        "end_time": "14:05",
+        "chair": "柴田 知秀 (SB Intuitions)",
+        "presentations": [
+          {
+            "id": "WS2-8-1",
+            "title": "金融業に特化した生成AIモデルのインストラクションデータ開発プロセス",
+            "authors": [{ "name": "佐藤 奈穂子", "affiliation": "リコー" }]
+          }
+        ]
+      },
+      {
+        "id": "WS2-9",
+        "title": "WS2 午後＜1＞ 語彙を起点とした完全合成によるドメイン特化指示データセットの構築と金融分野での実証",
+        "start_time": "14:05",
+        "end_time": "14:25",
+        "chair": "柴田 知秀 (SB Intuitions)",
+        "presentations": [
+          {
+            "id": "WS2-9-1",
+            "title": "語彙を起点とした完全合成によるドメイン特化指示データセットの構築と金融分野での実証",
+            "authors": [
+              { "name": "大河内 悠磨", "affiliation": "NRI" },
+              { "name": "Fabio Milentiansen Sim", "affiliation": "NRIインドネシア" },
+              { "name": "岡田 智靖", "affiliation": "NRI" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "WS2-10",
+        "title": "WS2 午後＜1＞ Deep Research結果に対する細粒度引用と矛盾のアノテーション",
+        "start_time": "14:25",
+        "end_time": "14:35",
+        "chair": "柴田 知秀 (SB Intuitions)",
+        "presentations": [
+          {
+            "id": "WS2-10-1",
+            "title": "Deep Research結果に対する細粒度引用と矛盾のアノテーション",
+            "authors": [
+              { "name": "松田 耕史", "affiliation": "SB Intuitions" },
+              { "name": "福地 成彦", "affiliation": "SB Intuitions" },
+              { "name": "上之薗 有夏", "affiliation": "SB Intuitions" },
+              { "name": "吉田 奈央", "affiliation": "SB Intuitions" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "WS2-11",
+        "title": "WS2 午後＜2＞ 日本語インストラクションデータの多様化に向けた高品質な人手データを起点とする合成手法の検討",
+        "start_time": "14:45",
+        "end_time": "15:10",
+        "chair": "松田 寛 (Megagon Labs)",
+        "presentations": [
+          {
+            "id": "WS2-11-1",
+            "title": "日本語インストラクションデータの多様化に向けた高品質な人手データを起点とする合成手法の検討",
+            "authors": [
+              { "name": "宮里 龍平", "affiliation": "電気通信大" },
+              { "name": "中山 功太", "affiliation": "NII LLMC" },
+              { "name": "関根 聡", "affiliation": "いちから" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "WS2-12",
+        "title": "WS2 午後＜2＞ 人間-LLM間のインタラクション分析に向けたコーパス構築のための談話行為アノテーション設計",
+        "start_time": "15:10",
+        "end_time": "15:35",
+        "chair": "松田 寛 (Megagon Labs)",
+        "presentations": [
+          {
+            "id": "WS2-12-1",
+            "title": "人間-LLM間のインタラクション分析に向けたコーパス構築のための談話行為アノテーション設計",
+            "authors": [
+              { "name": "永井 宥之", "affiliation": "NAIST" },
+              { "name": "伊藤 和浩", "affiliation": "NAIST" },
+              { "name": "山崎 由佳", "affiliation": "京都大学" },
+              { "name": "白石 暖哉", "affiliation": "京都大学" },
+              { "name": "若宮 翔子", "affiliation": "NAIST" },
+              { "name": "荒牧 英治", "affiliation": "NAIST" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "WS2-13",
+        "title": "WS2 午後＜2＞ ユーザの個人特性を含む破綻・修復発話文の収集",
+        "start_time": "15:35",
+        "end_time": "15:45",
+        "chair": "松田 寛 (Megagon Labs)",
+        "presentations": [
+          {
+            "id": "WS2-13-1",
+            "title": "ユーザの個人特性を含む破綻・修復発話文の収集",
+            "authors": [
+              { "name": "坪倉 和哉", "affiliation": "愛知県立大" },
+              { "name": "入部 百合絵", "affiliation": "愛知県立大" },
+              { "name": "北岡 教英", "affiliation": "豊橋技科大" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "WS3": {
+    "title": "気軽に国際会議を目指しましょう",
+    "date": "2026-03-13",
+    "start_time": "9:00",
+    "end_time": "16:45",
+    "rooms": ["2F 大会議室201・202"],
+    "url": "https://naist-nlp.github.io/breaking-into-top-tier-conferences/",
+    "sessions": [
+      {
+        "id": "WS3-1",
+        "title": "WS3 Graham Neubig: Thoughts on International Conferences",
+        "start_time": "9:00",
+        "end_time": "9:30",
+        "presentations": [
+          {
+            "id": "WS3-1-1",
+            "title": "Thoughts on International Conferences: An Interview with Graham Neubig",
+            "authors": [{ "name": "Graham Neubig" }]
+          }
+        ]
+      },
+      {
+        "id": "WS3-2",
+        "title": "WS3 Naoaki Okazaki",
+        "start_time": "9:30",
+        "end_time": "10:00",
+        "presentations": [
+          {
+            "id": "WS3-2-1",
+            "title": "(TBA)",
+            "authors": [{ "name": "Naoaki Okazaki" }]
+          }
+        ]
+      },
+      {
+        "id": "WS3-3",
+        "title": "WS3 Jun Suzuki: ACL Rolling Review Editor-in-Chief として得た経験の共有",
+        "start_time": "10:00",
+        "end_time": "10:30",
+        "presentations": [
+          {
+            "id": "WS3-3-1",
+            "title": "ACL Rolling Review Editor-in-Chief として得た経験の共有",
+            "authors": [{ "name": "Jun Suzuki" }]
+          }
+        ]
+      },
+      {
+        "id": "WS3-4",
+        "title": "WS3 Yusuke Sakai",
+        "start_time": "10:45",
+        "end_time": "11:15",
+        "presentations": [
+          {
+            "id": "WS3-4-1",
+            "title": "(TBA)",
+            "authors": [{ "name": "Yusuke Sakai" }]
+          }
+        ]
+      },
+      {
+        "id": "WS3-5",
+        "title": "WS3 Masahiro Kaneko",
+        "start_time": "11:15",
+        "end_time": "11:45",
+        "presentations": [
+          {
+            "id": "WS3-5-1",
+            "title": "(TBA)",
+            "authors": [{ "name": "Masahiro Kaneko" }]
+          }
+        ]
+      },
+      {
+        "id": "WS3-6",
+        "title": "WS3 Panel Discussion",
+        "start_time": "11:45",
+        "end_time": "12:30",
+        "presentations": [
+          {
+            "id": "WS3-6-1",
+            "title": "Panel Discussion",
+            "presenter": "",
+            "authors": [
+              { "name": "Naoaki Okazaki" },
+              { "name": "Jun Suzuki" },
+              { "name": "Yugo Murawaki" },
+              { "name": "Keisuke Sakaguchi" },
+              { "name": "Sho Takase" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "WS3-7",
+        "title": "WS3 Talk for Experience",
+        "start_time": "13:30",
+        "end_time": "15:00"
+      },
+      {
+        "id": "WS3-8",
+        "title": "WS3 Hands-on Session",
+        "start_time": "15:15",
+        "end_time": "16:45",
+        "chair": "Taro Watanabe",
+        "presentations": [
+          {
+            "id": "WS3-8-1",
+            "title": "Hands-on Session",
+            "authors": [{ "name": "Taro Watanabe" }]
+          }
+        ]
+      }
+    ]
+  },
+  "WS4": {
+    "title": "「未来言語処理」ワークショップ",
+    "date": "2026-03-13",
+    "start_time": "9:00",
+    "end_time": "12:45",
+    "rooms": ["3F 中ホール"],
+    "url": "https://sites.google.com/view/mirai-nlp-2026",
+    "sessions": [
+      {
+        "id": "WS4-1",
+        "title": "WS4 オープニング",
+        "start_time": "9:00",
+        "end_time": "9:05"
+      },
+      {
+        "id": "WS4-2",
+        "title": "WS4 招待講演: 鷲田祐一 先生",
+        "start_time": "9:10",
+        "end_time": "10:00",
+        "presentations": [
+          {
+            "id": "WS4-2-1",
+            "title": "招待講演: 鷲田祐一 先生",
+            "authors": [{ "name": "鷲田 祐一" }]
+          }
+        ]
+      },
+      {
+        "id": "WS4-3",
+        "title": "WS4 一般論文発表: ビジネスアイデアの新規性自動評価に向けた事例分析",
+        "start_time": "10:00",
+        "end_time": "10:20",
+        "presentations": [
+          {
+            "id": "WS4-3-1",
+            "title": "ビジネスアイデアの新規性自動評価に向けた事例分析",
+            "authors": [
+              { "name": "朱晨成", "affiliation": "旭化成" },
+              { "name": "高橋拓誠", "affiliation": "旭化成" },
+              { "name": "谷口友紀", "affiliation": "旭化成" },
+              { "name": "大熊智子", "affiliation": "旭化成" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "WS4-4",
+        "title": "WS4 一般論文発表: リスクイベントの影響説明に向けた評価データセットの提案",
+        "start_time": "10:20",
+        "end_time": "10:40",
+        "presentations": [
+          {
+            "id": "WS4-4-1",
+            "title": "リスクイベントの影響説明に向けた評価データセットの提案",
+            "authors": [
+              { "name": "Namgi Han", "affiliation": "東京大学" },
+              { "name": "朝倉 卓人", "affiliation": "東京大学" },
+              { "name": "宮尾 祐介", "affiliation": "東京大学" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "WS4-5",
+        "title": "WS4 一般論文発表: 化学技術の応用領域拡張を目的とした用途探索フレームワーク",
+        "start_time": "10:40",
+        "end_time": "11:00",
+        "presentations": [
+          {
+            "id": "WS4-5-1",
+            "title": "化学技術の応用領域拡張を目的とした用途探索フレームワーク",
+            "authors": [
+              { "name": "進藤 尚希", "affiliation": "ストックマーク、電通大" },
+              { "name": "広田 航", "affiliation": "ストックマーク" },
+              { "name": "中川 大輔", "affiliation": "ストックマーク" },
+              { "name": "高橋 洸丞", "affiliation": "ストックマーク" },
+              { "name": "及川 圭太", "affiliation": "日本ガイシ" },
+              { "name": "箕田 拓水", "affiliation": "日本ガイシ" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "WS4-6",
+        "title": "WS4 招待講演: 欅 惇志 先生",
+        "start_time": "11:10",
+        "end_time": "12:00",
+        "presentations": [
+          {
+            "id": "WS4-6-1",
+            "title": "招待講演: 欅 惇志 先生",
+            "authors": [{ "name": "欅 惇志" }]
+          }
+        ]
+      },
+      {
+        "id": "WS4-7",
+        "title": "WS4 shared task PBIG: オープニング",
+        "start_time": "12:00",
+        "end_time": "12:10"
+      },
+      {
+        "id": "WS4-8",
+        "title": "WS4 システム紹介 ① e-gen",
+        "start_time": "12:10",
+        "end_time": "12:25"
+      },
+      {
+        "id": "WS4-9",
+        "title": "WS4 システム紹介 ② ソルティライチ",
+        "start_time": "12:25",
+        "end_time": "12:40"
+      },
+      {
+        "id": "WS4-10",
+        "title": "WS4 クロージング",
+        "start_time": "12:40",
+        "end_time": "12:45"
+      }
+    ]
+  }
+}
