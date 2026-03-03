@@ -14,7 +14,7 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["apple-touch-icon.png"],
       manifest: {
-        name: "NLP 2026 プログラム",
+        name: "NLP2026 非公式版 予定表",
         short_name: "NLP 2026",
         description: "NLP 2026 の非公式プログラムウェブサイト",
         theme_color: "#4338ca",

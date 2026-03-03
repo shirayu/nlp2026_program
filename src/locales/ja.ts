@@ -1,4 +1,5 @@
 export const ja = {
+  documentTitle: "NLP2026 非公式版 予定表",
   programPageTitle: "NLP2026",
   programPageSubTitle: "非公式版 予定表",
   loading: "読み込み中...",
