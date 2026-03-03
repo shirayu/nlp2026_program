@@ -5,6 +5,9 @@
 """
 NLP2026 プログラムHTML から正規化JSONを抽出するスクリプト。
 標準ライブラリのみ使用。
+
+Usage:
+    uv run extract.py --html <HTML> --out <JSON>
 """
 
 import argparse
@@ -16,10 +19,10 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urljoin
 
+
 # ─── ユーティリティ ────────────────────────────────────────────
 
 def clean(text: str) -> str:
-
     text = text.replace("\u00a0", " ").replace("\u3000", " ")
     return re.sub(r"\s+", " ", text).strip()
 
@@ -149,7 +152,7 @@ def split_rooms(raw: str) -> list[str]:
                     depth -= 1
                     if depth == 0:
                         suffix = raw[cursor + 1:suffix_end]
-                        suffix = raw[cursor + 1 : suffix_end]
+                        matches.extend(f"{prefix}({suffix})" for prefix in prefixes)
                         i = suffix_end + 1
                         break
                 suffix_end += 1
@@ -165,7 +168,9 @@ def split_rooms(raw: str) -> list[str]:
 
     return [
         normalize_room_name(part)
-        normalize_room_name(part) for part in re.split(r"\s*[、，,／/]\s*", raw) if part
+        for part in re.split(r"\s*[、，,／/]\s*", raw)
+        if part
+    ]
 
 
 def parse_header_text(text: str) -> dict:
@@ -193,7 +198,6 @@ def parse_header_text(text: str) -> dict:
 # ─── HTMLパーサー（生データ収集） ─────────────────────────────────
 
 class ProgramParser(HTMLParser):
-
     """生の発表・セッション・著者データを収集する。正規化は normalize() で行う。"""
 
     def __init__(self) -> None:
@@ -225,9 +229,9 @@ class ProgramParser(HTMLParser):
         self._td_is_pid = False
         self._span_pid_id: str = ""
         self._row_is_oral: bool = False           # span id が ORAL 末尾
-        self._row_is_oral: bool = False  # span id が ORAL 末尾
+        self._row_oral_session_ref: str | None = None  # (A1) リンク先
         self._row_is_online: bool = False         # 💻 マーク
-        self._row_is_online: bool = False  # 💻 マーク
+
         # タイトル行確定後に保持（著者行で参照）
         self._cur_pid: str = ""
         self._cur_title: str = ""
@@ -314,20 +318,12 @@ class ProgramParser(HTMLParser):
                 return
 
         if tag == "h3" and self._cur_session is not None and not self._in_session_header:
-        if (
-            tag == "h3"
-            and self._cur_session is not None
-            and not self._in_session_header
-        ):
+            self._in_session_body_title = True
             self._session_body_title_text = []
             return
 
         if tag == "h4" and self._cur_session is not None and not self._in_session_header:
-        if (
-            tag == "h4"
-            and self._cur_session is not None
-            and not self._in_session_header
-        ):
+            self._in_session_body_speakers = True
             self._session_body_speakers_text = []
             return
 
@@ -339,11 +335,7 @@ class ProgramParser(HTMLParser):
                     self._cur_session["id"] = sid
 
         if tag == "table" and self._cur_session is not None and not self._in_session_header:
-        if (
-            tag == "table"
-            and self._cur_session is not None
-            and not self._in_session_header
-        ):
+            self._in_session_table = True
             return
 
         if self._in_session_table and self._cur_session is not None:
@@ -466,10 +458,8 @@ class ProgramParser(HTMLParser):
 
         if tag == "div":
             if (self._cur_session is not None
-            if (
-                self._cur_session is not None
-                and self._session_div_depth == self._global_div_depth
-            ):
+                    and self._session_div_depth == self._global_div_depth):
+                self._finalize_special_session()
                 if self._cur_session.get("id"):
                     self.raw_sessions.append(self._cur_session)
                 self._cur_session = None
@@ -501,20 +491,18 @@ class ProgramParser(HTMLParser):
         pres_id = f"{self._cur_session['id']}-1"
         authors, presenter_name = parse_speakers(self._cur_body_speakers)
         self.raw_presentations.append({
-        self.raw_presentations.append(
-            {
-                "id": pres_id,
-                "title": self._cur_body_title,
-                "authors": authors,
-                "presenter_name": presenter_name,
-                "session_id": self._cur_session["id"],
-                "pdf_url": None,
-                "is_oral": False,
-                "oral_session_ref": None,
-                "is_online": False,
-                "is_english": False,
-            }
-        )
+            "id": pres_id,
+            "title": self._cur_body_title,
+            "authors": authors,
+            "presenter_name": presenter_name,
+            "session_id": self._cur_session["id"],
+            "pdf_url": None,
+            "is_oral": False,
+            "oral_session_ref": None,
+            "is_online": False,
+            "is_english": False,
+        })
+        self._cur_session["presentation_ids"].append(pres_id)
 
     def _flush_presentation_row(self) -> None:
         cells = self._tr_cells
@@ -536,20 +524,18 @@ class ProgramParser(HTMLParser):
 
             if self._cur_title and self._cur_session:
                 self.raw_presentations.append({
-                self.raw_presentations.append(
-                    {
-                        "id": self._cur_pid,
-                        "title": self._cur_title,
-                        "authors": authors,  # [{"name": ..., "affiliation": ...}]
-                        "presenter_name": presenter_name,
-                        "session_id": self._cur_session["id"],
-                        "pdf_url": self._cur_pdf_url,
-                        "is_oral": self._cur_is_oral,
-                        "oral_session_ref": self._cur_oral_session_ref,
-                        "is_online": self._cur_is_online,
-                        "is_english": is_english,
-                    }
-                )
+                    "id": self._cur_pid,
+                    "title": self._cur_title,
+                    "authors": authors,           # [{"name": ..., "affiliation": ...}]
+                    "presenter_name": presenter_name,
+                    "session_id": self._cur_session["id"],
+                    "pdf_url": self._cur_pdf_url,
+                    "is_oral": self._cur_is_oral,
+                    "oral_session_ref": self._cur_oral_session_ref,
+                    "is_online": self._cur_is_online,
+                    "is_english": is_english,
+                })
+                self._cur_session["presentation_ids"].append(self._cur_pid)
 
             self._cur_pid = ""
             self._cur_title = ""
@@ -576,18 +562,15 @@ class ProgramParser(HTMLParser):
                 presenter_ids.append(pid)
 
         self.raw_persons.append({
-        self.raw_persons.append(
-            {
-                "name": name,
-                "paper_ids": paper_ids,
-                "presenter_paper_ids": presenter_ids,
-            }
-        )
+            "name": name,
+            "paper_ids": paper_ids,
+            "presenter_paper_ids": presenter_ids,
+        })
+
 
 # ─── 後処理・正規化 ───────────────────────────────────────────────
 
 def fix_urls(raw_presentations: list[dict], base_url: str) -> None:
-
     """pdf_url が相対URLの場合、base_url を基準に絶対URLへ変換する。"""
     for entry in raw_presentations:
         if entry.get("pdf_url"):
@@ -620,7 +603,7 @@ def normalize(
 
     for i, rp in enumerate(raw_persons):
         pid = f"p{i+1:04d}"
-        pid = f"p{i + 1:04d}"
+        persons[pid] = {"name": rp["name"]}
         name_to_pid[rp["name"]] = pid
 
     unknown_counter = [len(raw_persons)]
@@ -688,9 +671,7 @@ def normalize(
 
         presenter_id = (
             name_to_pid.get(entry["presenter_name"]) if entry["presenter_name"] else None
-            name_to_pid.get(entry["presenter_name"])
-            if entry["presenter_name"]
-            else None
+        )
 
         p: dict = {
             "title": entry["title"],
@@ -775,9 +756,7 @@ def load_workshop_config(path: Path | None) -> dict[str, dict]:
     for sid, entry in raw.items():
         if not isinstance(sid, str) or not sid.startswith("WS"):
             raise ValueError(f"workshop.json のキーは WS1 のようなセッションIDにしてください: {sid!r}")
-            raise ValueError(
-                f"workshop.json のキーは WS1 のようなセッションIDにしてください: {sid!r}"
-            )
+        if not isinstance(entry, dict):
             raise ValueError(f"workshop.json[{sid!r}] は object である必要があります")
 
         title = entry.get("title")
@@ -791,101 +770,74 @@ def load_workshop_config(path: Path | None) -> dict[str, dict]:
             raise ValueError(f"workshop.json[{sid!r}].date は必須です")
         if start_time is not None and not isinstance(start_time, str):
             raise ValueError(f"workshop.json[{sid!r}].start_time は文字列である必要があります")
-            raise ValueError(
-                f"workshop.json[{sid!r}].start_time は文字列である必要があります"
-            )
+        if end_time is not None and not isinstance(end_time, str):
             raise ValueError(f"workshop.json[{sid!r}].end_time は文字列である必要があります")
-            raise ValueError(
-                f"workshop.json[{sid!r}].end_time は文字列である必要があります"
-            )
+        if start_time is not None and not _TIME_RE.fullmatch(start_time):
             raise ValueError(f"workshop.json[{sid!r}].start_time は H:MM 形式で指定してください")
-            raise ValueError(
-                f"workshop.json[{sid!r}].start_time は H:MM 形式で指定してください"
-            )
+        if end_time is not None and not _TIME_RE.fullmatch(end_time):
             raise ValueError(f"workshop.json[{sid!r}].end_time は H:MM 形式で指定してください")
-            raise ValueError(
-                f"workshop.json[{sid!r}].end_time は H:MM 形式で指定してください"
-            )
-        if (
-            not isinstance(rooms, list)
-            or not rooms
-            or not all(isinstance(room, str) and room for room in rooms)
-        ):
-            raise ValueError(
-                f"workshop.json[{sid!r}].rooms は会場名文字列の配列で必須です"
-            )
+        if not isinstance(rooms, list) or not rooms or not all(isinstance(room, str) and room for room in rooms):
+            raise ValueError(f"workshop.json[{sid!r}].rooms は会場名文字列の配列で必須です")
+
         sessions = entry.get("sessions")
         if sessions is not None:
             if not isinstance(sessions, list):
                 raise ValueError(f"workshop.json[{sid!r}].sessions は配列である必要があります")
-                raise ValueError(
-                    f"workshop.json[{sid!r}].sessions は配列である必要があります"
-                )
+            for i, session in enumerate(sessions, start=1):
                 if not isinstance(session, dict):
                     raise ValueError(f"workshop.json[{sid!r}].sessions[{i-1}] は object である必要があります")
-                    raise ValueError(
-                        f"workshop.json[{sid!r}].sessions[{i - 1}] は object である必要があります"
-                    )
+                child_id = session.get("id")
                 title = session.get("title")
                 child_start = session.get("start_time")
                 child_end = session.get("end_time")
                 if not isinstance(child_id, str) or not child_id:
                     raise ValueError(f"workshop.json[{sid!r}].sessions[{i-1}].id は必須です")
-                    raise ValueError(
-                        f"workshop.json[{sid!r}].sessions[{i - 1}].id は必須です"
-                    )
+                if not isinstance(title, str) or not title:
                     raise ValueError(f"workshop.json[{sid!r}].sessions[{i-1}].title は必須です")
-                        f"workshop.json[{sid!r}].sessions[{i-1}].start_time は H:MM 形式で必須です"
-                        f"workshop.json[{sid!r}].sessions[{i - 1}].title は必須です"
-                    )
-                if not isinstance(child_start, str) or not _TIME_RE.fullmatch(
-                    child_start
-                ):
+                if not isinstance(child_start, str) or not _TIME_RE.fullmatch(child_start):
                     raise ValueError(
-                        f"workshop.json[{sid!r}].sessions[{i - 1}].start_time は H:MM 形式で必須です"
+                        f"workshop.json[{sid!r}].sessions[{i-1}].start_time は H:MM 形式で必須です"
+                    )
                 if not isinstance(child_end, str) or not _TIME_RE.fullmatch(child_end):
                     raise ValueError(
                         f"workshop.json[{sid!r}].sessions[{i-1}].end_time は H:MM 形式で必須です"
-                        f"workshop.json[{sid!r}].sessions[{i - 1}].end_time は H:MM 形式で必須です"
+                    )
                 presentations = session.get("presentations")
                 if presentations is not None:
                     if not isinstance(presentations, list):
                         raise ValueError(
                             f"workshop.json[{sid!r}].sessions[{i-1}].presentations は配列である必要があります"
-                            f"workshop.json[{sid!r}].sessions[{i - 1}].presentations は配列である必要があります"
+                        )
                     for j, presentation in enumerate(presentations, start=1):
                         if not isinstance(presentation, dict):
                             raise ValueError(
                                 f"workshop.json[{sid!r}].sessions[{i-1}].presentations[{j-1}] は object である必要があります"
-                                f"workshop.json[{sid!r}].sessions[{i - 1}].presentations[{j - 1}] は object である必要があります"
+                            )
                         pid = presentation.get("id")
                         ptitle = presentation.get("title")
                         authors = presentation.get("authors")
                         if not isinstance(pid, str) or not pid:
                             raise ValueError(
                                 f"workshop.json[{sid!r}].sessions[{i-1}].presentations[{j-1}].id は必須です"
-                                f"workshop.json[{sid!r}].sessions[{i - 1}].presentations[{j - 1}].id は必須です"
+                            )
                         if not isinstance(ptitle, str) or not ptitle:
                             raise ValueError(
                                 f"workshop.json[{sid!r}].sessions[{i-1}].presentations[{j-1}].title は必須です"
-                                f"workshop.json[{sid!r}].sessions[{i - 1}].presentations[{j - 1}].title は必須です"
+                            )
                         if authors is not None:
                             if not isinstance(authors, list):
                                 raise ValueError(
                                     f"workshop.json[{sid!r}].sessions[{i-1}].presentations[{j-1}].authors は配列である必要があります"
-                                    f"workshop.json[{sid!r}].sessions[{i - 1}].presentations[{j - 1}].authors は配列である必要があります"
+                                )
                             for k, author in enumerate(authors, start=1):
                                 if not isinstance(author, dict):
                                     raise ValueError(
                                         f"workshop.json[{sid!r}].sessions[{i-1}].presentations[{j-1}].authors[{k-1}] は object である必要があります"
-                                        f"workshop.json[{sid!r}].sessions[{i - 1}].presentations[{j - 1}].authors[{k - 1}] は object である必要があります"
+                                    )
                                 if not isinstance(author.get("name"), str) or not author["name"]:
-                                if (
-                                    not isinstance(author.get("name"), str)
-                                    or not author["name"]
-                                ):
+                                    raise ValueError(
                                         f"workshop.json[{sid!r}].sessions[{i-1}].presentations[{j-1}].authors[{k-1}].name は必須です"
-                                        f"workshop.json[{sid!r}].sessions[{i - 1}].presentations[{j - 1}].authors[{k - 1}].name は必須です"
+                                    )
 
         config[sid] = entry
 
@@ -932,9 +884,7 @@ def apply_workshop_overrides(result: dict, workshop_config: dict[str, dict]) -> 
 
     for sid, override in workshop_config.items():
         room_ids = [get_or_create_room(normalize_room_name(name)) for name in override["rooms"]]
-        room_ids = [
-            get_or_create_room(normalize_room_name(name)) for name in override["rooms"]
-        ]
+        session = {
             "title": override["title"],
             "date": override["date"],
             "start_time": override.get("start_time", ""),
@@ -949,11 +899,7 @@ def apply_workshop_overrides(result: dict, workshop_config: dict[str, dict]) -> 
 
         child_prefix = f"{sid}-"
         stale_child_ids = [existing_sid for existing_sid in result["sessions"] if existing_sid.startswith(child_prefix)]
-        stale_child_ids = [
-            existing_sid
-            for existing_sid in result["sessions"]
-            if existing_sid.startswith(child_prefix)
-        ]
+        for stale_sid in stale_child_ids:
             del result["sessions"][stale_sid]
 
         child_sessions = override.get("sessions", [])
@@ -961,17 +907,12 @@ def apply_workshop_overrides(result: dict, workshop_config: dict[str, dict]) -> 
             child_sid = child["id"]
             child_room_ids = (
                 [get_or_create_room(normalize_room_name(name)) for name in child.get("rooms", [])]
-                [
-                    get_or_create_room(normalize_room_name(name))
-                    for name in child.get("rooms", [])
-                ]
+                if child.get("rooms")
                 else session["room_ids"]
             )
             if child_sid in result["sessions"]:
                 raise ValueError(f"workshop.json の個別セッションIDが重複しています: {child_sid}")
-                raise ValueError(
-                    f"workshop.json の個別セッションIDが重複しています: {child_sid}"
-                )
+
             child_presentations = child.get("presentations", [])
             presentation_ids: list[str] = []
             for presentation in child_presentations:
@@ -984,22 +925,16 @@ def apply_workshop_overrides(result: dict, workshop_config: dict[str, dict]) -> 
                 for author in authors:
                     person_id = get_or_create_person(author["name"])
                     affiliation_id = get_or_create_affiliation(author.get("affiliation"))
-                    affiliation_id = get_or_create_affiliation(
-                        author.get("affiliation")
-                    )
-                    normalized_authors.append(
-                        {
-                            "person_id": person_id,
-                            "affiliation_id": affiliation_id,
-                        }
-                    )
+                    normalized_authors.append({
+                        "person_id": person_id,
+                        "affiliation_id": affiliation_id,
+                    })
+
                 presenter_name = presentation.get("presenter")
                 if presenter_name is None and authors:
                     presenter_name = authors[0]["name"]
                 presenter_id = get_or_create_person(presenter_name) if presenter_name else None
-                presenter_id = (
-                    get_or_create_person(presenter_name) if presenter_name else None
-                )
+
                 result["presentations"][pid] = {
                     "title": presentation["title"],
                     "session_id": child_sid,
@@ -1160,33 +1095,24 @@ class ScheduleTableParser(HTMLParser):
             start_time = m2.group(1) if m2 else self._row_time
             end_time = m2.group(2) if m2 else ""
             self.special_events.append({
-            self.special_events.append(
-                {
-                    "title": title,
-                    "date": self._current_date,
-                    "start_time": start_time,
-                    "end_time": end_time,
-                    "rooms": split_rooms(venue),
-                    "url": self._external_url,
-                }
-            )
+                "title": title,
+                "date": self._current_date,
+                "start_time": start_time,
+                "end_time": end_time,
+                "rooms": split_rooms(venue),
+                "url": self._external_url,
+            })
+
 
 # ─── メイン ───────────────────────────────────────────────────────
 
 def main() -> None:
-
     parser = argparse.ArgumentParser(description="NLP2026 プログラムHTML→JSON 抽出スクリプト")
-    parser = argparse.ArgumentParser(
-        description="NLP2026 プログラムHTML→JSON 抽出スクリプト"
-    )
+    parser.add_argument("--html", required=True, help="入力HTMLファイルパス")
     parser.add_argument("--out", required=True, help="出力JSONファイルパス")
     parser.add_argument("--base-url", default=None, help="PDF等の相対URLを解決する基底URL (例: https://www.anlp.jp/proceedings/)")
-        "--workshop-config",
-        "--base-url",
-        default=None,
-        help="PDF等の相対URLを解決する基底URL (例: https://www.anlp.jp/proceedings/)",
-    )
     parser.add_argument(
+        "--workshop-config",
         default="workshop.json",
         help="ワークショップ時刻の手動上書きJSON。存在しない場合は無視する",
     )
@@ -1220,14 +1146,7 @@ def main() -> None:
         room_ids: list[str] = []
         for room_name in ev["rooms"]:
             room_id = next((rid for rid, room in result["rooms"].items() if room["name"] == room_name), None)
-            room_id = next(
-                (
-                    rid
-                    for rid, room in result["rooms"].items()
-                    if room["name"] == room_name
-                ),
-                None,
-            )
+            if room_id is None:
                 room_id = f"r{len(result['rooms']) + 1:04d}"
                 result["rooms"][room_id] = {"name": room_name}
             room_ids.append(room_id)
@@ -1248,14 +1167,12 @@ def main() -> None:
 
     pres = result["presentations"]
     oral_count   = sum(1 for p in pres.values() if p.get("oral_session_id"))
-    oral_count = sum(1 for p in pres.values() if p.get("oral_session_id"))
+    online_count = sum(1 for p in pres.values() if p.get("is_online"))
     english_count = sum(1 for p in pres.values() if p.get("is_english"))
 
     out_path = Path(args.out)
     out_path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
-    out_path.write_text(
-        json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+
     print(f"\n✅ 完了: {out_path}")
     print(f"   セッション数        : {len(result['sessions'])}")
     print(f"   発表数              : {len(result['presentations'])}")
