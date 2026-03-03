@@ -221,7 +221,7 @@ function FilterHeader({
         <h1 className="text-indigo-700">
           <a
             href="."
-            className="inline-flex items-baseline gap-2 rounded-sm hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            className="inline-flex flex-col items-start rounded-sm hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-400"
           >
             <span className="text-lg font-bold">{ja.programPageTitle}</span>
             <span className="text-xs font-medium text-indigo-500">{ja.programPageSubTitle}</span>
@@ -394,51 +394,42 @@ function RoomChips({
         >
           {ja.allRooms}
         </button>
-        {rooms.flatMap((room) => {
-          const chip = (
-            <button
-              key={room}
-              type="button"
-              disabled={filtersDisabled}
-              onClick={() => onSelectRoom(room)}
-              className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${
-                filtersDisabled
-                  ? "cursor-not-allowed bg-gray-200 text-gray-400"
-                  : selectedRoom === room
-                    ? getRoomTheme(room).chipActive
-                    : getRoomTheme(room).chipInactive
-              }`}
-            >
-              {room}
-            </button>
-          );
-
-          if (room !== "3F") return [chip];
-
-          return [
-            chip,
-            <a
-              key={`${room}-map`}
-              href={filtersDisabled ? undefined : VENUE_GUIDE_URL}
-              target={filtersDisabled ? undefined : "_blank"}
-              rel={filtersDisabled ? undefined : "noreferrer"}
-              aria-disabled={filtersDisabled}
-              aria-label="会場案内PDFを開く"
-              onClick={(event) => {
-                if (filtersDisabled) {
-                  event.preventDefault();
-                }
-              }}
-              className={`shrink-0 rounded-full border p-2 ${
-                filtersDisabled
-                  ? "pointer-events-none border-gray-200 bg-gray-200 text-gray-400"
-                  : "border-gray-200 bg-white text-gray-500 transition hover:border-indigo-200 hover:text-indigo-600"
-              }`}
-            >
-              <MapPinned className="h-4 w-4" />
-            </a>,
-          ];
-        })}
+        {rooms.map((room) => (
+          <button
+            key={room}
+            type="button"
+            disabled={filtersDisabled}
+            onClick={() => onSelectRoom(room)}
+            className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${
+              filtersDisabled
+                ? "cursor-not-allowed bg-gray-200 text-gray-400"
+                : selectedRoom === room
+                  ? getRoomTheme(room).chipActive
+                  : getRoomTheme(room).chipInactive
+            }`}
+          >
+            {room}
+          </button>
+        ))}
+        <a
+          href={filtersDisabled ? undefined : VENUE_GUIDE_URL}
+          target={filtersDisabled ? undefined : "_blank"}
+          rel={filtersDisabled ? undefined : "noreferrer"}
+          aria-disabled={filtersDisabled}
+          aria-label="会場案内PDFを開く"
+          onClick={(event) => {
+            if (filtersDisabled) {
+              event.preventDefault();
+            }
+          }}
+          className={`shrink-0 rounded-full border p-2 ${
+            filtersDisabled
+              ? "pointer-events-none border-gray-200 bg-gray-200 text-gray-400"
+              : "border-gray-200 bg-white text-gray-500 transition hover:border-indigo-200 hover:text-indigo-600"
+          }`}
+        >
+          <MapPinned className="h-4 w-4" />
+        </a>
       </div>
     </div>
   );
