@@ -70,7 +70,12 @@ export function PresentationCard({
   return (
     <li className={`px-4 py-2 ${open ? "bg-white/55" : "bg-transparent even:bg-white/35"}`}>
       <div className="flex items-start gap-2">
-        <button type="button" className="min-w-0 flex-1 text-left" onClick={() => setOpen((v) => !v)}>
+        <button
+          type="button"
+          className="min-w-0 flex-1 text-left"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+        >
           <div className="flex items-start gap-2">
             <span className="mt-0.5 shrink-0 font-mono text-xs text-gray-400">{pid}</span>
             <div className="min-w-0 flex-1">
@@ -104,9 +109,15 @@ export function PresentationCard({
             <FileText className="h-4 w-4" />
           </a>
         )}
-        <ChevronDown
-          className={`mt-1 h-4 w-4 shrink-0 text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-        />
+        <button
+          type="button"
+          className="mt-0.5 shrink-0 rounded p-1 text-gray-400 transition-colors hover:bg-slate-100 hover:text-gray-600"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-label={open ? "発表詳細をたたむ" : "発表詳細を開く"}
+        >
+          <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+        </button>
       </div>
 
       {open && (
