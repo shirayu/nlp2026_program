@@ -9,7 +9,7 @@ export function useSessionJump() {
     if (!jumpSession) return;
     const el = sessionRefs.current[jumpSession];
     if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      el.scrollIntoView({ block: "start" });
       setJumpSession(null);
     }
   }, [jumpSession]);

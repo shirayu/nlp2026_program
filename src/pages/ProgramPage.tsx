@@ -718,12 +718,12 @@ export default function ProgramPage() {
   }
 
   function scrollContentToTop() {
-    mainRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    mainRef.current?.scrollTo({ top: 0 });
   }
 
   function scrollSessionToTop(sessionId: SessionId) {
     window.requestAnimationFrame(() => {
-      sessionRefs.current[sessionId]?.scrollIntoView({ behavior: "smooth", block: "start" });
+      sessionRefs.current[sessionId]?.scrollIntoView({ block: "start" });
     });
   }
 
