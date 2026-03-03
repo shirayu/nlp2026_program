@@ -19,3 +19,8 @@ task -p
 
 task dev
 ```
+
+### GitHub Pages
+
+- GitHub Actions の `CI` workflow で `main` への push 時に `dist/` をデプロイします
+- リポジトリ設定の `Settings > Pages > Source` は `GitHub Actions` を選択してください
