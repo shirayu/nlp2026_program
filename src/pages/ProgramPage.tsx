@@ -353,12 +353,14 @@ function InstallDialog({
   dialogRef,
   open,
   installContext,
+  hasInstallPrompt,
   onClose,
   onInstall,
 }: {
   dialogRef: React.RefObject<HTMLDialogElement | null>;
   open: boolean;
   installContext: { isStandalone: boolean; isIos: boolean };
+  hasInstallPrompt: boolean;
   onClose: () => void;
   onInstall: () => void;
 }) {
@@ -385,7 +387,12 @@ function InstallDialog({
             </button>
           </div>
           <div className="space-y-4 px-4 py-4 text-sm text-gray-700">
-            {installContext.isIos ? (
+            {installContext.isStandalone ? (
+              <>
+                <p>{ja.installGuideInstalledLead}</p>
+                <p className="text-gray-500">{ja.installGuideInstalledDescription}</p>
+              </>
+            ) : installContext.isIos ? (
               <>
                 <p>{ja.installGuideIosLead}</p>
                 <ol className="list-decimal space-y-2 pl-5 text-gray-600">
@@ -394,7 +401,7 @@ function InstallDialog({
                   <li>{ja.installGuideIosStep3}</li>
                 </ol>
               </>
-            ) : (
+            ) : hasInstallPrompt ? (
               <>
                 <p>{ja.installGuideLead}</p>
                 <p className="text-gray-500">{ja.installGuideDescription}</p>
@@ -414,6 +421,11 @@ function InstallDialog({
                     {ja.installNow}
                   </button>
                 </div>
+              </>
+            ) : (
+              <>
+                <p>{ja.installGuideUnsupportedLead}</p>
+                <p className="text-gray-500">{ja.installGuideUnsupportedDescription}</p>
               </>
             )}
           </div>
@@ -643,7 +655,7 @@ export default function ProgramPage() {
   const trimmedQuery = query.trim();
   const filtersDisabled = trimmedQuery.length > 0 && searchAll;
   const searchScopeLabel = searchAll ? ja.searchAll : ja.searchFiltered;
-  const showInstallButton = !installContext.isStandalone && (installContext.isIos || installPromptEvent !== null);
+  const showInstallButton = true;
   const matchedPresentationCount = useMemo(() => {
     return filteredSessions.reduce((total, item) => total + item.presIds.length, 0);
   }, [filteredSessions]);
@@ -795,6 +807,7 @@ export default function ProgramPage() {
         dialogRef={installDialogRef}
         open={showInstallDialog}
         installContext={installContext}
+        hasInstallPrompt={installPromptEvent !== null}
         onClose={closeInstallDialog}
         onInstall={() => void handleInstallApp()}
       />

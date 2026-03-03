@@ -29,6 +29,11 @@ export const ja = {
   installGuideIosStep1: "Safari の共有ボタンをタップします。",
   installGuideIosStep2: "「ホーム画面に追加」を選びます。",
   installGuideIosStep3: "追加を確定すると、ホーム画面から直接開けます。",
+  installGuideInstalledLead: "このサイトはすでにホーム画面から開ける状態です。",
+  installGuideInstalledDescription: "必要ならホーム画面やアプリ一覧から直接起動できます。",
+  installGuideUnsupportedLead: "このブラウザでは直接インストールの確認画面を開けません。",
+  installGuideUnsupportedDescription:
+    "Chrome や Edge などの対応ブラウザを使うか、ブラウザの共有メニューからホーム画面への追加を試してください。",
   later: "あとで",
   installNow: "追加する",
   displaySettings: "表示設定",
