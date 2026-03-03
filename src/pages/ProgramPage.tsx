@@ -58,6 +58,9 @@ type BeforeInstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
 };
 
+export const fullscreenDialogClassName =
+  "backdrop:bg-black/40 fixed inset-0 z-50 m-0 h-screen max-h-none w-screen max-w-none border-0 bg-transparent p-0";
+
 function isIosDevice() {
   if (typeof navigator === "undefined") return false;
   return /iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -457,15 +460,14 @@ function InstallDialog({
   onInstall: () => void;
 }) {
   return (
-    <dialog
-      ref={dialogRef}
-      open={open}
-      onClose={onClose}
-      onCancel={onClose}
-      className="backdrop:bg-black/40 fixed inset-0 m-0 h-screen max-h-none w-screen max-w-none border-0 bg-transparent p-0"
-    >
+    <dialog ref={dialogRef} open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
       <div className="flex min-h-full items-center justify-center p-4">
-        <button type="button" aria-label={ja.closeInstallGuide} className="absolute inset-0" onClick={onClose} />
+        <button
+          type="button"
+          aria-label={ja.closeInstallGuide}
+          className="absolute inset-0 bg-black/55"
+          onClick={onClose}
+        />
         <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white shadow-xl">
           <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
             <h2 className="text-sm font-bold text-gray-800">{ja.installApp}</h2>
@@ -541,15 +543,14 @@ function SettingsDialog({
   onToggleShowAuthors: () => void;
 }) {
   return (
-    <dialog
-      ref={dialogRef}
-      open={open}
-      onClose={onClose}
-      onCancel={onClose}
-      className="backdrop:bg-black/40 fixed inset-0 m-0 h-screen max-h-none w-screen max-w-none border-0 bg-transparent p-0"
-    >
+    <dialog ref={dialogRef} open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
       <div className="flex min-h-full items-center justify-center p-4">
-        <button type="button" aria-label={ja.closeDisplaySettings} className="absolute inset-0" onClick={onClose} />
+        <button
+          type="button"
+          aria-label={ja.closeDisplaySettings}
+          className="absolute inset-0 bg-black/55"
+          onClick={onClose}
+        />
         <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white shadow-xl">
           <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
             <h2 className="text-sm font-bold text-gray-800">{ja.displaySettings}</h2>
