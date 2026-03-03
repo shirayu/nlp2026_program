@@ -1,5 +1,14 @@
 import { ChevronDown, ChevronUp, X as CloseIcon, Download, Globe, MapPinned, Search, Settings } from "lucide-react";
-import { type SVGProps, startTransition, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import {
+  type MouseEvent,
+  type SVGProps,
+  startTransition,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { PersonModal } from "../components/PersonModal";
 import { SessionCard } from "../components/SessionCard";
 import { TimelineFilter } from "../components/TimelineFilter";
@@ -10,7 +19,8 @@ import {
   getRoomTheme,
   OFFICIAL_SITE_URL,
   PROJECT_REPOSITORY_URL,
-  SLACK_URL,
+  SLACK_APP_URL,
+  SLACK_WEB_URL,
   VENUE_GUIDE_URL,
   X_SEARCH_URL,
 } from "../constants";
@@ -73,6 +83,45 @@ function toTimeString(date: Date): string {
 function toMinutes(time: string): number {
   const [hour, minute] = time.split(":").map(Number);
   return hour * 60 + minute;
+}
+
+function openSlackFromSpa(event: MouseEvent<HTMLAnchorElement>) {
+  if (
+    typeof window === "undefined" ||
+    typeof document === "undefined" ||
+    event.button !== 0 ||
+    event.metaKey ||
+    event.ctrlKey ||
+    event.shiftKey ||
+    event.altKey
+  ) {
+    return;
+  }
+
+  event.preventDefault();
+
+  const fallbackId = window.setTimeout(() => {
+    window.open(SLACK_WEB_URL, "_blank", "noopener,noreferrer");
+    cleanup();
+  }, 700);
+
+  const cleanup = () => {
+    window.clearTimeout(fallbackId);
+    window.removeEventListener("blur", cleanup);
+    window.removeEventListener("pagehide", cleanup);
+    document.removeEventListener("visibilitychange", onVisibilityChange);
+  };
+
+  const onVisibilityChange = () => {
+    if (document.visibilityState === "hidden") {
+      cleanup();
+    }
+  };
+
+  window.addEventListener("blur", cleanup, { once: true });
+  window.addEventListener("pagehide", cleanup, { once: true });
+  document.addEventListener("visibilitychange", onVisibilityChange);
+  window.location.href = SLACK_APP_URL;
 }
 
 function isWorkshopParentSession(sessionId: SessionId, allSessionIds: SessionId[]): boolean {
@@ -186,9 +235,10 @@ function FilterHeader({
             <Globe className="h-5 w-5" />
           </a>
           <a
-            href={SLACK_URL}
+            href={SLACK_WEB_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={openSlackFromSpa}
             className="rounded-full p-1.5 text-gray-400 transition-colors hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400"
             aria-label={ja.openSlack}
           >
