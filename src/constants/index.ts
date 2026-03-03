@@ -3,7 +3,7 @@ import type { ConferenceData, RoomId, RoomTheme, Session } from "../types";
 export const OFFICIAL_SITE_URL = "https://www.anlp.jp/proceedings/annual_meeting/2026/";
 export const VENUE_GUIDE_URL = "https://www.anlp.jp/nlp2026/pdf/venue_guide.pdf";
 export const X_SEARCH_URL = "https://x.com/search?q=%23nlp2026";
-export const SLACK_APP_URL = "slack://nlp2026utsunomiya.slack.com/";
+export const SLACK_APP_URL = "slack://open?team=T0AFE8T2X2M";
 export const SLACK_WEB_URL = "https://nlp2026utsunomiya.slack.com/";
 export const AUTHOR_NAME = "Yuta Hayashibe";
 export const AUTHOR_WEBSITE_URL = "https://hayashibe.jp";
