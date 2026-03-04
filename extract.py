@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # /// script
 # requires-python = ">=3.11"
+# dependencies = ["pydantic>=2.11,<3"]
 # ///
 """
 NLP2026 プログラムHTML から正規化JSONを抽出するスクリプト。
-標準ライブラリのみ使用。
+`workshop.json` と最終出力は Pydantic で検証する。
 
 Usage:
     uv run extract.py --html <HTML> --out <JSON>
@@ -17,8 +18,10 @@ import sys
 import unicodedata
 from html.parser import HTMLParser
 from pathlib import Path
-from typing import Any, NotRequired, TypedDict, cast
+from typing import Any, NotRequired, TypedDict
 from urllib.parse import urljoin
+
+from pydantic import BaseModel, ConfigDict, RootModel, ValidationError, ValidationInfo, field_validator
 
 Attrs = list[tuple[str, str | None]]
 JsonDict = dict[str, Any]
@@ -860,111 +863,253 @@ def _special_event_id(title: str) -> str:
 
 
 _TIME_RE = re.compile(r"^\d{1,2}:\d{2}$")
+_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
-def load_workshop_config(path: Path | None) -> dict[str, JsonDict]:
+def _require_non_empty(value: str, field_name: str) -> str:
+    value = clean(value)
+    if not value:
+        raise ValueError(f"{field_name} は空文字列にできません")
+    return value
+
+
+def _validate_time(value: str, field_name: str) -> str:
+    value = _require_non_empty(value, field_name)
+    if not _TIME_RE.fullmatch(value):
+        raise ValueError(f"{field_name} は H:MM 形式で指定してください")
+    return value
+
+
+def _validate_date(value: str, field_name: str) -> str:
+    value = _require_non_empty(value, field_name)
+    if not _DATE_RE.fullmatch(value):
+        raise ValueError(f"{field_name} は YYYY-MM-DD 形式で指定してください")
+    return value
+
+
+def _format_validation_location(loc: tuple[Any, ...]) -> str:
+    path = "workshop.json"
+    for item in loc:
+        if item == "root":
+            continue
+        if isinstance(item, str):
+            path += f".{item}" if path != "workshop.json" else f".{item}"
+        else:
+            path += f"[{item}]"
+    return path
+
+
+def _validation_error_to_message(error: ValidationError) -> str:
+    details: list[str] = []
+    for item in error.errors():
+        location = _format_validation_location(tuple(item["loc"]))
+        details.append(f"{location}: {item['msg']}")
+    return "\n".join(details)
+
+
+class WorkshopAuthorInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: str
+    affiliation: str | None = None
+
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, value: str) -> str:
+        return _require_non_empty(value, "name")
+
+    @field_validator("affiliation")
+    @classmethod
+    def validate_affiliation(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        return _require_non_empty(value, "affiliation")
+
+
+class WorkshopPresentationInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    title: str
+    presenter: str | None = None
+    is_english: bool = False
+    is_online: bool = False
+    pdf_url: str | None = None
+    authors: list[WorkshopAuthorInput] = []
+
+    @field_validator("id", "title", "presenter")
+    @classmethod
+    def validate_text_fields(cls, value: str | None, info: ValidationInfo) -> str | None:
+        if value is None:
+            return None
+        return _require_non_empty(value, str(info.field_name))
+
+
+class WorkshopSessionInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    title: str
+    start_time: str
+    end_time: str
+    date: str | None = None
+    chair: str | None = None
+    rooms: list[str] | None = None
+    url: str | None = None
+    presentations: list[WorkshopPresentationInput] = []
+
+    @field_validator("id", "title", "chair", "url")
+    @classmethod
+    def validate_text_fields(cls, value: str | None, info: ValidationInfo) -> str | None:
+        if value is None:
+            return None
+        return _require_non_empty(value, str(info.field_name))
+
+    @field_validator("start_time", "end_time")
+    @classmethod
+    def validate_times(cls, value: str, info: ValidationInfo) -> str:
+        return _validate_time(value, str(info.field_name))
+
+    @field_validator("date")
+    @classmethod
+    def validate_date(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        return _validate_date(value, "date")
+
+    @field_validator("rooms")
+    @classmethod
+    def validate_rooms(cls, value: list[str] | None) -> list[str] | None:
+        if value is None:
+            return None
+        if not value:
+            raise ValueError("rooms は空配列にできません")
+        return [_require_non_empty(room, "rooms") for room in value]
+
+
+class WorkshopConfigEntry(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    title: str
+    date: str
+    start_time: str | None = None
+    end_time: str | None = None
+    rooms: list[str]
+    chair: str | None = None
+    url: str | None = None
+    sessions: list[WorkshopSessionInput] = []
+
+    @field_validator("title", "chair", "url")
+    @classmethod
+    def validate_text_fields(cls, value: str | None, info: ValidationInfo) -> str | None:
+        if value is None:
+            return None
+        return _require_non_empty(value, str(info.field_name))
+
+    @field_validator("date")
+    @classmethod
+    def validate_date(cls, value: str) -> str:
+        return _validate_date(value, "date")
+
+    @field_validator("start_time", "end_time")
+    @classmethod
+    def validate_times(cls, value: str | None, info: ValidationInfo) -> str | None:
+        if value is None:
+            return None
+        return _validate_time(value, str(info.field_name))
+
+    @field_validator("rooms")
+    @classmethod
+    def validate_rooms(cls, value: list[str]) -> list[str]:
+        if not value:
+            raise ValueError("rooms は空配列にできません")
+        return [_require_non_empty(room, "rooms") for room in value]
+
+
+class WorkshopConfigFile(RootModel[dict[str, WorkshopConfigEntry]]):
+    @field_validator("root")
+    @classmethod
+    def validate_keys(cls, value: dict[str, WorkshopConfigEntry]) -> dict[str, WorkshopConfigEntry]:
+        for sid in value:
+            if not re.fullmatch(r"WS\d+", sid):
+                raise ValueError(f"キーは WS1 のようなセッションIDにしてください: {sid!r}")
+        return value
+
+
+class PersonRecord(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: str
+
+
+class AffiliationRecord(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: str
+
+
+class RoomRecord(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: str
+
+
+class PresentationAuthorRecord(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    person_id: str
+    affiliation_id: str | None
+
+
+class PresentationRecord(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    title: str
+    session_id: str
+    presenter_id: str | None
+    is_english: bool
+    is_online: bool
+    authors: list[PresentationAuthorRecord]
+    pdf_url: str | None
+    oral_session_id: str | None = None
+
+
+class SessionRecord(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    title: str
+    date: str
+    start_time: str
+    end_time: str
+    room_ids: list[str]
+    chair: str
+    presentation_ids: list[str]
+    url: str | None = None
+
+
+class DataJsonRecord(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    persons: dict[str, PersonRecord]
+    affiliations: dict[str, AffiliationRecord]
+    rooms: dict[str, RoomRecord]
+    sessions: dict[str, SessionRecord]
+    presentations: dict[str, PresentationRecord]
+
+
+def load_workshop_config(path: Path | None) -> dict[str, WorkshopConfigEntry]:
     """workshop.json を読み込む。存在しない場合は空辞書を返す。"""
     if path is None or not path.exists():
         return {}
 
     raw = json.loads(path.read_text(encoding="utf-8"))
-    if not isinstance(raw, dict):
-        raise ValueError("workshop.json のトップレベルは object である必要があります")
-    raw = cast(dict[str, object], raw)
-
-    config: dict[str, JsonDict] = {}
-    for sid, entry in raw.items():
-        if not sid.startswith("WS"):
-            raise ValueError(f"workshop.json のキーは WS1 のようなセッションIDにしてください: {sid!r}")
-        if not isinstance(entry, dict):
-            raise ValueError(f"workshop.json[{sid!r}] は object である必要があります")
-        entry = cast(JsonDict, entry)
-
-        title = entry.get("title")
-        date = entry.get("date")
-        start_time = entry.get("start_time")
-        end_time = entry.get("end_time")
-        rooms = entry.get("rooms")
-        if not isinstance(title, str) or not title:
-            raise ValueError(f"workshop.json[{sid!r}].title は必須です")
-        if not isinstance(date, str) or not date:
-            raise ValueError(f"workshop.json[{sid!r}].date は必須です")
-        if start_time is not None and not isinstance(start_time, str):
-            raise ValueError(f"workshop.json[{sid!r}].start_time は文字列である必要があります")
-        if end_time is not None and not isinstance(end_time, str):
-            raise ValueError(f"workshop.json[{sid!r}].end_time は文字列である必要があります")
-        if start_time is not None and not _TIME_RE.fullmatch(start_time):
-            raise ValueError(f"workshop.json[{sid!r}].start_time は H:MM 形式で指定してください")
-        if end_time is not None and not _TIME_RE.fullmatch(end_time):
-            raise ValueError(f"workshop.json[{sid!r}].end_time は H:MM 形式で指定してください")
-        room_list = cast(list[object], rooms) if isinstance(rooms, list) else None
-        if room_list is None or not room_list or not all(isinstance(room, str) and room for room in room_list):
-            raise ValueError(f"workshop.json[{sid!r}].rooms は会場名文字列の配列で必須です")
-
-        sessions = entry.get("sessions")
-        if sessions is not None:
-            if not isinstance(sessions, list):
-                raise ValueError(f"workshop.json[{sid!r}].sessions は配列である必要があります")
-            session_list = cast(list[object], sessions)
-            for i, session in enumerate(session_list, start=1):
-                if not isinstance(session, dict):
-                    raise ValueError(f"workshop.json[{sid!r}].sessions[{i - 1}] は object である必要があります")
-                session = cast(JsonDict, session)
-                child_id = session.get("id")
-                title = session.get("title")
-                child_start = session.get("start_time")
-                child_end = session.get("end_time")
-                if not isinstance(child_id, str) or not child_id:
-                    raise ValueError(f"workshop.json[{sid!r}].sessions[{i - 1}].id は必須です")
-                if not isinstance(title, str) or not title:
-                    raise ValueError(f"workshop.json[{sid!r}].sessions[{i - 1}].title は必須です")
-                if not isinstance(child_start, str) or not _TIME_RE.fullmatch(child_start):
-                    raise ValueError(f"workshop.json[{sid!r}].sessions[{i - 1}].start_time は H:MM 形式で必須です")
-                if not isinstance(child_end, str) or not _TIME_RE.fullmatch(child_end):
-                    raise ValueError(f"workshop.json[{sid!r}].sessions[{i - 1}].end_time は H:MM 形式で必須です")
-                presentations = session.get("presentations")
-                if presentations is not None:
-                    if not isinstance(presentations, list):
-                        raise ValueError(
-                            f"workshop.json[{sid!r}].sessions[{i - 1}].presentations は配列である必要があります"
-                        )
-                    presentation_list = cast(list[object], presentations)
-                    for j, presentation in enumerate(presentation_list, start=1):
-                        if not isinstance(presentation, dict):
-                            presentation_path = f"workshop.json[{sid!r}].sessions[{i - 1}].presentations[{j - 1}]"
-                            raise ValueError(f"{presentation_path} は object である必要があります")
-                        presentation = cast(JsonDict, presentation)
-                        pid = presentation.get("id")
-                        ptitle = presentation.get("title")
-                        authors = presentation.get("authors")
-                        if not isinstance(pid, str) or not pid:
-                            raise ValueError(
-                                f"workshop.json[{sid!r}].sessions[{i - 1}].presentations[{j - 1}].id は必須です"
-                            )
-                        if not isinstance(ptitle, str) or not ptitle:
-                            raise ValueError(
-                                f"workshop.json[{sid!r}].sessions[{i - 1}].presentations[{j - 1}].title は必須です"
-                            )
-                        if authors is not None:
-                            presentation_path = f"workshop.json[{sid!r}].sessions[{i - 1}].presentations[{j - 1}]"
-                            if not isinstance(authors, list):
-                                raise ValueError(f"{presentation_path}.authors は配列である必要があります")
-                            author_list = cast(list[object], authors)
-                            for k, author in enumerate(author_list, start=1):
-                                if not isinstance(author, dict):
-                                    author_path = f"{presentation_path}.authors[{k - 1}]"
-                                    raise ValueError(f"{author_path} は object である必要があります")
-                                author = cast(JsonDict, author)
-                                if not isinstance(author.get("name"), str) or not author["name"]:
-                                    author_path = f"{presentation_path}.authors[{k - 1}]"
-                                    raise ValueError(f"{author_path}.name は必須です")
-
-        config[sid] = entry
-
-    return config
+    try:
+        return WorkshopConfigFile.model_validate(raw).root
+    except ValidationError as error:
+        raise ValueError(_validation_error_to_message(error)) from error
 
 
-def apply_workshop_overrides(result: JsonDict, workshop_config: dict[str, JsonDict]) -> None:
+def apply_workshop_overrides(result: JsonDict, workshop_config: dict[str, WorkshopConfigEntry]) -> None:
     """workshop.json の内容で WS セッションの時刻等を上書きし、個別セッションも追加する。"""
     name_to_pid = {person["name"]: pid for pid, person in result["persons"].items()}
     aff_to_id = {aff["name"]: aid for aid, aff in result["affiliations"].items()}
@@ -1003,18 +1148,18 @@ def apply_workshop_overrides(result: JsonDict, workshop_config: dict[str, JsonDi
         return room_to_id[name]
 
     for sid, override in workshop_config.items():
-        room_ids = [get_or_create_room(normalize_room_name(name)) for name in override["rooms"]]
+        room_ids = [get_or_create_room(normalize_room_name(name)) for name in override.rooms]
         session = {
-            "title": override["title"],
-            "date": override["date"],
-            "start_time": override.get("start_time", ""),
-            "end_time": override.get("end_time", ""),
+            "title": override.title,
+            "date": override.date,
+            "start_time": override.start_time or "",
+            "end_time": override.end_time or "",
             "room_ids": room_ids,
-            "chair": override.get("chair", ""),
+            "chair": override.chair or "",
             "presentation_ids": [],
         }
-        if override.get("url"):
-            session["url"] = override["url"]
+        if override.url:
+            session["url"] = override.url
         result["sessions"][sid] = session
 
         child_prefix = f"{sid}-"
@@ -1022,29 +1167,27 @@ def apply_workshop_overrides(result: JsonDict, workshop_config: dict[str, JsonDi
         for stale_sid in stale_child_ids:
             del result["sessions"][stale_sid]
 
-        child_sessions = override.get("sessions", [])
+        child_sessions = override.sessions
         for child in child_sessions:
-            child_sid = child["id"]
+            child_sid = child.id
             child_room_ids = (
-                [get_or_create_room(normalize_room_name(name)) for name in child.get("rooms", [])]
-                if child.get("rooms")
+                [get_or_create_room(normalize_room_name(name)) for name in child.rooms]
+                if child.rooms
                 else session["room_ids"]
             )
             if child_sid in result["sessions"]:
                 raise ValueError(f"workshop.json の個別セッションIDが重複しています: {child_sid}")
 
-            child_presentations = cast(list[JsonDict], child.get("presentations", []))
             presentation_ids: list[str] = []
-            for presentation in child_presentations:
-                pid = presentation["id"]
+            for presentation in child.presentations:
+                pid = presentation.id
                 if pid in result["presentations"]:
                     raise ValueError(f"workshop.json の発表IDが重複しています: {pid}")
 
-                authors = cast(list[JsonDict], presentation.get("authors", []))
                 normalized_authors: list[JsonDict] = []
-                for author in authors:
-                    person_id = get_or_create_person(author["name"])
-                    affiliation_id = get_or_create_affiliation(author.get("affiliation"))
+                for author in presentation.authors:
+                    person_id = get_or_create_person(author.name)
+                    affiliation_id = get_or_create_affiliation(author.affiliation)
                     normalized_authors.append(
                         {
                             "person_id": person_id,
@@ -1052,33 +1195,33 @@ def apply_workshop_overrides(result: JsonDict, workshop_config: dict[str, JsonDi
                         }
                     )
 
-                presenter_name = presentation.get("presenter")
-                if presenter_name is None and authors:
-                    presenter_name = authors[0]["name"]
+                presenter_name = presentation.presenter
+                if presenter_name is None and presentation.authors:
+                    presenter_name = presentation.authors[0].name
                 presenter_id = get_or_create_person(presenter_name) if presenter_name else None
 
                 result["presentations"][pid] = {
-                    "title": presentation["title"],
+                    "title": presentation.title,
                     "session_id": child_sid,
                     "presenter_id": presenter_id,
-                    "is_english": presentation.get("is_english", False),
-                    "is_online": presentation.get("is_online", False),
+                    "is_english": presentation.is_english,
+                    "is_online": presentation.is_online,
                     "authors": normalized_authors,
-                    "pdf_url": presentation.get("pdf_url"),
+                    "pdf_url": presentation.pdf_url,
                 }
                 presentation_ids.append(pid)
 
             entry = {
-                "title": child["title"],
-                "date": child.get("date", session["date"]),
-                "start_time": child["start_time"],
-                "end_time": child["end_time"],
+                "title": child.title,
+                "date": child.date or session["date"],
+                "start_time": child.start_time,
+                "end_time": child.end_time,
                 "room_ids": child_room_ids,
-                "chair": child.get("chair", ""),
+                "chair": child.chair or "",
                 "presentation_ids": presentation_ids,
             }
-            if child.get("url"):
-                entry["url"] = child["url"]
+            if child.url:
+                entry["url"] = child.url
             elif session.get("url"):
                 entry["url"] = session["url"]
 
@@ -1299,8 +1442,16 @@ def main() -> None:
     online_count = sum(1 for p in pres.values() if p.get("is_online"))
     english_count = sum(1 for p in pres.values() if p.get("is_english"))
 
+    validated_result = DataJsonRecord.model_validate(result).model_dump(exclude_none=False)
+    for session in validated_result["sessions"].values():
+        if session.get("url") is None:
+            session.pop("url", None)
+    for presentation in validated_result["presentations"].values():
+        if presentation.get("oral_session_id") is None:
+            presentation.pop("oral_session_id", None)
+
     out_path = Path(args.out)
-    out_path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+    out_path.write_text(json.dumps(validated_result, ensure_ascii=False, indent=2), encoding="utf-8")
 
     print(f"\n✅ 完了: {out_path}")
     print(f"   セッション数        : {len(result['sessions'])}")

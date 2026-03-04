@@ -3,6 +3,9 @@
 `extract.py` が生成する `data.json` のスキーマ定義と各フィールドの説明。  
 データはリレーショナルDBに倣い正規化されており、人物・所属・セッション・発表をIDで相互参照する。
 
+`extract.py` は `pydantic` を使って `workshop.json` の入力値と、
+出力する `data.json` の最終構造を検証する。
+
 ワークショップ (`WS1`〜`WS4`) については HTML からは抽出せず、
 `workshop.json` を唯一のデータソースとして親セッション・個別セッション・個別発表を生成する。
 
@@ -135,6 +138,10 @@
 `extract.py --workshop-config workshop.json` で読み込む任意設定ファイル。
 省略時はカレントディレクトリの `workshop.json` を見に行き、存在しなければ無視する。
 
+`workshop.json` は `pydantic` モデルで検証される。
+未定義のキーは受け付けず、バリデーションエラー時は
+`workshop.json.sessions[0].presentations[1].title` のようなパス付きで失敗箇所を表示する。
+
 ```json
 {
   "WS2": {
@@ -178,6 +185,14 @@
 | `url` | `string` | 親ワークショップのURL |
 | `sessions` | `object[]` | 個別セッションの追加定義 |
 
+補足:
+
+- トップレベルのキーは `WS1`, `WS2` のような `WS` + 数字のみ許可する
+- 文字列フィールドに空文字列や空白のみは指定できない
+- `rooms` は空配列にできない
+- 親セッションの `start_time` / `end_time` は省略可能だが、指定する場合は `H:MM` 形式
+- `date` は `YYYY-MM-DD` 形式
+
 `sessions[*]` の各要素は以下を持つ。
 
 | フィールド | 型 | 説明 |
@@ -192,6 +207,13 @@
 | `url` | `string` | 省略時は親ワークショップの `url` を継承 |
 | `presentations` | `object[]` | 個別発表の手動定義。定義時は `data.json.presentations` にも追加される |
 
+補足:
+
+- `start_time` / `end_time` は必須で、`H:MM` 形式
+- `date`, `chair`, `rooms`, `url` は省略可能
+- `rooms` を省略した場合は親ワークショップの `rooms` を継承する
+- `presentations` を省略した場合は空配列として扱う
+
 `presentations[*]` の各要素は以下を持つ。
 
 | フィールド | 型 | 説明 |
@@ -204,12 +226,17 @@
 | `pdf_url` | `string \| null` | 省略時は `null` |
 | `authors` | `object[]` | 著者一覧。`persons` / `affiliations` に自動反映される |
 
+補足:
+
+- `authors` を省略した場合は空配列として扱う
+- `presenter` を省略した場合、`authors` が非空なら先頭著者を発表者にする
+
 `presentations[*].authors[*]` の各要素は以下を持つ。
 
 | フィールド | 型 | 説明 |
 |---|---|---|
 | `name` | `string` | 著者名 |
-| `affiliation` | `string` | 所属。省略時は `null` として扱う |
+| `affiliation` | `string` \| `null` | 所属。省略時は `null` として扱う |
 
 ---
 
