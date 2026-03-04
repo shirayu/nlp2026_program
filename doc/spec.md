@@ -1,4 +1,6 @@
-# data.json 仕様書
+# データ構造仕様
+
+## data.json
 
 `extract.py` が生成する `data.json` のスキーマ定義と各フィールドの説明。  
 データはリレーショナルDBに倣い正規化されており、人物・所属・セッション・発表をIDで相互参照する。
@@ -9,9 +11,7 @@
 ワークショップ (`WS1`〜`WS4`) については HTML からは抽出せず、
 `workshop.json` を唯一のデータソースとして親セッション・個別セッション・個別発表を生成する。
 
----
-
-## トップレベル構造
+### トップレベル構造
 
 ```json
 {
@@ -33,9 +33,7 @@
 
 各 `Record` のキーがそのままIDとして機能する（`persons["p0001"]` で O(1) 参照可能）。
 
----
-
-## Person
+### Person
 
 ```json
 "p0001": { "name": "相澤 彰子" }
@@ -48,9 +46,7 @@
 **PersonId** は `p` + 4桁連番（例: `p0001`）。  
 著者索引の掲載順に採番し、索引外の著者は末尾に追番する。
 
----
-
-## Affiliation
+### Affiliation
 
 ```json
 "a0001": { "name": "デンソーITラボ" }
@@ -63,9 +59,7 @@
 **AffiliationId** は `a` + 4桁連番（例: `a0001`）。初出順に採番。  
 所属が省略されている著者は `affiliation_id: null` となる（`Affiliation` エントリは作られない）。
 
----
-
-## Room
+### Room
 
 ```json
 "r0001": { "name": "B会場(2F 大会議室201)" }
@@ -78,9 +72,7 @@
 **RoomId** は `r` + 4桁連番（例: `r0001`）。初出順に採番。  
 1つのセッションが複数会場を使う場合でも、`sessions[*].room_ids` から複数参照できる。
 
----
-
-## Session
+### Session
 
 ```json
 "B1": {
@@ -115,7 +107,7 @@
 > 個別セッション内に `presentations` 配列を持たせると、対応する `presentations` / `persons` / `affiliations`
 > も手動追加される。
 
-### SessionId の命名規則
+#### SessionId の命名規則
 
 | プレフィックス | 種別 | 例 |
 |---|---|---|
@@ -133,7 +125,7 @@
 ワークショップの個別セッションは `WS1-1`, `WS2-3` のように、
 親ワークショップIDに連番を付けた形式を使う。
 
-### workshop.json
+#### workshop.json
 
 `extract.py --workshop-config workshop.json` で読み込む任意設定ファイル。
 省略時はカレントディレクトリの `workshop.json` を見に行き、存在しなければ無視する。
@@ -238,9 +230,7 @@
 | `name` | `string` | 著者名 |
 | `affiliation` | `string` \| `null` | 所属。省略時は `null` として扱う |
 
----
-
-## Presentation
+### Presentation
 
 ```json
 "B1-1": {
@@ -268,7 +258,7 @@
 | `authors` | `PresentationAuthor[]` | 著者リスト。HTML記載順（発表者が先頭とは限らない） |
 | `pdf_url` | `string \| null` | 抄録PDFへのパス（サイトルート相対）。PDFリンクがないセッションは `null` |
 
-### PresentationAuthor
+#### PresentationAuthor
 
 | フィールド | 型 | 説明 |
 |---|---|---|
@@ -283,11 +273,9 @@
 > 著者行の記法 `○齋藤 幸史郎, 小池 隆斗 (科学大)` では、括弧内の所属が直前の著者のみに対応する。  
 > 所属が書かれていない著者（`null`）は「前の著者と同所属」または「省略」の可能性がある。
 
----
+### 参照関係まとめ
 
-## 参照関係まとめ
-
-```
+```txt
 sessions[id].presentation_ids  →  presentations のキー
 presentations[id].session_id   →  sessions のキー
 presentations[id].oral_session_id → sessions のキー（A1〜A9）
