@@ -73,9 +73,9 @@ export function PresentationCard({
 
   return (
     <li className={`px-4 py-2 ${open ? "bg-white/55" : "bg-transparent even:bg-white/35"}`}>
-      <div className="flex items-start gap-2">
-        <div className="shrink-0">
-          <span className="mt-0.5 block font-mono text-xs text-gray-400">
+      <div className="grid grid-cols-[3.25rem_minmax(0,1fr)_auto_auto] items-start gap-x-1">
+        <div className="w-[3.25rem] shrink-0">
+          <span className="mt-0.5 block text-pretty break-all font-mono text-xs leading-tight text-gray-400">
             <HighlightedText text={pid} query={query} />
           </span>
           <button
@@ -94,11 +94,11 @@ export function PresentationCard({
         </div>
         <button
           type="button"
-          className="min-w-0 flex-1 text-left"
+          className="col-start-2 min-w-0 text-left"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
         >
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0">
             <p className="text-sm font-medium leading-snug text-gray-800">
               <HighlightedText text={p.title} query={query} />
             </p>
@@ -140,7 +140,7 @@ export function PresentationCard({
       </div>
 
       {open && (
-        <div className="mt-2 space-y-1 pl-10">
+        <div className="mt-2 space-y-1 pl-[3.5rem]">
           <p className="text-xs text-gray-600">
             {authorList.map((a, i) => (
               <span key={`${a.personId}-${a.aff ?? "none"}-${a.isPresenter ? "presenter" : "author"}`}>
