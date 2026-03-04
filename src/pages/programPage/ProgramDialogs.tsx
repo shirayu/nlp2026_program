@@ -147,8 +147,6 @@ export function SettingsDialog({
 }) {
   const formattedBuildGitDate = formatBuildGitDate(BUILD_GIT_DATE);
   const formattedDataGeneratedAt = dataGeneratedAt ? formatBuildGitDate(dataGeneratedAt) : null;
-  const buildCommitUrl =
-    BUILD_GIT_HASH === "unknown" ? null : `${PROJECT_REPOSITORY_URL}/commit/${encodeURIComponent(BUILD_GIT_HASH)}`;
 
   return (
     <dialog ref={dialogRef} open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
@@ -238,20 +236,7 @@ export function SettingsDialog({
               <dl className="mt-2 space-y-2 text-sm">
                 <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
                   <dt className="text-gray-500">{ja.gitHash}</dt>
-                  <dd className="min-w-0 break-all font-mono text-left text-gray-800">
-                    {buildCommitUrl ? (
-                      <a
-                        href={buildCommitUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-indigo-600 underline decoration-indigo-200 underline-offset-2 hover:text-indigo-700"
-                      >
-                        {BUILD_GIT_HASH}
-                      </a>
-                    ) : (
-                      BUILD_GIT_HASH
-                    )}
-                  </dd>
+                  <dd className="min-w-0 break-all font-mono text-left text-gray-800">{BUILD_GIT_HASH}</dd>
                 </div>
                 <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
                   <dt className="text-gray-500">{ja.gitDate}</dt>
