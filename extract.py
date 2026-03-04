@@ -5,7 +5,7 @@
 # ///
 """
 NLP2026 プログラムHTML から正規化JSONを抽出するスクリプト。
-`workshop.json` と最終出力は Pydantic で検証する。
+`data_for_extraction/workshop.json` と最終出力は Pydantic で検証する。
 
 Usage:
     uv run extract.py --html <HTML> --out <JSON>
@@ -1112,7 +1112,7 @@ class DataJsonRecord(BaseModel):
 
 
 def load_workshop_config(path: Path | None) -> dict[str, WorkshopConfigEntry]:
-    """workshop.json を読み込む。存在しない場合は空辞書を返す。"""
+    """data_for_extraction/workshop.json を読み込む。存在しない場合は空辞書を返す。"""
     if path is None or not path.exists():
         return {}
 
@@ -1120,11 +1120,11 @@ def load_workshop_config(path: Path | None) -> dict[str, WorkshopConfigEntry]:
     try:
         return WorkshopConfigFile.model_validate(raw).root
     except ValidationError as error:
-        raise ValueError(_validation_error_to_message(error, "workshop.json")) from error
+        raise ValueError(_validation_error_to_message(error, "data_for_extraction/workshop.json")) from error
 
 
 def load_invitedpapers_config(path: Path | None) -> list[WorkshopPresentationInput]:
-    """invitedpapers.json を読み込む。存在しない場合は空リストを返す。"""
+    """data_for_extraction/invitedpapers.json を読み込む。存在しない場合は空リストを返す。"""
     if path is None or not path.exists():
         return []
 
@@ -1132,11 +1132,11 @@ def load_invitedpapers_config(path: Path | None) -> list[WorkshopPresentationInp
     try:
         return InvitedPapersConfigFile.model_validate(raw).root
     except ValidationError as error:
-        raise ValueError(_validation_error_to_message(error, "invitedpapers.json")) from error
+        raise ValueError(_validation_error_to_message(error, "data_for_extraction/invitedpapers.json")) from error
 
 
 def apply_workshop_overrides(result: JsonDict, workshop_config: dict[str, WorkshopConfigEntry]) -> None:
-    """workshop.json の内容で WS セッションの時刻等を上書きし、個別セッションも追加する。"""
+    """data_for_extraction/workshop.json の内容で WS セッションを上書きし、個別セッションも追加する。"""
     name_to_pid = {person["name"]: pid for pid, person in result["persons"].items()}
     aff_to_id = {aff["name"]: aid for aid, aff in result["affiliations"].items()}
     person_counter = len(result["persons"])
@@ -1202,13 +1202,13 @@ def apply_workshop_overrides(result: JsonDict, workshop_config: dict[str, Worksh
                 else session["room_ids"]
             )
             if child_sid in result["sessions"]:
-                raise ValueError(f"workshop.json の個別セッションIDが重複しています: {child_sid}")
+                raise ValueError(f"data_for_extraction/workshop.json の個別セッションIDが重複しています: {child_sid}")
 
             presentation_ids: list[str] = []
             for presentation in child.presentations:
                 pid = presentation.id
                 if pid in result["presentations"]:
-                    raise ValueError(f"workshop.json の発表IDが重複しています: {pid}")
+                    raise ValueError(f"data_for_extraction/workshop.json の発表IDが重複しています: {pid}")
 
                 normalized_authors: list[JsonDict] = []
                 for author in presentation.authors:
@@ -1255,7 +1255,7 @@ def apply_workshop_overrides(result: JsonDict, workshop_config: dict[str, Worksh
 
 
 def apply_invitedpapers_config(result: JsonDict, invitedpapers_config: list[WorkshopPresentationInput]) -> None:
-    """invitedpapers.json の内容で invitedpapers セッション配下の発表を追加する。"""
+    """data_for_extraction/invitedpapers.json の内容で発表を追加する。"""
     if not invitedpapers_config:
         return
 
@@ -1292,7 +1292,7 @@ def apply_invitedpapers_config(result: JsonDict, invitedpapers_config: list[Work
     for presentation in invitedpapers_config:
         pid = presentation.id
         if pid in result["presentations"]:
-            raise ValueError(f"invitedpapers.json の発表IDが重複しています: {pid}")
+            raise ValueError(f"data_for_extraction/invitedpapers.json の発表IDが重複しています: {pid}")
 
         normalized_authors: list[JsonDict] = []
         for author in presentation.authors:
@@ -1476,13 +1476,13 @@ def main() -> None:
     )
     parser.add_argument(
         "--workshop-config",
-        default="workshop.json",
-        help="ワークショップ時刻の手動上書きJSON。存在しない場合は無視する",
+        default=None,
+        help="ワークショップ時刻の手動上書きJSON。未指定または存在しない場合は無視する",
     )
     parser.add_argument(
         "--invitedpapers-config",
-        default="invitedpapers.json",
-        help="招待論文セッションの手動補完JSON。存在しない場合は無視する",
+        default=None,
+        help="招待論文セッションの手動補完JSON。未指定または存在しない場合は無視する",
     )
     args = parser.parse_args()
 

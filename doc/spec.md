@@ -5,11 +5,11 @@
 `extract.py` が生成する `data.json` のスキーマ定義と各フィールドの説明。  
 データはリレーショナルDBに倣い正規化されており、人物・所属・セッション・発表をIDで相互参照する。
 
-`extract.py` は `pydantic` を使って `workshop.json` の入力値と、
+`extract.py` は `pydantic` を使って `data_for_extraction/workshop.json` の入力値と、
 出力する `data.json` の最終構造を検証する。
 
 ワークショップ (`WS1`〜`WS4`) については HTML からは抽出せず、
-`workshop.json` を唯一のデータソースとして親セッション・個別セッション・個別発表を生成する。
+`data_for_extraction/workshop.json` を唯一のデータソースとして親セッション・個別セッション・個別発表を生成する。
 
 ### トップレベル構造
 
@@ -102,7 +102,7 @@
 > `presentations[id].oral_session_id` でも同じ関係を逆引きできる。
 
 > **ワークショップの手動補完**  
-> `extract.py` は `workshop.json` を読み込み、`WS1` など親ワークショップセッション自体を生成する。  
+> `extract.py` は `data_for_extraction/workshop.json` を読み込み、`WS1` など親ワークショップセッション自体を生成する。   
 > さらに `sessions` 配列を持たせると、`WS1-1` のような個別セッションを `sessions` に追加生成する。  
 > 個別セッション内に `presentations` 配列を持たせると、対応する `presentations` / `persons` / `affiliations`
 > も手動追加される。
@@ -125,14 +125,14 @@
 ワークショップの個別セッションは `WS1-1`, `WS2-3` のように、
 親ワークショップIDに連番を付けた形式を使う。
 
-#### workshop.json
+#### data_for_extraction/workshop.json
 
-`extract.py --workshop-config workshop.json` で読み込む任意設定ファイル。
-省略時はカレントディレクトリの `workshop.json` を見に行き、存在しなければ無視する。
+`extract.py --workshop-config data_for_extraction/workshop.json` で読み込む任意設定ファイル。
+引数を省略した場合は読み込まない。`task extract` では `Taskfile.yml` からこのパスを明示的に渡す。
 
-`workshop.json` は `pydantic` モデルで検証される。
+`data_for_extraction/workshop.json` は `pydantic` モデルで検証される。
 未定義のキーは受け付けず、バリデーションエラー時は
-`workshop.json.sessions[0].presentations[1].title` のようなパス付きで失敗箇所を表示する。
+`data_for_extraction/workshop.json.sessions[0].presentations[1].title` のようなパス付きで失敗箇所を表示する。
 
 ```json
 {
@@ -172,7 +172,7 @@
 | `date` | `string` | 親ワークショップの開催日 (`YYYY-MM-DD`) |
 | `start_time` | `string` | 親ワークショップの開始時刻 (`H:MM`) |
 | `end_time` | `string` | 親ワークショップの終了時刻 (`H:MM`) |
-| `rooms` | `string[]` | 親ワークショップの会場名。`doc/original_program.html` と同じ表記で記述する |
+| `rooms` | `string[]` | 親ワークショップの会場名。`data_for_extraction/original_program.html` と同じ表記で記述する |
 | `chair` | `string` | 親ワークショップの座長 |
 | `url` | `string` | 親ワークショップのURL |
 | `sessions` | `object[]` | 個別セッションの追加定義 |
@@ -218,12 +218,12 @@
 | `pdf_url` | `string \| null` | 省略時は `null` |
 | `authors` | `object[]` | 著者一覧。`persons` / `affiliations` に自動反映される |
 
-#### invitedpapers.json
+#### data_for_extraction/invitedpapers.json
 
-`extract.py --invitedpapers-config invitedpapers.json` で読み込む任意設定ファイル。
-省略時はカレントディレクトリの `invitedpapers.json` を見に行き、存在しなければ無視する。
+`extract.py --invitedpapers-config data_for_extraction/invitedpapers.json` で読み込む任意設定ファイル。
+引数を省略した場合は読み込まない。`task extract` では `Taskfile.yml` からこのパスを明示的に渡す。
 
-`invitedpapers.json` は `pydantic` モデルで検証される。
+`data_for_extraction/invitedpapers.json` は `pydantic` モデルで検証される。
 `invitedpapers` セッション自体の日時・会場・座長は HTML から取得し、
 このファイルでは `invitedpapers` 配下の発表だけを補完する。
 
@@ -247,7 +247,7 @@
 ]
 ```
 
-各要素は `workshop.json` の `presentations[*]` と同じ形式で、以下を持つ。
+各要素は `data_for_extraction/workshop.json` の `presentations[*]` と同じ形式で、以下を持つ。
 
 | フィールド | 型 | 説明 |
 |---|---|---|
@@ -261,9 +261,9 @@
 
 補足:
 
-- `invitedpapers.json` は配列形式
+- `data_for_extraction/invitedpapers.json` は配列形式
 - `id` は `invitedpapers-` + 数字の形式のみ許可する
-- `task extract` では自動的に `invitedpapers.json` も入力として扱う
+- `task extract` では自動的に `data_for_extraction/invitedpapers.json` も入力として扱う
 
 補足:
 

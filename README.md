@@ -8,14 +8,15 @@
 ```txt
 src/constants/index.ts
 src/locales/ja.ts
-workshop.json
-invitedpapers.json
+data_for_extraction/original_program.html
+data_for_extraction/workshop.json
+data_for_extraction/invitedpapers.json
 public/slack.json
 ```
 
 `public/slack.json` は `session_id -> { team, channel_id }` の辞書形式です。
 
-`invitedpapers.json` は `invitedpapers` セッションに差し込む発表一覧です。
+`data_for_extraction/invitedpapers.json` は `invitedpapers` セッションに差し込む発表一覧です。
 
 ```json
 [
@@ -34,7 +35,7 @@ public/slack.json
 ### 開発
 
 ```bash
-wget https://www.anlp.jp/proceedings/annual_meeting/2026/ -O original_program.html
+wget https://www.anlp.jp/proceedings/annual_meeting/2026/ -O data_for_extraction/original_program.html
 task -p
 
 task dev
