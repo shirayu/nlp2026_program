@@ -1,0 +1,142 @@
+[
+  {
+    "session_id": "A2",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFD6RT0JK"
+  },
+  {
+    "session_id": "A5",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AGNU6J4CQ"
+  },
+  {
+    "session_id": "B1",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFD6X51M5"
+  },
+  {
+    "session_id": "B2",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFUL7MS3U"
+  },
+  {
+    "session_id": "B6",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AG7HZ38HX"
+  },
+  {
+    "session_id": "C1",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AG7HQQJPK"
+  },
+  {
+    "session_id": "C2",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFSJG4XFY"
+  },
+  {
+    "session_id": "C3",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AG7HTBT8R"
+  },
+  {
+    "session_id": "C5",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFY8PKG04"
+  },
+  {
+    "session_id": "C6",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFY8T7R4L"
+  },
+  {
+    "session_id": "C7",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFD77T5SB"
+  },
+  {
+    "session_id": "P1",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFD6THF1D"
+  },
+  {
+    "session_id": "P2",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFUL8KCF4"
+  },
+  {
+    "session_id": "P3",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFSJHUDF0"
+  },
+  {
+    "session_id": "P4",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFR7TP7V3"
+  },
+  {
+    "session_id": "P5",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFULDQZ34"
+  },
+  {
+    "session_id": "P7",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AGNUM11UY"
+  },
+  {
+    "session_id": "Q2",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFSJHDN4W"
+  },
+  {
+    "session_id": "Q3",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AGNUFBRHN"
+  },
+  {
+    "session_id": "Q4",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFULC4XT4"
+  },
+  {
+    "session_id": "Q5",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AG7HY2MRP"
+  },
+  {
+    "session_id": "Q6",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AG7J06U73"
+  },
+  {
+    "session_id": "T1",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AG77M15C1"
+  },
+  {
+    "session_id": "T2",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFXTV2PN0"
+  },
+  {
+    "session_id": "T3",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AGNJ8FCSC"
+  },
+  {
+    "session_id": "T4",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFCS93XJB"
+  },
+  {
+    "session_id": "TS3-a",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFD6WCPNK"
+  },
+  {
+    "session_id": "TS3-q",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFSJN7DKQ"
+  },
+  {
+    "session_id": "opening",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFS8BLEH4"
+  },
+  {
+    "session_id": "closing",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFCSBRRK9"
+  },
+  {
+    "session_id": "sponsor",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AGNJA1K8Q"
+  },
+  {
+    "session_id": "reception",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFMU2F08K"
+  },
+  {
+    "session_id": "invitedpapers",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFQT0NNE9"
+  },
+  {
+    "session_id": "invited1-1",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFMU143KM"
+  },
+  {
+    "session_id": "invited2-1",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFCSBJZ2B"
+  }
+]

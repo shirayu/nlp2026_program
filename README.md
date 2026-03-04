@@ -9,6 +9,7 @@
 src/constants/index.ts
 src/locales/ja.ts
 workshop.json
+public/slack.json
 ```
 
 ### 開発
