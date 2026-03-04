@@ -1,19 +1,23 @@
-import { X } from "lucide-react";
+import { Star, X } from "lucide-react";
 import { sessionRoomsLabel } from "../constants";
 import { formatSessionDateTime } from "../lib/date";
 import { ja } from "../locales/ja";
-import type { ConferenceData, PersonId, SessionId } from "../types";
+import type { ConferenceData, PersonId, PresentationId, SessionId } from "../types";
 
 export function PersonModal({
   personId,
   data,
+  bookmarkedPresentationIds,
   onClose,
   onJumpToSession,
+  onToggleBookmark,
 }: {
   personId: PersonId;
   data: ConferenceData;
+  bookmarkedPresentationIds: Set<PresentationId>;
   onClose: () => void;
   onJumpToSession: (sid: SessionId) => void;
+  onToggleBookmark: (id: PresentationId) => void;
 }) {
   const person = data.persons[personId];
   const presentations = Object.entries(data.presentations).filter(([, p]) =>
@@ -36,20 +40,36 @@ export function PersonModal({
           {presentations.length === 0 && <li className="px-4 py-4 text-sm text-gray-400">{ja.noPresentation}</li>}
           {presentations.map(([pid, p]) => {
             const session = data.sessions[p.session_id];
+            const bookmarked = bookmarkedPresentationIds.has(pid as PresentationId);
             return (
-              <li key={pid} className="px-4 py-3">
-                <p className="text-xs text-gray-400 font-mono">{pid}</p>
-                <p className="text-sm font-medium text-gray-800 leading-snug">{p.title}</p>
-                {session && (
-                  <button
-                    type="button"
-                    className="mt-1 text-xs text-indigo-600 hover:underline"
-                    onClick={() => onJumpToSession(p.session_id as SessionId)}
-                  >
-                    {formatSessionDateTime(session.date, session.start_time, session.end_time)}{" "}
-                    {sessionRoomsLabel(session, data.rooms)}
-                  </button>
-                )}
+              <li key={pid} className="flex items-start gap-3 px-4 py-3">
+                <button
+                  type="button"
+                  className={`mt-0.5 shrink-0 rounded p-0.5 transition-colors ${
+                    bookmarked
+                      ? "text-amber-500 hover:bg-amber-50 hover:text-amber-600"
+                      : "text-gray-300 hover:bg-slate-100 hover:text-gray-500"
+                  }`}
+                  onClick={() => onToggleBookmark(pid as PresentationId)}
+                  aria-label={bookmarked ? ja.removeBookmark : ja.addBookmark}
+                  aria-pressed={bookmarked}
+                >
+                  <Star className={`h-4 w-4 ${bookmarked ? "fill-current" : ""}`} />
+                </button>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-gray-400 font-mono">{pid}</p>
+                  <p className="text-sm font-medium text-gray-800 leading-snug">{p.title}</p>
+                  {session && (
+                    <button
+                      type="button"
+                      className="mt-1 text-left text-xs text-indigo-600 hover:underline"
+                      onClick={() => onJumpToSession(p.session_id as SessionId)}
+                    >
+                      {formatSessionDateTime(session.date, session.start_time, session.end_time)}{" "}
+                      {sessionRoomsLabel(session, data.rooms)}
+                    </button>
+                  )}
+                </div>
               </li>
             );
           })}

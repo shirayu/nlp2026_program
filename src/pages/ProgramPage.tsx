@@ -1016,11 +1016,13 @@ export default function ProgramPage() {
         <PersonModal
           personId={personModal}
           data={data}
+          bookmarkedPresentationIds={bookmarkedPresentationIds}
           onClose={() => setPersonModal(null)}
           onJumpToSession={(sid) => {
             setPersonModal(null);
             handleJumpToSession(sid);
           }}
+          onToggleBookmark={toggleBookmark}
         />
       )}
 
