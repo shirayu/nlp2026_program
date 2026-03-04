@@ -154,7 +154,7 @@ describe("ProgramHeader", () => {
       }),
     );
 
-    expect(html).not.toContain("全日程を検索");
+    expect(html).not.toContain("全日程検索");
     expect(html).toContain('aria-disabled="false"');
     expect(html).toContain('<div aria-disabled="false" class="bg-white">');
   });
@@ -196,7 +196,7 @@ describe("ProgramHeader", () => {
       }),
     );
 
-    expect(html).toContain("全日程を検索");
+    expect(html).toContain("全日程検索");
     expect(html).toContain("bg-gray-100 text-gray-400");
   });
 
@@ -237,7 +237,7 @@ describe("ProgramHeader", () => {
       }),
     );
 
-    expect(html).toContain("表示中を検索");
+    expect(html).toContain("絞り込み内検索");
   });
 });
 
