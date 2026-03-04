@@ -66,11 +66,17 @@
   "WS2": {
     "title": "日本語言語資源の構築と利用性の向上",
     "date": "2026-03-13",
-    "start_time": "10:05",
-    "end_time": "15:45",
+    "start_time": "10:00",
+    "end_time": "16:00",
     "rooms": ["1F 大ホール(西)"],
     "url": "https://jedworkshop.github.io/JLR2026/program/",
     "sessions": [
+      {
+        "id": "WS2-0",
+        "title": "WS2 オープニング",
+        "start_time": "10:00",
+        "end_time": "10:05"
+      },
       {
         "id": "WS2-1",
         "title": "WS2 午前＜1＞ 独自日本語Webコーパス構築のための巡回クロール基盤構築",
@@ -291,6 +297,12 @@
             ]
           }
         ]
+      },
+      {
+        "id": "WS2-14",
+        "title": "WS2 総合討論・クロージング",
+        "start_time": "15:45",
+        "end_time": "16:00"
       }
     ]
   },

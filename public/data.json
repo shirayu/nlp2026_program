@@ -8605,8 +8605,18 @@
     "WS2": {
       "title": "日本語言語資源の構築と利用性の向上",
       "date": "2026-03-13",
-      "start_time": "10:05",
-      "end_time": "15:45",
+      "start_time": "10:00",
+      "end_time": "16:00",
+      "room_ids": ["r0011"],
+      "chair": "",
+      "presentation_ids": [],
+      "url": "https://jedworkshop.github.io/JLR2026/program/"
+    },
+    "WS2-0": {
+      "title": "WS2 オープニング",
+      "date": "2026-03-13",
+      "start_time": "10:00",
+      "end_time": "10:05",
       "room_ids": ["r0011"],
       "chair": "",
       "presentation_ids": [],
@@ -8740,6 +8750,16 @@
       "room_ids": ["r0011"],
       "chair": "松田 寛 (Megagon Labs)",
       "presentation_ids": ["WS2-13-1"],
+      "url": "https://jedworkshop.github.io/JLR2026/program/"
+    },
+    "WS2-14": {
+      "title": "WS2 総合討論・クロージング",
+      "date": "2026-03-13",
+      "start_time": "15:45",
+      "end_time": "16:00",
+      "room_ids": ["r0011"],
+      "chair": "",
+      "presentation_ids": [],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
     },
     "WS3": {
