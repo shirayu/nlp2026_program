@@ -1,7 +1,6 @@
-import { PersonModal } from "../components/PersonModal";
 import { ja } from "../locales/ja";
-import { InstallDialog, SettingsDialog } from "./programPage/ProgramDialogs";
 import { ProgramHeader } from "./programPage/ProgramHeader";
+import { ProgramOverlays } from "./programPage/ProgramOverlays";
 import { ProgramResults } from "./programPage/ProgramResults";
 import { SearchField } from "./programPage/SearchField";
 import { useProgramPageState } from "./programPage/useProgramPageState";
@@ -132,37 +131,28 @@ export default function ProgramPage() {
         onToggleSessionBookmark={toggleSessionBookmark}
       />
 
-      {personModal && (
-        <PersonModal
-          personId={personModal}
-          data={data}
-          bookmarkedPresentationIds={bookmarkedPresentationIds}
-          showAuthors={settings.showAuthors}
-          onClose={() => setPersonModal(null)}
-          onPersonClick={setPersonModal}
-          onJumpToSession={(sid) => {
-            setPersonModal(null);
-            handleJumpToSession(sid);
-          }}
-          onToggleBookmark={toggleBookmark}
-        />
-      )}
-
-      <InstallDialog
-        dialogRef={installDialogRef}
-        open={showInstallDialog}
+      <ProgramOverlays
+        personModal={personModal}
+        data={data}
+        bookmarkedPresentationIds={bookmarkedPresentationIds}
+        showAuthors={settings.showAuthors}
+        onClosePersonModal={() => setPersonModal(null)}
+        onPersonClick={setPersonModal}
+        onJumpToSessionFromPerson={(sid) => {
+          setPersonModal(null);
+          handleJumpToSession(sid);
+        }}
+        onToggleBookmark={toggleBookmark}
+        installDialogRef={installDialogRef}
+        showInstallDialog={showInstallDialog}
         installContext={installContext}
         hasInstallPrompt={installPromptEvent !== null}
-        onClose={() => setShowInstallDialog(false)}
+        onCloseInstallDialog={() => setShowInstallDialog(false)}
         onInstall={() => void handleInstallApp()}
-      />
-
-      <SettingsDialog
-        dialogRef={settingsDialogRef}
-        open={showSettings}
-        showAuthors={settings.showAuthors}
+        settingsDialogRef={settingsDialogRef}
+        showSettings={showSettings}
         useSlackAppLinks={settings.useSlackAppLinks}
-        onClose={() => setShowSettings(false)}
+        onCloseSettings={() => setShowSettings(false)}
         onToggleShowAuthors={toggleShowAuthors}
         onToggleUseSlackAppLinks={toggleUseSlackAppLinks}
       />
