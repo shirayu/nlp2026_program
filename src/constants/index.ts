@@ -6,6 +6,8 @@ export const X_SEARCH_URL = "https://x.com/search?q=%23nlp2026";
 export const AUTHOR_NAME = "Yuta Hayashibe";
 export const AUTHOR_WEBSITE_URL = "https://hayashibe.jp";
 export const PROJECT_REPOSITORY_URL = "https://github.com/shirayu/nlp2026_program";
+export const BUILD_GIT_HASH = import.meta.env.VITE_BUILD_HASH || "unknown";
+export const BUILD_GIT_DATE = import.meta.env.VITE_BUILD_DATE || "unknown";
 
 const DEFAULT_ROOM_THEME: RoomTheme = {
   surface: "bg-slate-50",

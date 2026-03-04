@@ -52,6 +52,11 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
 
+      - name: Export build metadata
+        run: |
+          echo "VITE_BUILD_HASH=$(git rev-parse --short=12 HEAD)" >> "$GITHUB_ENV"
+          echo "VITE_BUILD_DATE=$(git show -s --format=%cI HEAD)" >> "$GITHUB_ENV"
+
       - name: Run test
         run: task ci -p
 

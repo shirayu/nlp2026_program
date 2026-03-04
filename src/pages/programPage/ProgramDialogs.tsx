@@ -1,8 +1,32 @@
 import { X as CloseIcon } from "lucide-react";
 import type { ReactNode, RefObject } from "react";
-import { AUTHOR_NAME, AUTHOR_WEBSITE_URL, PROJECT_REPOSITORY_URL } from "../../constants";
+import {
+  AUTHOR_NAME,
+  AUTHOR_WEBSITE_URL,
+  BUILD_GIT_DATE,
+  BUILD_GIT_HASH,
+  PROJECT_REPOSITORY_URL,
+} from "../../constants";
 import { ja } from "../../locales/ja";
 import { fullscreenDialogClassName } from "./utils";
+
+export function formatBuildGitDate(value: string, locale?: string | string[], timeZone?: string): string {
+  if (value === "unknown") return value;
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+
+  return new Intl.DateTimeFormat(locale, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    timeZone,
+    timeZoneName: "short",
+  }).format(date);
+}
 
 export function InstallDialog({
   dialogRef,
@@ -119,6 +143,10 @@ export function SettingsDialog({
   onToggleShowAuthors: () => void;
   onToggleUseSlackAppLinks: () => void;
 }) {
+  const formattedBuildGitDate = formatBuildGitDate(BUILD_GIT_DATE);
+  const buildCommitUrl =
+    BUILD_GIT_HASH === "unknown" ? null : `${PROJECT_REPOSITORY_URL}/commit/${encodeURIComponent(BUILD_GIT_HASH)}`;
+
   return (
     <dialog ref={dialogRef} open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
       <div className="flex min-h-full items-center justify-center p-4">
@@ -199,6 +227,32 @@ export function SettingsDialog({
                       {PROJECT_REPOSITORY_URL}
                     </a>
                   </dd>
+                </div>
+              </dl>
+            </section>
+            <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
+              <h3 className="text-sm font-semibold text-gray-800">{ja.buildInfo}</h3>
+              <dl className="mt-2 space-y-2 text-sm">
+                <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
+                  <dt className="text-gray-500">{ja.gitHash}</dt>
+                  <dd className="min-w-0 break-all font-mono text-left text-gray-800">
+                    {buildCommitUrl ? (
+                      <a
+                        href={buildCommitUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-indigo-600 underline decoration-indigo-200 underline-offset-2 hover:text-indigo-700"
+                      >
+                        {BUILD_GIT_HASH}
+                      </a>
+                    ) : (
+                      BUILD_GIT_HASH
+                    )}
+                  </dd>
+                </div>
+                <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
+                  <dt className="text-gray-500">{ja.gitDate}</dt>
+                  <dd className="min-w-0 break-all font-mono text-left text-gray-800">{formattedBuildGitDate}</dd>
                 </div>
               </dl>
             </section>
