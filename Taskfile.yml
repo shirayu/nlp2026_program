@@ -49,13 +49,14 @@ tasks:
       - pnpm exec vitest run
 
   lint:
-    desc: "Biome と Ruff で lint を実行"
+    desc: "Ruff / Pyright / Biome で lint を実行"
     cmds:
       - uv run --group dev ruff check .
+      - pnpm exec pyright
       - pnpm exec biome check .
 
   format:
-    desc: "Biome と Ruff で整形と import 整理を実行"
+    desc: "Ruff と Biome で整形と import 整理を実行"
     cmds:
       - uv run --group dev ruff check --fix .
       - uv run --group dev ruff format .

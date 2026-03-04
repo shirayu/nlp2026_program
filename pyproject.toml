@@ -14,3 +14,33 @@ line-length = 120
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "TID", "C4", "N"]
 fixable = ["ALL"]
+
+[tool.pyright]
+typeCheckingMode = "strict"
+include = ["."]
+exclude = [".venv", "node_modules", "tmp"]
+# Disable in strict mode since our source code has type annotations (no .pyi stubs needed)
+reportMissingTypeStubs = "none"
+
+reportDeprecated = "error"
+reportIncompatibleVariableOverride = "error"
+reportAttributeAccessIssue = "error"
+reportUnusedImport = "error"
+reportUnusedClass = "error"
+reportUnusedFunction = "error"
+reportUnnecessaryComparison = "error"
+reportUnknownLambdaType = "error"
+reportUnnecessaryIsInstance = "error"
+reportMissingTypeArgument = "error"
+reportArgumentType = "error"
+reportMissingParameterType = "error"
+reportPrivateUsage = "error"
+reportUnknownArgumentType = "error"
+reportUnknownMemberType = "error"
+reportUnknownParameterType = "error"
+reportUnknownVariableType = "error"
+reportUnnecessaryCast = "error"
+
+[[tool.pyright.executionEnvironments]]
+root = "tests"
+reportPrivateUsage = "none"
