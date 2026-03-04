@@ -1,0 +1,197 @@
+import { X as CloseIcon } from "lucide-react";
+import type { RefObject } from "react";
+import { AUTHOR_NAME, AUTHOR_WEBSITE_URL, PROJECT_REPOSITORY_URL } from "../../constants";
+import { ja } from "../../locales/ja";
+import { fullscreenDialogClassName } from "./utils";
+
+export function InstallDialog({
+  dialogRef,
+  open,
+  installContext,
+  hasInstallPrompt,
+  onClose,
+  onInstall,
+}: {
+  dialogRef: RefObject<HTMLDialogElement | null>;
+  open: boolean;
+  installContext: { isStandalone: boolean; isIos: boolean };
+  hasInstallPrompt: boolean;
+  onClose: () => void;
+  onInstall: () => void;
+}) {
+  return (
+    <dialog ref={dialogRef} open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
+      <div className="flex min-h-full items-center justify-center p-4">
+        <button
+          type="button"
+          aria-label={ja.closeInstallGuide}
+          className="absolute inset-0 bg-black/55"
+          onClick={onClose}
+        />
+        <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white shadow-xl">
+          <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
+            <h2 className="text-sm font-bold text-gray-800">{ja.installApp}</h2>
+            <button
+              type="button"
+              onClick={onClose}
+              className="text-gray-400 transition-colors hover:text-gray-600"
+              aria-label={ja.closeInstallGuide}
+            >
+              <CloseIcon className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="space-y-4 px-4 py-4 text-sm text-gray-700">
+            {installContext.isStandalone ? (
+              <>
+                <p>{ja.installGuideInstalledLead}</p>
+                <p className="text-gray-500">{ja.installGuideInstalledDescription}</p>
+              </>
+            ) : installContext.isIos ? (
+              <>
+                <p>{ja.installGuideIosLead}</p>
+                <ol className="list-decimal space-y-2 pl-5 text-gray-600">
+                  <li>{ja.installGuideIosStep1}</li>
+                  <li>{ja.installGuideIosStep2}</li>
+                  <li>{ja.installGuideIosStep3}</li>
+                </ol>
+              </>
+            ) : hasInstallPrompt ? (
+              <>
+                <p>{ja.installGuideLead}</p>
+                <p className="text-gray-500">{ja.installGuideDescription}</p>
+                <div className="flex justify-end gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
+                  >
+                    {ja.later}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onInstall}
+                    className="rounded-full bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+                  >
+                    {ja.installNow}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p>{ja.installGuideUnsupportedLead}</p>
+                <p className="text-gray-500">{ja.installGuideUnsupportedDescription}</p>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </dialog>
+  );
+}
+
+export function SettingsDialog({
+  dialogRef,
+  open,
+  showAuthors,
+  useSlackAppLinks,
+  onClose,
+  onToggleShowAuthors,
+  onToggleUseSlackAppLinks,
+}: {
+  dialogRef: RefObject<HTMLDialogElement | null>;
+  open: boolean;
+  showAuthors: boolean;
+  useSlackAppLinks: boolean;
+  onClose: () => void;
+  onToggleShowAuthors: () => void;
+  onToggleUseSlackAppLinks: () => void;
+}) {
+  return (
+    <dialog ref={dialogRef} open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
+      <div className="flex min-h-full items-center justify-center p-4">
+        <button
+          type="button"
+          aria-label={ja.closeDisplaySettings}
+          className="absolute inset-0 bg-black/55"
+          onClick={onClose}
+        />
+        <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white shadow-xl">
+          <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
+            <h2 className="text-sm font-bold text-gray-800">{ja.displaySettings}</h2>
+            <button
+              type="button"
+              onClick={onClose}
+              className="text-gray-400 transition-colors hover:text-gray-600"
+              aria-label={ja.closeDisplaySettings}
+            >
+              <CloseIcon className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="space-y-2 px-4 py-4">
+            <label className="flex items-center justify-between">
+              <span className="text-sm text-gray-700">{ja.showAuthors}</span>
+              <button
+                type="button"
+                onClick={onToggleShowAuthors}
+                className={`relative inline-flex h-5 w-9 rounded-full transition-colors ${showAuthors ? "bg-indigo-600" : "bg-gray-300"}`}
+                aria-pressed={showAuthors}
+              >
+                <span
+                  className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showAuthors ? "translate-x-4" : "translate-x-0"}`}
+                />
+              </button>
+            </label>
+            <label className="flex items-center justify-between">
+              <span className="text-sm text-gray-700">{ja.useSlackAppLinks}</span>
+              <button
+                type="button"
+                onClick={onToggleUseSlackAppLinks}
+                className={`relative inline-flex h-5 w-9 rounded-full transition-colors ${useSlackAppLinks ? "bg-indigo-600" : "bg-gray-300"}`}
+                aria-pressed={useSlackAppLinks}
+              >
+                <span
+                  className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${useSlackAppLinks ? "translate-x-4" : "translate-x-0"}`}
+                />
+              </button>
+            </label>
+            <section className="mt-4 rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
+              <h3 className="text-sm font-semibold text-gray-800">{ja.aboutAuthor}</h3>
+              <dl className="mt-2 space-y-2 text-sm">
+                <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
+                  <dt className="text-gray-500">{ja.authorName}</dt>
+                  <dd className="min-w-0 text-left text-gray-800">{AUTHOR_NAME}</dd>
+                </div>
+                <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
+                  <dt className="text-gray-500">{ja.authorWebsite}</dt>
+                  <dd className="min-w-0 text-left">
+                    <a
+                      href={AUTHOR_WEBSITE_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="break-all text-indigo-600 underline decoration-indigo-200 underline-offset-2 hover:text-indigo-700"
+                    >
+                      {AUTHOR_WEBSITE_URL}
+                    </a>
+                  </dd>
+                </div>
+                <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
+                  <dt className="text-gray-500">{ja.projectRepository}</dt>
+                  <dd className="min-w-0 text-left">
+                    <a
+                      href={PROJECT_REPOSITORY_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="break-all text-indigo-600 underline decoration-indigo-200 underline-offset-2 hover:text-indigo-700"
+                    >
+                      {PROJECT_REPOSITORY_URL}
+                    </a>
+                  </dd>
+                </div>
+              </dl>
+            </section>
+          </div>
+        </div>
+      </div>
+    </dialog>
+  );
+}
