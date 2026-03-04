@@ -70,7 +70,7 @@ function matchesPresentationTerms(data: ConferenceData, presentationId: Presenta
     author.affiliation_id ? data.affiliations[author.affiliation_id]?.name : null,
   ]);
 
-  return matchesAllTerms([presentation.title, ...authorTexts], terms);
+  return matchesAllTerms([presentationId, presentation.title, ...authorTexts], terms);
 }
 
 function shouldSkipLocationFilter(searchAll: boolean, hasQuery: boolean): boolean {

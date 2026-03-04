@@ -75,7 +75,9 @@ export function PresentationCard({
     <li className={`px-4 py-2 ${open ? "bg-white/55" : "bg-transparent even:bg-white/35"}`}>
       <div className="flex items-start gap-2">
         <div className="shrink-0">
-          <span className="mt-0.5 block font-mono text-xs text-gray-400">{pid}</span>
+          <span className="mt-0.5 block font-mono text-xs text-gray-400">
+            <HighlightedText text={pid} query={query} />
+          </span>
           <button
             type="button"
             className={`mt-1 inline-flex rounded p-0.5 transition-colors ${

@@ -260,6 +260,12 @@ describe("filterSessions - 日付・時刻・会場フィルタ", () => {
 });
 
 describe("filterSessions - テキスト検索", () => {
+  it("発表 ID でヒットする", () => {
+    const result = filterSessions(data, { ...noFilter, query: "pr2" });
+    expect(result).toHaveLength(1);
+    expect(result[0].presIds).toEqual(["pr2"]);
+  });
+
   it("発表タイトルでヒットする", () => {
     const result = filterSessions(data, { ...noFilter, query: "BERT" });
     expect(result).toHaveLength(1);
@@ -316,6 +322,13 @@ describe("filterSessions - テキスト検索", () => {
 
   it("発表情報だけでAND検索できる", () => {
     const result = filterSessions(data, { ...noFilter, query: "深層 田中" });
+    expect(result).toHaveLength(1);
+    expect(result[0].sessionId).toBe("s2");
+    expect(result[0].presIds).toEqual(["pr3"]);
+  });
+
+  it("発表 ID とタイトルの AND 検索ができる", () => {
+    const result = filterSessions(data, { ...noFilter, query: "pr3 深層" });
     expect(result).toHaveLength(1);
     expect(result[0].sessionId).toBe("s2");
     expect(result[0].presIds).toEqual(["pr3"]);
