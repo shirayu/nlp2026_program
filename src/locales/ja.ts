@@ -13,6 +13,7 @@ export const ja = {
   resetTimepoint: "時点指定をリセット",
   nowUnavailable: "次の時点がないため利用できません",
   showAuthors: "著者名を表示",
+  useSlackAppLinks: "Slack をアプリリンクで開く",
   searchPlaceholder: "ID・タイトル・著者名・所属で検索",
   clearSearch: "検索語をクリア",
   searchAll: "全日程を検索",

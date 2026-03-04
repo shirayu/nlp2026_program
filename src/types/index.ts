@@ -56,6 +56,11 @@ export interface SlackChannelRef {
   channel_id: string;
 }
 
+export interface AppSettings {
+  showAuthors: boolean;
+  useSlackAppLinks: boolean;
+}
+
 export interface ConferenceData {
   persons: Record<PersonId, Person>;
   affiliations: Record<AffiliationId, Affiliation>;

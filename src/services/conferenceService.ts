@@ -1,4 +1,3 @@
-import { mapSlackChannelsToUrls } from "../lib/slack";
 import type { ConferenceData, SessionId, SlackChannelRef } from "../types";
 
 export async function fetchConferenceData(): Promise<ConferenceData> {
@@ -6,8 +5,7 @@ export async function fetchConferenceData(): Promise<ConferenceData> {
   return response.json();
 }
 
-export async function fetchSessionSlackLinks(): Promise<Record<string, string>> {
+export async function fetchSessionSlackChannels(): Promise<Partial<Record<SessionId, SlackChannelRef>>> {
   const response = await fetch(`${import.meta.env.BASE_URL}slack.json`);
-  const channels = (await response.json()) as Partial<Record<SessionId, SlackChannelRef>>;
-  return mapSlackChannelsToUrls(channels);
+  return (await response.json()) as Partial<Record<SessionId, SlackChannelRef>>;
 }

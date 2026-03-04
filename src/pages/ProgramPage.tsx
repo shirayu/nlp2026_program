@@ -29,17 +29,17 @@ import {
   getRoomTheme,
   OFFICIAL_SITE_URL,
   PROJECT_REPOSITORY_URL,
-  SLACK_APP_URL,
-  SLACK_WEB_URL,
   VENUE_GUIDE_URL,
   X_SEARCH_URL,
 } from "../constants";
+import { useAppSettings } from "../hooks/useAppSettings";
 import { useBookmarks } from "../hooks/useBookmarks";
 import { useConferenceData } from "../hooks/useConferenceData";
 import { useSessionJump } from "../hooks/useSessionJump";
 import { filterBookmarkedSessions } from "../lib/bookmarks";
 import { formatJapaneseDate } from "../lib/date";
 import { filterSessions, getAvailableDates, getAvailableRooms, getAvailableTimes } from "../lib/filters";
+import { buildSlackTeamAppUrl, buildSlackTeamWebUrl, getFirstSlackTeamId, mapSlackChannelsToUrls } from "../lib/slack";
 import { ja } from "../locales/ja";
 import type { PersonId, Session, SessionId } from "../types";
 
@@ -96,7 +96,7 @@ function toMinutes(time: string): number {
   return hour * 60 + minute;
 }
 
-function openSlackFromSpa(event: MouseEvent<HTMLAnchorElement>) {
+function openSlackFromSpa(event: MouseEvent<HTMLAnchorElement>, fallbackUrl: string, appUrl: string) {
   if (
     typeof window === "undefined" ||
     typeof document === "undefined" ||
@@ -112,7 +112,7 @@ function openSlackFromSpa(event: MouseEvent<HTMLAnchorElement>) {
   event.preventDefault();
 
   const fallbackId = window.setTimeout(() => {
-    window.open(SLACK_WEB_URL, "_blank", "noopener,noreferrer");
+    window.open(fallbackUrl, "_blank", "noopener,noreferrer");
     cleanup();
   }, 700);
 
@@ -132,7 +132,7 @@ function openSlackFromSpa(event: MouseEvent<HTMLAnchorElement>) {
   window.addEventListener("blur", cleanup, { once: true });
   window.addEventListener("pagehide", cleanup, { once: true });
   document.addEventListener("visibilitychange", onVisibilityChange);
-  window.location.href = SLACK_APP_URL;
+  window.location.href = appUrl;
 }
 
 function isWorkshopParentSession(sessionId: SessionId, allSessionIds: SessionId[]): boolean {
@@ -253,6 +253,9 @@ function FilterHeader({
   showSettings,
   showInstallButton,
   showInstallDialog,
+  slackUrl,
+  slackAppUrl,
+  useSlackAppLinks,
   onQueryCommit,
   onToggleSearchAll,
   onToggleBookmarkFilter,
@@ -267,6 +270,9 @@ function FilterHeader({
   showSettings: boolean;
   showInstallButton: boolean;
   showInstallDialog: boolean;
+  slackUrl: string | null;
+  slackAppUrl: string | null;
+  useSlackAppLinks: boolean;
   onQueryCommit: (nextValue: string) => void;
   onToggleSearchAll: () => void;
   onToggleBookmarkFilter: () => void;
@@ -298,16 +304,22 @@ function FilterHeader({
           >
             <Globe className="h-5 w-5" />
           </a>
-          <a
-            href={SLACK_WEB_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={openSlackFromSpa}
-            className="rounded-full p-1.5 text-gray-400 transition-colors hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            aria-label={ja.openSlack}
-          >
-            <HashIcon className="h-5 w-5" />
-          </a>
+          {slackUrl && (
+            <a
+              href={slackUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(event) => {
+                if (useSlackAppLinks && slackAppUrl) {
+                  openSlackFromSpa(event, slackUrl, slackAppUrl);
+                }
+              }}
+              className="rounded-full p-1.5 text-gray-400 transition-colors hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              aria-label={ja.openSlack}
+            >
+              <HashIcon className="h-5 w-5" />
+            </a>
+          )}
           <a
             href={X_SEARCH_URL}
             target="_blank"
@@ -604,14 +616,18 @@ function SettingsDialog({
   dialogRef,
   open,
   showAuthors,
+  useSlackAppLinks,
   onClose,
   onToggleShowAuthors,
+  onToggleUseSlackAppLinks,
 }: {
   dialogRef: React.RefObject<HTMLDialogElement | null>;
   open: boolean;
   showAuthors: boolean;
+  useSlackAppLinks: boolean;
   onClose: () => void;
   onToggleShowAuthors: () => void;
+  onToggleUseSlackAppLinks: () => void;
 }) {
   return (
     <dialog ref={dialogRef} open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
@@ -645,6 +661,19 @@ function SettingsDialog({
               >
                 <span
                   className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showAuthors ? "translate-x-4" : "translate-x-0"}`}
+                />
+              </button>
+            </label>
+            <label className="flex items-center justify-between">
+              <span className="text-sm text-gray-700">{ja.useSlackAppLinks}</span>
+              <button
+                type="button"
+                onClick={onToggleUseSlackAppLinks}
+                className={`relative inline-flex h-5 w-9 rounded-full transition-colors ${useSlackAppLinks ? "bg-indigo-600" : "bg-gray-300"}`}
+                aria-pressed={useSlackAppLinks}
+              >
+                <span
+                  className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${useSlackAppLinks ? "translate-x-4" : "translate-x-0"}`}
                 />
               </button>
             </label>
@@ -691,7 +720,8 @@ function SettingsDialog({
 }
 
 export default function ProgramPage() {
-  const { data, sessionSlackLinks } = useConferenceData();
+  const { data, sessionSlackChannels } = useConferenceData();
+  const { settings, toggleShowAuthors, toggleUseSlackAppLinks } = useAppSettings();
   const {
     bookmarkIds,
     sessionBookmarkIds,
@@ -709,7 +739,6 @@ export default function ProgramPage() {
   const [showSettings, setShowSettings] = useState(false);
   const [showBookmarkedOnly, setShowBookmarkedOnly] = useState(false);
   const [showInstallDialog, setShowInstallDialog] = useState(false);
-  const [showAuthors, setShowAuthors] = useState(true);
   const [sessionsExpanded, setSessionsExpanded] = useState(true);
   const [personModal, setPersonModal] = useState<PersonId | null>(null);
   const [installPromptEvent, setInstallPromptEvent] = useState<BeforeInstallPromptEvent | null>(null);
@@ -723,6 +752,13 @@ export default function ProgramPage() {
   const deferredSelectedRoom = useDeferredValue(selectedRoom);
   const deferredSelectedTime = useDeferredValue(selectedTime);
   const deferredSearchAll = useDeferredValue(searchAll);
+  const sessionSlackLinks = useMemo(
+    () => mapSlackChannelsToUrls(sessionSlackChannels, settings.useSlackAppLinks),
+    [sessionSlackChannels, settings.useSlackAppLinks],
+  );
+  const slackTeamId = useMemo(() => getFirstSlackTeamId(sessionSlackChannels), [sessionSlackChannels]);
+  const slackAppUrl = slackTeamId ? buildSlackTeamAppUrl(slackTeamId) : null;
+  const slackWebUrl = slackTeamId ? buildSlackTeamWebUrl(slackTeamId) : null;
 
   const allDates = useMemo(() => {
     if (!data) return [];
@@ -925,6 +961,9 @@ export default function ProgramPage() {
           showSettings={showSettings}
           showInstallButton={showInstallButton}
           showInstallDialog={showInstallDialog}
+          slackUrl={settings.useSlackAppLinks ? slackAppUrl : slackWebUrl}
+          slackAppUrl={slackAppUrl}
+          useSlackAppLinks={settings.useSlackAppLinks}
           onQueryCommit={setQuery}
           onToggleSearchAll={() => setSearchAll((value) => !value)}
           onToggleBookmarkFilter={() => {
@@ -996,7 +1035,7 @@ export default function ProgramPage() {
               sessionSlackUrl={sessionSlackLinks[sessionId]}
               presIds={presIds}
               data={data}
-              showAuthors={showAuthors}
+              showAuthors={settings.showAuthors}
               query={trimmedQuery}
               expanded={sessionsExpanded}
               onToggleExpanded={() => handleToggleExpanded(sessionId)}
@@ -1017,7 +1056,7 @@ export default function ProgramPage() {
           personId={personModal}
           data={data}
           bookmarkedPresentationIds={bookmarkedPresentationIds}
-          showAuthors={showAuthors}
+          showAuthors={settings.showAuthors}
           onClose={() => setPersonModal(null)}
           onPersonClick={setPersonModal}
           onJumpToSession={(sid) => {
@@ -1040,9 +1079,11 @@ export default function ProgramPage() {
       <SettingsDialog
         dialogRef={settingsDialogRef}
         open={showSettings}
-        showAuthors={showAuthors}
+        showAuthors={settings.showAuthors}
+        useSlackAppLinks={settings.useSlackAppLinks}
         onClose={closeSettingsDialog}
-        onToggleShowAuthors={() => setShowAuthors((value) => !value)}
+        onToggleShowAuthors={toggleShowAuthors}
+        onToggleUseSlackAppLinks={toggleUseSlackAppLinks}
       />
     </div>
   );

@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import { fetchConferenceData, fetchSessionSlackLinks } from "../services/conferenceService";
-import type { ConferenceData } from "../types";
+import { fetchConferenceData, fetchSessionSlackChannels } from "../services/conferenceService";
+import type { ConferenceData, SessionId, SlackChannelRef } from "../types";
 
 export function useConferenceData() {
   const [data, setData] = useState<ConferenceData | null>(null);
-  const [sessionSlackLinks, setSessionSlackLinks] = useState<Record<string, string>>({});
+  const [sessionSlackChannels, setSessionSlackChannels] = useState<Partial<Record<SessionId, SlackChannelRef>>>({});
 
   useEffect(() => {
-    Promise.all([fetchConferenceData(), fetchSessionSlackLinks()]).then(([conferenceData, slackLinks]) => {
+    Promise.all([fetchConferenceData(), fetchSessionSlackChannels()]).then(([conferenceData, slackChannels]) => {
       setData(conferenceData);
-      setSessionSlackLinks(slackLinks);
+      setSessionSlackChannels(slackChannels);
     });
   }, []);
 
-  return { data, sessionSlackLinks };
+  return { data, sessionSlackChannels };
 }

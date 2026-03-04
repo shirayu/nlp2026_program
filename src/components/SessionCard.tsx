@@ -67,6 +67,8 @@ export const SessionCard = memo(
               {sessionSlackUrl && (
                 <a
                   href={sessionSlackUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className={`rounded-full p-1 transition-colors hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-indigo-400 ${roomTheme.title}`}
                   aria-label={ja.openSessionSlack}
                 >
