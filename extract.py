@@ -887,22 +887,22 @@ def _validate_date(value: str, field_name: str) -> str:
     return value
 
 
-def _format_validation_location(loc: tuple[Any, ...]) -> str:
-    path = "workshop.json"
+def _format_validation_location(loc: tuple[Any, ...], root_name: str) -> str:
+    path = root_name
     for item in loc:
         if item == "root":
             continue
         if isinstance(item, str):
-            path += f".{item}" if path != "workshop.json" else f".{item}"
+            path += f".{item}" if path != root_name else f".{item}"
         else:
             path += f"[{item}]"
     return path
 
 
-def _validation_error_to_message(error: ValidationError) -> str:
+def _validation_error_to_message(error: ValidationError, root_name: str) -> str:
     details: list[str] = []
     for item in error.errors():
-        location = _format_validation_location(tuple(item["loc"]))
+        location = _format_validation_location(tuple(item["loc"]), root_name)
         details.append(f"{location}: {item['msg']}")
     return "\n".join(details)
 
@@ -1036,6 +1036,20 @@ class WorkshopConfigFile(RootModel[dict[str, WorkshopConfigEntry]]):
         return value
 
 
+class InvitedPapersConfigFile(RootModel[list[WorkshopPresentationInput]]):
+    @field_validator("root")
+    @classmethod
+    def validate_entries(cls, value: list[WorkshopPresentationInput]) -> list[WorkshopPresentationInput]:
+        ids: set[str] = set()
+        for entry in value:
+            if not re.fullmatch(r"invitedpapers-\d+", entry.id):
+                raise ValueError(f"id は invitedpapers-1 のような形式にしてください: {entry.id!r}")
+            if entry.id in ids:
+                raise ValueError(f"id が重複しています: {entry.id}")
+            ids.add(entry.id)
+        return value
+
+
 class PersonRecord(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -1106,7 +1120,19 @@ def load_workshop_config(path: Path | None) -> dict[str, WorkshopConfigEntry]:
     try:
         return WorkshopConfigFile.model_validate(raw).root
     except ValidationError as error:
-        raise ValueError(_validation_error_to_message(error)) from error
+        raise ValueError(_validation_error_to_message(error, "workshop.json")) from error
+
+
+def load_invitedpapers_config(path: Path | None) -> list[WorkshopPresentationInput]:
+    """invitedpapers.json を読み込む。存在しない場合は空リストを返す。"""
+    if path is None or not path.exists():
+        return []
+
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    try:
+        return InvitedPapersConfigFile.model_validate(raw).root
+    except ValidationError as error:
+        raise ValueError(_validation_error_to_message(error, "invitedpapers.json")) from error
 
 
 def apply_workshop_overrides(result: JsonDict, workshop_config: dict[str, WorkshopConfigEntry]) -> None:
@@ -1226,6 +1252,71 @@ def apply_workshop_overrides(result: JsonDict, workshop_config: dict[str, Worksh
                 entry["url"] = session["url"]
 
             result["sessions"][child_sid] = entry
+
+
+def apply_invitedpapers_config(result: JsonDict, invitedpapers_config: list[WorkshopPresentationInput]) -> None:
+    """invitedpapers.json の内容で invitedpapers セッション配下の発表を追加する。"""
+    if not invitedpapers_config:
+        return
+
+    invitedpapers_session = result["sessions"].get("invitedpapers")
+    if invitedpapers_session is None:
+        raise ValueError("invitedpapers セッションが data.json に存在しません")
+
+    name_to_pid = {person["name"]: pid for pid, person in result["persons"].items()}
+    aff_to_id = {aff["name"]: aid for aid, aff in result["affiliations"].items()}
+    person_counter = len(result["persons"])
+    aff_counter = len(result["affiliations"])
+
+    def get_or_create_person(name: str) -> str:
+        nonlocal person_counter
+        if name not in name_to_pid:
+            person_counter += 1
+            pid = f"p{person_counter:04d}"
+            result["persons"][pid] = {"name": name}
+            name_to_pid[name] = pid
+        return name_to_pid[name]
+
+    def get_or_create_affiliation(name: str | None) -> str | None:
+        nonlocal aff_counter
+        if not name:
+            return None
+        if name not in aff_to_id:
+            aff_counter += 1
+            aid = f"a{aff_counter:04d}"
+            result["affiliations"][aid] = {"name": name}
+            aff_to_id[name] = aid
+        return aff_to_id[name]
+
+    presentation_ids: list[str] = []
+    for presentation in invitedpapers_config:
+        pid = presentation.id
+        if pid in result["presentations"]:
+            raise ValueError(f"invitedpapers.json の発表IDが重複しています: {pid}")
+
+        normalized_authors: list[JsonDict] = []
+        for author in presentation.authors:
+            person_id = get_or_create_person(author.name)
+            affiliation_id = get_or_create_affiliation(author.affiliation)
+            normalized_authors.append({"person_id": person_id, "affiliation_id": affiliation_id})
+
+        presenter_name = presentation.presenter
+        if presenter_name is None and presentation.authors:
+            presenter_name = presentation.authors[0].name
+        presenter_id = get_or_create_person(presenter_name) if presenter_name else None
+
+        result["presentations"][pid] = {
+            "title": presentation.title,
+            "session_id": "invitedpapers",
+            "presenter_id": presenter_id,
+            "is_english": presentation.is_english,
+            "is_online": presentation.is_online,
+            "authors": normalized_authors,
+            "pdf_url": presentation.pdf_url,
+        }
+        presentation_ids.append(pid)
+
+    invitedpapers_session["presentation_ids"] = presentation_ids
 
 
 class ScheduleTableParser(HTMLParser):
@@ -1388,6 +1479,11 @@ def main() -> None:
         default="workshop.json",
         help="ワークショップ時刻の手動上書きJSON。存在しない場合は無視する",
     )
+    parser.add_argument(
+        "--invitedpapers-config",
+        default="invitedpapers.json",
+        help="招待論文セッションの手動補完JSON。存在しない場合は無視する",
+    )
     args = parser.parse_args()
 
     html_path = Path(args.html)
@@ -1404,6 +1500,8 @@ def main() -> None:
     sp.feed(html_text)
     workshop_config_path = Path(args.workshop_config) if args.workshop_config else None
     workshop_config = load_workshop_config(workshop_config_path)
+    invitedpapers_config_path = Path(args.invitedpapers_config) if args.invitedpapers_config else None
+    invitedpapers_config = load_invitedpapers_config(invitedpapers_config_path)
 
     print("正規化中...")
     if args.base_url:
@@ -1436,6 +1534,7 @@ def main() -> None:
         result["sessions"][sid] = entry
 
     apply_workshop_overrides(result, workshop_config)
+    apply_invitedpapers_config(result, invitedpapers_config)
 
     pres = result["presentations"]
     oral_count = sum(1 for p in pres.values() if p.get("oral_session_id"))

@@ -236,8 +236,7 @@ export function PresentationListItem({
 }) {
   const [open, setOpen] = useState(false);
   const resolved = resolvePresentationMeta(data, pid, detailsContent, onJumpToSession);
-  const shouldAutoOpen =
-    resolved !== null && resolved.hasDetails && hasPresentationHiddenSearchMatch(data, pid, query, showAuthors);
+  const shouldAutoOpen = resolved?.hasDetails && hasPresentationHiddenSearchMatch(data, pid, query, showAuthors);
 
   useEffect(() => {
     if (shouldAutoOpen) {

@@ -218,6 +218,53 @@
 | `pdf_url` | `string \| null` | 省略時は `null` |
 | `authors` | `object[]` | 著者一覧。`persons` / `affiliations` に自動反映される |
 
+#### invitedpapers.json
+
+`extract.py --invitedpapers-config invitedpapers.json` で読み込む任意設定ファイル。
+省略時はカレントディレクトリの `invitedpapers.json` を見に行き、存在しなければ無視する。
+
+`invitedpapers.json` は `pydantic` モデルで検証される。
+`invitedpapers` セッション自体の日時・会場・座長は HTML から取得し、
+このファイルでは `invitedpapers` 配下の発表だけを補完する。
+
+```json
+[
+  {
+    "id": "invitedpapers-1",
+    "title": "招待論文1（未定）",
+    "authors": []
+  },
+  {
+    "id": "invitedpapers-2",
+    "title": "招待論文2（未定）",
+    "authors": []
+  },
+  {
+    "id": "invitedpapers-3",
+    "title": "招待論文3（未定）",
+    "authors": []
+  }
+]
+```
+
+各要素は `workshop.json` の `presentations[*]` と同じ形式で、以下を持つ。
+
+| フィールド | 型 | 説明 |
+|---|---|---|
+| `id` | `string` | 発表ID。`invitedpapers-1` のような形式で一意である必要がある |
+| `title` | `string` | 発表タイトル |
+| `presenter` | `string` | 省略時は `authors[0].name` を発表者として使う |
+| `is_english` | `boolean` | 省略時は `false` |
+| `is_online` | `boolean` | 省略時は `false` |
+| `pdf_url` | `string \| null` | 省略時は `null` |
+| `authors` | `object[]` | 著者一覧。`persons` / `affiliations` に自動反映される |
+
+補足:
+
+- `invitedpapers.json` は配列形式
+- `id` は `invitedpapers-` + 数字の形式のみ許可する
+- `task extract` では自動的に `invitedpapers.json` も入力として扱う
+
 補足:
 
 - `authors` を省略した場合は空配列として扱う

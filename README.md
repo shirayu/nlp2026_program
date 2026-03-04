@@ -9,10 +9,27 @@
 src/constants/index.ts
 src/locales/ja.ts
 workshop.json
+invitedpapers.json
 public/slack.json
 ```
 
 `public/slack.json` は `session_id -> { team, channel_id }` の辞書形式です。
+
+`invitedpapers.json` は `invitedpapers` セッションに差し込む発表一覧です。
+
+```json
+[
+  {
+    "id": "invitedpapers-1",
+    "title": "招待論文1（未定）",
+    "pdf_url": "https://example.invalid/paper1.pdf",
+    "authors": [
+      { "name": "著者名1" },
+      { "name": "著者名2", "affiliation": "所属名" }
+    ]
+  }
+]
+```
 
 ### 開発
 

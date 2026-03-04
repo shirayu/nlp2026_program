@@ -91,7 +91,7 @@ tasks:
 
   lint:biome:
     cmds:
-      - pnpm exec biome check .
+      - pnpm exec biome check --error-on-warnings .
 
   lint:typos:
     cmds:
@@ -128,5 +128,6 @@ tasks:
       - extract.py
       - "{{.HTML}}"
       - workshop.json
+      - invitedpapers.json
     generates:
       - "{{.OUT}}"

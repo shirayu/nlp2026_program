@@ -7183,7 +7183,7 @@
       "end_time": "19:00",
       "room_ids": ["r0001"],
       "chair": "宮尾 祐介 (東大)",
-      "presentation_ids": []
+      "presentation_ids": ["invitedpapers-1", "invitedpapers-2", "invitedpapers-3"]
     },
     "A1": {
       "title": "A1:口頭発表1",
@@ -29118,6 +29118,33 @@
           "affiliation_id": null
         }
       ],
+      "pdf_url": null
+    },
+    "invitedpapers-1": {
+      "title": "招待論文1（未定）",
+      "session_id": "invitedpapers",
+      "presenter_id": null,
+      "is_english": false,
+      "is_online": false,
+      "authors": [],
+      "pdf_url": null
+    },
+    "invitedpapers-2": {
+      "title": "招待論文2（未定）",
+      "session_id": "invitedpapers",
+      "presenter_id": null,
+      "is_english": false,
+      "is_online": false,
+      "authors": [],
+      "pdf_url": null
+    },
+    "invitedpapers-3": {
+      "title": "招待論文3（未定）",
+      "session_id": "invitedpapers",
+      "presenter_id": null,
+      "is_english": false,
+      "is_online": false,
+      "authors": [],
       "pdf_url": null
     }
   }
