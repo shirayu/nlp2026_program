@@ -40,13 +40,15 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
-            urlPattern: ({ url }) => url.pathname.endsWith("/data.json"),
+            // 公開 JSON は最新取得を優先しつつ、通信不安定時は直近キャッシュを返す。
+            urlPattern: ({ url }) =>
+              ["/data.json", "/slack.json"].some((path) => url.pathname.endsWith(path)),
             handler: "NetworkFirst",
             options: {
-              cacheName: "conference-data",
+              cacheName: "conference-json",
               networkTimeoutSeconds: 3,
               expiration: {
-                maxEntries: 4,
+                maxEntries: 2,
                 maxAgeSeconds: 60 * 60,
               },
               cacheableResponse: {
