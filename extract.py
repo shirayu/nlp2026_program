@@ -41,10 +41,22 @@ def normalize_session_title_key(title: str) -> str:
 
 
 _SESSION_ID_OVERRIDES: dict[str, str] = {
+    normalize_session_title_key("テーマセッション1：人狼知能：噓を見破り説得する会話ゲームとLLM（ポスター）"): "TS1-q",
+    normalize_session_title_key("TS1:テーマセッション1：人狼知能：噓を見破り説得する会話ゲームとLLM（ポスター）"): "TS1-q",
+    normalize_session_title_key("テーマセッション1：人狼知能：噓を見破り説得する会話ゲームとLLM（総合討論）"): "TS1-a",
+    normalize_session_title_key("TS1:テーマセッション1：人狼知能：噓を見破り説得する会話ゲームとLLM（総合討論）"): "TS1-a",
+    normalize_session_title_key("テーマセッション2：せめぎ合う計算言語学——LLM時代に揺れ動く言語観の中で——（ポスター）"): "TS2-q",
+    normalize_session_title_key("TS2:テーマセッション2：せめぎ合う計算言語学——LLM時代に揺れ動く言語観の中で——（ポスター）"): "TS2-q",
+    normalize_session_title_key("テーマセッション2：せめぎ合う計算言語学——LLM時代に揺れ動く言語観の中で——（総合討論）"): "TS2-a",
+    normalize_session_title_key("TS2:テーマセッション2：せめぎ合う計算言語学——LLM時代に揺れ動く言語観の中で——（総合討論）"): "TS2-a",
     normalize_session_title_key("テーマセッション3：法ドメインにおける言語処理（ポスター）"): "TS3-q",
     normalize_session_title_key("TS3:テーマセッション3：法ドメインにおける言語処理（ポスター）"): "TS3-q",
     normalize_session_title_key("テーマセッション3：法ドメインにおける言語処理（総合討論）"): "TS3-a",
     normalize_session_title_key("TS3:テーマセッション3：法ドメインにおける言語処理（総合討論）"): "TS3-a",
+    normalize_session_title_key("テーマセッション4：大規模言語モデル時代の数式NLP：表現・推論・検証の実務基盤（ポスター）"): "TS4-q",
+    normalize_session_title_key("TS4:テーマセッション4：大規模言語モデル時代の数式NLP：表現・推論・検証の実務基盤（ポスター）"): "TS4-q",
+    normalize_session_title_key("テーマセッション4：大規模言語モデル時代の数式NLP：表現・推論・検証の実務基盤（総合討論）"): "TS4-a",
+    normalize_session_title_key("TS4:テーマセッション4：大規模言語モデル時代の数式NLP：表現・推論・検証の実務基盤（総合討論）"): "TS4-a",
 }
 
 

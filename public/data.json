@@ -7296,7 +7296,34 @@
       "chair": "西田 典起 (理研)",
       "presentation_ids": ["Q1-1", "Q1-2", "Q1-3", "Q1-4", "Q1-5", "Q1-6"]
     },
-    "TS2": {
+    "TS2-q": {
+      "title": "TS2:テーマセッション2：せめぎ合う計算言語学——LLM時代に揺れ動く言語観の中で——（ポスター）",
+      "date": "2026-03-10",
+      "start_time": "9:30",
+      "end_time": "11:00",
+      "room_ids": ["r0005"],
+      "chair": "木山 朔 (一橋大)",
+      "presentation_ids": [
+        "TS2-1",
+        "TS2-2",
+        "TS2-3",
+        "TS2-4",
+        "TS2-5",
+        "TS2-6",
+        "TS2-7",
+        "TS2-8",
+        "TS2-9",
+        "TS2-10",
+        "TS2-11",
+        "TS2-12",
+        "TS2-13",
+        "TS2-14",
+        "TS2-15",
+        "TS2-16",
+        "TS2-17"
+      ]
+    },
+    "TS2-a": {
       "title": "TS2:テーマセッション2：せめぎ合う計算言語学——LLM時代に揺れ動く言語観の中で——（総合討論）",
       "date": "2026-03-10",
       "start_time": "11:15",
@@ -7575,7 +7602,16 @@
         "Q3-14"
       ]
     },
-    "TS4": {
+    "TS4-q": {
+      "title": "TS4:テーマセッション4：大規模言語モデル時代の数式NLP：表現・推論・検証の実務基盤（ポスター）",
+      "date": "2026-03-10",
+      "start_time": "15:10",
+      "end_time": "16:40",
+      "room_ids": ["r0005"],
+      "chair": "朝倉 卓人 (ストックマーク)",
+      "presentation_ids": ["TS4-1", "TS4-2", "TS4-3", "TS4-4", "TS4-5", "TS4-6", "TS4-7", "TS4-8", "TS4-9"]
+    },
+    "TS4-a": {
       "title": "TS4:テーマセッション4：大規模言語モデル時代の数式NLP：表現・推論・検証の実務基盤（総合討論）",
       "date": "2026-03-10",
       "start_time": "16:55",
@@ -8143,7 +8179,16 @@
         "Q7-17"
       ]
     },
-    "TS1": {
+    "TS1-q": {
+      "title": "TS1:テーマセッション1：人狼知能：噓を見破り説得する会話ゲームとLLM（ポスター）",
+      "date": "2026-03-12",
+      "start_time": "9:30",
+      "end_time": "11:00",
+      "room_ids": ["r0005"],
+      "chair": "稲葉 通将 (電通大)",
+      "presentation_ids": ["TS1-1", "TS1-2", "TS1-3"]
+    },
+    "TS1-a": {
       "title": "TS1:テーマセッション1：人狼知能：噓を見破り説得する会話ゲームとLLM（総合討論）",
       "date": "2026-03-12",
       "start_time": "11:15",
@@ -10670,7 +10715,7 @@
     },
     "TS2-1": {
       "title": "意味と頻度の関係から探求する言語モデルの特性",
-      "session_id": "TS2",
+      "session_id": "TS2-q",
       "presenter_id": "p0970",
       "is_english": false,
       "is_online": false,
@@ -10701,7 +10746,7 @@
     },
     "TS2-2": {
       "title": "単語の意味の通時変化とドメイン変化は区別できるのか",
-      "session_id": "TS2",
+      "session_id": "TS2-q",
       "presenter_id": "p1704",
       "is_english": false,
       "is_online": false,
@@ -10727,7 +10772,7 @@
     },
     "TS2-3": {
       "title": "高品質な単語ベクトル取得のための言語モデルの層選択",
-      "session_id": "TS2",
+      "session_id": "TS2-q",
       "presenter_id": "p0189",
       "is_english": false,
       "is_online": false,
@@ -10745,7 +10790,7 @@
     },
     "TS2-4": {
       "title": "大規模言語モデルの音象徴ベンチマーク",
-      "session_id": "TS2",
+      "session_id": "TS2-q",
       "presenter_id": "p0141",
       "is_english": false,
       "is_online": false,
@@ -10767,7 +10812,7 @@
     },
     "TS2-5": {
       "title": "日本語文埋め込み空間に現れる空間認知方法表現の1次元軸",
-      "session_id": "TS2",
+      "session_id": "TS2-q",
       "presenter_id": "p0559",
       "is_english": false,
       "is_online": false,
@@ -10781,7 +10826,7 @@
     },
     "TS2-6": {
       "title": "Echo State Networkを用いたシグナリングゲーム—カオスの縁において生じる言語の性質について—",
-      "session_id": "TS2",
+      "session_id": "TS2-q",
       "presenter_id": "p0187",
       "is_english": false,
       "is_online": false,
@@ -10795,7 +10840,7 @@
     },
     "TS2-7": {
       "title": "CCGに基づく言語的計算効果の評価遅延",
-      "session_id": "TS2",
+      "session_id": "TS2-q",
       "presenter_id": "p1200",
       "is_english": false,
       "is_online": false,
@@ -10813,7 +10858,7 @@
     },
     "TS2-8": {
       "title": "統語論研究の例文に基づくLLM の英語文法性判断ベンチマーク構築",
-      "session_id": "TS2",
+      "session_id": "TS2-q",
       "presenter_id": "p1422",
       "is_english": false,
       "is_online": false,
@@ -10847,7 +10892,7 @@
     },
     "TS2-9": {
       "title": "Simulating Spreading Activation: A Generative Approach to Semantic Similarity in Script-Variant Languages",
-      "session_id": "TS2",
+      "session_id": "TS2-q",
       "presenter_id": "p1705",
       "is_english": false,
       "is_online": false,
@@ -10877,7 +10922,7 @@
     },
     "TS2-10": {
       "title": "大規模言語モデルの衝撃を生き残る統語理論を考える",
-      "session_id": "TS2",
+      "session_id": "TS2-q",
       "presenter_id": "p0112",
       "is_english": false,
       "is_online": false,
@@ -10895,7 +10940,7 @@
     },
     "TS2-11": {
       "title": "離散と連続の交互学習に基づく拡散言語モデルの開発",
-      "session_id": "TS2",
+      "session_id": "TS2-q",
       "presenter_id": "p0805",
       "is_english": false,
       "is_online": false,
@@ -10913,7 +10958,7 @@
     },
     "TS2-12": {
       "title": "文字の並びの統計的規則性が引き起こす単語らしさの心理的印象",
-      "session_id": "TS2",
+      "session_id": "TS2-q",
       "presenter_id": "p0913",
       "is_english": false,
       "is_online": false,
@@ -10927,7 +10972,7 @@
     },
     "TS2-13": {
       "title": "サプライザルによってガーデンパス効果を説明できる言語モデルは存在する",
-      "session_id": "TS2",
+      "session_id": "TS2-q",
       "presenter_id": "p1416",
       "is_english": false,
       "is_online": false,
@@ -10957,7 +11002,7 @@
     },
     "TS2-14": {
       "title": "言語モデリングに階層構造は必要か？インクリメンタルな言語処理における記憶との関係について",
-      "session_id": "TS2",
+      "session_id": "TS2-q",
       "presenter_id": "p0088",
       "is_english": false,
       "is_online": false,
@@ -10975,7 +11020,7 @@
     },
     "TS2-15": {
       "title": "擬似均衡コーパスの構築と統計的性質",
-      "session_id": "TS2",
+      "session_id": "TS2-q",
       "presenter_id": "p0797",
       "is_english": false,
       "is_online": false,
@@ -11002,7 +11047,7 @@
     },
     "TS2-16": {
       "title": "多言語統語解析処理のためのMulti-task LoRA SFT方式の評価",
-      "session_id": "TS2",
+      "session_id": "TS2-q",
       "presenter_id": "p1210",
       "is_english": false,
       "is_online": false,
@@ -11020,7 +11065,7 @@
     },
     "TS2-17": {
       "title": "言語モデルにおける統語的長距離依存関係の内部操作",
-      "session_id": "TS2",
+      "session_id": "TS2-q",
       "presenter_id": "p0459",
       "is_english": false,
       "is_online": false,
@@ -15437,7 +15482,7 @@
     },
     "TS4-1": {
       "title": "大規模言語モデルの数値系列解釈メカニズムの解明に向けて：プロンプトの有無が順位情報表現に与える影響",
-      "session_id": "TS4",
+      "session_id": "TS4-q",
       "presenter_id": "p0052",
       "is_english": false,
       "is_online": false,
@@ -15467,7 +15512,7 @@
     },
     "TS4-2": {
       "title": "ホワイトボードを用いた数学協調作業の対話構造解析に向けて",
-      "session_id": "TS4",
+      "session_id": "TS4-q",
       "presenter_id": "p1759",
       "is_english": true,
       "is_online": false,
@@ -15489,7 +15534,7 @@
     },
     "TS4-3": {
       "title": "Fermi-MCTS：フェルミ推定のためのLLM推論フレームワーク",
-      "session_id": "TS4",
+      "session_id": "TS4-q",
       "presenter_id": "p1227",
       "is_english": false,
       "is_online": false,
@@ -15507,7 +15552,7 @@
     },
     "TS4-4": {
       "title": "数学的証明におけるbutの機能：証明コーパスの構築と分析",
-      "session_id": "TS4",
+      "session_id": "TS4-q",
       "presenter_id": "p1371",
       "is_english": false,
       "is_online": false,
@@ -15541,7 +15586,7 @@
     },
     "TS4-5": {
       "title": "出力制約と表記正規化による LLM 形式証明のタクティク選択評価",
-      "session_id": "TS4",
+      "session_id": "TS4-q",
       "presenter_id": "p1323",
       "is_english": false,
       "is_online": false,
@@ -15567,7 +15612,7 @@
     },
     "TS4-6": {
       "title": "Multi-Expert Evaluation with Chain-of-Thought Reasoning: A Mixture of Experts Approach to Automated Japanese Essay Scoring",
-      "session_id": "TS4",
+      "session_id": "TS4-q",
       "presenter_id": "p1760",
       "is_english": true,
       "is_online": false,
@@ -15585,7 +15630,7 @@
     },
     "TS4-7": {
       "title": "網羅的統制実験によるTransformerの加算能力獲得機序の解明",
-      "session_id": "TS4",
+      "session_id": "TS4-q",
       "presenter_id": "p0485",
       "is_english": false,
       "is_online": false,
@@ -15603,7 +15648,7 @@
     },
     "TS4-8": {
       "title": "BikeCoach: 練習プロトコルを考慮した自転車競技における観点別助言生成",
-      "session_id": "TS4",
+      "session_id": "TS4-q",
       "presenter_id": "p0095",
       "is_english": true,
       "is_online": false,
@@ -15637,7 +15682,7 @@
     },
     "TS4-9": {
       "title": "大規模言語モデル単体パイプラインによるPDF文献群からの物理モデル自動構築",
-      "session_id": "TS4",
+      "session_id": "TS4-q",
       "presenter_id": "p0361",
       "is_english": false,
       "is_online": false,
@@ -24509,7 +24554,7 @@
     },
     "TS1-1": {
       "title": "大規模言語モデルとの対話では否定表現で否定的な意思決定を誘導できる",
-      "session_id": "TS1",
+      "session_id": "TS1-q",
       "presenter_id": "p1458",
       "is_english": false,
       "is_online": false,
@@ -24527,7 +24572,7 @@
     },
     "TS1-2": {
       "title": "InterviewArena：情報量の欠損度合いに着目した不完全情報下での対話型推論能力ベンチマーク",
-      "session_id": "TS1",
+      "session_id": "TS1-q",
       "presenter_id": "p0396",
       "is_english": false,
       "is_online": false,
@@ -24577,7 +24622,7 @@
     },
     "TS1-3": {
       "title": "LLMを用いた人狼エージェントにおける動的記憶蓄積による発言の一貫性維持と効率化",
-      "session_id": "TS1",
+      "session_id": "TS1-q",
       "presenter_id": "p0269",
       "is_english": false,
       "is_online": false,
