@@ -74,11 +74,12 @@ tasks:
       - pnpm exec vitest run
 
   lint:
-    desc: "Ruff / Pyright / Biome で lint を実行"
+    desc: "Ruff / Pyright / Biome / typos で lint を実行"
     cmds:
       - uv run --group dev ruff check .
       - uv run pnpm exec pyright
       - pnpm exec biome check .
+      - typos --config _typos.toml
 
   format:
     desc: "Ruff と Biome で整形と import 整理を実行"

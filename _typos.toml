@@ -8,6 +8,7 @@ extend-ignore-re = ["(?Rm)^.*(#|//)\\s*spellchecker:disable-line$"]
 noInferrableTypes = "noInferrableTypes"
 
 [default.extend-words]
+AFE = "AFE"
 
 [files]
 extend-exclude = [
