@@ -11,7 +11,7 @@ export const ja = {
   timepoint: "時点",
   now: "今",
   resetTimepoint: "時点指定をリセット",
-  nowUnavailable: "開催日以外のため利用できません",
+  nowUnavailable: "次の時点がないため利用できません",
   showAuthors: "著者名を表示",
   searchPlaceholder: "タイトル・著者名・所属で検索",
   searchAll: "全日程を検索",

@@ -41,7 +41,7 @@ import { filterBookmarkedSessions } from "../lib/bookmarks";
 import { formatJapaneseDate } from "../lib/date";
 import { filterSessions, getAvailableDates, getAvailableRooms, getAvailableTimes } from "../lib/filters";
 import { ja } from "../locales/ja";
-import type { PersonId, SessionId } from "../types";
+import type { PersonId, Session, SessionId } from "../types";
 
 function XBrandIcon(props: SVGProps<SVGSVGElement>) {
   return (
@@ -89,10 +89,6 @@ function toLocalIsoDate(date: Date): string {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
-}
-
-function toTimeString(date: Date): string {
-  return `${date.getHours()}:${String(date.getMinutes()).padStart(2, "0")}`;
 }
 
 function toMinutes(time: string): number {
@@ -145,14 +141,34 @@ function isWorkshopParentSession(sessionId: SessionId, allSessionIds: SessionId[
   return allSessionIds.some((sid) => sid.startsWith(childPrefix));
 }
 
-function getNearestTimePoint(points: string[], targetTime: string): string | null {
-  if (points.length === 0) return null;
-  const targetMinutes = toMinutes(targetTime);
-  return points.reduce((nearest, current) => {
-    return Math.abs(toMinutes(current) - targetMinutes) < Math.abs(toMinutes(nearest) - targetMinutes)
-      ? current
-      : nearest;
-  });
+export function getNextScheduleTimePoint(
+  sessions: Record<SessionId, Session>,
+  now: Date,
+): {
+  date: string;
+  time: string;
+} | null {
+  const today = toLocalIsoDate(now);
+  const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+  const availableDates = getAvailableDates(sessions);
+
+  for (const date of availableDates) {
+    if (date < today) continue;
+
+    const points = getAvailableTimes(sessions, date);
+    if (points.length === 0) continue;
+
+    if (date > today) {
+      return { date, time: points[0] };
+    }
+
+    const nextTime = points.find((point) => toMinutes(point) * 60 >= currentSeconds);
+    if (nextTime) {
+      return { date, time: nextTime };
+    }
+  }
+
+  return null;
 }
 
 function SearchField({
@@ -703,10 +719,12 @@ export default function ProgramPage() {
     );
   }, [data, allTimes, selectedDate]);
 
-  const nowAvailable = useMemo(() => {
-    const today = toLocalIsoDate(new Date());
-    return allDates.includes(today);
-  }, [allDates]);
+  const nextScheduleTimePoint = useMemo(() => {
+    if (!data) return null;
+    return getNextScheduleTimePoint(data.sessions, new Date());
+  }, [data]);
+
+  const nowEnabled = nextScheduleTimePoint !== null;
 
   useEffect(() => {
     if (selectedTime && allTimes.length > 0 && !allTimes.includes(selectedTime)) {
@@ -838,14 +856,9 @@ export default function ProgramPage() {
   }
 
   function handleSelectNow() {
-    if (!data || !nowAvailable) return;
-    const now = new Date();
-    const today = toLocalIsoDate(now);
-    const points = getAvailableTimes(data.sessions, today);
-    const nearest = getNearestTimePoint(points, toTimeString(now));
-
-    setSelectedDate(today);
-    setSelectedTime(nearest);
+    if (!nextScheduleTimePoint) return;
+    setSelectedDate(nextScheduleTimePoint.date);
+    setSelectedTime(nextScheduleTimePoint.time);
     scrollContentToTop();
   }
 
@@ -910,7 +923,7 @@ export default function ProgramPage() {
                   scrollContentToTop();
                 }}
                 onSelectNow={handleSelectNow}
-                nowEnabled={nowAvailable}
+                nowEnabled={nowEnabled}
                 disabled={filtersDisabled}
               />
               <RoomChips

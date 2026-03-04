@@ -86,7 +86,7 @@ function TimelineActions({
           title={disabled ? undefined : nowEnabled ? ja.now : ja.nowUnavailable}
           className={`rounded-full border px-3 py-1 text-xs font-semibold ${
             !disabled && nowEnabled
-              ? "border-amber-300 bg-amber-50 text-amber-700"
+              ? "border-gray-300 bg-white text-gray-600"
               : "border-gray-200 bg-gray-100 text-gray-400"
           }`}
         >
