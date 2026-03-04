@@ -238,6 +238,40 @@ describe("filterSessions - 日付・時刻・会場フィルタ", () => {
     expect(result.map((r) => r.sessionId)).toEqual(["s1", "s2"]);
   });
 
+  it("ブックマーク全体表示かつ全日程検索では時点フィルタを無視する", () => {
+    const result = filterSessions(data, {
+      ...noFilter,
+      selectedDate: "2026-03-09",
+      selectedTime: "13:00",
+      searchAll: true,
+      bookmarkedOnly: true,
+    });
+    expect(result.map((r) => r.sessionId)).toEqual(["s1", "s2", "s3", "WS1-1"]);
+  });
+
+  it("ブックマーク全体表示かつ全日程検索では会場フィルタを無視する", () => {
+    const result = filterSessions(data, {
+      ...noFilter,
+      selectedDate: "2026-03-09",
+      selectedRoom: "第2会場",
+      searchAll: true,
+      bookmarkedOnly: true,
+    });
+    expect(result.map((r) => r.sessionId)).toEqual(["s1", "s2", "s3", "WS1-1"]);
+  });
+
+  it("ブックマーク全体表示でも全日程検索オフなら時点と会場のフィルタを維持する", () => {
+    const result = filterSessions(data, {
+      ...noFilter,
+      selectedDate: "2026-03-09",
+      selectedTime: "13:00",
+      selectedRoom: "第2会場",
+      searchAll: false,
+      bookmarkedOnly: true,
+    });
+    expect(result.map((r) => r.sessionId)).toEqual(["s2"]);
+  });
+
   it("終了時刻ちょうどは含めない", () => {
     const result = filterSessions(data, {
       ...noFilter,
@@ -381,6 +415,19 @@ describe("filterSessions - searchAll フラグの挙動", () => {
     expect(presIds).toContain("pr3"); // s2 (2026-03-09)
   });
 
+  it("searchAll=true + クエリあり: 時点と会場フィルタも無視して全セッションを検索する", () => {
+    const result = filterSessions(data, {
+      ...noFilter,
+      searchAll: true,
+      selectedDate: "2026-03-10",
+      selectedTime: "10:00",
+      selectedRoom: "第3会場",
+      query: "田中",
+    });
+    const presIds = result.flatMap((r) => r.presIds);
+    expect(presIds).toEqual(["pr1", "pr3"]);
+  });
+
   it("searchAll=false + クエリあり: 日付フィルタ内だけを検索する", () => {
     // selectedDate=2026-03-10 の場合、s3 のみが対象 → 田中はヒットしない
     const result = filterSessions(data, {
@@ -388,6 +435,32 @@ describe("filterSessions - searchAll フラグの挙動", () => {
       searchAll: false,
       selectedDate: "2026-03-10",
       query: "田中",
+    });
+    expect(result).toHaveLength(0);
+  });
+
+  it("searchAll=false + クエリあり: 時点と会場フィルタも維持する", () => {
+    const result = filterSessions(data, {
+      ...noFilter,
+      searchAll: false,
+      selectedDate: "2026-03-09",
+      selectedTime: "9:00",
+      selectedRoom: "第1会場",
+      query: "GPT",
+    });
+    expect(result).toHaveLength(1);
+    expect(result[0].sessionId).toBe("s1");
+    expect(result[0].presIds).toEqual(["pr2"]);
+  });
+
+  it("searchAll=false + クエリあり: 時点や会場が外れていればヒットしても除外する", () => {
+    const result = filterSessions(data, {
+      ...noFilter,
+      searchAll: false,
+      selectedDate: "2026-03-09",
+      selectedTime: "13:00",
+      selectedRoom: "第2会場",
+      query: "GPT",
     });
     expect(result).toHaveLength(0);
   });
