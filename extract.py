@@ -36,6 +36,18 @@ def normalize_room_name(name: str) -> str:
     return name
 
 
+def normalize_session_title_key(title: str) -> str:
+    return clean(unicodedata.normalize("NFKC", title))
+
+
+_SESSION_ID_OVERRIDES: dict[str, str] = {
+    normalize_session_title_key("テーマセッション3：法ドメインにおける言語処理（ポスター）"): "TS3-q",
+    normalize_session_title_key("TS3:テーマセッション3：法ドメインにおける言語処理（ポスター）"): "TS3-q",
+    normalize_session_title_key("テーマセッション3：法ドメインにおける言語処理（総合討論）"): "TS3-a",
+    normalize_session_title_key("TS3:テーマセッション3：法ドメインにおける言語処理（総合討論）"): "TS3-a",
+}
+
+
 def parse_authors(raw: str) -> tuple[list[dict], str | None, bool]:
     """
     著者文字列をパースし (authors, presenter_name, is_english) を返す。
@@ -426,7 +438,11 @@ class ProgramParser(HTMLParser):
 
         if tag == "span" and self._in_session_title_span:
             if self._cur_session is not None:
-                self._cur_session["title"] = clean("".join(self._session_title_text))
+                title = clean("".join(self._session_title_text))
+                self._cur_session["title"] = title
+                override_id = _SESSION_ID_OVERRIDES.get(normalize_session_title_key(title))
+                if override_id:
+                    self._cur_session["id"] = override_id
             self._in_session_title_span = False
 
         if tag == "h3" and self._in_session_body_title:

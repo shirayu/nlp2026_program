@@ -7837,7 +7837,30 @@
       "chair": "伊藤 滉一朗 (名大)",
       "presentation_ids": ["Q5-1", "Q5-2", "Q5-3", "Q5-4", "Q5-5", "Q5-6", "Q5-7", "Q5-8", "Q5-9", "Q5-10", "Q5-11"]
     },
-    "TS3": {
+    "TS3-q": {
+      "title": "TS3:テーマセッション3：法ドメインにおける言語処理（ポスター）",
+      "date": "2026-03-11",
+      "start_time": "9:30",
+      "end_time": "11:00",
+      "room_ids": ["r0005"],
+      "chair": "吉岡 真治 (北大)",
+      "presentation_ids": [
+        "TS3-1",
+        "TS3-2",
+        "TS3-3",
+        "TS3-4",
+        "TS3-5",
+        "TS3-6",
+        "TS3-7",
+        "TS3-8",
+        "TS3-9",
+        "TS3-10",
+        "TS3-11",
+        "TS3-12",
+        "TS3-13"
+      ]
+    },
+    "TS3-a": {
       "title": "TS3:テーマセッション3：法ドメインにおける言語処理（総合討論）",
       "date": "2026-03-11",
       "start_time": "11:15",
@@ -19798,7 +19821,7 @@
     },
     "TS3-1": {
       "title": "「単位文文脈構造体」言語モデル",
-      "session_id": "TS3",
+      "session_id": "TS3-q",
       "presenter_id": "p0216",
       "is_english": false,
       "is_online": false,
@@ -19812,7 +19835,7 @@
     },
     "TS3-2": {
       "title": "Legal NLP for Comparing Judicial Considerations in Child Custody Cases Involving Domestic and Foreign Spouses",
-      "session_id": "TS3",
+      "session_id": "TS3-q",
       "presenter_id": "p1803",
       "is_english": false,
       "is_online": false,
@@ -19830,7 +19853,7 @@
     },
     "TS3-3": {
       "title": "自己検証LLMによる日本司法試験短答式試験合格",
-      "session_id": "TS3",
+      "session_id": "TS3-q",
       "presenter_id": "p1804",
       "is_english": false,
       "is_online": false,
@@ -19844,7 +19867,7 @@
     },
     "TS3-4": {
       "title": "専門家評価と相関分析に基づく大規模言語モデルによる法廷通訳の実現可能性の検証",
-      "session_id": "TS3",
+      "session_id": "TS3-q",
       "presenter_id": "p1341",
       "is_english": false,
       "is_online": false,
@@ -19866,7 +19889,7 @@
     },
     "TS3-5": {
       "title": "法令知識グラフ構築のための法令文における参照関係抽出手法",
-      "session_id": "TS3",
+      "session_id": "TS3-q",
       "presenter_id": "p0447",
       "is_english": false,
       "is_online": false,
@@ -19884,7 +19907,7 @@
     },
     "TS3-6": {
       "title": "JBE-QA: 日本法知識を評価する司法試験質問応答データセット",
-      "session_id": "TS3",
+      "session_id": "TS3-q",
       "presenter_id": "p1805",
       "is_english": false,
       "is_online": false,
@@ -19918,7 +19941,7 @@
     },
     "TS3-7": {
       "title": "法的判例検索における書誌結合を用いた評価指標の提案",
-      "session_id": "TS3",
+      "session_id": "TS3-q",
       "presenter_id": "p0745",
       "is_english": false,
       "is_online": false,
@@ -19936,7 +19959,7 @@
     },
     "TS3-8": {
       "title": "法意識論を踏まえた法の不確定性における言語処理の可能性",
-      "session_id": "TS3",
+      "session_id": "TS3-q",
       "presenter_id": "p1355",
       "is_english": false,
       "is_online": false,
@@ -19950,7 +19973,7 @@
     },
     "TS3-9": {
       "title": "法令沿革の自動作成における予測結果の誤り検出手法の提案",
-      "session_id": "TS3",
+      "session_id": "TS3-q",
       "presenter_id": "p1182",
       "is_english": false,
       "is_online": false,
@@ -19972,7 +19995,7 @@
     },
     "TS3-10": {
       "title": "契約文書における条項マッチング手法の検討",
-      "session_id": "TS3",
+      "session_id": "TS3-q",
       "presenter_id": "p0916",
       "is_english": false,
       "is_online": false,
@@ -19990,7 +20013,7 @@
     },
     "TS3-11": {
       "title": "大規模言語モデルを用いた End-to-End の法令あてはめとその出力を利用した検索拡張手法の検証",
-      "session_id": "TS3",
+      "session_id": "TS3-q",
       "presenter_id": "p0592",
       "is_english": false,
       "is_online": false,
@@ -20012,7 +20035,7 @@
     },
     "TS3-12": {
       "title": "LawQA-JP: 日本の法令に関する多肢選択式質問応答データセットの公開と分析",
-      "session_id": "TS3",
+      "session_id": "TS3-q",
       "presenter_id": "p0194",
       "is_english": false,
       "is_online": false,
@@ -20030,7 +20053,7 @@
     },
     "TS3-13": {
       "title": "法令間委任関係におけるマルチラベル委任先条文特定",
-      "session_id": "TS3",
+      "session_id": "TS3-q",
       "presenter_id": "p1130",
       "is_english": false,
       "is_online": false,
