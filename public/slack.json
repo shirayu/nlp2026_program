@@ -1,7 +1,19 @@
 [
   {
+    "session_id": "A1",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFSJ7LWT0"
+  },
+  {
     "session_id": "A2",
     "url": "slack://open?team=T0AFE8T2X2M&id=C0AFD6RT0JK"
+  },
+  {
+    "session_id": "A3",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFN8HLS67"
+  },
+  {
+    "session_id": "A4",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFR7GK477"
   },
   {
     "session_id": "A5",
@@ -14,6 +26,18 @@
   {
     "session_id": "B2",
     "url": "slack://open?team=T0AFE8T2X2M&id=C0AFUL7MS3U"
+  },
+  {
+    "session_id": "B3",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFSJGLDT8"
+  },
+  {
+    "session_id": "B4",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFULAP55Y"
+  },
+  {
+    "session_id": "B5",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFN8QH7GT"
   },
   {
     "session_id": "B6",
@@ -30,6 +54,10 @@
   {
     "session_id": "C3",
     "url": "slack://open?team=T0AFE8T2X2M&id=C0AG7HTBT8R"
+  },
+  {
+    "session_id": "C4",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFULB5KL2"
   },
   {
     "session_id": "C5",
@@ -64,8 +92,16 @@
     "url": "slack://open?team=T0AFE8T2X2M&id=C0AFULDQZ34"
   },
   {
+    "session_id": "P6",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFSJNLNG6"
+  },
+  {
     "session_id": "P7",
     "url": "slack://open?team=T0AFE8T2X2M&id=C0AGNUM11UY"
+  },
+  {
+    "session_id": "Q1",
+    "url": "slack://open?team=T0AFE8T2X2M&id=C0AFY8KBS4U"
   },
   {
     "session_id": "Q2",
@@ -132,11 +168,11 @@
     "url": "slack://open?team=T0AFE8T2X2M&id=C0AFQT0NNE9"
   },
   {
-    "session_id": "invited1-1",
+    "session_id": "invited1",
     "url": "slack://open?team=T0AFE8T2X2M&id=C0AFMU143KM"
   },
   {
-    "session_id": "invited2-1",
+    "session_id": "invited2",
     "url": "slack://open?team=T0AFE8T2X2M&id=C0AFCSBJZ2B"
   }
 ]
