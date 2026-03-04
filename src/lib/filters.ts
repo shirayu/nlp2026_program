@@ -119,7 +119,10 @@ function matchesSessionFilters(
   data: ConferenceData,
   _sessionId: SessionId,
   session: Session,
-  opts: Pick<FilterOptions, "selectedDate" | "selectedTime" | "selectedRoom" | "searchAll" | "query" | "bookmarkedOnly">,
+  opts: Pick<
+    FilterOptions,
+    "selectedDate" | "selectedTime" | "selectedRoom" | "searchAll" | "query" | "bookmarkedOnly"
+  >,
 ): boolean {
   const hasQuery = normalizeTerms(opts.query).length > 0;
   if (shouldSkipLocationFilter(opts.searchAll, hasQuery, opts.bookmarkedOnly ?? false)) return true;

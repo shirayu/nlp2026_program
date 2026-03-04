@@ -168,7 +168,15 @@ export function useProgramPageState() {
       searchAll: deferredSearchAll,
       bookmarkedOnly: showBookmarkedOnly,
     });
-  }, [data, deferredQuery, deferredSearchAll, deferredSelectedDate, deferredSelectedRoom, deferredSelectedTime, showBookmarkedOnly]);
+  }, [
+    data,
+    deferredQuery,
+    deferredSearchAll,
+    deferredSelectedDate,
+    deferredSelectedRoom,
+    deferredSelectedTime,
+    showBookmarkedOnly,
+  ]);
 
   const filteredSessions = useMemo(() => {
     return filterBookmarkedSessions(
