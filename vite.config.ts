@@ -8,6 +8,13 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   // GitHub Pages 配備先も .env に寄せ、manifest とアプリ配信パスを同じ定義から作る。
   const base = env.VITE_APP_BASE_PATH;
+  const joinBasePath = (basePath: string, filePath: string) => {
+    const normalizedBasePath = basePath.endsWith("/") ? basePath : `${basePath}/`;
+    const normalizedFilePath = filePath.startsWith("/") ? filePath.slice(1) : filePath;
+    return `${normalizedBasePath}${normalizedFilePath}`;
+  };
+  const conferenceDataPath = joinBasePath(base, env.VITE_CONFERENCE_DATA_FILE);
+  const sessionSlackPath = joinBasePath(base, env.VITE_SESSION_SLACK_FILE);
 
   return {
     base,
@@ -42,23 +49,33 @@ export default defineConfig(({ mode }) => {
         },
         workbox: {
           cleanupOutdatedCaches: true,
+          // ビルド成果物と静的アセットだけを precache する。
+          // data.json / slack.json は更新頻度が高いため precache には含めず、
+          // 下の runtimeCaching で最新取得優先の NetworkFirst に寄せる。
+          globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
           runtimeCaching: [
             {
-              // HTML もアプリ本体も同じ env を参照し、公開ファイル名の定義を一箇所に寄せる。
-              // 公開 JSON は最新取得を優先しつつ、通信不安定時は直近キャッシュを返す。
-              urlPattern: ({ url }) =>
-                [env.VITE_CONFERENCE_DATA_FILE, env.VITE_SESSION_SLACK_FILE].some((path) =>
-                  url.pathname.endsWith(`/${path}`),
-                ),
+              // 公開 JSON は毎回 fetch されるデータソースなので、SW 更新まで固定される
+              // precache ではなく runtime cache に分離する。
+              // handler は NetworkFirst を選び、オンライン時は変更されたタイムテーブルや
+              // Slack 導線をできるだけ早く反映し、オフライン時だけ直近キャッシュへフォール
+              // バックする。
+              // 学会の数日前に一度アプリを開いたあと、会場や地下で長時間オフラインになっても
+              // 表示できるよう、キャッシュ保持期間は 14 日にしている。
+              // pathname は完全一致で判定し、意図しない別パスへの誤マッチを避ける。
+              urlPattern: ({ url }) => url.pathname === conferenceDataPath || url.pathname === sessionSlackPath,
               handler: "NetworkFirst",
               options: {
                 cacheName: "conference-json",
+                // 電波が弱い会場では長く待たず、3 秒でキャッシュ利用へ切り替える。
                 networkTimeoutSeconds: 3,
                 expiration: {
+                  // data.json と slack.json の 2 件だけを保持対象にする。
                   maxEntries: 2,
-                  maxAgeSeconds: 60 * 60,
+                  maxAgeSeconds: 60 * 60 * 24 * 14,
                 },
                 cacheableResponse: {
+                  // 通常の 200 応答に加え、一部環境で返りうる opaque response も許可する。
                   statuses: [0, 200],
                 },
               },
