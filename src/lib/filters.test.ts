@@ -218,6 +218,26 @@ describe("filterSessions - 日付・時刻・会場フィルタ", () => {
     expect(result.map((r) => r.sessionId)).toEqual(["s3", "WS1-1"]);
   });
 
+  it("ブックマーク全体表示かつ全日程検索では日付フィルタを無視する", () => {
+    const result = filterSessions(data, {
+      ...noFilter,
+      selectedDate: "2026-03-09",
+      searchAll: true,
+      bookmarkedOnly: true,
+    });
+    expect(result.map((r) => r.sessionId)).toEqual(["s1", "s2", "s3", "WS1-1"]);
+  });
+
+  it("ブックマーク全体表示でなければ全日程検索でも空クエリ時は日付フィルタを維持する", () => {
+    const result = filterSessions(data, {
+      ...noFilter,
+      selectedDate: "2026-03-09",
+      searchAll: true,
+      bookmarkedOnly: false,
+    });
+    expect(result.map((r) => r.sessionId)).toEqual(["s1", "s2"]);
+  });
+
   it("終了時刻ちょうどは含めない", () => {
     const result = filterSessions(data, {
       ...noFilter,

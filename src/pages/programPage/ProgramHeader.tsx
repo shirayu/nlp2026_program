@@ -133,7 +133,7 @@ function FilterHeader({
           placeholder={ja.searchPlaceholder}
           onCommit={onQueryCommit}
         />
-        {trimmedQuery && (
+        {(trimmedQuery || bookmarkFilterActive) && (
           <button
             type="button"
             onClick={onToggleSearchAll}

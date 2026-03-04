@@ -107,3 +107,11 @@ export function getNextScheduleTimePoint(
 
   return null;
 }
+
+export function syncSearchAllWithBookmarkFilter(searchAll: boolean, nextBookmarkedOnly: boolean): boolean {
+  return nextBookmarkedOnly ? true : searchAll;
+}
+
+export function shouldDisableFilters(searchAll: boolean, trimmedQuery: string, bookmarkedOnly: boolean): boolean {
+  return searchAll && (trimmedQuery.length > 0 || bookmarkedOnly);
+}

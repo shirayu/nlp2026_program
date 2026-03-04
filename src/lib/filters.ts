@@ -14,6 +14,8 @@ export interface FilterOptions {
   selectedRoom: string | null;
   /** 全発表を対象にテキスト検索するか。false のときは絞り込み済みセッションのみ検索 */
   searchAll: boolean;
+  /** ブックマーク全体表示中か。true のときは searchAll と組み合わせて場所系フィルタを外す */
+  bookmarkedOnly?: boolean;
 }
 
 export function normalizeTerms(query: string): string[] {
@@ -109,18 +111,18 @@ export function hasPresentationHiddenSearchMatch(
   return !matchesAllTerms(visibleTexts, terms);
 }
 
-function shouldSkipLocationFilter(searchAll: boolean, hasQuery: boolean): boolean {
-  return searchAll && hasQuery;
+function shouldSkipLocationFilter(searchAll: boolean, hasQuery: boolean, bookmarkedOnly: boolean): boolean {
+  return searchAll && (hasQuery || bookmarkedOnly);
 }
 
 function matchesSessionFilters(
   data: ConferenceData,
   _sessionId: SessionId,
   session: Session,
-  opts: Pick<FilterOptions, "selectedDate" | "selectedTime" | "selectedRoom" | "searchAll" | "query">,
+  opts: Pick<FilterOptions, "selectedDate" | "selectedTime" | "selectedRoom" | "searchAll" | "query" | "bookmarkedOnly">,
 ): boolean {
   const hasQuery = normalizeTerms(opts.query).length > 0;
-  if (shouldSkipLocationFilter(opts.searchAll, hasQuery)) return true;
+  if (shouldSkipLocationFilter(opts.searchAll, hasQuery, opts.bookmarkedOnly ?? false)) return true;
   if (opts.selectedDate && session.date !== opts.selectedDate) return false;
   if (!isSessionActiveAt(session, opts.selectedTime)) return false;
   return matchesRoomFilter(session, data.rooms, opts.selectedRoom);
@@ -203,7 +205,7 @@ export function getAvailableRooms(
 
 /** セッション・発表の絞り込み */
 export function filterSessions(data: ConferenceData, opts: FilterOptions): FilteredSession[] {
-  const { query, selectedDate, selectedTime, selectedRoom, searchAll } = opts;
+  const { query, selectedDate, selectedTime, selectedRoom, searchAll, bookmarkedOnly = false } = opts;
   const terms = normalizeTerms(query);
 
   const sortedSessions = Object.entries(data.sessions).sort(([, a], [, b]) => {
@@ -221,6 +223,7 @@ export function filterSessions(data: ConferenceData, opts: FilterOptions): Filte
         selectedTime,
         selectedRoom,
         searchAll,
+        bookmarkedOnly,
       })
     ) {
       return [];

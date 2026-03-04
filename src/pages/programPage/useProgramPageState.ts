@@ -19,6 +19,8 @@ import {
   isIosDevice,
   isStandaloneMode,
   isWorkshopParentSession,
+  shouldDisableFilters,
+  syncSearchAllWithBookmarkFilter,
   toMinutes,
 } from "./utils";
 
@@ -164,8 +166,9 @@ export function useProgramPageState() {
       selectedTime: deferredSelectedTime,
       selectedRoom: deferredSelectedRoom,
       searchAll: deferredSearchAll,
+      bookmarkedOnly: showBookmarkedOnly,
     });
-  }, [data, deferredQuery, deferredSearchAll, deferredSelectedDate, deferredSelectedRoom, deferredSelectedTime]);
+  }, [data, deferredQuery, deferredSearchAll, deferredSelectedDate, deferredSelectedRoom, deferredSelectedTime, showBookmarkedOnly]);
 
   const filteredSessions = useMemo(() => {
     return filterBookmarkedSessions(
@@ -179,7 +182,7 @@ export function useProgramPageState() {
   const trimmedQuery = query.trim();
   const isSearching = query !== deferredQuery;
   const sessionsVisible = sessionsExpanded || trimmedQuery.length > 0;
-  const filtersDisabled = trimmedQuery.length > 0 && searchAll;
+  const filtersDisabled = shouldDisableFilters(searchAll, trimmedQuery, showBookmarkedOnly);
   const searchScopeLabel = searchAll ? ja.searchAll : ja.searchFiltered;
   const nowEnabled = nextScheduleTimePoint !== null;
   const bookmarkCount = bookmarkIds.length + sessionBookmarkIds.length;
@@ -217,7 +220,11 @@ export function useProgramPageState() {
   }
 
   function toggleBookmarkFilter() {
-    setShowBookmarkedOnly((value) => !value);
+    setShowBookmarkedOnly((value) => {
+      const nextValue = !value;
+      setSearchAll((current) => syncSearchAllWithBookmarkFilter(current, nextValue));
+      return nextValue;
+    });
     scrollContentToTop();
   }
 
