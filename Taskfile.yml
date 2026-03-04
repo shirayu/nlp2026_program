@@ -125,12 +125,14 @@ tasks:
       BASE_URL: '{{.BASE_URL | default "https://www.anlp.jp/proceedings/annual_meeting/2026/"}}'
       WORKSHOP_CONFIG: '{{.WORKSHOP_CONFIG | default "data_for_extraction/workshop.json"}}'
       INVITEDPAPERS_CONFIG: '{{.INVITEDPAPERS_CONFIG | default "data_for_extraction/invitedpapers.json"}}'
+      YOUTUBE_CONFIG: '{{.YOUTUBE_CONFIG | default "data_for_extraction/youtube.json"}}'
     cmds:
-      - 'uv run extract.py --html {{.HTML}} --out {{.OUT}} --base-url {{.BASE_URL}} --workshop-config {{.WORKSHOP_CONFIG}} --invitedpapers-config {{.INVITEDPAPERS_CONFIG}}'
+      - 'uv run extract.py --html {{.HTML}} --out {{.OUT}} --base-url {{.BASE_URL}} --workshop-config {{.WORKSHOP_CONFIG}} --invitedpapers-config {{.INVITEDPAPERS_CONFIG}} --youtube-config {{.YOUTUBE_CONFIG}}'
     sources:
       - extract.py
       - "{{.HTML}}"
       - data_for_extraction/workshop.json
       - data_for_extraction/invitedpapers.json
+      - data_for_extraction/youtube.json
     generates:
       - "{{.OUT}}"

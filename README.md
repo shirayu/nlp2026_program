@@ -11,6 +11,7 @@ src/locales/ja.ts
 data_for_extraction/original_program.html
 data_for_extraction/workshop.json
 data_for_extraction/invitedpapers.json
+data_for_extraction/youtube.json
 public/slack.json
 ```
 

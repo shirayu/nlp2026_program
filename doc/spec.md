@@ -95,7 +95,8 @@
 | `room_ids` | `RoomId[]` | 会場IDのリスト。複数会場利用セッションでは複数要素を持つ |
 | `chair` | `string` | 座長の氏名と所属（文字列のまま保持） |
 | `presentation_ids` | `PresentationId[]` | このセッションで発表された論文IDのリスト（HTML記載順）。イベント系セッションでは空配列 |
-| `url` | `string \| null`  | 外部サイトURL |
+| `url` | `string \| null`  | 一般の外部サイトURL |
+| `youtube_url` | `string \| null`  | YouTube 配信URL |
 
 > **口頭セッション（A1〜A9）の `presentation_ids`**  
 > 口頭発表として登壇した論文（ホームセッションは別のポスターセッション）が列挙される。  
@@ -174,7 +175,8 @@
 | `end_time` | `string` | 親ワークショップの終了時刻 (`H:MM`) |
 | `rooms` | `string[]` | 親ワークショップの会場名。`data_for_extraction/original_program.html` と同じ表記で記述する |
 | `chair` | `string` | 親ワークショップの座長 |
-| `url` | `string` | 親ワークショップのURL |
+| `url` | `string` | 親ワークショップの一般URL |
+| `youtube_url` | `string` | 親ワークショップの YouTube 配信URL |
 | `sessions` | `object[]` | 個別セッションの追加定義 |
 
 補足:
@@ -197,14 +199,41 @@
 | `chair` | `string` | 省略可 |
 | `rooms` | `string[]` | 省略時は親ワークショップの `rooms` を継承 |
 | `url` | `string` | 省略時は親ワークショップの `url` を継承 |
+| `youtube_url` | `string` | 省略時は親ワークショップの `youtube_url` を継承 |
 | `presentations` | `object[]` | 個別発表の手動定義。定義時は `data.json.presentations` にも追加される |
 
 補足:
 
 - `start_time` / `end_time` は必須で、`H:MM` 形式
-- `date`, `chair`, `rooms`, `url` は省略可能
+- `date`, `chair`, `rooms`, `url`, `youtube_url` は省略可能
 - `rooms` を省略した場合は親ワークショップの `rooms` を継承する
 - `presentations` を省略した場合は空配列として扱う
+
+#### data_for_extraction/youtube.json
+
+`extract.py --youtube-config data_for_extraction/youtube.json` で読み込む任意設定ファイル。
+引数を省略した場合は読み込まない。`task extract` では `Taskfile.yml` からこのパスを明示的に渡す。
+
+`data_for_extraction/youtube.json` は「`session_id -> youtube_url`」の辞書形式で、既存セッションに YouTube URL を付与する。
+存在しないセッションIDを指定した場合はエラーにする。
+
+```json
+{
+  "invited1": "https://www.youtube.com/@anlpyoutubechannel7888/streams",
+  "invited2": "https://www.youtube.com/@anlpyoutubechannel7888/streams"
+}
+```
+
+| フィールド | 型 | 説明 |
+|---|---|---|
+| `キー` | `string` | 対象セッションID。例: `invited1` |
+| `値` | `string` | 付与する YouTube 配信URL |
+
+補足:
+
+- `data_for_extraction/youtube.json` はオブジェクト形式
+- 文字列フィールドに空文字列や空白のみは指定できない
+- `task extract` では自動的に `data_for_extraction/youtube.json` も入力として扱う
 
 `presentations[*]` の各要素は以下を持つ。
 

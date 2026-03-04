@@ -7165,7 +7165,8 @@
       "end_time": "14:55",
       "room_ids": ["r0001"],
       "chair": "",
-      "presentation_ids": ["invited1-1"]
+      "presentation_ids": ["invited1-1"],
+      "youtube_url": "https://www.youtube.com/@anlpyoutubechannel7888/streams"
     },
     "invited2": {
       "title": "招待講演２",
@@ -7174,7 +7175,8 @@
       "end_time": "14:55",
       "room_ids": ["r0001"],
       "chair": "",
-      "presentation_ids": ["invited2-1"]
+      "presentation_ids": ["invited2-1"],
+      "youtube_url": "https://www.youtube.com/@anlpyoutubechannel7888/streams"
     },
     "invitedpapers": {
       "title": "招待論文",

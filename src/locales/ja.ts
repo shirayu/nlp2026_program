@@ -25,6 +25,7 @@ export const ja = {
   collapseSessionDetails: "セッション詳細をすべて閉じる",
   openOfficialSite: "公式サイトを開く",
   openSessionSite: "このセッションの関連リンクを開く",
+  openSessionYoutube: "このセッションの YouTube 配信を開く",
   openSlack: "Slack を開く",
   openSessionSlack: "このセッションの Slack チャンネルを開く",
   openXSearch: "Xで #nlp2026 の最新投稿を開く",

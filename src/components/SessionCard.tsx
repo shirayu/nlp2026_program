@@ -1,8 +1,9 @@
-import { ChevronDown, ChevronUp, Globe, Hash, Star } from "lucide-react";
+import { ChevronDown, ChevronUp, Globe, Star } from "lucide-react";
 import { forwardRef, memo } from "react";
 import { getRoomTheme, getSessionRoomNames, sessionRoomsLabel } from "../constants";
 import { formatSessionDateTime } from "../lib/date";
 import { ja } from "../locales/ja";
+import { HashIcon, YoutubeIcon } from "../pages/programPage/icons";
 import type { ConferenceData, PersonId, PresentationId, SessionId } from "../types";
 import { HighlightedText } from "./HighlightedText";
 import { PresentationCard } from "./PresentationCard";
@@ -64,6 +65,17 @@ export const SessionCard = memo(
               <HighlightedText text={session.title || sessionId} query={query} />
             </h2>
             <div className="flex shrink-0 items-center gap-1">
+              {session.youtube_url && (
+                <a
+                  href={session.youtube_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`rounded-full p-1 transition-colors hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-indigo-400 ${roomTheme.title}`}
+                  aria-label={ja.openSessionYoutube}
+                >
+                  <YoutubeIcon className="h-4 w-4" />
+                </a>
+              )}
               {session.url && (
                 <a
                   href={session.url}
@@ -83,7 +95,7 @@ export const SessionCard = memo(
                   className={`rounded-full p-1 transition-colors hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-indigo-400 ${roomTheme.title}`}
                   aria-label={ja.openSessionSlack}
                 >
-                  <Hash className="h-4 w-4" />
+                  <HashIcon className="h-4 w-4" />
                 </a>
               )}
               <button

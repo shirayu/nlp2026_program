@@ -956,9 +956,10 @@ class WorkshopSessionInput(BaseModel):
     chair: str | None = None
     rooms: list[str] | None = None
     url: str | None = None
+    youtube_url: str | None = None
     presentations: list[WorkshopPresentationInput] = []
 
-    @field_validator("id", "title", "chair", "url")
+    @field_validator("id", "title", "chair", "url", "youtube_url")
     @classmethod
     def validate_text_fields(cls, value: str | None, info: ValidationInfo) -> str | None:
         if value is None:
@@ -997,9 +998,10 @@ class WorkshopConfigEntry(BaseModel):
     rooms: list[str]
     chair: str | None = None
     url: str | None = None
+    youtube_url: str | None = None
     sessions: list[WorkshopSessionInput] = []
 
-    @field_validator("title", "chair", "url")
+    @field_validator("title", "chair", "url", "youtube_url")
     @classmethod
     def validate_text_fields(cls, value: str | None, info: ValidationInfo) -> str | None:
         if value is None:
@@ -1047,6 +1049,17 @@ class InvitedPapersConfigFile(RootModel[list[WorkshopPresentationInput]]):
             if entry.id in ids:
                 raise ValueError(f"id が重複しています: {entry.id}")
             ids.add(entry.id)
+        return value
+
+
+class YoutubeConfigFile(RootModel[dict[str, str]]):
+    @field_validator("root")
+    @classmethod
+    def validate_entries(cls, value: dict[str, str]) -> dict[str, str]:
+        for sid, url in value.items():
+            if not _require_non_empty(sid, "session_id"):
+                continue
+            _require_non_empty(url, "youtube_url")
         return value
 
 
@@ -1099,6 +1112,7 @@ class SessionRecord(BaseModel):
     chair: str
     presentation_ids: list[str]
     url: str | None = None
+    youtube_url: str | None = None
 
 
 class DataJsonRecord(BaseModel):
@@ -1133,6 +1147,18 @@ def load_invitedpapers_config(path: Path | None) -> list[WorkshopPresentationInp
         return InvitedPapersConfigFile.model_validate(raw).root
     except ValidationError as error:
         raise ValueError(_validation_error_to_message(error, "data_for_extraction/invitedpapers.json")) from error
+
+
+def load_youtube_config(path: Path | None) -> dict[str, str]:
+    """data_for_extraction/youtube.json を読み込む。存在しない場合は空辞書を返す。"""
+    if path is None or not path.exists():
+        return {}
+
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    try:
+        return YoutubeConfigFile.model_validate(raw).root
+    except ValidationError as error:
+        raise ValueError(_validation_error_to_message(error, "data_for_extraction/youtube.json")) from error
 
 
 def apply_workshop_overrides(result: JsonDict, workshop_config: dict[str, WorkshopConfigEntry]) -> None:
@@ -1186,6 +1212,8 @@ def apply_workshop_overrides(result: JsonDict, workshop_config: dict[str, Worksh
         }
         if override.url:
             session["url"] = override.url
+        if override.youtube_url:
+            session["youtube_url"] = override.youtube_url
         result["sessions"][sid] = session
 
         child_prefix = f"{sid}-"
@@ -1250,6 +1278,10 @@ def apply_workshop_overrides(result: JsonDict, workshop_config: dict[str, Worksh
                 entry["url"] = child.url
             elif session.get("url"):
                 entry["url"] = session["url"]
+            if child.youtube_url:
+                entry["youtube_url"] = child.youtube_url
+            elif session.get("youtube_url"):
+                entry["youtube_url"] = session["youtube_url"]
 
             result["sessions"][child_sid] = entry
 
@@ -1317,6 +1349,15 @@ def apply_invitedpapers_config(result: JsonDict, invitedpapers_config: list[Work
         presentation_ids.append(pid)
 
     invitedpapers_session["presentation_ids"] = presentation_ids
+
+
+def apply_youtube_config(result: JsonDict, youtube_config: dict[str, str]) -> None:
+    """data_for_extraction/youtube.json の内容でセッションに YouTube URL を付与する。"""
+    for session_id, youtube_url in youtube_config.items():
+        session = result["sessions"].get(session_id)
+        if session is None:
+            raise ValueError(f"data_for_extraction/youtube.json のセッションIDが存在しません: {session_id}")
+        session["youtube_url"] = youtube_url
 
 
 class ScheduleTableParser(HTMLParser):
@@ -1484,6 +1525,11 @@ def main() -> None:
         default=None,
         help="招待論文セッションの手動補完JSON。未指定または存在しない場合は無視する",
     )
+    parser.add_argument(
+        "--youtube-config",
+        default=None,
+        help="セッションごとの YouTube URL を付与するJSON。未指定または存在しない場合は無視する",
+    )
     args = parser.parse_args()
 
     html_path = Path(args.html)
@@ -1502,6 +1548,8 @@ def main() -> None:
     workshop_config = load_workshop_config(workshop_config_path)
     invitedpapers_config_path = Path(args.invitedpapers_config) if args.invitedpapers_config else None
     invitedpapers_config = load_invitedpapers_config(invitedpapers_config_path)
+    youtube_config_path = Path(args.youtube_config) if args.youtube_config else None
+    youtube_config = load_youtube_config(youtube_config_path)
 
     print("正規化中...")
     if args.base_url:
@@ -1535,6 +1583,7 @@ def main() -> None:
 
     apply_workshop_overrides(result, workshop_config)
     apply_invitedpapers_config(result, invitedpapers_config)
+    apply_youtube_config(result, youtube_config)
 
     pres = result["presentations"]
     oral_count = sum(1 for p in pres.values() if p.get("oral_session_id"))
@@ -1545,6 +1594,8 @@ def main() -> None:
     for session in validated_result["sessions"].values():
         if session.get("url") is None:
             session.pop("url", None)
+        if session.get("youtube_url") is None:
+            session.pop("youtube_url", None)
     for presentation in validated_result["presentations"].values():
         if presentation.get("oral_session_id") is None:
             presentation.pop("oral_session_id", None)

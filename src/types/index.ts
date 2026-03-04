@@ -32,6 +32,7 @@ export interface Session {
   end_time: string;
   room_ids: RoomId[];
   url?: string;
+  youtube_url?: string;
   chair: string;
   presentation_ids: PresentationId[];
 }

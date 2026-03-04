@@ -20,6 +20,7 @@ const data: ConferenceData = {
       end_time: "10:00",
       room_ids: ["r1"],
       url: "https://example.com/session",
+      youtube_url: "https://www.youtube.com/watch?v=test",
       chair: "",
       presentation_ids: ["pr1"],
     },
@@ -61,6 +62,30 @@ describe("SessionCard", () => {
     expect(html).toContain('href="https://example.com/session"');
     expect(html).toContain(ja.openSessionSite);
     expect(html.indexOf('href="https://example.com/session"')).toBeLessThan(html.indexOf(ja.addBookmark));
+  });
+
+  it("YouTube URL があるときは YouTube リンクを表示する", () => {
+    const html = renderToStaticMarkup(
+      <SessionCard
+        bookmarkedPresentationIds={new Set()}
+        bookmarkedSessionIds={new Set()}
+        sessionId="s1"
+        session={data.sessions.s1}
+        presIds={["pr1"]}
+        data={data}
+        showAuthors
+        query=""
+        expanded={false}
+        onToggleExpanded={vi.fn()}
+        onPersonClick={vi.fn()}
+        onJumpToSession={vi.fn()}
+        onToggleBookmark={vi.fn()}
+        onToggleSessionBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).toContain('href="https://www.youtube.com/watch?v=test"');
+    expect(html).toContain(ja.openSessionYoutube);
   });
 
   it("Slack リンクは新規タブで開く", () => {
@@ -133,5 +158,28 @@ describe("SessionCard", () => {
     );
 
     expect(html).not.toContain(ja.openSessionSite);
+  });
+
+  it("YouTube URL がないときは YouTube リンクを表示しない", () => {
+    const html = renderToStaticMarkup(
+      <SessionCard
+        bookmarkedPresentationIds={new Set()}
+        bookmarkedSessionIds={new Set()}
+        sessionId="s1"
+        session={{ ...data.sessions.s1, youtube_url: undefined }}
+        presIds={["pr1"]}
+        data={data}
+        showAuthors
+        query=""
+        expanded={false}
+        onToggleExpanded={vi.fn()}
+        onPersonClick={vi.fn()}
+        onJumpToSession={vi.fn()}
+        onToggleBookmark={vi.fn()}
+        onToggleSessionBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).not.toContain(ja.openSessionYoutube);
   });
 });

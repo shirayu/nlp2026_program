@@ -21,3 +21,18 @@ export function HashIcon(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function YoutubeIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M21.58 7.19a2.99 2.99 0 0 0-2.1-2.12C17.65 4.5 12 4.5 12 4.5s-5.65 0-7.48.57a2.99 2.99 0 0 0-2.1 2.12A31.44 31.44 0 0 0 2 12a31.44 31.44 0 0 0 .42 4.81 2.99 2.99 0 0 0 2.1 2.12c1.83.57 7.48.57 7.48.57s5.65 0 7.48-.57a2.99 2.99 0 0 0 2.1-2.12A31.44 31.44 0 0 0 22 12a31.44 31.44 0 0 0-.42-4.81Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="m10 15.5 5-3.5-5-3.5v7Z" fill="currentColor" />
+    </svg>
+  );
+}
