@@ -1,5 +1,5 @@
 import { X as CloseIcon } from "lucide-react";
-import type { RefObject } from "react";
+import type { ReactNode, RefObject } from "react";
 import { AUTHOR_NAME, AUTHOR_WEBSITE_URL, PROJECT_REPOSITORY_URL } from "../../constants";
 import { ja } from "../../locales/ja";
 import { fullscreenDialogClassName } from "./utils";
@@ -19,6 +19,55 @@ export function InstallDialog({
   onClose: () => void;
   onInstall: () => void;
 }) {
+  const installSectionClassName = "rounded-xl border border-gray-200 bg-gray-50 px-3 py-3";
+
+  let installSectionContent: ReactNode;
+  if (installContext.isStandalone) {
+    installSectionContent = (
+      <>
+        <p className="font-bold text-gray-800">{ja.installGuideInstalledLead}</p>
+        <p className="mt-2 text-gray-500">{ja.installGuideInstalledDescription}</p>
+      </>
+    );
+  } else if (installContext.isIos) {
+    installSectionContent = (
+      <>
+        <p className="font-bold text-gray-800">{ja.installGuideIosLead}</p>
+        <ol className="mt-2 list-decimal space-y-2 pl-5 text-gray-600">
+          {ja.installGuideIosSteps.map((step) => (
+            <li key={step}>{step}</li>
+          ))}
+        </ol>
+      </>
+    );
+  } else if (hasInstallPrompt) {
+    installSectionContent = (
+      <div className="flex justify-end gap-2">
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
+        >
+          {ja.later}
+        </button>
+        <button
+          type="button"
+          onClick={onInstall}
+          className="rounded-full bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+        >
+          {ja.installNow}
+        </button>
+      </div>
+    );
+  } else {
+    installSectionContent = (
+      <>
+        <p className="font-bold text-gray-800">{ja.installGuideUnsupportedLead}</p>
+        <p className="mt-2 text-gray-500">{ja.installGuideUnsupportedDescription}</p>
+      </>
+    );
+  }
+
   return (
     <dialog ref={dialogRef} open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
       <div className="flex min-h-full items-center justify-center p-4">
@@ -41,47 +90,11 @@ export function InstallDialog({
             </button>
           </div>
           <div className="space-y-4 px-4 py-4 text-sm text-gray-700">
-            {installContext.isStandalone ? (
-              <>
-                <p>{ja.installGuideInstalledLead}</p>
-                <p className="text-gray-500">{ja.installGuideInstalledDescription}</p>
-              </>
-            ) : installContext.isIos ? (
-              <>
-                <p>{ja.installGuideIosLead}</p>
-                <ol className="list-decimal space-y-2 pl-5 text-gray-600">
-                  <li>{ja.installGuideIosStep1}</li>
-                  <li>{ja.installGuideIosStep2}</li>
-                  <li>{ja.installGuideIosStep3}</li>
-                </ol>
-              </>
-            ) : hasInstallPrompt ? (
-              <>
-                <p>{ja.installGuideLead}</p>
-                <p className="text-gray-500">{ja.installGuideDescription}</p>
-                <div className="flex justify-end gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-                  >
-                    {ja.later}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={onInstall}
-                    className="rounded-full bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
-                  >
-                    {ja.installNow}
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                <p>{ja.installGuideUnsupportedLead}</p>
-                <p className="text-gray-500">{ja.installGuideUnsupportedDescription}</p>
-              </>
-            )}
+            <div className="space-y-2">
+              <p>{ja.installGuideLead}</p>
+              <p>{ja.installGuideDescription}</p>
+            </div>
+            <section className={installSectionClassName}>{installSectionContent}</section>
           </div>
         </div>
       </div>
