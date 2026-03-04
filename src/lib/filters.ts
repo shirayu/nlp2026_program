@@ -16,7 +16,7 @@ export interface FilterOptions {
   searchAll: boolean;
 }
 
-function normalizeTerms(query: string): string[] {
+export function normalizeTerms(query: string): string[] {
   return [...new Set(query.trim().toLowerCase().split(/\s+/).filter(Boolean))];
 }
 
@@ -61,16 +61,52 @@ function getSessionPresentationIds(data: ConferenceData, sessionId: SessionId, s
     .map(([id]) => id);
 }
 
-function matchesPresentationTerms(data: ConferenceData, presentationId: PresentationId, terms: string[]): boolean {
+function getPresentationSearchTexts(
+  data: ConferenceData,
+  presentationId: PresentationId,
+): {
+  summaryTexts: (string | null | undefined)[];
+  allTexts: (string | null | undefined)[];
+} {
   const presentation = data.presentations[presentationId];
-  if (!presentation) return false;
+  if (!presentation) {
+    return {
+      summaryTexts: [],
+      allTexts: [],
+    };
+  }
+
+  const presenterName = presentation.presenter_id ? (data.persons[presentation.presenter_id]?.name ?? null) : null;
 
   const authorTexts = presentation.authors.flatMap((author) => [
     data.persons[author.person_id]?.name,
     author.affiliation_id ? data.affiliations[author.affiliation_id]?.name : null,
   ]);
 
-  return matchesAllTerms([presentationId, presentation.title, ...authorTexts], terms);
+  return {
+    summaryTexts: [presentationId, presentation.title, presenterName ?? ""],
+    allTexts: [presentationId, presentation.title, ...authorTexts],
+  };
+}
+
+function matchesPresentationTerms(data: ConferenceData, presentationId: PresentationId, terms: string[]): boolean {
+  return matchesAllTerms(getPresentationSearchTexts(data, presentationId).allTexts, terms);
+}
+
+export function hasPresentationHiddenSearchMatch(
+  data: ConferenceData,
+  presentationId: PresentationId,
+  query: string,
+  showAuthors: boolean,
+): boolean {
+  const terms = normalizeTerms(query);
+  if (terms.length === 0) return false;
+
+  const { summaryTexts, allTexts } = getPresentationSearchTexts(data, presentationId);
+  if (!matchesAllTerms(allTexts, terms)) return false;
+
+  const visibleTexts = showAuthors ? summaryTexts : summaryTexts.slice(0, 2);
+  return !matchesAllTerms(visibleTexts, terms);
 }
 
 function shouldSkipLocationFilter(searchAll: boolean, hasQuery: boolean): boolean {

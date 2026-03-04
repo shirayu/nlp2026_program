@@ -1,5 +1,6 @@
 import { ChevronDown, FileText, Globe, Monitor, Star } from "lucide-react";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
+import { hasPresentationHiddenSearchMatch } from "../lib/filters";
 import { ja } from "../locales/ja";
 import type { ConferenceData, PersonId, PresentationId, SessionId } from "../types";
 import { HighlightedText } from "./HighlightedText";
@@ -9,6 +10,35 @@ interface ResolvedAuthor {
   name: string;
   affiliation: string | null;
   isPresenter: boolean;
+}
+
+function resolvePresentationMeta(
+  data: ConferenceData,
+  pid: PresentationId,
+  detailsContent: ReactNode,
+  onJumpToSession?: (sid: SessionId) => void,
+) {
+  const presentation = data.presentations[pid];
+  if (!presentation) {
+    return null;
+  }
+
+  const presenterName = presentation.presenter_id ? (data.persons[presentation.presenter_id]?.name ?? "") : "";
+  const authorList: ResolvedAuthor[] = presentation.authors.map((author) => ({
+    personId: author.person_id,
+    name: data.persons[author.person_id]?.name ?? author.person_id,
+    affiliation: author.affiliation_id ? (data.affiliations[author.affiliation_id]?.name ?? null) : null,
+    isPresenter: author.person_id === presentation.presenter_id,
+  }));
+  const hasDetails =
+    authorList.length > 0 || Boolean(detailsContent) || Boolean(presentation.oral_session_id && onJumpToSession);
+
+  return {
+    presentation,
+    presenterName,
+    authorList,
+    hasDetails,
+  };
 }
 
 function PresentationMeta({
@@ -205,18 +235,20 @@ export function PresentationListItem({
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const p = data.presentations[pid];
-  if (!p) return null;
+  const resolved = resolvePresentationMeta(data, pid, detailsContent, onJumpToSession);
+  const shouldAutoOpen =
+    resolved !== null && resolved.hasDetails && hasPresentationHiddenSearchMatch(data, pid, query, showAuthors);
 
-  const presenterName = p.presenter_id ? (data.persons[p.presenter_id]?.name ?? "") : "";
-  const authorList: ResolvedAuthor[] = p.authors.map((author) => ({
-    personId: author.person_id,
-    name: data.persons[author.person_id]?.name ?? author.person_id,
-    affiliation: author.affiliation_id ? (data.affiliations[author.affiliation_id]?.name ?? null) : null,
-    isPresenter: author.person_id === p.presenter_id,
-  }));
+  useEffect(() => {
+    if (shouldAutoOpen) {
+      setOpen(true);
+    }
+  }, [shouldAutoOpen]);
 
-  const hasDetails = authorList.length > 0 || Boolean(detailsContent) || Boolean(p.oral_session_id && onJumpToSession);
+  if (!resolved) return null;
+
+  const { presentation: p, presenterName, authorList, hasDetails } = resolved;
+
   function toggleOpen() {
     if (hasDetails) {
       setOpen((value) => !value);

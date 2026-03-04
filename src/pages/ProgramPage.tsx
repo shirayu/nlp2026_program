@@ -876,6 +876,7 @@ export default function ProgramPage() {
 
   const trimmedQuery = query.trim();
   const isSearching = query !== deferredQuery;
+  const sessionsVisible = sessionsExpanded || trimmedQuery.length > 0;
   const filtersDisabled = trimmedQuery.length > 0 && searchAll;
   const searchScopeLabel = searchAll ? ja.searchAll : ja.searchFiltered;
   const showInstallButton = true;
@@ -1037,7 +1038,7 @@ export default function ProgramPage() {
               data={data}
               showAuthors={settings.showAuthors}
               query={trimmedQuery}
-              expanded={sessionsExpanded}
+              expanded={sessionsVisible}
               onToggleExpanded={() => handleToggleExpanded(sessionId)}
               onPersonClick={setPersonModal}
               onJumpToSession={handleJumpToSession}

@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { roomShort } from "../constants";
 import type { ConferenceData } from "../types";
-import { filterSessions, getAvailableDates, getAvailableRooms, getAvailableTimes } from "./filters";
+import {
+  filterSessions,
+  getAvailableDates,
+  getAvailableRooms,
+  getAvailableTimes,
+  hasPresentationHiddenSearchMatch,
+} from "./filters";
 
 // ── テスト用データ ───────────────────────────────────────────────
 const data: ConferenceData = {
@@ -375,5 +381,27 @@ describe("filterSessions - searchAll フラグの挙動", () => {
       query: "",
     });
     expect(result.map((r) => r.sessionId)).toEqual(["s3", "WS1-1"]);
+  });
+});
+
+describe("hasPresentationHiddenSearchMatch", () => {
+  it("showAuthors=false では発表者名ヒットを隠しマッチとして扱う", () => {
+    expect(hasPresentationHiddenSearchMatch(data, "pr1", "田中", false)).toBe(true);
+  });
+
+  it("showAuthors=true では発表者名ヒットだけなら隠しマッチにしない", () => {
+    expect(hasPresentationHiddenSearchMatch(data, "pr1", "田中", true)).toBe(false);
+  });
+
+  it("所属ヒットは showAuthors=true でも隠しマッチとして扱う", () => {
+    expect(hasPresentationHiddenSearchMatch(data, "pr1", "東京大学", true)).toBe(true);
+  });
+
+  it("タイトルだけで完結する検索は隠しマッチにしない", () => {
+    expect(hasPresentationHiddenSearchMatch(data, "pr1", "BERT", false)).toBe(false);
+  });
+
+  it("表示済み情報だけで AND 条件を満たせない場合は隠しマッチにする", () => {
+    expect(hasPresentationHiddenSearchMatch(data, "pr1", "BERT 田中", false)).toBe(true);
   });
 });
