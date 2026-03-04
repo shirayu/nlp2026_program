@@ -12,6 +12,8 @@ workshop.json
 public/slack.json
 ```
 
+`public/slack.json` は `session_id -> { team, channel_id }` の辞書形式です。
+
 ### 開発
 
 ```bash
