@@ -1,4 +1,4 @@
-import { ChevronDown, FileText, Globe, Monitor } from "lucide-react";
+import { ChevronDown, FileText, Globe, Monitor, Star } from "lucide-react";
 import { useState } from "react";
 import { ja } from "../locales/ja";
 import type { ConferenceData, PersonId, PresentationId, SessionId } from "../types";
@@ -43,17 +43,21 @@ function PresentationFlags({ isEnglish, isOnline }: { isEnglish: boolean; isOnli
 export function PresentationCard({
   pid,
   data,
+  bookmarked,
   showAuthors,
   query,
   onPersonClick,
   onJumpToSession,
+  onToggleBookmark,
 }: {
   pid: PresentationId;
   data: ConferenceData;
+  bookmarked: boolean;
   showAuthors: boolean;
   query: string;
   onPersonClick: (id: PersonId) => void;
   onJumpToSession: (sid: SessionId) => void;
+  onToggleBookmark: (id: PresentationId) => void;
 }) {
   const [open, setOpen] = useState(false);
   const p = data.presentations[pid];
@@ -70,30 +74,43 @@ export function PresentationCard({
   return (
     <li className={`px-4 py-2 ${open ? "bg-white/55" : "bg-transparent even:bg-white/35"}`}>
       <div className="flex items-start gap-2">
+        <div className="shrink-0">
+          <span className="mt-0.5 block font-mono text-xs text-gray-400">{pid}</span>
+          <button
+            type="button"
+            className={`mt-1 inline-flex rounded p-0.5 transition-colors ${
+              bookmarked
+                ? "text-amber-500 hover:bg-amber-50 hover:text-amber-600"
+                : "text-gray-300 hover:bg-slate-100 hover:text-gray-500"
+            }`}
+            onClick={() => onToggleBookmark(pid)}
+            aria-label={bookmarked ? ja.removeBookmark : ja.addBookmark}
+            aria-pressed={bookmarked}
+          >
+            <Star className={`h-4 w-4 ${bookmarked ? "fill-current" : ""}`} />
+          </button>
+        </div>
         <button
           type="button"
           className="min-w-0 flex-1 text-left"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
         >
-          <div className="flex items-start gap-2">
-            <span className="mt-0.5 shrink-0 font-mono text-xs text-gray-400">{pid}</span>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium leading-snug text-gray-800">
-                <HighlightedText text={p.title} query={query} />
-              </p>
-              {showAuthors && (
-                <PresentationMeta
-                  presenterName={presenterName}
-                  query={query}
-                  isEnglish={p.is_english}
-                  isOnline={p.is_online}
-                />
-              )}
-              {!showAuthors && (p.is_english || p.is_online) && (
-                <PresentationFlags isEnglish={p.is_english} isOnline={p.is_online} />
-              )}
-            </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-medium leading-snug text-gray-800">
+              <HighlightedText text={p.title} query={query} />
+            </p>
+            {showAuthors && (
+              <PresentationMeta
+                presenterName={presenterName}
+                query={query}
+                isEnglish={p.is_english}
+                isOnline={p.is_online}
+              />
+            )}
+            {!showAuthors && (p.is_english || p.is_online) && (
+              <PresentationFlags isEnglish={p.is_english} isOnline={p.is_online} />
+            )}
           </div>
         </button>
 

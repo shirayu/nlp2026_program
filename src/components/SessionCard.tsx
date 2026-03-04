@@ -11,6 +11,7 @@ export const SessionCard = memo(
   forwardRef<
     HTMLElement,
     {
+      bookmarkedPresentationIds: Set<PresentationId>;
       sessionId: SessionId;
       session: ConferenceData["sessions"][string];
       presIds: PresentationId[];
@@ -21,9 +22,11 @@ export const SessionCard = memo(
       onToggleExpanded: () => void;
       onPersonClick: (id: PersonId) => void;
       onJumpToSession: (sid: SessionId) => void;
+      onToggleBookmark: (id: PresentationId) => void;
     }
   >(function SessionCard(
     {
+      bookmarkedPresentationIds,
       sessionId,
       session,
       presIds,
@@ -34,6 +37,7 @@ export const SessionCard = memo(
       onToggleExpanded,
       onPersonClick,
       onJumpToSession,
+      onToggleBookmark,
     },
     ref,
   ) {
@@ -86,10 +90,12 @@ export const SessionCard = memo(
                   key={pid}
                   pid={pid}
                   data={data}
+                  bookmarked={bookmarkedPresentationIds.has(pid)}
                   showAuthors={showAuthors}
                   query={query}
                   onPersonClick={onPersonClick}
                   onJumpToSession={onJumpToSession}
+                  onToggleBookmark={onToggleBookmark}
                 />
               ))
             ) : (

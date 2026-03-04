@@ -1,4 +1,14 @@
-import { ChevronDown, ChevronUp, X as CloseIcon, Download, Globe, MapPinned, Search, Settings } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  X as CloseIcon,
+  Download,
+  Globe,
+  MapPinned,
+  Search,
+  Settings,
+  Star,
+} from "lucide-react";
 import {
   type MouseEvent,
   type SVGProps,
@@ -24,8 +34,10 @@ import {
   VENUE_GUIDE_URL,
   X_SEARCH_URL,
 } from "../constants";
+import { useBookmarks } from "../hooks/useBookmarks";
 import { useConferenceData } from "../hooks/useConferenceData";
 import { useSessionJump } from "../hooks/useSessionJump";
+import { filterBookmarkedSessions } from "../lib/bookmarks";
 import { formatJapaneseDate } from "../lib/date";
 import { filterSessions, getAvailableDates, getAvailableRooms, getAvailableTimes } from "../lib/filters";
 import { ja } from "../locales/ja";
@@ -194,21 +206,27 @@ function SearchField({
 function FilterHeader({
   query,
   searchAll,
+  bookmarkCount,
+  bookmarkFilterActive,
   showSettings,
   showInstallButton,
   showInstallDialog,
   onQueryCommit,
   onToggleSearchAll,
+  onToggleBookmarkFilter,
   onOpenSettings,
   onOpenInstallDialog,
 }: {
   query: string;
   searchAll: boolean;
+  bookmarkCount: number;
+  bookmarkFilterActive: boolean;
   showSettings: boolean;
   showInstallButton: boolean;
   showInstallDialog: boolean;
   onQueryCommit: (nextValue: string) => void;
   onToggleSearchAll: () => void;
+  onToggleBookmarkFilter: () => void;
   onOpenSettings: () => void;
   onOpenInstallDialog: () => void;
 }) {
@@ -266,6 +284,20 @@ function FilterHeader({
               <Download className="h-5 w-5" />
             </button>
           )}
+          <button
+            type="button"
+            onClick={onToggleBookmarkFilter}
+            className={`relative rounded-full p-1.5 transition-colors ${bookmarkFilterActive ? "bg-amber-100 text-amber-600" : bookmarkCount > 0 ? "text-amber-500 hover:text-amber-600" : "text-gray-400 hover:text-gray-600"}`}
+            aria-label={ja.openBookmarks}
+            aria-pressed={bookmarkFilterActive}
+          >
+            <Star className={`h-5 w-5 ${bookmarkFilterActive ? "fill-current" : ""}`} />
+            {bookmarkCount > 0 && (
+              <span className="absolute -right-0.5 -top-0.5 min-w-4 rounded-full bg-amber-500 px-1 text-center text-[10px] font-bold leading-4 text-white">
+                {bookmarkCount}
+              </span>
+            )}
+          </button>
           <button
             type="button"
             onClick={onOpenSettings}
@@ -612,6 +644,7 @@ function SettingsDialog({
 
 export default function ProgramPage() {
   const data = useConferenceData();
+  const { bookmarkIds, toggleBookmark } = useBookmarks();
   const [query, setQuery] = useState("");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
@@ -619,6 +652,7 @@ export default function ProgramPage() {
   const [searchAll, setSearchAll] = useState(true);
   const [showFilters, setShowFilters] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
+  const [showBookmarkedOnly, setShowBookmarkedOnly] = useState(false);
   const [showInstallDialog, setShowInstallDialog] = useState(false);
   const [showAuthors, setShowAuthors] = useState(true);
   const [sessionsExpanded, setSessionsExpanded] = useState(true);
@@ -727,7 +761,9 @@ export default function ProgramPage() {
     };
   }, []);
 
-  const filteredSessions = useMemo(() => {
+  const bookmarkedPresentationIds = useMemo(() => new Set(bookmarkIds), [bookmarkIds]);
+
+  const baseFilteredSessions = useMemo(() => {
     if (!data) return [];
     return filterSessions(data, {
       query: deferredQuery,
@@ -737,6 +773,10 @@ export default function ProgramPage() {
       searchAll: deferredSearchAll,
     });
   }, [data, deferredQuery, deferredSearchAll, deferredSelectedDate, deferredSelectedRoom, deferredSelectedTime]);
+
+  const filteredSessions = useMemo(() => {
+    return filterBookmarkedSessions(baseFilteredSessions, bookmarkedPresentationIds, showBookmarkedOnly);
+  }, [baseFilteredSessions, bookmarkedPresentationIds, showBookmarkedOnly]);
 
   const trimmedQuery = query.trim();
   const filtersDisabled = trimmedQuery.length > 0 && searchAll;
@@ -823,11 +863,17 @@ export default function ProgramPage() {
         <FilterHeader
           query={query}
           searchAll={searchAll}
+          bookmarkCount={bookmarkIds.length}
+          bookmarkFilterActive={showBookmarkedOnly}
           showSettings={showSettings}
           showInstallButton={showInstallButton}
           showInstallDialog={showInstallDialog}
           onQueryCommit={setQuery}
           onToggleSearchAll={() => setSearchAll((value) => !value)}
+          onToggleBookmarkFilter={() => {
+            setShowBookmarkedOnly((value) => !value);
+            scrollContentToTop();
+          }}
           onOpenSettings={() => setShowSettings(true)}
           onOpenInstallDialog={() => setShowInstallDialog(true)}
         />
@@ -873,9 +919,12 @@ export default function ProgramPage() {
 
       <main ref={mainRef} className="min-h-0 flex-1 overflow-y-auto">
         <div className="mx-auto max-w-2xl space-y-4 px-3 py-4 pb-10">
-          {trimmedQuery && (
+          {(trimmedQuery || showBookmarkedOnly) && (
             <div className="flex items-center justify-between gap-3 text-xs font-medium text-gray-500">
-              <p>{ja.searchResultScope(searchScopeLabel)}</p>
+              <div className="flex flex-col gap-1">
+                {trimmedQuery && <p>{ja.searchResultScope(searchScopeLabel)}</p>}
+                {showBookmarkedOnly && <p className="text-amber-600">{ja.bookmarksFiltered}</p>}
+              </div>
               <p>{ja.searchResultCount(matchedPresentationCount)}</p>
             </div>
           )}
@@ -883,6 +932,7 @@ export default function ProgramPage() {
           {filteredSessions.map(({ sessionId, session, presIds }) => (
             <SessionCard
               key={sessionId}
+              bookmarkedPresentationIds={bookmarkedPresentationIds}
               sessionId={sessionId}
               session={session}
               presIds={presIds}
@@ -893,6 +943,7 @@ export default function ProgramPage() {
               onToggleExpanded={() => handleToggleExpanded(sessionId)}
               onPersonClick={setPersonModal}
               onJumpToSession={handleJumpToSession}
+              onToggleBookmark={toggleBookmark}
               ref={(el) => {
                 sessionRefs.current[sessionId] = el;
               }}
