@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
+import { ja } from "../locales/ja";
 import type { ConferenceData } from "../types";
 import { SessionCard } from "./SessionCard";
 
@@ -18,6 +19,7 @@ const data: ConferenceData = {
       start_time: "9:00",
       end_time: "10:00",
       room_ids: ["r1"],
+      url: "https://example.com/session",
       chair: "",
       presentation_ids: ["pr1"],
     },
@@ -36,6 +38,31 @@ const data: ConferenceData = {
 };
 
 describe("SessionCard", () => {
+  it("URL があるときは星マークの左にリンクを表示する", () => {
+    const html = renderToStaticMarkup(
+      <SessionCard
+        bookmarkedPresentationIds={new Set()}
+        bookmarkedSessionIds={new Set()}
+        sessionId="s1"
+        session={data.sessions.s1}
+        presIds={["pr1"]}
+        data={data}
+        showAuthors
+        query=""
+        expanded={false}
+        onToggleExpanded={vi.fn()}
+        onPersonClick={vi.fn()}
+        onJumpToSession={vi.fn()}
+        onToggleBookmark={vi.fn()}
+        onToggleSessionBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).toContain('href="https://example.com/session"');
+    expect(html).toContain(ja.openSessionSite);
+    expect(html.indexOf('href="https://example.com/session"')).toBeLessThan(html.indexOf(ja.addBookmark));
+  });
+
   it("Slack リンクは新規タブで開く", () => {
     const html = renderToStaticMarkup(
       <SessionCard
@@ -83,5 +110,28 @@ describe("SessionCard", () => {
     );
 
     expect(html).not.toContain("このセッションの Slack チャンネルを開く");
+  });
+
+  it("URL がないときは関連リンクを表示しない", () => {
+    const html = renderToStaticMarkup(
+      <SessionCard
+        bookmarkedPresentationIds={new Set()}
+        bookmarkedSessionIds={new Set()}
+        sessionId="s1"
+        session={{ ...data.sessions.s1, url: undefined }}
+        presIds={["pr1"]}
+        data={data}
+        showAuthors
+        query=""
+        expanded={false}
+        onToggleExpanded={vi.fn()}
+        onPersonClick={vi.fn()}
+        onJumpToSession={vi.fn()}
+        onToggleBookmark={vi.fn()}
+        onToggleSessionBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).not.toContain(ja.openSessionSite);
   });
 });

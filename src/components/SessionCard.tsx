@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp, Hash, Star } from "lucide-react";
+import { ChevronDown, ChevronUp, Globe, Hash, Star } from "lucide-react";
 import { forwardRef, memo } from "react";
 import { getRoomTheme, getSessionRoomNames, sessionRoomsLabel } from "../constants";
 import { formatSessionDateTime } from "../lib/date";
@@ -64,6 +64,17 @@ export const SessionCard = memo(
               <HighlightedText text={session.title || sessionId} query={query} />
             </h2>
             <div className="flex shrink-0 items-center gap-1">
+              {session.url && (
+                <a
+                  href={session.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`rounded-full p-1 transition-colors hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-indigo-400 ${roomTheme.title}`}
+                  aria-label={ja.openSessionSite}
+                >
+                  <Globe className="h-4 w-4" />
+                </a>
+              )}
               {sessionSlackUrl && (
                 <a
                   href={sessionSlackUrl}

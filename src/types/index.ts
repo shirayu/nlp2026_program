@@ -31,6 +31,7 @@ export interface Session {
   start_time: string;
   end_time: string;
   room_ids: RoomId[];
+  url?: string;
   chair: string;
   presentation_ids: PresentationId[];
 }
