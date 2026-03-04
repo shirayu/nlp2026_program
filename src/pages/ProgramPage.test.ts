@@ -1,6 +1,8 @@
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import type { Session } from "../types";
-import { fullscreenDialogClassName, getNextScheduleTimePoint } from "./ProgramPage";
+import { fullscreenDialogClassName, getNextScheduleTimePoint, SearchField } from "./ProgramPage";
 
 function localDate(year: number, month: number, day: number, hour: number, minute: number, second = 0) {
   return new Date(year, month - 1, day, hour, minute, second);
@@ -99,5 +101,15 @@ describe("getNextScheduleTimePoint", () => {
 
   it("未来の時点がなければ null を返す", () => {
     expect(getNextScheduleTimePoint(sessions, localDate(2026, 3, 10, 14, 1))).toBeNull();
+  });
+});
+
+describe("SearchField", () => {
+  it("検索反映中は値が空でもクリアボタンを表示する", () => {
+    const html = renderToStaticMarkup(
+      createElement(SearchField, { value: "", isSearching: true, placeholder: "検索", onCommit: () => {} }),
+    );
+
+    expect(html).toContain("検索語をクリア");
   });
 });

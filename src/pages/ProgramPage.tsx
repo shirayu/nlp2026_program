@@ -171,12 +171,14 @@ export function getNextScheduleTimePoint(
   return null;
 }
 
-function SearchField({
+export function SearchField({
   value,
+  isSearching,
   placeholder,
   onCommit,
 }: {
   value: string;
+  isSearching: boolean;
   placeholder: string;
   onCommit: (nextValue: string) => void;
 }) {
@@ -203,24 +205,48 @@ function SearchField({
     return () => window.clearTimeout(timeoutId);
   }, [draftValue, onCommit]);
 
+  const showClearButton = draftValue.length > 0 || value.length > 0 || isSearching;
+
+  function handleClear() {
+    setDraftValue("");
+    if (lastCommittedValueRef.current === "") return;
+    lastCommittedValueRef.current = "";
+    startTransition(() => {
+      onCommit("");
+    });
+  }
+
   return (
     <div className="relative flex-1">
       <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
       <input
-        type="search"
+        type="text"
         id="program-search"
         name="program-search"
         placeholder={placeholder}
         value={draftValue}
         onChange={(e) => setDraftValue(e.target.value)}
-        className="w-full rounded-full border border-gray-300 py-2 pl-9 pr-4 text-sm outline-none focus:border-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400"
+        inputMode="search"
+        enterKeyHint="search"
+        className={`w-full rounded-full border border-gray-300 py-2 pl-9 text-sm outline-none focus:border-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400 ${showClearButton ? "pr-10" : "pr-4"}`}
       />
+      {showClearButton && (
+        <button
+          type="button"
+          onClick={handleClear}
+          className="absolute right-2 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          aria-label={ja.clearSearch}
+        >
+          <CloseIcon className="h-4 w-4" />
+        </button>
+      )}
     </div>
   );
 }
 
 function FilterHeader({
   query,
+  isSearching,
   searchAll,
   bookmarkCount,
   bookmarkFilterActive,
@@ -234,6 +260,7 @@ function FilterHeader({
   onOpenInstallDialog,
 }: {
   query: string;
+  isSearching: boolean;
   searchAll: boolean;
   bookmarkCount: number;
   bookmarkFilterActive: boolean;
@@ -325,7 +352,12 @@ function FilterHeader({
         </div>
       </div>
       <div className="flex gap-2">
-        <SearchField value={query} placeholder={ja.searchPlaceholder} onCommit={onQueryCommit} />
+        <SearchField
+          value={query}
+          isSearching={isSearching}
+          placeholder={ja.searchPlaceholder}
+          onCommit={onQueryCommit}
+        />
         {trimmedQuery && (
           <button
             type="button"
@@ -807,6 +839,7 @@ export default function ProgramPage() {
   }, [baseFilteredSessions, bookmarkedPresentationIds, bookmarkedSessionIds, showBookmarkedOnly]);
 
   const trimmedQuery = query.trim();
+  const isSearching = query !== deferredQuery;
   const filtersDisabled = trimmedQuery.length > 0 && searchAll;
   const searchScopeLabel = searchAll ? ja.searchAll : ja.searchFiltered;
   const showInstallButton = true;
@@ -885,6 +918,7 @@ export default function ProgramPage() {
       <header className="sticky top-0 z-30 shrink-0 bg-white shadow-sm">
         <FilterHeader
           query={query}
+          isSearching={isSearching}
           searchAll={searchAll}
           bookmarkCount={bookmarkIds.length + sessionBookmarkIds.length}
           bookmarkFilterActive={showBookmarkedOnly}

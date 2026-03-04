@@ -14,6 +14,7 @@ export const ja = {
   nowUnavailable: "次の時点がないため利用できません",
   showAuthors: "著者名を表示",
   searchPlaceholder: "ID・タイトル・著者名・所属で検索",
+  clearSearch: "検索語をクリア",
   searchAll: "全日程を検索",
   searchFiltered: "表示中を検索",
   bookmarksFiltered: "ブックマーク済みのみ表示中",
