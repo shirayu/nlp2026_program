@@ -1017,7 +1017,9 @@ export default function ProgramPage() {
           personId={personModal}
           data={data}
           bookmarkedPresentationIds={bookmarkedPresentationIds}
+          showAuthors={showAuthors}
           onClose={() => setPersonModal(null)}
+          onPersonClick={setPersonModal}
           onJumpToSession={(sid) => {
             setPersonModal(null);
             handleJumpToSession(sid);

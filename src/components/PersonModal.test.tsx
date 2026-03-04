@@ -55,7 +55,9 @@ describe("PersonModal", () => {
         personId="p1"
         data={data}
         bookmarkedPresentationIds={new Set()}
+        showAuthors
         onClose={vi.fn()}
+        onPersonClick={vi.fn()}
         onJumpToSession={vi.fn()}
         onToggleBookmark={vi.fn()}
       />,
@@ -70,7 +72,9 @@ describe("PersonModal", () => {
         personId="p1"
         data={data}
         bookmarkedPresentationIds={new Set(["pr2"])}
+        showAuthors
         onClose={vi.fn()}
+        onPersonClick={vi.fn()}
         onJumpToSession={vi.fn()}
         onToggleBookmark={vi.fn()}
       />,
@@ -79,5 +83,22 @@ describe("PersonModal", () => {
     expect(html).toContain('aria-label="ブックマークを解除"');
     expect(html).toContain('aria-pressed="true"');
     expect(html).toContain('aria-label="ブックマークを追加"');
+  });
+
+  it("発表詳細の開閉ボタンを表示する", () => {
+    const html = renderToStaticMarkup(
+      <PersonModal
+        personId="p1"
+        data={data}
+        bookmarkedPresentationIds={new Set()}
+        showAuthors
+        onClose={vi.fn()}
+        onPersonClick={vi.fn()}
+        onJumpToSession={vi.fn()}
+        onToggleBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).toContain('aria-label="発表詳細を開く"');
   });
 });

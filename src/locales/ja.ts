@@ -54,6 +54,8 @@ export const ja = {
   projectRepository: "GitHub",
   noSessionData: "-",
   noPresenter: "発表者情報なし",
+  expandPresentationDetails: "発表詳細を開く",
+  collapsePresentationDetails: "発表詳細をたたむ",
   jumpToOralSession: "口頭発表セッションへ →",
   abstractPdf: "抄録PDF",
   chair: "座長: ",
