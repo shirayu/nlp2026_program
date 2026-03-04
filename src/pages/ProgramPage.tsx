@@ -1,8 +1,8 @@
 import { PersonModal } from "../components/PersonModal";
-import { SessionCard } from "../components/SessionCard";
 import { ja } from "../locales/ja";
 import { InstallDialog, SettingsDialog } from "./programPage/ProgramDialogs";
 import { ProgramHeader } from "./programPage/ProgramHeader";
+import { ProgramResults } from "./programPage/ProgramResults";
 import { SearchField } from "./programPage/SearchField";
 import { useProgramPageState } from "./programPage/useProgramPageState";
 import { fullscreenDialogClassName, getNextScheduleTimePoint } from "./programPage/utils";
@@ -111,43 +111,26 @@ export default function ProgramPage() {
         onSelectRoom={selectRoom}
       />
 
-      <main ref={mainRef} className="min-h-0 flex-1 overflow-y-auto">
-        <div className="mx-auto max-w-2xl space-y-4 px-3 py-4 pb-10">
-          {(trimmedQuery || showBookmarkedOnly) && (
-            <div className="flex items-center justify-between gap-3 text-xs font-medium text-gray-500">
-              <div className="flex flex-col gap-1">
-                {trimmedQuery && <p>{ja.searchResultScope(searchScopeLabel)}</p>}
-                {showBookmarkedOnly && <p className="text-amber-600">{ja.bookmarksFiltered}</p>}
-              </div>
-              <p>{ja.searchResultCount(matchedPresentationCount)}</p>
-            </div>
-          )}
-          {filteredSessions.length === 0 && <p className="py-10 text-center text-gray-400">{ja.noResults}</p>}
-          {filteredSessions.map(({ sessionId, session, presIds }) => (
-            <SessionCard
-              key={sessionId}
-              bookmarkedPresentationIds={bookmarkedPresentationIds}
-              bookmarkedSessionIds={bookmarkedSessionIds}
-              sessionId={sessionId}
-              session={session}
-              sessionSlackUrl={sessionSlackLinks[sessionId]}
-              presIds={presIds}
-              data={data}
-              showAuthors={settings.showAuthors}
-              query={trimmedQuery}
-              expanded={sessionsVisible}
-              onToggleExpanded={() => handleToggleExpanded(sessionId)}
-              onPersonClick={setPersonModal}
-              onJumpToSession={handleJumpToSession}
-              onToggleBookmark={toggleBookmark}
-              onToggleSessionBookmark={toggleSessionBookmark}
-              ref={(el) => {
-                sessionRefs.current[sessionId] = el;
-              }}
-            />
-          ))}
-        </div>
-      </main>
+      <ProgramResults
+        data={data}
+        mainRef={mainRef}
+        trimmedQuery={trimmedQuery}
+        showBookmarkedOnly={showBookmarkedOnly}
+        searchScopeLabel={searchScopeLabel}
+        matchedPresentationCount={matchedPresentationCount}
+        filteredSessions={filteredSessions}
+        bookmarkedPresentationIds={bookmarkedPresentationIds}
+        bookmarkedSessionIds={bookmarkedSessionIds}
+        sessionSlackLinks={sessionSlackLinks}
+        showAuthors={settings.showAuthors}
+        sessionsVisible={sessionsVisible}
+        sessionRefs={sessionRefs}
+        onToggleExpanded={handleToggleExpanded}
+        onPersonClick={setPersonModal}
+        onJumpToSession={handleJumpToSession}
+        onToggleBookmark={toggleBookmark}
+        onToggleSessionBookmark={toggleSessionBookmark}
+      />
 
       {personModal && (
         <PersonModal
