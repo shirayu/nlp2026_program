@@ -1,6 +1,6 @@
 import type { ConferenceData, RoomId, RoomTheme, Session } from "../types";
 
-export const OFFICIAL_SITE_URL = "https://www.anlp.jp/proceedings/annual_meeting/2026/";
+export const OFFICIAL_SITE_URL = import.meta.env.VITE_OFFICIAL_SITE_URL;
 export const VENUE_GUIDE_URL = "https://www.anlp.jp/nlp2026/pdf/venue_guide.pdf";
 export const X_SEARCH_URL = "https://x.com/search?q=%23nlp2026";
 export const AUTHOR_NAME = "Yuta Hayashibe";

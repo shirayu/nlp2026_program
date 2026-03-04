@@ -6,6 +6,7 @@
 ## 設定ファイル
 
 ```txt
+.env
 src/constants/index.ts
 src/locales/ja.ts
 data_for_extraction/original_program.html
