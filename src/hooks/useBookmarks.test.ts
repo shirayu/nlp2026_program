@@ -6,16 +6,34 @@ describe("bookmarksStorage", () => {
     Reflect.deleteProperty(globalThis, "window");
   });
 
-  it("保存済み JSON から文字列 ID 配列だけを復元する", () => {
-    expect(bookmarksStorage.parseBookmarkIds('["P1",123,"P2",null]')).toEqual(["P1", "P2"]);
+  it("旧形式の保存済み JSON から発表 ID 配列だけを復元する", () => {
+    expect(bookmarksStorage.parseBookmarks('["P1",123,"P2",null]')).toEqual({
+      presentationIds: ["P1", "P2"],
+      sessionIds: [],
+    });
   });
 
   it("不正な JSON は空配列にフォールバックする", () => {
-    expect(bookmarksStorage.parseBookmarkIds("{broken")).toEqual([]);
+    expect(bookmarksStorage.parseBookmarks("{broken")).toEqual({
+      presentationIds: [],
+      sessionIds: [],
+    });
+  });
+
+  it("新形式の保存済み JSON から発表 ID とセッション ID を復元する", () => {
+    expect(
+      bookmarksStorage.parseBookmarks('{"presentationIds":["P10",false,"P11"],"sessionIds":["S1",1,"S2"]}'),
+    ).toEqual({
+      presentationIds: ["P10", "P11"],
+      sessionIds: ["S1", "S2"],
+    });
   });
 
   it("window がない環境では空配列を返す", () => {
-    expect(bookmarksStorage.readBookmarkIds()).toEqual([]);
+    expect(bookmarksStorage.readBookmarks()).toEqual({
+      presentationIds: [],
+      sessionIds: [],
+    });
   });
 
   it("localStorage からブックマークを読み出す", () => {
@@ -23,11 +41,15 @@ describe("bookmarksStorage", () => {
       configurable: true,
       value: {
         localStorage: {
-          getItem: (key: string) => (key === bookmarksStorageKey ? '["P10","P11"]' : null),
+          getItem: (key: string) =>
+            key === bookmarksStorageKey ? '{"presentationIds":["P10"],"sessionIds":["S10","S11"]}' : null,
         },
       },
     });
 
-    expect(bookmarksStorage.readBookmarkIds()).toEqual(["P10", "P11"]);
+    expect(bookmarksStorage.readBookmarks()).toEqual({
+      presentationIds: ["P10"],
+      sessionIds: ["S10", "S11"],
+    });
   });
 });

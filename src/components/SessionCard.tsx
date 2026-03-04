@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Star } from "lucide-react";
 import { forwardRef, memo } from "react";
 import { getRoomTheme, getSessionRoomNames, sessionRoomsLabel } from "../constants";
 import { formatSessionDateTime } from "../lib/date";
@@ -12,6 +12,7 @@ export const SessionCard = memo(
     HTMLElement,
     {
       bookmarkedPresentationIds: Set<PresentationId>;
+      bookmarkedSessionIds: Set<SessionId>;
       sessionId: SessionId;
       session: ConferenceData["sessions"][string];
       presIds: PresentationId[];
@@ -23,10 +24,12 @@ export const SessionCard = memo(
       onPersonClick: (id: PersonId) => void;
       onJumpToSession: (sid: SessionId) => void;
       onToggleBookmark: (id: PresentationId) => void;
+      onToggleSessionBookmark: (id: SessionId) => void;
     }
   >(function SessionCard(
     {
       bookmarkedPresentationIds,
+      bookmarkedSessionIds,
       sessionId,
       session,
       presIds,
@@ -38,11 +41,13 @@ export const SessionCard = memo(
       onPersonClick,
       onJumpToSession,
       onToggleBookmark,
+      onToggleSessionBookmark,
     },
     ref,
   ) {
     const roomTheme = getRoomTheme(getSessionRoomNames(session, data.rooms)[0] ?? "");
     const roomLabel = sessionRoomsLabel(session, data.rooms);
+    const sessionBookmarked = bookmarkedSessionIds.has(sessionId);
     const workshopParentTitle = (() => {
       const match = sessionId.match(/^(WS\d+)-/);
       if (!match) return null;
@@ -56,15 +61,30 @@ export const SessionCard = memo(
             <h2 className={`min-w-0 flex-1 text-sm font-semibold leading-snug ${roomTheme.title}`}>
               <HighlightedText text={session.title || sessionId} query={query} />
             </h2>
-            <button
-              type="button"
-              onClick={onToggleExpanded}
-              className={`shrink-0 rounded-full p-1 transition-colors hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-indigo-400 ${roomTheme.title}`}
-              aria-label={expanded ? ja.collapseSessionDetails : ja.expandSessionDetails}
-              aria-expanded={expanded}
-            >
-              {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-            </button>
+            <div className="flex shrink-0 items-center gap-1">
+              <button
+                type="button"
+                onClick={() => onToggleSessionBookmark(sessionId)}
+                className={`rounded-full p-1 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-400 ${
+                  sessionBookmarked
+                    ? "text-amber-500 hover:bg-amber-50 hover:text-amber-600"
+                    : `hover:bg-white/60 ${roomTheme.title}`
+                }`}
+                aria-label={sessionBookmarked ? ja.removeBookmark : ja.addBookmark}
+                aria-pressed={sessionBookmarked}
+              >
+                <Star className={`h-4 w-4 ${sessionBookmarked ? "fill-current" : ""}`} />
+              </button>
+              <button
+                type="button"
+                onClick={onToggleExpanded}
+                className={`rounded-full p-1 transition-colors hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-indigo-400 ${roomTheme.title}`}
+                aria-label={expanded ? ja.collapseSessionDetails : ja.expandSessionDetails}
+                aria-expanded={expanded}
+              >
+                {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
           <p className={`mt-0.5 text-xs ${roomTheme.meta}`}>
             {formatSessionDateTime(session.date, session.start_time, session.end_time)}{" "}

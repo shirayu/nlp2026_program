@@ -33,11 +33,11 @@ const sessions: FilteredSession[] = [
 
 describe("filterBookmarkedSessions", () => {
   it("ブックマーク絞り込みが無効なら入力をそのまま返す", () => {
-    expect(filterBookmarkedSessions(sessions, new Set(["p1"]), false)).toEqual(sessions);
+    expect(filterBookmarkedSessions(sessions, new Set(["p1"]), new Set(), false)).toEqual(sessions);
   });
 
   it("ブックマーク済み発表だけを残す", () => {
-    expect(filterBookmarkedSessions(sessions, new Set(["p2", "p3"]), true)).toEqual([
+    expect(filterBookmarkedSessions(sessions, new Set(["p2", "p3"]), new Set(), true)).toEqual([
       {
         ...sessions[0],
         presIds: ["p2"],
@@ -47,10 +47,17 @@ describe("filterBookmarkedSessions", () => {
   });
 
   it("ブックマーク済み発表がないセッションは除外する", () => {
-    expect(filterBookmarkedSessions(sessions, new Set(["p3"]), true)).toEqual([sessions[1]]);
+    expect(filterBookmarkedSessions(sessions, new Set(["p3"]), new Set(), true)).toEqual([sessions[1]]);
+  });
+
+  it("セッション自体がブックマーク済みなら発表を間引かず残す", () => {
+    expect(filterBookmarkedSessions(sessions, new Set(["p3"]), new Set(["s1"]), true)).toEqual([
+      sessions[0],
+      sessions[1],
+    ]);
   });
 
   it("ブックマークが空なら結果も空になる", () => {
-    expect(filterBookmarkedSessions(sessions, new Set(), true)).toEqual([]);
+    expect(filterBookmarkedSessions(sessions, new Set(), new Set(), true)).toEqual([]);
   });
 });

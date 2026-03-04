@@ -644,7 +644,14 @@ function SettingsDialog({
 
 export default function ProgramPage() {
   const data = useConferenceData();
-  const { bookmarkIds, toggleBookmark } = useBookmarks();
+  const {
+    bookmarkIds,
+    sessionBookmarkIds,
+    bookmarkedPresentationIds,
+    bookmarkedSessionIds,
+    toggleBookmark,
+    toggleSessionBookmark,
+  } = useBookmarks();
   const [query, setQuery] = useState("");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
@@ -761,8 +768,6 @@ export default function ProgramPage() {
     };
   }, []);
 
-  const bookmarkedPresentationIds = useMemo(() => new Set(bookmarkIds), [bookmarkIds]);
-
   const baseFilteredSessions = useMemo(() => {
     if (!data) return [];
     return filterSessions(data, {
@@ -775,8 +780,13 @@ export default function ProgramPage() {
   }, [data, deferredQuery, deferredSearchAll, deferredSelectedDate, deferredSelectedRoom, deferredSelectedTime]);
 
   const filteredSessions = useMemo(() => {
-    return filterBookmarkedSessions(baseFilteredSessions, bookmarkedPresentationIds, showBookmarkedOnly);
-  }, [baseFilteredSessions, bookmarkedPresentationIds, showBookmarkedOnly]);
+    return filterBookmarkedSessions(
+      baseFilteredSessions,
+      bookmarkedPresentationIds,
+      bookmarkedSessionIds,
+      showBookmarkedOnly,
+    );
+  }, [baseFilteredSessions, bookmarkedPresentationIds, bookmarkedSessionIds, showBookmarkedOnly]);
 
   const trimmedQuery = query.trim();
   const filtersDisabled = trimmedQuery.length > 0 && searchAll;
@@ -863,7 +873,7 @@ export default function ProgramPage() {
         <FilterHeader
           query={query}
           searchAll={searchAll}
-          bookmarkCount={bookmarkIds.length}
+          bookmarkCount={bookmarkIds.length + sessionBookmarkIds.length}
           bookmarkFilterActive={showBookmarkedOnly}
           showSettings={showSettings}
           showInstallButton={showInstallButton}
@@ -933,6 +943,7 @@ export default function ProgramPage() {
             <SessionCard
               key={sessionId}
               bookmarkedPresentationIds={bookmarkedPresentationIds}
+              bookmarkedSessionIds={bookmarkedSessionIds}
               sessionId={sessionId}
               session={session}
               presIds={presIds}
@@ -944,6 +955,7 @@ export default function ProgramPage() {
               onPersonClick={setPersonModal}
               onJumpToSession={handleJumpToSession}
               onToggleBookmark={toggleBookmark}
+              onToggleSessionBookmark={toggleSessionBookmark}
               ref={(el) => {
                 sessionRefs.current[sessionId] = el;
               }}
