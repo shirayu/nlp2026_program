@@ -57,6 +57,6 @@ export const ja = {
   jumpToOralSession: "口頭発表セッションへ →",
   abstractPdf: "抄録PDF",
   chair: "座長: ",
-  personPresentations: (name: string) => `${name} の発表一覧`,
+  personPresentations: (name: string, count: number) => `${name} の発表一覧 (${count}件)`,
   noPresentation: "発表が見つかりません",
 };
