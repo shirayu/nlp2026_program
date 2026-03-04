@@ -1,0 +1,16 @@
+[project]
+name = "nlp2026-program"
+version = "0.1.0"
+requires-python = ">=3.11"
+
+[dependency-groups]
+dev = [
+  "ruff>=0.15.4",
+]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "TID", "C4", "N"]
+fixable = ["ALL"]

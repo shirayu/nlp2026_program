@@ -4,6 +4,7 @@ pnpm = "latest"
 python = "3.13.12"
 task = "latest"
 typos = "latest"
+uv = "latest"
 
 [settings]
 lockfile = true

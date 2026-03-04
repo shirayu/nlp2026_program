@@ -19,8 +19,8 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urljoin
 
-
 # ─── ユーティリティ ────────────────────────────────────────────
+
 
 def clean(text: str) -> str:
     text = text.replace("\u00a0", " ").replace("\u3000", " ")
@@ -42,21 +42,41 @@ def normalize_session_title_key(title: str) -> str:
 
 _SESSION_ID_OVERRIDES: dict[str, str] = {
     normalize_session_title_key("テーマセッション1：人狼知能：噓を見破り説得する会話ゲームとLLM（ポスター）"): "TS1-q",
-    normalize_session_title_key("TS1:テーマセッション1：人狼知能：噓を見破り説得する会話ゲームとLLM（ポスター）"): "TS1-q",
+    normalize_session_title_key(
+        "TS1:テーマセッション1：人狼知能：噓を見破り説得する会話ゲームとLLM（ポスター）"
+    ): "TS1-q",
     normalize_session_title_key("テーマセッション1：人狼知能：噓を見破り説得する会話ゲームとLLM（総合討論）"): "TS1-a",
-    normalize_session_title_key("TS1:テーマセッション1：人狼知能：噓を見破り説得する会話ゲームとLLM（総合討論）"): "TS1-a",
-    normalize_session_title_key("テーマセッション2：せめぎ合う計算言語学——LLM時代に揺れ動く言語観の中で——（ポスター）"): "TS2-q",
-    normalize_session_title_key("TS2:テーマセッション2：せめぎ合う計算言語学——LLM時代に揺れ動く言語観の中で——（ポスター）"): "TS2-q",
-    normalize_session_title_key("テーマセッション2：せめぎ合う計算言語学——LLM時代に揺れ動く言語観の中で——（総合討論）"): "TS2-a",
-    normalize_session_title_key("TS2:テーマセッション2：せめぎ合う計算言語学——LLM時代に揺れ動く言語観の中で——（総合討論）"): "TS2-a",
+    normalize_session_title_key(
+        "TS1:テーマセッション1：人狼知能：噓を見破り説得する会話ゲームとLLM（総合討論）"
+    ): "TS1-a",
+    normalize_session_title_key(
+        "テーマセッション2：せめぎ合う計算言語学——LLM時代に揺れ動く言語観の中で——（ポスター）"
+    ): "TS2-q",
+    normalize_session_title_key(
+        "TS2:テーマセッション2：せめぎ合う計算言語学——LLM時代に揺れ動く言語観の中で——（ポスター）"
+    ): "TS2-q",
+    normalize_session_title_key(
+        "テーマセッション2：せめぎ合う計算言語学——LLM時代に揺れ動く言語観の中で——（総合討論）"
+    ): "TS2-a",
+    normalize_session_title_key(
+        "TS2:テーマセッション2：せめぎ合う計算言語学——LLM時代に揺れ動く言語観の中で——（総合討論）"
+    ): "TS2-a",
     normalize_session_title_key("テーマセッション3：法ドメインにおける言語処理（ポスター）"): "TS3-q",
     normalize_session_title_key("TS3:テーマセッション3：法ドメインにおける言語処理（ポスター）"): "TS3-q",
     normalize_session_title_key("テーマセッション3：法ドメインにおける言語処理（総合討論）"): "TS3-a",
     normalize_session_title_key("TS3:テーマセッション3：法ドメインにおける言語処理（総合討論）"): "TS3-a",
-    normalize_session_title_key("テーマセッション4：大規模言語モデル時代の数式NLP：表現・推論・検証の実務基盤（ポスター）"): "TS4-q",
-    normalize_session_title_key("TS4:テーマセッション4：大規模言語モデル時代の数式NLP：表現・推論・検証の実務基盤（ポスター）"): "TS4-q",
-    normalize_session_title_key("テーマセッション4：大規模言語モデル時代の数式NLP：表現・推論・検証の実務基盤（総合討論）"): "TS4-a",
-    normalize_session_title_key("TS4:テーマセッション4：大規模言語モデル時代の数式NLP：表現・推論・検証の実務基盤（総合討論）"): "TS4-a",
+    normalize_session_title_key(
+        "テーマセッション4：大規模言語モデル時代の数式NLP：表現・推論・検証の実務基盤（ポスター）"
+    ): "TS4-q",
+    normalize_session_title_key(
+        "TS4:テーマセッション4：大規模言語モデル時代の数式NLP：表現・推論・検証の実務基盤（ポスター）"
+    ): "TS4-q",
+    normalize_session_title_key(
+        "テーマセッション4：大規模言語モデル時代の数式NLP：表現・推論・検証の実務基盤（総合討論）"
+    ): "TS4-a",
+    normalize_session_title_key(
+        "TS4:テーマセッション4：大規模言語モデル時代の数式NLP：表現・推論・検証の実務基盤（総合討論）"
+    ): "TS4-a",
 }
 
 
@@ -175,7 +195,7 @@ def split_rooms(raw: str) -> list[str]:
                 elif raw[suffix_end] == ")":
                     depth -= 1
                     if depth == 0:
-                        suffix = raw[cursor + 1:suffix_end]
+                        suffix = raw[cursor + 1 : suffix_end]
                         matches.extend(f"{prefix}({suffix})" for prefix in prefixes)
                         i = suffix_end + 1
                         break
@@ -190,11 +210,7 @@ def split_rooms(raw: str) -> list[str]:
     if matches:
         return [normalize_room_name(match) for match in matches]
 
-    return [
-        normalize_room_name(part)
-        for part in re.split(r"\s*[、，,／/]\s*", raw)
-        if part
-    ]
+    return [normalize_room_name(part) for part in re.split(r"\s*[、，,／/]\s*", raw) if part]
 
 
 def parse_header_text(text: str) -> dict:
@@ -220,6 +236,7 @@ def parse_header_text(text: str) -> dict:
 
 
 # ─── HTMLパーサー（生データ収集） ─────────────────────────────────
+
 
 class ProgramParser(HTMLParser):
     """生の発表・セッション・著者データを収集する。正規化は normalize() で行う。"""
@@ -252,9 +269,9 @@ class ProgramParser(HTMLParser):
         # pid 行で収集（行単位でリセット）
         self._td_is_pid = False
         self._span_pid_id: str = ""
-        self._row_is_oral: bool = False           # span id が ORAL 末尾
+        self._row_is_oral: bool = False  # span id が ORAL 末尾
         self._row_oral_session_ref: str | None = None  # (A1) リンク先
-        self._row_is_online: bool = False         # 💻 マーク
+        self._row_is_online: bool = False  # 💻 マーク
 
         # タイトル行確定後に保持（著者行で参照）
         self._cur_pid: str = ""
@@ -485,8 +502,7 @@ class ProgramParser(HTMLParser):
                 self._in_session_table = False
 
         if tag == "div":
-            if (self._cur_session is not None
-                    and self._session_div_depth == self._global_div_depth):
+            if self._cur_session is not None and self._session_div_depth == self._global_div_depth:
                 self._finalize_special_session()
                 if self._cur_session.get("id"):
                     self.raw_sessions.append(self._cur_session)
@@ -518,18 +534,20 @@ class ProgramParser(HTMLParser):
 
         pres_id = f"{self._cur_session['id']}-1"
         authors, presenter_name = parse_speakers(self._cur_body_speakers)
-        self.raw_presentations.append({
-            "id": pres_id,
-            "title": self._cur_body_title,
-            "authors": authors,
-            "presenter_name": presenter_name,
-            "session_id": self._cur_session["id"],
-            "pdf_url": None,
-            "is_oral": False,
-            "oral_session_ref": None,
-            "is_online": False,
-            "is_english": False,
-        })
+        self.raw_presentations.append(
+            {
+                "id": pres_id,
+                "title": self._cur_body_title,
+                "authors": authors,
+                "presenter_name": presenter_name,
+                "session_id": self._cur_session["id"],
+                "pdf_url": None,
+                "is_oral": False,
+                "oral_session_ref": None,
+                "is_online": False,
+                "is_english": False,
+            }
+        )
         self._cur_session["presentation_ids"].append(pres_id)
 
     def _flush_presentation_row(self) -> None:
@@ -551,18 +569,20 @@ class ProgramParser(HTMLParser):
             authors, presenter_name, is_english = parse_authors(authors_raw)
 
             if self._cur_title and self._cur_session:
-                self.raw_presentations.append({
-                    "id": self._cur_pid,
-                    "title": self._cur_title,
-                    "authors": authors,           # [{"name": ..., "affiliation": ...}]
-                    "presenter_name": presenter_name,
-                    "session_id": self._cur_session["id"],
-                    "pdf_url": self._cur_pdf_url,
-                    "is_oral": self._cur_is_oral,
-                    "oral_session_ref": self._cur_oral_session_ref,
-                    "is_online": self._cur_is_online,
-                    "is_english": is_english,
-                })
+                self.raw_presentations.append(
+                    {
+                        "id": self._cur_pid,
+                        "title": self._cur_title,
+                        "authors": authors,  # [{"name": ..., "affiliation": ...}]
+                        "presenter_name": presenter_name,
+                        "session_id": self._cur_session["id"],
+                        "pdf_url": self._cur_pdf_url,
+                        "is_oral": self._cur_is_oral,
+                        "oral_session_ref": self._cur_oral_session_ref,
+                        "is_online": self._cur_is_online,
+                        "is_english": is_english,
+                    }
+                )
                 self._cur_session["presentation_ids"].append(self._cur_pid)
 
             self._cur_pid = ""
@@ -589,14 +609,17 @@ class ProgramParser(HTMLParser):
             if m.group(2):
                 presenter_ids.append(pid)
 
-        self.raw_persons.append({
-            "name": name,
-            "paper_ids": paper_ids,
-            "presenter_paper_ids": presenter_ids,
-        })
+        self.raw_persons.append(
+            {
+                "name": name,
+                "paper_ids": paper_ids,
+                "presenter_paper_ids": presenter_ids,
+            }
+        )
 
 
 # ─── 後処理・正規化 ───────────────────────────────────────────────
+
 
 def fix_urls(raw_presentations: list[dict], base_url: str) -> None:
     """pdf_url が相対URLの場合、base_url を基準に絶対URLへ変換する。"""
@@ -630,7 +653,7 @@ def normalize(
     name_to_pid: dict[str, str] = {}
 
     for i, rp in enumerate(raw_persons):
-        pid = f"p{i+1:04d}"
+        pid = f"p{i + 1:04d}"
         persons[pid] = {"name": rp["name"]}
         name_to_pid[rp["name"]] = pid
 
@@ -697,9 +720,7 @@ def normalize(
             aff_id = get_or_create_aff(a["affiliation"]) if a["affiliation"] else None
             norm_authors.append({"person_id": person_id, "affiliation_id": aff_id})
 
-        presenter_id = (
-            name_to_pid.get(entry["presenter_name"]) if entry["presenter_name"] else None
-        )
+        presenter_id = name_to_pid.get(entry["presenter_name"]) if entry["presenter_name"] else None
 
         p: dict = {
             "title": entry["title"],
@@ -813,59 +834,51 @@ def load_workshop_config(path: Path | None) -> dict[str, dict]:
                 raise ValueError(f"workshop.json[{sid!r}].sessions は配列である必要があります")
             for i, session in enumerate(sessions, start=1):
                 if not isinstance(session, dict):
-                    raise ValueError(f"workshop.json[{sid!r}].sessions[{i-1}] は object である必要があります")
+                    raise ValueError(f"workshop.json[{sid!r}].sessions[{i - 1}] は object である必要があります")
                 child_id = session.get("id")
                 title = session.get("title")
                 child_start = session.get("start_time")
                 child_end = session.get("end_time")
                 if not isinstance(child_id, str) or not child_id:
-                    raise ValueError(f"workshop.json[{sid!r}].sessions[{i-1}].id は必須です")
+                    raise ValueError(f"workshop.json[{sid!r}].sessions[{i - 1}].id は必須です")
                 if not isinstance(title, str) or not title:
-                    raise ValueError(f"workshop.json[{sid!r}].sessions[{i-1}].title は必須です")
+                    raise ValueError(f"workshop.json[{sid!r}].sessions[{i - 1}].title は必須です")
                 if not isinstance(child_start, str) or not _TIME_RE.fullmatch(child_start):
-                    raise ValueError(
-                        f"workshop.json[{sid!r}].sessions[{i-1}].start_time は H:MM 形式で必須です"
-                    )
+                    raise ValueError(f"workshop.json[{sid!r}].sessions[{i - 1}].start_time は H:MM 形式で必須です")
                 if not isinstance(child_end, str) or not _TIME_RE.fullmatch(child_end):
-                    raise ValueError(
-                        f"workshop.json[{sid!r}].sessions[{i-1}].end_time は H:MM 形式で必須です"
-                    )
+                    raise ValueError(f"workshop.json[{sid!r}].sessions[{i - 1}].end_time は H:MM 形式で必須です")
                 presentations = session.get("presentations")
                 if presentations is not None:
                     if not isinstance(presentations, list):
                         raise ValueError(
-                            f"workshop.json[{sid!r}].sessions[{i-1}].presentations は配列である必要があります"
+                            f"workshop.json[{sid!r}].sessions[{i - 1}].presentations は配列である必要があります"
                         )
                     for j, presentation in enumerate(presentations, start=1):
                         if not isinstance(presentation, dict):
-                            raise ValueError(
-                                f"workshop.json[{sid!r}].sessions[{i-1}].presentations[{j-1}] は object である必要があります"
-                            )
+                            presentation_path = f"workshop.json[{sid!r}].sessions[{i - 1}].presentations[{j - 1}]"
+                            raise ValueError(f"{presentation_path} は object である必要があります")
                         pid = presentation.get("id")
                         ptitle = presentation.get("title")
                         authors = presentation.get("authors")
                         if not isinstance(pid, str) or not pid:
                             raise ValueError(
-                                f"workshop.json[{sid!r}].sessions[{i-1}].presentations[{j-1}].id は必須です"
+                                f"workshop.json[{sid!r}].sessions[{i - 1}].presentations[{j - 1}].id は必須です"
                             )
                         if not isinstance(ptitle, str) or not ptitle:
                             raise ValueError(
-                                f"workshop.json[{sid!r}].sessions[{i-1}].presentations[{j-1}].title は必須です"
+                                f"workshop.json[{sid!r}].sessions[{i - 1}].presentations[{j - 1}].title は必須です"
                             )
                         if authors is not None:
                             if not isinstance(authors, list):
-                                raise ValueError(
-                                    f"workshop.json[{sid!r}].sessions[{i-1}].presentations[{j-1}].authors は配列である必要があります"
-                                )
+                                presentation_path = f"workshop.json[{sid!r}].sessions[{i - 1}].presentations[{j - 1}]"
+                                raise ValueError(f"{presentation_path}.authors は配列である必要があります")
                             for k, author in enumerate(authors, start=1):
                                 if not isinstance(author, dict):
-                                    raise ValueError(
-                                        f"workshop.json[{sid!r}].sessions[{i-1}].presentations[{j-1}].authors[{k-1}] は object である必要があります"
-                                    )
+                                    author_path = f"{presentation_path}.authors[{k - 1}]"
+                                    raise ValueError(f"{author_path} は object である必要があります")
                                 if not isinstance(author.get("name"), str) or not author["name"]:
-                                    raise ValueError(
-                                        f"workshop.json[{sid!r}].sessions[{i-1}].presentations[{j-1}].authors[{k-1}].name は必須です"
-                                    )
+                                    author_path = f"{presentation_path}.authors[{k - 1}]"
+                                    raise ValueError(f"{author_path}.name は必須です")
 
         config[sid] = entry
 
@@ -953,10 +966,12 @@ def apply_workshop_overrides(result: dict, workshop_config: dict[str, dict]) -> 
                 for author in authors:
                     person_id = get_or_create_person(author["name"])
                     affiliation_id = get_or_create_affiliation(author.get("affiliation"))
-                    normalized_authors.append({
-                        "person_id": person_id,
-                        "affiliation_id": affiliation_id,
-                    })
+                    normalized_authors.append(
+                        {
+                            "person_id": person_id,
+                            "affiliation_id": affiliation_id,
+                        }
+                    )
 
                 presenter_name = presentation.get("presenter")
                 if presenter_name is None and authors:
@@ -1122,23 +1137,30 @@ class ScheduleTableParser(HTMLParser):
             m2 = re.match(r"(\d{1,2}:\d{2})-(\d{1,2}:\d{2})", self._row_time)
             start_time = m2.group(1) if m2 else self._row_time
             end_time = m2.group(2) if m2 else ""
-            self.special_events.append({
-                "title": title,
-                "date": self._current_date,
-                "start_time": start_time,
-                "end_time": end_time,
-                "rooms": split_rooms(venue),
-                "url": self._external_url,
-            })
+            self.special_events.append(
+                {
+                    "title": title,
+                    "date": self._current_date,
+                    "start_time": start_time,
+                    "end_time": end_time,
+                    "rooms": split_rooms(venue),
+                    "url": self._external_url,
+                }
+            )
 
 
 # ─── メイン ───────────────────────────────────────────────────────
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="NLP2026 プログラムHTML→JSON 抽出スクリプト")
     parser.add_argument("--html", required=True, help="入力HTMLファイルパス")
     parser.add_argument("--out", required=True, help="出力JSONファイルパス")
-    parser.add_argument("--base-url", default=None, help="PDF等の相対URLを解決する基底URL (例: https://www.anlp.jp/proceedings/)")
+    parser.add_argument(
+        "--base-url",
+        default=None,
+        help="PDF等の相対URLを解決する基底URL (例: https://www.anlp.jp/proceedings/)",
+    )
     parser.add_argument(
         "--workshop-config",
         default="workshop.json",
@@ -1194,7 +1216,7 @@ def main() -> None:
     apply_workshop_overrides(result, workshop_config)
 
     pres = result["presentations"]
-    oral_count   = sum(1 for p in pres.values() if p.get("oral_session_id"))
+    oral_count = sum(1 for p in pres.values() if p.get("oral_session_id"))
     online_count = sum(1 for p in pres.values() if p.get("is_online"))
     english_count = sum(1 for p in pres.values() if p.get("is_english"))
 

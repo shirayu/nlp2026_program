@@ -49,13 +49,16 @@ tasks:
       - pnpm exec vitest run
 
   lint:
-    desc: "Biome で lint を実行"
+    desc: "Biome と Ruff で lint を実行"
     cmds:
+      - uv run --group dev ruff check .
       - pnpm exec biome check .
 
   format:
-    desc: "Biome で整形と import 整理を実行"
+    desc: "Biome と Ruff で整形と import 整理を実行"
     cmds:
+      - uv run --group dev ruff check --fix .
+      - uv run --group dev ruff format .
       - pnpm exec biome check --write .
 
   preview:
@@ -77,7 +80,7 @@ tasks:
       OUT: '{{.OUT | default "public/data.json"}}'
       BASE_URL: '{{.BASE_URL | default "https://www.anlp.jp/proceedings/annual_meeting/2026/"}}'
     cmds:
-      - 'python3 extract.py --html {{.HTML}} --out {{.OUT}} --base-url {{.BASE_URL}}'
+      - 'uv run extract.py --html {{.HTML}} --out {{.OUT}} --base-url {{.BASE_URL}}'
     sources:
       - extract.py
       - "{{.HTML}}"
