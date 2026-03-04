@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp, Star } from "lucide-react";
+import { ChevronDown, ChevronUp, Hash, Star } from "lucide-react";
 import { forwardRef, memo } from "react";
 import { getRoomTheme, getSessionRoomNames, sessionRoomsLabel } from "../constants";
 import { formatSessionDateTime } from "../lib/date";
@@ -15,6 +15,7 @@ export const SessionCard = memo(
       bookmarkedSessionIds: Set<SessionId>;
       sessionId: SessionId;
       session: ConferenceData["sessions"][string];
+      sessionSlackUrl?: string;
       presIds: PresentationId[];
       data: ConferenceData;
       showAuthors: boolean;
@@ -32,6 +33,7 @@ export const SessionCard = memo(
       bookmarkedSessionIds,
       sessionId,
       session,
+      sessionSlackUrl,
       presIds,
       data,
       showAuthors,
@@ -62,6 +64,15 @@ export const SessionCard = memo(
               <HighlightedText text={session.title || sessionId} query={query} />
             </h2>
             <div className="flex shrink-0 items-center gap-1">
+              {sessionSlackUrl && (
+                <a
+                  href={sessionSlackUrl}
+                  className={`rounded-full p-1 transition-colors hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-indigo-400 ${roomTheme.title}`}
+                  aria-label={ja.openSessionSlack}
+                >
+                  <Hash className="h-4 w-4" />
+                </a>
+              )}
               <button
                 type="button"
                 onClick={() => onToggleSessionBookmark(sessionId)}

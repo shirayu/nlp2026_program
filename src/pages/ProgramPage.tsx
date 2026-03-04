@@ -643,7 +643,7 @@ function SettingsDialog({
 }
 
 export default function ProgramPage() {
-  const data = useConferenceData();
+  const { data, sessionSlackLinks } = useConferenceData();
   const {
     bookmarkIds,
     sessionBookmarkIds,
@@ -946,6 +946,7 @@ export default function ProgramPage() {
               bookmarkedSessionIds={bookmarkedSessionIds}
               sessionId={sessionId}
               session={session}
+              sessionSlackUrl={sessionSlackLinks[sessionId]}
               presIds={presIds}
               data={data}
               showAuthors={showAuthors}

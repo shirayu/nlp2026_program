@@ -51,6 +51,11 @@ export interface Presentation {
   pdf_url: string | null;
 }
 
+export interface SessionSlackLink {
+  session_id: SessionId;
+  url: string;
+}
+
 export interface ConferenceData {
   persons: Record<PersonId, Person>;
   affiliations: Record<AffiliationId, Affiliation>;
