@@ -16,6 +16,7 @@ import json
 import re
 import sys
 import unicodedata
+from datetime import UTC, datetime
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any, NotRequired, TypedDict
@@ -1118,6 +1119,7 @@ class SessionRecord(BaseModel):
 class DataJsonRecord(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
+    generated_at: str | None = None
     persons: dict[str, PersonRecord]
     affiliations: dict[str, AffiliationRecord]
     rooms: dict[str, RoomRecord]
@@ -1555,6 +1557,7 @@ def main() -> None:
     if args.base_url:
         fix_urls(p.raw_presentations, args.base_url)
     result = normalize(p.raw_sessions, p.raw_presentations, p.raw_persons)
+    result["generated_at"] = datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
     # スケジュール表にのみ存在する特殊イベントをセッションとして追加
     for ev in sp.special_events:

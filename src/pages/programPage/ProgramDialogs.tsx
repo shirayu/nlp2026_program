@@ -129,6 +129,7 @@ export function InstallDialog({
 export function SettingsDialog({
   dialogRef,
   open,
+  dataGeneratedAt,
   showAuthors,
   useSlackAppLinks,
   onClose,
@@ -137,6 +138,7 @@ export function SettingsDialog({
 }: {
   dialogRef: RefObject<HTMLDialogElement | null>;
   open: boolean;
+  dataGeneratedAt?: string;
   showAuthors: boolean;
   useSlackAppLinks: boolean;
   onClose: () => void;
@@ -144,6 +146,7 @@ export function SettingsDialog({
   onToggleUseSlackAppLinks: () => void;
 }) {
   const formattedBuildGitDate = formatBuildGitDate(BUILD_GIT_DATE);
+  const formattedDataGeneratedAt = dataGeneratedAt ? formatBuildGitDate(dataGeneratedAt) : null;
   const buildCommitUrl =
     BUILD_GIT_HASH === "unknown" ? null : `${PROJECT_REPOSITORY_URL}/commit/${encodeURIComponent(BUILD_GIT_HASH)}`;
 
@@ -254,6 +257,12 @@ export function SettingsDialog({
                   <dt className="text-gray-500">{ja.gitDate}</dt>
                   <dd className="min-w-0 break-all font-mono text-left text-gray-800">{formattedBuildGitDate}</dd>
                 </div>
+                {formattedDataGeneratedAt && (
+                  <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
+                    <dt className="text-gray-500">{ja.dataGeneratedAt}</dt>
+                    <dd className="min-w-0 break-all font-mono text-left text-gray-800">{formattedDataGeneratedAt}</dd>
+                  </div>
+                )}
               </dl>
             </section>
           </div>

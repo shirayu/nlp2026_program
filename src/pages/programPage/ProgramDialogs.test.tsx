@@ -18,6 +18,7 @@ describe("SettingsDialog", () => {
       <SettingsDialog
         dialogRef={{ current: null }}
         open
+        dataGeneratedAt="2026-03-05T01:44:12Z"
         showAuthors
         useSlackAppLinks={false}
         onClose={() => {}}
@@ -29,6 +30,7 @@ describe("SettingsDialog", () => {
     expect(html).toContain("ビルド情報");
     expect(html).toContain(BUILD_GIT_HASH);
     expect(html).toContain("Git hash");
-    expect(html).toContain("Local time");
+    expect(html).toContain("Build time");
+    expect(html).toContain("Data time");
   });
 });

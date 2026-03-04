@@ -73,6 +73,7 @@ export function ProgramOverlays({
       <SettingsDialog
         dialogRef={settingsDialogRef}
         open={showSettings}
+        dataGeneratedAt={data.generated_at}
         showAuthors={showAuthors}
         useSlackAppLinks={useSlackAppLinks}
         onClose={onCloseSettings}

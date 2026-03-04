@@ -15,6 +15,7 @@
 
 ```json
 {
+  "generated_at":  "2026-03-05T01:44:12Z",
   "persons":       { "p0001": Person, ... },
   "affiliations":  { "a0001": Affiliation, ... },
   "rooms":         { "r0001": Room, ... },
@@ -25,6 +26,7 @@
 
 | フィールド | 型 | 説明 |
 |---|---|---|
+| `generated_at` | `string \| null` | `data.json` の生成日時（UTC の ISO 8601 形式。例: `2026-03-05T01:44:12Z`） |
 | `persons` | `Record<PersonId, Person>` | 人物マスタ。著者索引を正典とし、索引外の著者も含む |
 | `affiliations` | `Record<AffiliationId, Affiliation>` | 所属機関マスタ |
 | `rooms` | `Record<RoomId, Room>` | 会場マスタ |

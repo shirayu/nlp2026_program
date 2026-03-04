@@ -64,6 +64,7 @@ export interface AppSettings {
 }
 
 export interface ConferenceData {
+  generated_at?: string;
   persons: Record<PersonId, Person>;
   affiliations: Record<AffiliationId, Affiliation>;
   rooms: Record<RoomId, Room>;
