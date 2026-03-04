@@ -20,6 +20,7 @@ import {
   isStandaloneMode,
   isWorkshopParentSession,
   shouldDisableFilters,
+  shouldExitBookmarkFilter,
   syncSearchAllWithBookmarkFilter,
   toMinutes,
 } from "./utils";
@@ -198,6 +199,15 @@ export function useProgramPageState() {
     return filteredSessions.reduce((total, item) => total + item.presIds.length, 0);
   }, [filteredSessions]);
 
+  useEffect(() => {
+    if (!shouldExitBookmarkFilter(bookmarkCount, showBookmarkedOnly)) {
+      return;
+    }
+
+    setShowBookmarkedOnly(false);
+    mainRef.current?.scrollTo({ top: 0 });
+  }, [bookmarkCount, showBookmarkedOnly]);
+
   function scrollContentToTop() {
     mainRef.current?.scrollTo({ top: 0 });
   }
@@ -228,6 +238,10 @@ export function useProgramPageState() {
   }
 
   function toggleBookmarkFilter() {
+    if (bookmarkCount === 0 && !showBookmarkedOnly) {
+      return;
+    }
+
     setShowBookmarkedOnly((value) => {
       const nextValue = !value;
       setSearchAll((current) => syncSearchAllWithBookmarkFilter(current, nextValue));

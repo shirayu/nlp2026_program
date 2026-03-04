@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import type { Session } from "../types";
 import { fullscreenDialogClassName, getNextScheduleTimePoint, SearchField } from "./ProgramPage";
 import { ProgramHeader } from "./programPage/ProgramHeader";
-import { shouldDisableFilters, syncSearchAllWithBookmarkFilter } from "./programPage/utils";
+import { shouldDisableFilters, shouldExitBookmarkFilter, syncSearchAllWithBookmarkFilter } from "./programPage/utils";
 
 function localDate(year: number, month: number, day: number, hour: number, minute: number, second = 0) {
   return new Date(year, month - 1, day, hour, minute, second);
@@ -159,6 +159,48 @@ describe("ProgramHeader", () => {
     expect(html).toContain('<div aria-disabled="false" class="bg-white">');
   });
 
+  it("ブックマーク0件ではブックマーク一覧表示ボタンを無効化する", () => {
+    const html = renderToStaticMarkup(
+      createElement(ProgramHeader, {
+        query: "",
+        isSearching: false,
+        searchAll: true,
+        bookmarkCount: 0,
+        bookmarkFilterActive: false,
+        showSettings: false,
+        showInstallButton: false,
+        showInstallDialog: false,
+        slackUrl: null,
+        slackAppUrl: null,
+        useSlackAppLinks: false,
+        allDates: ["2026-03-09"],
+        filtersDisabled: false,
+        selectedDate: null,
+        showFilters: true,
+        allTimes: ["9:00", "9:05"],
+        timelineSegments: [true],
+        selectedTime: null,
+        nowEnabled: false,
+        rooms: ["A会場"],
+        selectedRoom: null,
+        onQueryCommit: () => {},
+        onToggleSearchAll: () => {},
+        onToggleBookmarkFilter: () => {},
+        onOpenSettings: () => {},
+        onOpenInstallDialog: () => {},
+        onSelectDate: () => {},
+        onToggleFilters: () => {},
+        onSelectTime: () => {},
+        onSelectNow: () => {},
+        onSelectRoom: () => {},
+      }),
+    );
+
+    expect(html).toContain('aria-label="ブックマーク済みのみ表示"');
+    expect(html).toContain('disabled=""');
+    expect(html).toContain("cursor-not-allowed text-gray-400");
+  });
+
   it("ブックマーク全体表示中なら空クエリでもトグルを表示し絞り込みをグレーアウトする", () => {
     const html = renderToStaticMarkup(
       createElement(ProgramHeader, {
@@ -274,5 +316,19 @@ describe("shouldDisableFilters", () => {
 
   it("全日程検索オフなら絞り込みを無効化しない", () => {
     expect(shouldDisableFilters(false, "NLP", true)).toBe(false);
+  });
+});
+
+describe("shouldExitBookmarkFilter", () => {
+  it("ブックマーク一覧表示中に0件なら一覧表示を解除する", () => {
+    expect(shouldExitBookmarkFilter(0, true)).toBe(true);
+  });
+
+  it("ブックマークが残っていれば一覧表示を維持する", () => {
+    expect(shouldExitBookmarkFilter(1, true)).toBe(false);
+  });
+
+  it("一覧表示していなければ0件でも何もしない", () => {
+    expect(shouldExitBookmarkFilter(0, false)).toBe(false);
   });
 });

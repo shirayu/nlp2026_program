@@ -112,6 +112,10 @@ export function syncSearchAllWithBookmarkFilter(searchAll: boolean, nextBookmark
   return nextBookmarkedOnly ? true : searchAll;
 }
 
+export function shouldExitBookmarkFilter(bookmarkCount: number, bookmarkedOnly: boolean): boolean {
+  return bookmarkedOnly && bookmarkCount === 0;
+}
+
 export function shouldDisableFilters(searchAll: boolean, trimmedQuery: string, bookmarkedOnly: boolean): boolean {
   return searchAll && (trimmedQuery.length > 0 || bookmarkedOnly);
 }

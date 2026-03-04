@@ -44,6 +44,7 @@ function FilterHeader({
 }) {
   const trimmedQuery = query.trim();
   const searchScopeLabel = searchAll ? ja.searchAll : ja.searchFiltered;
+  const bookmarkButtonDisabled = bookmarkCount === 0 && !bookmarkFilterActive;
 
   return (
     <div className="px-4 pt-3 pb-2">
@@ -104,8 +105,15 @@ function FilterHeader({
           )}
           <button
             type="button"
+            disabled={bookmarkButtonDisabled}
             onClick={onToggleBookmarkFilter}
-            className={`relative rounded-full p-1.5 transition-colors ${bookmarkFilterActive ? "bg-amber-100 text-amber-600" : bookmarkCount > 0 ? "text-amber-500 hover:text-amber-600" : "text-gray-400 hover:text-gray-600"}`}
+            className={`relative rounded-full p-1.5 transition-colors ${
+              bookmarkButtonDisabled
+                ? "cursor-not-allowed text-gray-400"
+                : bookmarkFilterActive
+                  ? "bg-amber-100 text-amber-600"
+                  : "text-amber-500 hover:text-amber-600"
+            }`}
             aria-label={ja.openBookmarks}
             aria-pressed={bookmarkFilterActive}
           >
