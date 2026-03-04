@@ -4,6 +4,7 @@ import { ja } from "../locales/ja";
 type TimelineFilterProps = {
   points: string[];
   activeSegments: boolean[];
+  selectedDate: string | null;
   selectedTime: string | null;
   onChange: (time: string | null) => void;
   onSelectNow: () => void;
@@ -14,6 +15,29 @@ type TimelineFilterProps = {
 function toMinutes(time: string): number {
   const [hour, minute] = time.split(":").map(Number);
   return hour * 60 + minute;
+}
+
+function toLocalIsoDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function getPastTimeSet(points: string[], selectedDate: string | null, now: Date) {
+  if (!selectedDate) return new Set<string>();
+
+  const today = toLocalIsoDate(now);
+  if (selectedDate < today) {
+    return new Set(points);
+  }
+
+  if (selectedDate > today) {
+    return new Set<string>();
+  }
+
+  const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+  return new Set(points.filter((time) => toMinutes(time) * 60 < currentSeconds));
 }
 
 function buildTimelineMarks(points: string[], selectedTime: string | null) {
@@ -45,10 +69,11 @@ function buildTimelineMarks(points: string[], selectedTime: string | null) {
   });
 }
 
-function buildTimelineSegments(points: string[], activeSegments: boolean[]) {
+function buildTimelineSegments(points: string[], activeSegments: boolean[], pastTimes: Set<string>) {
   return activeSegments.map((isActive, index) => ({
     key: `${points[index] ?? "start"}-${points[index + 1] ?? "end"}`,
     isActive,
+    past: pastTimes.has(points[index] ?? ""),
   }));
 }
 
@@ -100,6 +125,7 @@ function TimelineActions({
 export function TimelineFilter({
   points,
   activeSegments,
+  selectedDate,
   selectedTime,
   onChange,
   onSelectNow,
@@ -111,8 +137,9 @@ export function TimelineFilter({
   const maxIndex = Math.max(points.length - 1, 0);
   const thumbLeft = maxIndex === 0 ? 0 : (sliderValue / maxIndex) * 100;
   const isUnspecified = selectedTime === null;
+  const pastTimes = getPastTimeSet(points, selectedDate, new Date());
   const marks = buildTimelineMarks(points, selectedTime);
-  const segments = buildTimelineSegments(points, activeSegments);
+  const segments = buildTimelineSegments(points, activeSegments, pastTimes);
 
   return (
     <div className={`border-t border-gray-100 px-3 py-3 ${disabled ? "opacity-50" : ""}`}>
@@ -131,7 +158,9 @@ export function TimelineFilter({
               {segments.map((segment) => (
                 <div
                   key={segment.key}
-                  className={`h-full flex-1 ${!isUnspecified && segment.isActive ? "bg-teal-200" : "bg-slate-100"}`}
+                  className={`h-full flex-1 ${
+                    !isUnspecified && segment.isActive ? (segment.past ? "bg-gray-600" : "bg-teal-200") : "bg-slate-100"
+                  }`}
                 />
               ))}
             </div>

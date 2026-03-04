@@ -391,6 +391,7 @@ export function ProgramHeader({
             <TimelineFilter
               points={allTimes}
               activeSegments={timelineSegments}
+              selectedDate={selectedDate}
               selectedTime={selectedTime}
               onChange={onSelectTime}
               onSelectNow={onSelectNow}
