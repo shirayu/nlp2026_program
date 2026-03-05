@@ -301,11 +301,14 @@ export function InstallDialog({
             style={{ scrollbarGutter: "stable" }}
           >
             <div className="space-y-2">
-              <p>{ja.installGuideLead}</p>
-              <p>{ja.installGuideDescription}</p>
-              <p>{ja.installGuideUpdateDescription}</p>
+              <p>
+                {ja.installGuideLead}
+                {ja.installGuideDescription}
+                <br />
+                {ja.installGuideUpdateDescription}
+              </p>
             </div>
-            <div>
+            <div className="space-y-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
               <InstallActionSection
                 installContext={installContext}
                 hasInstallPrompt={hasInstallPrompt}

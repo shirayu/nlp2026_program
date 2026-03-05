@@ -43,7 +43,7 @@ export const ja = {
   openInstallGuide: "ホーム画面への追加案内を開く",
   openDisplaySettings: "表示設定を開く",
   openBookmarks: "ブックマーク済みのみ表示",
-  installApp: "ホーム画面に追加",
+  installApp: "アプリ管理",
   closeInstallGuide: "ホーム画面への追加案内を閉じる",
   installGuideLead: "ホーム画面に追加すると、予定表を1タップですぐ開けます。",
   installGuideDescription: "一度開いておくと、電波が弱い場所でも使いやすくなります。",
