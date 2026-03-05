@@ -133,7 +133,7 @@ export function SettingsDialog({
   dialogRef,
   open,
   dataGeneratedAt,
-  originalProgramLastUpdatedAt,
+  programMainLastUpdatedAt,
   isReloadingData,
   reloadDataStatus,
   showAuthors,
@@ -146,7 +146,7 @@ export function SettingsDialog({
   dialogRef: RefObject<HTMLDialogElement | null>;
   open: boolean;
   dataGeneratedAt?: string;
-  originalProgramLastUpdatedAt?: string;
+  programMainLastUpdatedAt?: string;
   isReloadingData: boolean;
   reloadDataStatus: DataReloadStatus;
   showAuthors: boolean;
@@ -158,8 +158,8 @@ export function SettingsDialog({
 }) {
   const formattedBuildGitDate = formatBuildGitDate(BUILD_GIT_DATE);
   const formattedDataGeneratedAt = dataGeneratedAt ? formatBuildGitDate(dataGeneratedAt) : null;
-  const formattedOriginalProgramLastUpdatedAt = originalProgramLastUpdatedAt
-    ? formatBuildGitDate(originalProgramLastUpdatedAt, undefined, "Asia/Tokyo")
+  const formattedProgramMainLastUpdatedAt = programMainLastUpdatedAt
+    ? formatBuildGitDate(programMainLastUpdatedAt, undefined, "Asia/Tokyo")
     : null;
 
   return (
@@ -243,6 +243,26 @@ export function SettingsDialog({
               </div>
               {reloadDataStatus === "no_change" && <p className="mt-2 text-xs text-gray-500">{ja.reloadNoChanges}</p>}
               {reloadDataStatus === "error" && <p className="mt-2 text-xs text-rose-600">{ja.reloadFailed}</p>}
+              {(formattedDataGeneratedAt || formattedProgramMainLastUpdatedAt) && (
+                <dl className="mt-3 space-y-2 border-t border-gray-200 pt-3 text-sm">
+                  {formattedDataGeneratedAt && (
+                    <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
+                      <dt className="text-gray-500">{ja.dataGeneratedAt}</dt>
+                      <dd className="min-w-0 break-all font-mono text-left text-gray-800">
+                        {formattedDataGeneratedAt}
+                      </dd>
+                    </div>
+                  )}
+                  {formattedProgramMainLastUpdatedAt && (
+                    <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
+                      <dt className="text-gray-500">{ja.programMainLastUpdatedAt}</dt>
+                      <dd className="min-w-0 break-all font-mono text-left text-gray-800">
+                        {formattedProgramMainLastUpdatedAt}
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+              )}
             </section>
             <section className="mt-4 rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
               <h3 className="text-sm font-semibold text-gray-800">{ja.aboutAuthor}</h3>
@@ -290,20 +310,6 @@ export function SettingsDialog({
                   <dt className="text-gray-500">{ja.gitDate}</dt>
                   <dd className="min-w-0 break-all font-mono text-left text-gray-800">{formattedBuildGitDate}</dd>
                 </div>
-                {formattedDataGeneratedAt && (
-                  <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
-                    <dt className="text-gray-500">{ja.dataGeneratedAt}</dt>
-                    <dd className="min-w-0 break-all font-mono text-left text-gray-800">{formattedDataGeneratedAt}</dd>
-                  </div>
-                )}
-                {formattedOriginalProgramLastUpdatedAt && (
-                  <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
-                    <dt className="text-gray-500">{ja.originalProgramLastUpdatedAt}</dt>
-                    <dd className="min-w-0 break-all font-mono text-left text-gray-800">
-                      {formattedOriginalProgramLastUpdatedAt}
-                    </dd>
-                  </div>
-                )}
               </dl>
             </section>
           </div>

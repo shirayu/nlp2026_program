@@ -19,7 +19,7 @@ describe("SettingsDialog", () => {
         dialogRef={{ current: null }}
         open
         dataGeneratedAt="2026-03-05T01:44:12Z"
-        sourceLastUpdatedAt="2026-03-04T09:00:00+09:00"
+        programMainLastUpdatedAt="2026-03-04T09:00:00+09:00"
         isReloadingData={false}
         reloadDataStatus="idle"
         showAuthors
@@ -35,9 +35,10 @@ describe("SettingsDialog", () => {
     expect(html).toContain(BUILD_GIT_HASH);
     expect(html).toContain("Git hash");
     expect(html).toContain("Build time");
-    expect(html).toContain("Data time");
-    expect(html).toContain("最終更新日 (JST)");
-    expect(html).toContain("JST");
+    expect(html).toContain("Data");
+    expect(html).toContain("Main");
+    expect(html).toMatch(/(JST|GMT\+9|GMT\+09:00|UTC\+09:00)/);
+    expect(html.indexOf("データを再取得")).toBeLessThan(html.indexOf("Main"));
   });
 
   it("アイコン凡例を表示する", () => {
@@ -46,7 +47,7 @@ describe("SettingsDialog", () => {
         dialogRef={{ current: null }}
         open
         dataGeneratedAt="2026-03-05T01:44:12Z"
-        sourceLastUpdatedAt="2026-03-04T09:00:00+09:00"
+        programMainLastUpdatedAt="2026-03-04T09:00:00+09:00"
         isReloadingData={false}
         reloadDataStatus="idle"
         showAuthors
@@ -70,7 +71,7 @@ describe("SettingsDialog", () => {
         dialogRef={{ current: null }}
         open
         dataGeneratedAt="2026-03-05T01:44:12Z"
-        sourceLastUpdatedAt="2026-03-04T09:00:00+09:00"
+        programMainLastUpdatedAt="2026-03-04T09:00:00+09:00"
         isReloadingData={false}
         reloadDataStatus="no_change"
         showAuthors

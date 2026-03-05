@@ -100,17 +100,20 @@ class SourceUpdateTimeExtractor:
         self.html_text = html_text
         self.jst = timezone(timedelta(hours=9))
         self.patterns: dict[str, re.Pattern[str]] = {
-            "original_program": re.compile(
+            "program_main": re.compile(
                 r"最終更新日\s*[:：]\s*(\d{4})年\s*(\d{1,2})月\s*(\d{1,2})日\s*(\d{1,2}):(\d{2})"
             ),
         }
 
-    def extract_all(self) -> dict[str, str]:
-        extracted: dict[str, str] = {}
+    def extract_all(self) -> dict[str, dict[str, str | None]]:
+        extracted: dict[str, dict[str, str | None]] = {}
         for key, pattern in self.patterns.items():
             value = self._extract_jst_datetime(pattern)
             if value is not None:
-                extracted[key] = value
+                extracted[key] = {
+                    "blob_hash": None,
+                    "time": value,
+                }
         return extracted
 
     def _extract_jst_datetime(self, pattern: re.Pattern[str]) -> str | None:
@@ -1152,7 +1155,7 @@ class DataJsonRecord(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     generated_at: str | None = None
-    last_update: dict[str, str] | None = None
+    last_update: dict[str, dict[str, str | None]] | None = None
     persons: dict[str, PersonRecord]
     affiliations: dict[str, AffiliationRecord]
     rooms: dict[str, RoomRecord]
