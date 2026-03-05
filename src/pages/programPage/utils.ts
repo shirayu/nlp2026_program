@@ -8,7 +8,7 @@ export type BeforeInstallPromptEvent = Event & {
 };
 
 export const fullscreenDialogClassName =
-  "backdrop:bg-black/40 fixed inset-0 z-50 m-0 h-screen max-h-none w-screen max-w-none overflow-y-auto border-0 bg-transparent p-0";
+  "backdrop:bg-black/40 fixed inset-0 z-50 m-0 h-dvh max-h-none w-screen max-w-none overflow-y-auto border-0 bg-transparent p-0";
 
 export function isIosDevice() {
   if (typeof navigator === "undefined") return false;

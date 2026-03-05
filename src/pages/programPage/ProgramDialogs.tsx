@@ -15,6 +15,12 @@ import { fullscreenDialogClassName } from "./utils";
 
 type LastUpdateRow = { label: string; time: string };
 type AppUpdateStatus = "idle" | "updating" | "no_change" | "error";
+const dialogFramePaddingStyle = {
+  paddingTop: "max(1rem, env(safe-area-inset-top))",
+  paddingRight: "max(1rem, env(safe-area-inset-right))",
+  paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
+  paddingLeft: "max(1rem, env(safe-area-inset-left))",
+} as const;
 
 export function formatBuildGitDate(value: string, locale?: string | string[], timeZone?: string): string {
   if (value === "unknown") return value;
@@ -277,14 +283,14 @@ export function InstallDialog({
 
   return (
     <dialog ref={dialogRef} open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
-      <div className="flex min-h-full items-center justify-center p-4">
+      <div className="flex min-h-dvh items-center justify-center p-4" style={dialogFramePaddingStyle}>
         <button
           type="button"
           aria-label={ja.closeInstallGuide}
           className="fixed inset-0 bg-black/55"
           onClick={onClose}
         />
-        <div className="relative flex max-h-[calc(100vh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
+        <div className="relative flex max-h-[calc(100dvh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
           <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-indigo-50 px-4 py-3">
             <h2 className="text-sm font-bold text-gray-800">{ja.installApp}</h2>
             <button
@@ -297,7 +303,7 @@ export function InstallDialog({
             </button>
           </div>
           <div
-            className="space-y-4 overflow-y-auto px-4 py-4 text-sm text-gray-700"
+            className="min-h-0 space-y-4 overflow-y-auto px-4 py-4 text-sm text-gray-700"
             style={{ scrollbarGutter: "stable" }}
           >
             <div className="space-y-2">
@@ -356,14 +362,14 @@ export function SettingsDialog({
 
   return (
     <dialog ref={dialogRef} open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
-      <div className="flex min-h-full items-center justify-center p-4">
+      <div className="flex min-h-dvh items-center justify-center p-4" style={dialogFramePaddingStyle}>
         <button
           type="button"
           aria-label={ja.closeDisplaySettings}
           className="fixed inset-0 bg-black/55"
           onClick={onClose}
         />
-        <div className="relative flex max-h-[calc(100vh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
+        <div className="relative flex max-h-[calc(100dvh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
           <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-indigo-50 px-4 py-3">
             <h2 className="text-sm font-bold text-gray-800">{ja.settings}</h2>
             <button
@@ -375,7 +381,7 @@ export function SettingsDialog({
               <CloseIcon className="h-5 w-5" />
             </button>
           </div>
-          <div className="space-y-2 overflow-y-auto px-4 py-4" style={{ scrollbarGutter: "stable" }}>
+          <div className="min-h-0 space-y-2 overflow-y-auto px-4 py-4" style={{ scrollbarGutter: "stable" }}>
             <label className="flex items-center justify-between">
               <span className="text-sm text-gray-700">{ja.showAuthors}</span>
               <button
