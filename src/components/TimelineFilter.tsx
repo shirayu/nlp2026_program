@@ -184,6 +184,7 @@ export function TimelineFilter({
   const sliderValue = selectedIndex >= 0 ? selectedIndex : 0;
   const [draftSliderValue, setDraftSliderValue] = useState(sliderValue);
   const isPointerDraggingRef = useRef(false);
+  const lastCommittedTimeRef = useRef<string | null>(selectedTime);
   const maxIndex = Math.max(points.length - 1, 0);
   const thumbLeft = maxIndex === 0 ? 0 : (draftSliderValue / maxIndex) * 100;
   const isUnspecified = selectedTime === null;
@@ -195,8 +196,15 @@ export function TimelineFilter({
     setDraftSliderValue(sliderValue);
   }, [sliderValue]);
 
+  useEffect(() => {
+    lastCommittedTimeRef.current = selectedTime;
+  }, [selectedTime]);
+
   function commitSliderValue(nextValue: number) {
-    onChange(points[nextValue] ?? null);
+    const nextTime = points[nextValue] ?? null;
+    if (nextTime === lastCommittedTimeRef.current) return;
+    lastCommittedTimeRef.current = nextTime;
+    onChange(nextTime);
   }
 
   return (
@@ -241,26 +249,21 @@ export function TimelineFilter({
               onPointerDown={() => {
                 isPointerDraggingRef.current = true;
               }}
-              onPointerUp={(event) => {
-                const nextValue = Number((event.currentTarget as HTMLInputElement).value);
+              onPointerUp={() => {
                 isPointerDraggingRef.current = false;
-                commitSliderValue(nextValue);
               }}
               onPointerCancel={() => {
                 isPointerDraggingRef.current = false;
                 setDraftSliderValue(sliderValue);
               }}
-              onBlur={(event) => {
+              onBlur={() => {
                 if (!isPointerDraggingRef.current) return;
                 isPointerDraggingRef.current = false;
-                commitSliderValue(Number(event.currentTarget.value));
               }}
               onChange={(event) => {
                 const nextValue = Number(event.target.value);
                 setDraftSliderValue(nextValue);
-                if (!isPointerDraggingRef.current) {
-                  commitSliderValue(nextValue);
-                }
+                commitSliderValue(nextValue);
               }}
               disabled={disabled}
               className={`absolute inset-x-0 top-1/2 h-8 -translate-y-1/2 opacity-0 ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}

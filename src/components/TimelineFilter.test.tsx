@@ -117,7 +117,7 @@ describe("TimelineFilter", () => {
     expect(countMatches(html, /bg-teal-200/g)).toBe(3);
   });
 
-  it("ドラッグ中は onChange を確定せず、pointerup で1回だけ確定する", () => {
+  it("ドラッグ中も input ごとに onChange を確定する", () => {
     const onChange = vi.fn();
     const container = document.createElement("div");
     document.body.append(container);
@@ -138,19 +138,21 @@ describe("TimelineFilter", () => {
     });
 
     const slider = container.querySelector('input[type="range"]') as HTMLInputElement;
+    const setNativeValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+    expect(setNativeValue).toBeTypeOf("function");
 
     act(() => {
       slider.dispatchEvent(new Event("pointerdown", { bubbles: true }));
-      slider.value = "2";
-      slider.dispatchEvent(new Event("input", { bubbles: true }));
+      setNativeValue?.call(slider, "2");
+      slider.dispatchEvent(new InputEvent("input", { bubbles: true }));
     });
-    expect(onChange).not.toHaveBeenCalled();
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith("9:10");
 
     act(() => {
       slider.dispatchEvent(new Event("pointerup", { bubbles: true }));
     });
     expect(onChange).toHaveBeenCalledTimes(1);
-    expect(onChange).toHaveBeenCalledWith("9:10");
 
     act(() => {
       root.unmount();
