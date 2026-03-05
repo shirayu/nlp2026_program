@@ -1,11 +1,11 @@
 import { X as CloseIcon, Github, Globe, Monitor, RefreshCw } from "lucide-react";
 import type { ReactNode, RefObject } from "react";
 import {
-  AUTHOR_GITHUB_URL,
-  AUTHOR_NAME,
-  AUTHOR_WEBSITE_URL,
   BUILD_GIT_DATE,
   BUILD_GIT_HASH,
+  DEVELOPER_GITHUB_URL,
+  DEVELOPER_NAME,
+  DEVELOPER_WEBSITE_URL,
   PROJECT_REPOSITORY_URL,
 } from "../../constants";
 import type { DataReloadStatus } from "../../hooks/useConferenceData";
@@ -315,21 +315,21 @@ export function SettingsDialog({
               )}
             </section>
             <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
-              <h3 className="text-sm font-semibold text-gray-800">{ja.buildInfo}</h3>
+              <h3 className="text-sm font-semibold text-gray-800">{ja.softwareInfo}</h3>
               <dl className="mt-2 space-y-2 text-sm">
                 <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
-                  <dt className="text-gray-500">{ja.authorName}</dt>
+                  <dt className="text-gray-500">{ja.developer}</dt>
                   <dd className="min-w-0 text-left">
                     <a
-                      href={AUTHOR_WEBSITE_URL}
+                      href={DEVELOPER_WEBSITE_URL}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="break-all text-indigo-600 underline decoration-indigo-200 underline-offset-2 hover:text-indigo-700"
                     >
-                      {AUTHOR_NAME}
+                      {DEVELOPER_NAME}
                     </a>
                     <a
-                      href={AUTHOR_GITHUB_URL}
+                      href={DEVELOPER_GITHUB_URL}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={ja.projectRepository}
