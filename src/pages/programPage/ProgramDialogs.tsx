@@ -38,6 +38,10 @@ function shortHash(value: string | null): string {
   return `${value.slice(0, 3)}...${value.slice(-3)}`;
 }
 
+function omitHttps(value: string): string {
+  return value.replace(/^https?:\/\//, "");
+}
+
 function buildLastUpdateRows(lastUpdate?: Record<string, LastUpdateEntry>): {
   mainRow: LastUpdateRow | null;
   secondaryRows: LastUpdateRow[];
@@ -209,7 +213,7 @@ export function SettingsDialog({
         />
         <div className="relative flex max-h-[calc(100vh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
           <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-indigo-50 px-4 py-3">
-            <h2 className="text-sm font-bold text-gray-800">{ja.displaySettings}</h2>
+            <h2 className="text-sm font-bold text-gray-800">{ja.settings}</h2>
             <button
               type="button"
               onClick={onClose}
@@ -297,7 +301,7 @@ export function SettingsDialog({
                   )}
                   {secondaryRows.length > 0 && (
                     <details className="rounded-lg border border-gray-200 bg-white px-2 py-1">
-                      <summary className="cursor-pointer text-xs text-gray-600">Other Sources</summary>
+                      <summary className="cursor-pointer text-xs text-gray-600">{ja.otherSources}</summary>
                       {secondaryRows.map((row) => (
                         <div key={row.label} className="mt-2 grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
                           <dt className="text-gray-500">{row.label}</dt>
@@ -309,15 +313,11 @@ export function SettingsDialog({
                 </dl>
               )}
             </section>
-            <section className="mt-4 rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
-              <h3 className="text-sm font-semibold text-gray-800">{ja.aboutAuthor}</h3>
+            <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
+              <h3 className="text-sm font-semibold text-gray-800">{ja.buildInfo}</h3>
               <dl className="mt-2 space-y-2 text-sm">
                 <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
                   <dt className="text-gray-500">{ja.authorName}</dt>
-                  <dd className="min-w-0 text-left text-gray-800">{AUTHOR_NAME}</dd>
-                </div>
-                <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
-                  <dt className="text-gray-500">{ja.authorWebsite}</dt>
                   <dd className="min-w-0 text-left">
                     <a
                       href={AUTHOR_WEBSITE_URL}
@@ -325,7 +325,7 @@ export function SettingsDialog({
                       rel="noopener noreferrer"
                       className="break-all text-indigo-600 underline decoration-indigo-200 underline-offset-2 hover:text-indigo-700"
                     >
-                      {AUTHOR_WEBSITE_URL}
+                      {AUTHOR_NAME}
                     </a>
                   </dd>
                 </div>
@@ -338,15 +338,14 @@ export function SettingsDialog({
                       rel="noopener noreferrer"
                       className="break-all text-indigo-600 underline decoration-indigo-200 underline-offset-2 hover:text-indigo-700"
                     >
-                      {PROJECT_REPOSITORY_URL}
+                      {omitHttps(PROJECT_REPOSITORY_URL)}
                     </a>
                   </dd>
                 </div>
-              </dl>
-            </section>
-            <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
-              <h3 className="text-sm font-semibold text-gray-800">{ja.buildInfo}</h3>
-              <dl className="mt-2 space-y-2 text-sm">
+                <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
+                  <dt className="text-gray-500">{ja.license}</dt>
+                  <dd className="min-w-0 text-left text-gray-800">{ja.licenseName}</dd>
+                </div>
                 <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
                   <dt className="text-gray-500">{ja.gitHash}</dt>
                   <dd className="min-w-0 break-all font-mono text-left text-gray-800">{BUILD_GIT_HASH}</dd>
