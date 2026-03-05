@@ -16,7 +16,7 @@ import json
 import re
 import sys
 import unicodedata
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta, timezone
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any, NotRequired, TypedDict
@@ -88,6 +88,38 @@ class SpecialEvent(TypedDict):
 def clean(text: str) -> str:
     text = text.replace("\u00a0", " ").replace("\u3000", " ")
     return re.sub(r"\s+", " ", text).strip()
+
+
+class SourceUpdateTimeExtractor:
+    """HTML内の更新時刻を抽出する。
+
+    `patterns` に抽出ルールを足すだけで、他の更新時刻も追加できる。
+    """
+
+    def __init__(self, html_text: str) -> None:
+        self.html_text = html_text
+        self.jst = timezone(timedelta(hours=9))
+        self.patterns: dict[str, re.Pattern[str]] = {
+            "original_program": re.compile(
+                r"最終更新日\s*[:：]\s*(\d{4})年\s*(\d{1,2})月\s*(\d{1,2})日\s*(\d{1,2}):(\d{2})"
+            ),
+        }
+
+    def extract_all(self) -> dict[str, str]:
+        extracted: dict[str, str] = {}
+        for key, pattern in self.patterns.items():
+            value = self._extract_jst_datetime(pattern)
+            if value is not None:
+                extracted[key] = value
+        return extracted
+
+    def _extract_jst_datetime(self, pattern: re.Pattern[str]) -> str | None:
+        match = pattern.search(self.html_text)
+        if match is None:
+            return None
+
+        year, month, day, hour, minute = (int(value) for value in match.groups())
+        return datetime(year, month, day, hour, minute, tzinfo=self.jst).isoformat(timespec="seconds")
 
 
 def normalize_room_name(name: str) -> str:
@@ -1120,6 +1152,7 @@ class DataJsonRecord(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     generated_at: str | None = None
+    last_update: dict[str, str] | None = None
     persons: dict[str, PersonRecord]
     affiliations: dict[str, AffiliationRecord]
     rooms: dict[str, RoomRecord]
@@ -1558,6 +1591,9 @@ def main() -> None:
         fix_urls(p.raw_presentations, args.base_url)
     result = normalize(p.raw_sessions, p.raw_presentations, p.raw_persons)
     result["generated_at"] = datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    update_times = SourceUpdateTimeExtractor(html_text).extract_all()
+    if update_times:
+        result["last_update"] = update_times
 
     # スケジュール表にのみ存在する特殊イベントをセッションとして追加
     for ev in sp.special_events:

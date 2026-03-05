@@ -1,5 +1,6 @@
 {
-  "generated_at": "2026-03-05T01:31:26Z",
+  "generated_at": "2026-03-05T05:11:28Z",
+  "source_last_updated_at": "2026-03-04T09:00:00+09:00",
   "persons": {
     "p0001": {
       "name": "相澤 彰子"
@@ -7128,45 +7129,65 @@
       "date": "2026-03-09",
       "start_time": "13:00",
       "end_time": "14:30",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "",
-      "presentation_ids": ["T1-1"]
+      "presentation_ids": [
+        "T1-1"
+      ]
     },
     "T2": {
       "title": "チュートリアル２",
       "date": "2026-03-09",
       "start_time": "13:00",
       "end_time": "14:30",
-      "room_ids": ["r0002"],
+      "room_ids": [
+        "r0002"
+      ],
       "chair": "",
-      "presentation_ids": ["T2-1"]
+      "presentation_ids": [
+        "T2-1"
+      ]
     },
     "T3": {
       "title": "チュートリアル３",
       "date": "2026-03-09",
       "start_time": "14:45",
       "end_time": "16:15",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "",
-      "presentation_ids": ["T3-1"]
+      "presentation_ids": [
+        "T3-1"
+      ]
     },
     "T4": {
       "title": "チュートリアル４",
       "date": "2026-03-09",
       "start_time": "14:45",
       "end_time": "16:15",
-      "room_ids": ["r0002"],
+      "room_ids": [
+        "r0002"
+      ],
       "chair": "",
-      "presentation_ids": ["T4-1"]
+      "presentation_ids": [
+        "T4-1"
+      ]
     },
     "invited1": {
       "title": "招待講演１",
       "date": "2026-03-10",
       "start_time": "13:55",
       "end_time": "14:55",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "",
-      "presentation_ids": ["invited1-1"],
+      "presentation_ids": [
+        "invited1-1"
+      ],
       "youtube_url": "https://www.youtube.com/@anlpyoutubechannel7888/streams"
     },
     "invited2": {
@@ -7174,9 +7195,13 @@
       "date": "2026-03-11",
       "start_time": "13:55",
       "end_time": "14:55",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "",
-      "presentation_ids": ["invited2-1"],
+      "presentation_ids": [
+        "invited2-1"
+      ],
       "youtube_url": "https://www.youtube.com/@anlpyoutubechannel7888/streams"
     },
     "invitedpapers": {
@@ -7184,25 +7209,40 @@
       "date": "2026-03-09",
       "start_time": "17:20",
       "end_time": "19:00",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "宮尾 祐介 (東大)",
-      "presentation_ids": ["invitedpapers-1", "invitedpapers-2", "invitedpapers-3"]
+      "presentation_ids": [
+        "invitedpapers-1",
+        "invitedpapers-2",
+        "invitedpapers-3"
+      ]
     },
     "A1": {
       "title": "A1:口頭発表1",
       "date": "2026-03-10",
       "start_time": "9:30",
       "end_time": "11:00",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "船越 孝太郎 (科学大)",
-      "presentation_ids": ["B2-3", "B2-7", "C4-12", "B2-16"]
+      "presentation_ids": [
+        "B2-3",
+        "B2-7",
+        "C4-12",
+        "B2-16"
+      ]
     },
     "B1": {
       "title": "B1:NLPモデルの評価・安全性・信頼性",
       "date": "2026-03-10",
       "start_time": "9:30",
       "end_time": "11:00",
-      "room_ids": ["r0002"],
+      "room_ids": [
+        "r0002"
+      ],
       "chair": "大井 聖也 (科学大)",
       "presentation_ids": [
         "B1-1",
@@ -7232,7 +7272,9 @@
       "date": "2026-03-10",
       "start_time": "9:30",
       "end_time": "11:00",
-      "room_ids": ["r0003"],
+      "room_ids": [
+        "r0003"
+      ],
       "chair": "橋本 泰一 (RevComm)",
       "presentation_ids": [
         "C1-1",
@@ -7265,7 +7307,9 @@
       "date": "2026-03-10",
       "start_time": "9:30",
       "end_time": "11:00",
-      "room_ids": ["r0004"],
+      "room_ids": [
+        "r0004"
+      ],
       "chair": "牧野 拓哉 (Megagon Labs)",
       "presentation_ids": [
         "P1-1",
@@ -7295,16 +7339,27 @@
       "date": "2026-03-10",
       "start_time": "9:30",
       "end_time": "11:00",
-      "room_ids": ["r0005"],
+      "room_ids": [
+        "r0005"
+      ],
       "chair": "西田 典起 (理研)",
-      "presentation_ids": ["Q1-1", "Q1-2", "Q1-3", "Q1-4", "Q1-5", "Q1-6"]
+      "presentation_ids": [
+        "Q1-1",
+        "Q1-2",
+        "Q1-3",
+        "Q1-4",
+        "Q1-5",
+        "Q1-6"
+      ]
     },
     "TS2-q": {
       "title": "TS2:テーマセッション2：せめぎ合う計算言語学——LLM時代に揺れ動く言語観の中で——（ポスター）",
       "date": "2026-03-10",
       "start_time": "9:30",
       "end_time": "11:00",
-      "room_ids": ["r0005"],
+      "room_ids": [
+        "r0005"
+      ],
       "chair": "木山 朔 (一橋大)",
       "presentation_ids": [
         "TS2-1",
@@ -7331,7 +7386,9 @@
       "date": "2026-03-10",
       "start_time": "11:15",
       "end_time": "11:40",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "上田 亮 (東大)",
       "presentation_ids": []
     },
@@ -7340,16 +7397,24 @@
       "date": "2026-03-10",
       "start_time": "11:45",
       "end_time": "12:45",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "大内 啓樹 (NAIST)",
-      "presentation_ids": ["C1-1", "Q1-4", "Q1-5"]
+      "presentation_ids": [
+        "C1-1",
+        "Q1-4",
+        "Q1-5"
+      ]
     },
     "B2": {
       "title": "B2:NLPモデルの評価・安全性・信頼性",
       "date": "2026-03-10",
       "start_time": "11:15",
       "end_time": "12:45",
-      "room_ids": ["r0002"],
+      "room_ids": [
+        "r0002"
+      ],
       "chair": "柴田 知秀 (SB Intuitions)",
       "presentation_ids": [
         "B2-1",
@@ -7380,7 +7445,9 @@
       "date": "2026-03-10",
       "start_time": "11:15",
       "end_time": "12:45",
-      "room_ids": ["r0003"],
+      "room_ids": [
+        "r0003"
+      ],
       "chair": "高道 慎之介 (慶應大)",
       "presentation_ids": [
         "C2-1",
@@ -7415,7 +7482,9 @@
       "date": "2026-03-10",
       "start_time": "11:15",
       "end_time": "12:45",
-      "room_ids": ["r0004"],
+      "room_ids": [
+        "r0004"
+      ],
       "chair": "中山 祐輝 (楽天)",
       "presentation_ids": [
         "P2-1",
@@ -7448,7 +7517,9 @@
       "date": "2026-03-10",
       "start_time": "11:15",
       "end_time": "12:45",
-      "room_ids": ["r0005"],
+      "room_ids": [
+        "r0005"
+      ],
       "chair": "藤田 早苗 (NTT)",
       "presentation_ids": [
         "Q2-1",
@@ -7480,16 +7551,25 @@
       "date": "2026-03-10",
       "start_time": "15:10",
       "end_time": "16:40",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "松崎 拓也 (東京理科大)",
-      "presentation_ids": ["B4-1", "TS2-1", "TS2-15", "B2-17"]
+      "presentation_ids": [
+        "B4-1",
+        "TS2-1",
+        "TS2-15",
+        "B2-17"
+      ]
     },
     "B3": {
       "title": "B3:NLPモデルの評価・安全性・信頼性 / NLPモデルの解釈可能性・分析",
       "date": "2026-03-10",
       "start_time": "15:10",
       "end_time": "16:40",
-      "room_ids": ["r0002"],
+      "room_ids": [
+        "r0002"
+      ],
       "chair": "馬 尤咪 (科学大)",
       "presentation_ids": [
         "B3-1",
@@ -7520,7 +7600,9 @@
       "date": "2026-03-10",
       "start_time": "15:10",
       "end_time": "16:40",
-      "room_ids": ["r0003"],
+      "room_ids": [
+        "r0003"
+      ],
       "chair": "田中 涼太 (NTT)",
       "presentation_ids": [
         "C3-1",
@@ -7554,7 +7636,9 @@
       "date": "2026-03-10",
       "start_time": "15:10",
       "end_time": "16:40",
-      "room_ids": ["r0004"],
+      "room_ids": [
+        "r0004"
+      ],
       "chair": "田中 翔平 (オムロンサイニックエックス)",
       "presentation_ids": [
         "P3-1",
@@ -7586,7 +7670,9 @@
       "date": "2026-03-10",
       "start_time": "15:10",
       "end_time": "16:40",
-      "room_ids": ["r0005"],
+      "room_ids": [
+        "r0005"
+      ],
       "chair": "綱川 隆司 (静大)",
       "presentation_ids": [
         "Q3-1",
@@ -7610,16 +7696,30 @@
       "date": "2026-03-10",
       "start_time": "15:10",
       "end_time": "16:40",
-      "room_ids": ["r0005"],
+      "room_ids": [
+        "r0005"
+      ],
       "chair": "朝倉 卓人 (ストックマーク)",
-      "presentation_ids": ["TS4-1", "TS4-2", "TS4-3", "TS4-4", "TS4-5", "TS4-6", "TS4-7", "TS4-8", "TS4-9"]
+      "presentation_ids": [
+        "TS4-1",
+        "TS4-2",
+        "TS4-3",
+        "TS4-4",
+        "TS4-5",
+        "TS4-6",
+        "TS4-7",
+        "TS4-8",
+        "TS4-9"
+      ]
     },
     "TS4-a": {
       "title": "TS4:テーマセッション4：大規模言語モデル時代の数式NLP：表現・推論・検証の実務基盤（総合討論）",
       "date": "2026-03-10",
       "start_time": "16:55",
       "end_time": "17:20",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "加藤 祥太 (京大)",
       "presentation_ids": []
     },
@@ -7628,16 +7728,24 @@
       "date": "2026-03-10",
       "start_time": "17:25",
       "end_time": "18:25",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "中澤 敏明 (東大)",
-      "presentation_ids": ["Q3-10", "P3-10", "C3-15"]
+      "presentation_ids": [
+        "Q3-10",
+        "P3-10",
+        "C3-15"
+      ]
     },
     "B4": {
       "title": "B4:NLPモデルの評価・安全性・信頼性 / NLPモデルの解釈可能性・分析",
       "date": "2026-03-10",
       "start_time": "16:55",
       "end_time": "18:25",
-      "room_ids": ["r0002"],
+      "room_ids": [
+        "r0002"
+      ],
       "chair": "岡 佑依 (NTT)",
       "presentation_ids": [
         "B4-1",
@@ -7668,7 +7776,9 @@
       "date": "2026-03-10",
       "start_time": "16:55",
       "end_time": "18:25",
-      "room_ids": ["r0003"],
+      "room_ids": [
+        "r0003"
+      ],
       "chair": "長谷川 拓 (NTT)",
       "presentation_ids": [
         "C4-1",
@@ -7700,7 +7810,9 @@
       "date": "2026-03-10",
       "start_time": "16:55",
       "end_time": "18:25",
-      "room_ids": ["r0004"],
+      "room_ids": [
+        "r0004"
+      ],
       "chair": "赤間 怜奈 (東北大)",
       "presentation_ids": [
         "P4-1",
@@ -7733,7 +7845,9 @@
       "date": "2026-03-10",
       "start_time": "16:55",
       "end_time": "18:25",
-      "room_ids": ["r0005"],
+      "room_ids": [
+        "r0005"
+      ],
       "chair": "村上 聡一朗 (サイバーエージェント)",
       "presentation_ids": [
         "Q4-1",
@@ -7767,16 +7881,25 @@
       "date": "2026-03-11",
       "start_time": "9:30",
       "end_time": "11:00",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "徳久 良子 (愛工大/理研)",
-      "presentation_ids": ["B6-15", "C4-15", "B6-20", "C7-20"]
+      "presentation_ids": [
+        "B6-15",
+        "C4-15",
+        "B6-20",
+        "C7-20"
+      ]
     },
     "B5": {
       "title": "B5:NLPモデルの解釈可能性・分析",
       "date": "2026-03-11",
       "start_time": "9:30",
       "end_time": "11:00",
-      "room_ids": ["r0002"],
+      "room_ids": [
+        "r0002"
+      ],
       "chair": "小林 悟郎 (PFN/東北大)",
       "presentation_ids": [
         "B5-1",
@@ -7806,7 +7929,9 @@
       "date": "2026-03-11",
       "start_time": "9:30",
       "end_time": "11:00",
-      "room_ids": ["r0003"],
+      "room_ids": [
+        "r0003"
+      ],
       "chair": "大村 和正 (日経)",
       "presentation_ids": [
         "C5-1",
@@ -7839,7 +7964,9 @@
       "date": "2026-03-11",
       "start_time": "9:30",
       "end_time": "11:00",
-      "room_ids": ["r0004"],
+      "room_ids": [
+        "r0004"
+      ],
       "chair": "飯田 頌平 (弥生)",
       "presentation_ids": [
         "P5-1",
@@ -7872,16 +7999,32 @@
       "date": "2026-03-11",
       "start_time": "9:30",
       "end_time": "11:00",
-      "room_ids": ["r0005"],
+      "room_ids": [
+        "r0005"
+      ],
       "chair": "伊藤 滉一朗 (名大)",
-      "presentation_ids": ["Q5-1", "Q5-2", "Q5-3", "Q5-4", "Q5-5", "Q5-6", "Q5-7", "Q5-8", "Q5-9", "Q5-10", "Q5-11"]
+      "presentation_ids": [
+        "Q5-1",
+        "Q5-2",
+        "Q5-3",
+        "Q5-4",
+        "Q5-5",
+        "Q5-6",
+        "Q5-7",
+        "Q5-8",
+        "Q5-9",
+        "Q5-10",
+        "Q5-11"
+      ]
     },
     "TS3-q": {
       "title": "TS3:テーマセッション3：法ドメインにおける言語処理（ポスター）",
       "date": "2026-03-11",
       "start_time": "9:30",
       "end_time": "11:00",
-      "room_ids": ["r0005"],
+      "room_ids": [
+        "r0005"
+      ],
       "chair": "吉岡 真治 (北大)",
       "presentation_ids": [
         "TS3-1",
@@ -7904,7 +8047,9 @@
       "date": "2026-03-11",
       "start_time": "11:15",
       "end_time": "11:40",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "山田 寛章 (科学大)",
       "presentation_ids": []
     },
@@ -7913,16 +8058,24 @@
       "date": "2026-03-11",
       "start_time": "11:45",
       "end_time": "12:45",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "高村 大也 (産総研)",
-      "presentation_ids": ["Q7-3", "C8-8", "B5-14"]
+      "presentation_ids": [
+        "Q7-3",
+        "C8-8",
+        "B5-14"
+      ]
     },
     "B6": {
       "title": "B6:NLPモデルの解釈可能性・分析",
       "date": "2026-03-11",
       "start_time": "11:15",
       "end_time": "12:45",
-      "room_ids": ["r0002"],
+      "room_ids": [
+        "r0002"
+      ],
       "chair": "三田 雅人 (リクルート)",
       "presentation_ids": [
         "B6-1",
@@ -7953,7 +8106,9 @@
       "date": "2026-03-11",
       "start_time": "11:15",
       "end_time": "12:45",
-      "room_ids": ["r0003"],
+      "room_ids": [
+        "r0003"
+      ],
       "chair": "小川 泰弘 (名市大)",
       "presentation_ids": [
         "C6-1",
@@ -7987,7 +8142,9 @@
       "date": "2026-03-11",
       "start_time": "11:15",
       "end_time": "12:45",
-      "room_ids": ["r0004"],
+      "room_ids": [
+        "r0004"
+      ],
       "chair": "董 于洋 (SB Intuitions)",
       "presentation_ids": [
         "P6-1",
@@ -8019,7 +8176,9 @@
       "date": "2026-03-11",
       "start_time": "11:15",
       "end_time": "12:45",
-      "room_ids": ["r0005"],
+      "room_ids": [
+        "r0005"
+      ],
       "chair": "永田 亮 (甲南大)",
       "presentation_ids": [
         "Q6-1J",
@@ -8053,16 +8212,25 @@
       "date": "2026-03-12",
       "start_time": "9:30",
       "end_time": "11:00",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "平尾 努 (金大)",
-      "presentation_ids": ["B6-13", "Q6-15", "P9-19", "C6-23"]
+      "presentation_ids": [
+        "B6-13",
+        "Q6-15",
+        "P9-19",
+        "C6-23"
+      ]
     },
     "B7": {
       "title": "B7:NLPモデルの解釈可能性・分析 / NLPのための効率的・低リソース手法",
       "date": "2026-03-12",
       "start_time": "9:30",
       "end_time": "11:00",
-      "room_ids": ["r0002"],
+      "room_ids": [
+        "r0002"
+      ],
       "chair": "本多 右京 (サイバーエージェント)",
       "presentation_ids": [
         "B7-1",
@@ -8093,7 +8261,9 @@
       "date": "2026-03-12",
       "start_time": "9:30",
       "end_time": "11:00",
-      "room_ids": ["r0003"],
+      "room_ids": [
+        "r0003"
+      ],
       "chair": "佐々木 翔大 (SB Intuitions)",
       "presentation_ids": [
         "C7-1",
@@ -8127,7 +8297,9 @@
       "date": "2026-03-12",
       "start_time": "9:30",
       "end_time": "11:00",
-      "room_ids": ["r0004"],
+      "room_ids": [
+        "r0004"
+      ],
       "chair": "中山 功太 (NII)",
       "presentation_ids": [
         "P7-1",
@@ -8160,7 +8332,9 @@
       "date": "2026-03-12",
       "start_time": "9:30",
       "end_time": "11:00",
-      "room_ids": ["r0005"],
+      "room_ids": [
+        "r0005"
+      ],
       "chair": "大関 洋平 (東大)",
       "presentation_ids": [
         "Q7-1",
@@ -8187,16 +8361,24 @@
       "date": "2026-03-12",
       "start_time": "9:30",
       "end_time": "11:00",
-      "room_ids": ["r0005"],
+      "room_ids": [
+        "r0005"
+      ],
       "chair": "稲葉 通将 (電通大)",
-      "presentation_ids": ["TS1-1", "TS1-2", "TS1-3"]
+      "presentation_ids": [
+        "TS1-1",
+        "TS1-2",
+        "TS1-3"
+      ]
     },
     "TS1-a": {
       "title": "TS1:テーマセッション1：人狼知能：噓を見破り説得する会話ゲームとLLM（総合討論）",
       "date": "2026-03-12",
       "start_time": "11:15",
       "end_time": "11:40",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "狩野 芳伸 (静大)",
       "presentation_ids": []
     },
@@ -8205,16 +8387,24 @@
       "date": "2026-03-12",
       "start_time": "11:45",
       "end_time": "12:45",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "斉藤 いつみ (東北大)",
-      "presentation_ids": ["P9-5", "P9-7", "Q9-15"]
+      "presentation_ids": [
+        "P9-5",
+        "P9-7",
+        "Q9-15"
+      ]
     },
     "B8": {
       "title": "B8:NLPモデルの評価・安全性・信頼性",
       "date": "2026-03-12",
       "start_time": "11:15",
       "end_time": "12:45",
-      "room_ids": ["r0002"],
+      "room_ids": [
+        "r0002"
+      ],
       "chair": "小池 隆斗 (科学大)",
       "presentation_ids": [
         "B8-1",
@@ -8244,7 +8434,9 @@
       "date": "2026-03-12",
       "start_time": "11:15",
       "end_time": "12:45",
-      "room_ids": ["r0003"],
+      "room_ids": [
+        "r0003"
+      ],
       "chair": "小田 悠介 (NII)",
       "presentation_ids": [
         "C8-1",
@@ -8275,7 +8467,9 @@
       "date": "2026-03-12",
       "start_time": "11:15",
       "end_time": "12:45",
-      "room_ids": ["r0004"],
+      "room_ids": [
+        "r0004"
+      ],
       "chair": "内海 慶 (SB Intuitions)",
       "presentation_ids": [
         "P8-1",
@@ -8308,7 +8502,9 @@
       "date": "2026-03-12",
       "start_time": "11:15",
       "end_time": "12:45",
-      "room_ids": ["r0005"],
+      "room_ids": [
+        "r0005"
+      ],
       "chair": "黒田 航 (杏林大)",
       "presentation_ids": [
         "Q8-1",
@@ -8336,16 +8532,25 @@
       "date": "2026-03-12",
       "start_time": "14:15",
       "end_time": "15:45",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "金山 博 (IBM)",
-      "presentation_ids": ["B6-10", "C8-13", "C6-16", "P7-20"]
+      "presentation_ids": [
+        "B6-10",
+        "C8-13",
+        "C6-16",
+        "P7-20"
+      ]
     },
     "B9": {
       "title": "B9:NLPモデルのための評価・安全性・信頼性 / NLPモデルの解釈可能性・分析 / NLPのための効率的・低リソース手法",
       "date": "2026-03-12",
       "start_time": "14:15",
       "end_time": "15:45",
-      "room_ids": ["r0002"],
+      "room_ids": [
+        "r0002"
+      ],
       "chair": "坂井 優介 (NAIST)",
       "presentation_ids": [
         "B9-1",
@@ -8376,7 +8581,9 @@
       "date": "2026-03-12",
       "start_time": "14:15",
       "end_time": "15:45",
-      "room_ids": ["r0003"],
+      "room_ids": [
+        "r0003"
+      ],
       "chair": "森下 睦 (フューチャー)",
       "presentation_ids": [
         "C9-1",
@@ -8409,7 +8616,9 @@
       "date": "2026-03-12",
       "start_time": "14:15",
       "end_time": "15:45",
-      "room_ids": ["r0004"],
+      "room_ids": [
+        "r0004"
+      ],
       "chair": "森田 一 (ソフトバンク)",
       "presentation_ids": [
         "P9-1",
@@ -8442,7 +8651,9 @@
       "date": "2026-03-12",
       "start_time": "14:15",
       "end_time": "15:45",
-      "room_ids": ["r0005"],
+      "room_ids": [
+        "r0005"
+      ],
       "chair": "平野 正徳 (PFN)",
       "presentation_ids": [
         "Q9-1",
@@ -8474,7 +8685,9 @@
       "date": "2026-03-09",
       "start_time": "16:30",
       "end_time": "17:15",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "",
       "presentation_ids": []
     },
@@ -8483,7 +8696,11 @@
       "date": "2026-03-11",
       "start_time": "15:00",
       "end_time": "16:50",
-      "room_ids": ["r0006", "r0007", "r0008"],
+      "room_ids": [
+        "r0006",
+        "r0007",
+        "r0008"
+      ],
       "chair": "",
       "presentation_ids": []
     },
@@ -8492,7 +8709,9 @@
       "date": "2026-03-11",
       "start_time": "18:00",
       "end_time": "20:00",
-      "room_ids": ["r0009"],
+      "room_ids": [
+        "r0009"
+      ],
       "chair": "",
       "presentation_ids": []
     },
@@ -8501,7 +8720,9 @@
       "date": "2026-03-12",
       "start_time": "16:00",
       "end_time": "18:00",
-      "room_ids": ["r0001"],
+      "room_ids": [
+        "r0001"
+      ],
       "chair": "",
       "presentation_ids": []
     },
@@ -8510,7 +8731,9 @@
       "date": "2026-03-13",
       "start_time": "9:30",
       "end_time": "16:40",
-      "room_ids": ["r0010"],
+      "room_ids": [
+        "r0010"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
@@ -8520,7 +8743,9 @@
       "date": "2026-03-13",
       "start_time": "9:30",
       "end_time": "9:45",
-      "room_ids": ["r0010"],
+      "room_ids": [
+        "r0010"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
@@ -8530,7 +8755,9 @@
       "date": "2026-03-13",
       "start_time": "9:45",
       "end_time": "10:15",
-      "room_ids": ["r0010"],
+      "room_ids": [
+        "r0010"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
@@ -8540,7 +8767,9 @@
       "date": "2026-03-13",
       "start_time": "10:15",
       "end_time": "11:00",
-      "room_ids": ["r0010"],
+      "room_ids": [
+        "r0010"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
@@ -8550,7 +8779,9 @@
       "date": "2026-03-13",
       "start_time": "11:00",
       "end_time": "12:15",
-      "room_ids": ["r0010"],
+      "room_ids": [
+        "r0010"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
@@ -8560,7 +8791,9 @@
       "date": "2026-03-13",
       "start_time": "13:15",
       "end_time": "13:45",
-      "room_ids": ["r0010"],
+      "room_ids": [
+        "r0010"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
@@ -8570,7 +8803,9 @@
       "date": "2026-03-13",
       "start_time": "13:45",
       "end_time": "14:30",
-      "room_ids": ["r0010"],
+      "room_ids": [
+        "r0010"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
@@ -8580,7 +8815,9 @@
       "date": "2026-03-13",
       "start_time": "14:30",
       "end_time": "14:50",
-      "room_ids": ["r0010"],
+      "room_ids": [
+        "r0010"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
@@ -8590,7 +8827,9 @@
       "date": "2026-03-13",
       "start_time": "15:05",
       "end_time": "16:20",
-      "room_ids": ["r0010"],
+      "room_ids": [
+        "r0010"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
@@ -8600,7 +8839,9 @@
       "date": "2026-03-13",
       "start_time": "16:20",
       "end_time": "16:40",
-      "room_ids": ["r0010"],
+      "room_ids": [
+        "r0010"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
@@ -8610,7 +8851,9 @@
       "date": "2026-03-13",
       "start_time": "10:00",
       "end_time": "16:00",
-      "room_ids": ["r0011"],
+      "room_ids": [
+        "r0011"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
@@ -8620,7 +8863,9 @@
       "date": "2026-03-13",
       "start_time": "10:00",
       "end_time": "10:05",
-      "room_ids": ["r0011"],
+      "room_ids": [
+        "r0011"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
@@ -8630,9 +8875,13 @@
       "date": "2026-03-13",
       "start_time": "10:05",
       "end_time": "10:25",
-      "room_ids": ["r0011"],
+      "room_ids": [
+        "r0011"
+      ],
       "chair": "河原 大輔 (早稲田大)",
-      "presentation_ids": ["WS2-1-1"],
+      "presentation_ids": [
+        "WS2-1-1"
+      ],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
     },
     "WS2-2": {
@@ -8640,9 +8889,13 @@
       "date": "2026-03-13",
       "start_time": "10:25",
       "end_time": "10:45",
-      "room_ids": ["r0011"],
+      "room_ids": [
+        "r0011"
+      ],
       "chair": "河原 大輔 (早稲田大)",
-      "presentation_ids": ["WS2-2-1"],
+      "presentation_ids": [
+        "WS2-2-1"
+      ],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
     },
     "WS2-3": {
@@ -8650,9 +8903,13 @@
       "date": "2026-03-13",
       "start_time": "10:45",
       "end_time": "11:15",
-      "room_ids": ["r0011"],
+      "room_ids": [
+        "r0011"
+      ],
       "chair": "河原 大輔 (早稲田大)",
-      "presentation_ids": ["WS2-3-1"],
+      "presentation_ids": [
+        "WS2-3-1"
+      ],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
     },
     "WS2-4": {
@@ -8660,9 +8917,13 @@
       "date": "2026-03-13",
       "start_time": "11:15",
       "end_time": "11:35",
-      "room_ids": ["r0011"],
+      "room_ids": [
+        "r0011"
+      ],
       "chair": "河原 大輔 (早稲田大)",
-      "presentation_ids": ["WS2-4-1"],
+      "presentation_ids": [
+        "WS2-4-1"
+      ],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
     },
     "WS2-5": {
@@ -8670,9 +8931,13 @@
       "date": "2026-03-13",
       "start_time": "11:35",
       "end_time": "11:45",
-      "room_ids": ["r0011"],
+      "room_ids": [
+        "r0011"
+      ],
       "chair": "河原 大輔 (早稲田大)",
-      "presentation_ids": ["WS2-5-1"],
+      "presentation_ids": [
+        "WS2-5-1"
+      ],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
     },
     "WS2-6": {
@@ -8680,9 +8945,13 @@
       "date": "2026-03-13",
       "start_time": "13:00",
       "end_time": "13:20",
-      "room_ids": ["r0011"],
+      "room_ids": [
+        "r0011"
+      ],
       "chair": "柴田 知秀 (SB Intuitions)",
-      "presentation_ids": ["WS2-6-1"],
+      "presentation_ids": [
+        "WS2-6-1"
+      ],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
     },
     "WS2-7": {
@@ -8690,9 +8959,13 @@
       "date": "2026-03-13",
       "start_time": "13:20",
       "end_time": "13:40",
-      "room_ids": ["r0011"],
+      "room_ids": [
+        "r0011"
+      ],
       "chair": "柴田 知秀 (SB Intuitions)",
-      "presentation_ids": ["WS2-7-1"],
+      "presentation_ids": [
+        "WS2-7-1"
+      ],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
     },
     "WS2-8": {
@@ -8700,9 +8973,13 @@
       "date": "2026-03-13",
       "start_time": "13:40",
       "end_time": "14:05",
-      "room_ids": ["r0011"],
+      "room_ids": [
+        "r0011"
+      ],
       "chair": "柴田 知秀 (SB Intuitions)",
-      "presentation_ids": ["WS2-8-1"],
+      "presentation_ids": [
+        "WS2-8-1"
+      ],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
     },
     "WS2-9": {
@@ -8710,9 +8987,13 @@
       "date": "2026-03-13",
       "start_time": "14:05",
       "end_time": "14:25",
-      "room_ids": ["r0011"],
+      "room_ids": [
+        "r0011"
+      ],
       "chair": "柴田 知秀 (SB Intuitions)",
-      "presentation_ids": ["WS2-9-1"],
+      "presentation_ids": [
+        "WS2-9-1"
+      ],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
     },
     "WS2-10": {
@@ -8720,9 +9001,13 @@
       "date": "2026-03-13",
       "start_time": "14:25",
       "end_time": "14:35",
-      "room_ids": ["r0011"],
+      "room_ids": [
+        "r0011"
+      ],
       "chair": "柴田 知秀 (SB Intuitions)",
-      "presentation_ids": ["WS2-10-1"],
+      "presentation_ids": [
+        "WS2-10-1"
+      ],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
     },
     "WS2-11": {
@@ -8730,9 +9015,13 @@
       "date": "2026-03-13",
       "start_time": "14:45",
       "end_time": "15:10",
-      "room_ids": ["r0011"],
+      "room_ids": [
+        "r0011"
+      ],
       "chair": "松田 寛 (Megagon Labs)",
-      "presentation_ids": ["WS2-11-1"],
+      "presentation_ids": [
+        "WS2-11-1"
+      ],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
     },
     "WS2-12": {
@@ -8740,9 +9029,13 @@
       "date": "2026-03-13",
       "start_time": "15:10",
       "end_time": "15:35",
-      "room_ids": ["r0011"],
+      "room_ids": [
+        "r0011"
+      ],
       "chair": "松田 寛 (Megagon Labs)",
-      "presentation_ids": ["WS2-12-1"],
+      "presentation_ids": [
+        "WS2-12-1"
+      ],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
     },
     "WS2-13": {
@@ -8750,9 +9043,13 @@
       "date": "2026-03-13",
       "start_time": "15:35",
       "end_time": "15:45",
-      "room_ids": ["r0011"],
+      "room_ids": [
+        "r0011"
+      ],
       "chair": "松田 寛 (Megagon Labs)",
-      "presentation_ids": ["WS2-13-1"],
+      "presentation_ids": [
+        "WS2-13-1"
+      ],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
     },
     "WS2-14": {
@@ -8760,7 +9057,9 @@
       "date": "2026-03-13",
       "start_time": "15:45",
       "end_time": "16:00",
-      "room_ids": ["r0011"],
+      "room_ids": [
+        "r0011"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
@@ -8770,7 +9069,9 @@
       "date": "2026-03-13",
       "start_time": "9:00",
       "end_time": "16:45",
-      "room_ids": ["r0012"],
+      "room_ids": [
+        "r0012"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://naist-nlp.github.io/breaking-into-top-tier-conferences/"
@@ -8780,9 +9081,13 @@
       "date": "2026-03-13",
       "start_time": "9:00",
       "end_time": "9:30",
-      "room_ids": ["r0012"],
+      "room_ids": [
+        "r0012"
+      ],
       "chair": "",
-      "presentation_ids": ["WS3-1-1"],
+      "presentation_ids": [
+        "WS3-1-1"
+      ],
       "url": "https://naist-nlp.github.io/breaking-into-top-tier-conferences/"
     },
     "WS3-2": {
@@ -8790,9 +9095,13 @@
       "date": "2026-03-13",
       "start_time": "9:30",
       "end_time": "10:00",
-      "room_ids": ["r0012"],
+      "room_ids": [
+        "r0012"
+      ],
       "chair": "",
-      "presentation_ids": ["WS3-2-1"],
+      "presentation_ids": [
+        "WS3-2-1"
+      ],
       "url": "https://naist-nlp.github.io/breaking-into-top-tier-conferences/"
     },
     "WS3-3": {
@@ -8800,9 +9109,13 @@
       "date": "2026-03-13",
       "start_time": "10:00",
       "end_time": "10:30",
-      "room_ids": ["r0012"],
+      "room_ids": [
+        "r0012"
+      ],
       "chair": "",
-      "presentation_ids": ["WS3-3-1"],
+      "presentation_ids": [
+        "WS3-3-1"
+      ],
       "url": "https://naist-nlp.github.io/breaking-into-top-tier-conferences/"
     },
     "WS3-4": {
@@ -8810,9 +9123,13 @@
       "date": "2026-03-13",
       "start_time": "10:45",
       "end_time": "11:15",
-      "room_ids": ["r0012"],
+      "room_ids": [
+        "r0012"
+      ],
       "chair": "",
-      "presentation_ids": ["WS3-4-1"],
+      "presentation_ids": [
+        "WS3-4-1"
+      ],
       "url": "https://naist-nlp.github.io/breaking-into-top-tier-conferences/"
     },
     "WS3-5": {
@@ -8820,9 +9137,13 @@
       "date": "2026-03-13",
       "start_time": "11:15",
       "end_time": "11:45",
-      "room_ids": ["r0012"],
+      "room_ids": [
+        "r0012"
+      ],
       "chair": "",
-      "presentation_ids": ["WS3-5-1"],
+      "presentation_ids": [
+        "WS3-5-1"
+      ],
       "url": "https://naist-nlp.github.io/breaking-into-top-tier-conferences/"
     },
     "WS3-6": {
@@ -8830,9 +9151,13 @@
       "date": "2026-03-13",
       "start_time": "11:45",
       "end_time": "12:30",
-      "room_ids": ["r0012"],
+      "room_ids": [
+        "r0012"
+      ],
       "chair": "",
-      "presentation_ids": ["WS3-6-1"],
+      "presentation_ids": [
+        "WS3-6-1"
+      ],
       "url": "https://naist-nlp.github.io/breaking-into-top-tier-conferences/"
     },
     "WS3-7": {
@@ -8840,7 +9165,9 @@
       "date": "2026-03-13",
       "start_time": "13:30",
       "end_time": "15:00",
-      "room_ids": ["r0012"],
+      "room_ids": [
+        "r0012"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://naist-nlp.github.io/breaking-into-top-tier-conferences/"
@@ -8850,9 +9177,13 @@
       "date": "2026-03-13",
       "start_time": "15:15",
       "end_time": "16:45",
-      "room_ids": ["r0012"],
+      "room_ids": [
+        "r0012"
+      ],
       "chair": "Taro Watanabe",
-      "presentation_ids": ["WS3-8-1"],
+      "presentation_ids": [
+        "WS3-8-1"
+      ],
       "url": "https://naist-nlp.github.io/breaking-into-top-tier-conferences/"
     },
     "WS4": {
@@ -8860,7 +9191,9 @@
       "date": "2026-03-13",
       "start_time": "9:00",
       "end_time": "12:45",
-      "room_ids": ["r0009"],
+      "room_ids": [
+        "r0009"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
@@ -8870,7 +9203,9 @@
       "date": "2026-03-13",
       "start_time": "9:00",
       "end_time": "9:05",
-      "room_ids": ["r0009"],
+      "room_ids": [
+        "r0009"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
@@ -8880,9 +9215,13 @@
       "date": "2026-03-13",
       "start_time": "9:10",
       "end_time": "10:00",
-      "room_ids": ["r0009"],
+      "room_ids": [
+        "r0009"
+      ],
       "chair": "",
-      "presentation_ids": ["WS4-2-1"],
+      "presentation_ids": [
+        "WS4-2-1"
+      ],
       "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
     },
     "WS4-3": {
@@ -8890,9 +9229,13 @@
       "date": "2026-03-13",
       "start_time": "10:00",
       "end_time": "10:20",
-      "room_ids": ["r0009"],
+      "room_ids": [
+        "r0009"
+      ],
       "chair": "",
-      "presentation_ids": ["WS4-3-1"],
+      "presentation_ids": [
+        "WS4-3-1"
+      ],
       "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
     },
     "WS4-4": {
@@ -8900,9 +9243,13 @@
       "date": "2026-03-13",
       "start_time": "10:20",
       "end_time": "10:40",
-      "room_ids": ["r0009"],
+      "room_ids": [
+        "r0009"
+      ],
       "chair": "",
-      "presentation_ids": ["WS4-4-1"],
+      "presentation_ids": [
+        "WS4-4-1"
+      ],
       "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
     },
     "WS4-5": {
@@ -8910,9 +9257,13 @@
       "date": "2026-03-13",
       "start_time": "10:40",
       "end_time": "11:00",
-      "room_ids": ["r0009"],
+      "room_ids": [
+        "r0009"
+      ],
       "chair": "",
-      "presentation_ids": ["WS4-5-1"],
+      "presentation_ids": [
+        "WS4-5-1"
+      ],
       "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
     },
     "WS4-6": {
@@ -8920,9 +9271,13 @@
       "date": "2026-03-13",
       "start_time": "11:10",
       "end_time": "12:00",
-      "room_ids": ["r0009"],
+      "room_ids": [
+        "r0009"
+      ],
       "chair": "",
-      "presentation_ids": ["WS4-6-1"],
+      "presentation_ids": [
+        "WS4-6-1"
+      ],
       "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
     },
     "WS4-7": {
@@ -8930,7 +9285,9 @@
       "date": "2026-03-13",
       "start_time": "12:00",
       "end_time": "12:10",
-      "room_ids": ["r0009"],
+      "room_ids": [
+        "r0009"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
@@ -8940,7 +9297,9 @@
       "date": "2026-03-13",
       "start_time": "12:10",
       "end_time": "12:25",
-      "room_ids": ["r0009"],
+      "room_ids": [
+        "r0009"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
@@ -8950,7 +9309,9 @@
       "date": "2026-03-13",
       "start_time": "12:25",
       "end_time": "12:40",
-      "room_ids": ["r0009"],
+      "room_ids": [
+        "r0009"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
@@ -8960,7 +9321,9 @@
       "date": "2026-03-13",
       "start_time": "12:40",
       "end_time": "12:45",
-      "room_ids": ["r0009"],
+      "room_ids": [
+        "r0009"
+      ],
       "chair": "",
       "presentation_ids": [],
       "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"

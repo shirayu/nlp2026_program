@@ -27,7 +27,7 @@ backend = "core:python"
 
 [[tools.task]]
 version = "3.48.0"
-backend = "aqua:go-task/task"
+backend = "ubi:go-task/task"
 "platforms.linux-arm64" = { checksum = "sha256:15a54fd45f706ce0f4c679c93cf04e02d72ca7223f157209201a1576008056d6", url = "https://github.com/go-task/task/releases/download/v3.48.0/task_linux_arm64.tar.gz"}
 "platforms.linux-x64" = { checksum = "sha256:f4bfc4eef1b2557b262f3cc0a79976a421885cb7b9e71cfe75568a2ebe4d7ae5", url = "https://github.com/go-task/task/releases/download/v3.48.0/task_linux_amd64.tar.gz"}
 "platforms.macos-arm64" = { checksum = "sha256:9a2727b7b74821e1a0a1fb17c477a7e84b7f1bbc8c3ca3bf47ed9a9557c2b986", url = "https://github.com/go-task/task/releases/download/v3.48.0/task_darwin_arm64.tar.gz"}

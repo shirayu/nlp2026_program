@@ -75,6 +75,7 @@ export const ja = {
   gitHash: "Git hash",
   gitDate: "Build time",
   dataGeneratedAt: "Data time",
+  originalProgramLastUpdatedAt: "最終更新日 (JST)",
   noSessionData: "-",
   noPresenter: "発表者情報なし",
   expandPresentationDetails: "発表詳細を開く",

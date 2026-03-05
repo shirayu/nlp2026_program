@@ -133,6 +133,7 @@ export function SettingsDialog({
   dialogRef,
   open,
   dataGeneratedAt,
+  originalProgramLastUpdatedAt,
   isReloadingData,
   reloadDataStatus,
   showAuthors,
@@ -145,6 +146,7 @@ export function SettingsDialog({
   dialogRef: RefObject<HTMLDialogElement | null>;
   open: boolean;
   dataGeneratedAt?: string;
+  originalProgramLastUpdatedAt?: string;
   isReloadingData: boolean;
   reloadDataStatus: DataReloadStatus;
   showAuthors: boolean;
@@ -156,6 +158,9 @@ export function SettingsDialog({
 }) {
   const formattedBuildGitDate = formatBuildGitDate(BUILD_GIT_DATE);
   const formattedDataGeneratedAt = dataGeneratedAt ? formatBuildGitDate(dataGeneratedAt) : null;
+  const formattedOriginalProgramLastUpdatedAt = originalProgramLastUpdatedAt
+    ? formatBuildGitDate(originalProgramLastUpdatedAt, undefined, "Asia/Tokyo")
+    : null;
 
   return (
     <dialog ref={dialogRef} open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
@@ -289,6 +294,14 @@ export function SettingsDialog({
                   <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
                     <dt className="text-gray-500">{ja.dataGeneratedAt}</dt>
                     <dd className="min-w-0 break-all font-mono text-left text-gray-800">{formattedDataGeneratedAt}</dd>
+                  </div>
+                )}
+                {formattedOriginalProgramLastUpdatedAt && (
+                  <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
+                    <dt className="text-gray-500">{ja.originalProgramLastUpdatedAt}</dt>
+                    <dd className="min-w-0 break-all font-mono text-left text-gray-800">
+                      {formattedOriginalProgramLastUpdatedAt}
+                    </dd>
                   </div>
                 )}
               </dl>
