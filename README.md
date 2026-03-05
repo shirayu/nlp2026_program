@@ -45,6 +45,12 @@ task -p
 task dev
 ```
 
+```bash
+# ビルドテスト
+task build
+task preview
+```
+
 ## GitHub Pages
 
 - GitHub Actions の `CI` workflow で `main` への push 時に `dist/` をデプロイします
