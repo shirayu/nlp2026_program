@@ -172,7 +172,7 @@ describe("SettingsDialog", () => {
     );
 
     expect(html).toContain("セッションタイトルを検索対象にする");
-    expect(html).toContain("発表がないセッション");
-    expect(html).toContain("発表があるセッション");
+    expect(html).toContain("発表情報が無いセッション");
+    expect(html).toContain("発表情報が有るセッション");
   });
 });
