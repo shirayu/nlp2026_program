@@ -1,4 +1,4 @@
-import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { startTransition, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { useAppSettings } from "../../hooks/useAppSettings";
 import { useBookmarks } from "../../hooks/useBookmarks";
 import { useConferenceData } from "../../hooks/useConferenceData";
@@ -110,28 +110,6 @@ export function useProgramPageState() {
       setSelectedRoom(null);
     }
   }, [allRooms, selectedRoom]);
-
-  useEffect(() => {
-    const dialog = settingsDialogRef.current;
-    if (!dialog) return;
-
-    if (showSettings && !dialog.open) {
-      dialog.showModal();
-    } else if (!showSettings && dialog.open) {
-      dialog.close();
-    }
-  }, [showSettings]);
-
-  useEffect(() => {
-    const dialog = installDialogRef.current;
-    if (!dialog) return;
-
-    if (showInstallDialog && !dialog.open) {
-      dialog.showModal();
-    } else if (!showInstallDialog && dialog.open) {
-      dialog.close();
-    }
-  }, [showInstallDialog]);
 
   useEffect(() => {
     setInstallContext({
@@ -310,8 +288,8 @@ export function useProgramPageState() {
       onQueryCommit: setQuery,
       onToggleSearchAll: () => setSearchAll((value) => !value),
       onToggleBookmarkFilter: toggleBookmarkFilter,
-      onOpenSettings: () => setShowSettings(true),
-      onOpenInstallDialog: () => setShowInstallDialog(true),
+      onOpenSettings: () => startTransition(() => setShowSettings(true)),
+      onOpenInstallDialog: () => startTransition(() => setShowInstallDialog(true)),
       onSelectDate: selectDate,
       onToggleFilters: () => setShowFilters((value) => !value),
       onSelectTime: selectTime,
@@ -353,14 +331,14 @@ export function useProgramPageState() {
       showInstallDialog,
       installContext,
       hasInstallPrompt: installPromptEvent !== null,
-      onCloseInstallDialog: () => setShowInstallDialog(false),
+      onCloseInstallDialog: () => startTransition(() => setShowInstallDialog(false)),
       onInstall: () => void handleInstallApp(),
       settingsDialogRef,
       showSettings,
       isReloadingData: isReloading,
       reloadDataStatus: reloadStatus,
       useSlackAppLinks: settings.useSlackAppLinks,
-      onCloseSettings: () => setShowSettings(false),
+      onCloseSettings: () => startTransition(() => setShowSettings(false)),
       onReloadData: () => {
         void reload().catch(() => {});
       },
