@@ -893,6 +893,9 @@ _SPECIAL_EVENT_IDS: dict[str, str] = {
     "懇親会": "reception",
     "クロージング": "closing",
 }
+_SPECIAL_EVENT_URLS: dict[str, str] = {
+    "スポンサーミートアップ": "https://www.anlp.jp/nlp2026/#sponsor",
+}
 
 _WS_ZEN_DIGIT = {"１": 1, "２": 2, "３": 3, "４": 4}
 
@@ -1654,6 +1657,8 @@ def main() -> None:
         }
         if ev["url"]:
             entry["url"] = ev["url"]
+        elif ev["title"] in _SPECIAL_EVENT_URLS:
+            entry["url"] = _SPECIAL_EVENT_URLS[ev["title"]]
         result["sessions"][sid] = entry
 
     apply_workshop_overrides(result, workshop_config)
