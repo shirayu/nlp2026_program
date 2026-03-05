@@ -24,6 +24,15 @@ const data: ConferenceData = {
       chair: "",
       presentation_ids: ["pr1"],
     },
+    s2: {
+      title: "オープニング",
+      date: "2026-03-09",
+      start_time: "10:00",
+      end_time: "10:30",
+      room_ids: ["r1"],
+      chair: "",
+      presentation_ids: [],
+    },
   },
   presentations: {
     pr1: {
@@ -50,6 +59,8 @@ describe("SessionCard", () => {
         data={data}
         showAuthors
         query=""
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
         expanded={false}
         onToggleExpanded={vi.fn()}
         onScrollToSessionTop={vi.fn()}
@@ -76,6 +87,8 @@ describe("SessionCard", () => {
         data={data}
         showAuthors
         query=""
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
         expanded={false}
         onToggleExpanded={vi.fn()}
         onScrollToSessionTop={vi.fn()}
@@ -102,6 +115,8 @@ describe("SessionCard", () => {
         data={data}
         showAuthors
         query=""
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
         expanded={false}
         onToggleExpanded={vi.fn()}
         onScrollToSessionTop={vi.fn()}
@@ -128,6 +143,8 @@ describe("SessionCard", () => {
         data={data}
         showAuthors
         query=""
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
         expanded={false}
         onToggleExpanded={vi.fn()}
         onScrollToSessionTop={vi.fn()}
@@ -152,6 +169,8 @@ describe("SessionCard", () => {
         data={data}
         showAuthors
         query=""
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
         expanded={false}
         onToggleExpanded={vi.fn()}
         onScrollToSessionTop={vi.fn()}
@@ -176,6 +195,8 @@ describe("SessionCard", () => {
         data={data}
         showAuthors
         query=""
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
         expanded={false}
         onToggleExpanded={vi.fn()}
         onScrollToSessionTop={vi.fn()}
@@ -200,6 +221,8 @@ describe("SessionCard", () => {
         data={data}
         showAuthors
         query=""
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
         expanded={false}
         onToggleExpanded={vi.fn()}
         onScrollToSessionTop={vi.fn()}
@@ -212,5 +235,109 @@ describe("SessionCard", () => {
 
     expect(html).toContain(">セッション1<");
     expect(html).toContain(`aria-label="${ja.jumpToSessionTop}"`);
+  });
+
+  it("発表ありセッションのタイトル検索がOFFならタイトルをハイライトしない", () => {
+    const html = renderToStaticMarkup(
+      <SessionCard
+        bookmarkedPresentationIds={new Set()}
+        bookmarkedSessionIds={new Set()}
+        sessionId="s1"
+        session={data.sessions.s1}
+        presIds={["pr1"]}
+        data={data}
+        showAuthors
+        query="セッション"
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
+        expanded={false}
+        onToggleExpanded={vi.fn()}
+        onScrollToSessionTop={vi.fn()}
+        onPersonClick={vi.fn()}
+        onJumpToSession={vi.fn()}
+        onToggleBookmark={vi.fn()}
+        onToggleSessionBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).not.toContain("<mark");
+  });
+
+  it("発表ありセッションのタイトル検索がONならタイトルをハイライトする", () => {
+    const html = renderToStaticMarkup(
+      <SessionCard
+        bookmarkedPresentationIds={new Set()}
+        bookmarkedSessionIds={new Set()}
+        sessionId="s1"
+        session={data.sessions.s1}
+        presIds={["pr1"]}
+        data={data}
+        showAuthors
+        query="セッション"
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions
+        expanded={false}
+        onToggleExpanded={vi.fn()}
+        onScrollToSessionTop={vi.fn()}
+        onPersonClick={vi.fn()}
+        onJumpToSession={vi.fn()}
+        onToggleBookmark={vi.fn()}
+        onToggleSessionBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).toContain("<mark");
+  });
+
+  it("発表なしセッションのタイトル検索がOFFならタイトルをハイライトしない", () => {
+    const html = renderToStaticMarkup(
+      <SessionCard
+        bookmarkedPresentationIds={new Set()}
+        bookmarkedSessionIds={new Set()}
+        sessionId="s2"
+        session={data.sessions.s2}
+        presIds={[]}
+        data={data}
+        showAuthors
+        query="オープニング"
+        includeSessionTitleForNoPresentationSessions={false}
+        includeSessionTitleForPresentationSessions
+        expanded={false}
+        onToggleExpanded={vi.fn()}
+        onScrollToSessionTop={vi.fn()}
+        onPersonClick={vi.fn()}
+        onJumpToSession={vi.fn()}
+        onToggleBookmark={vi.fn()}
+        onToggleSessionBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).not.toContain("<mark");
+  });
+
+  it("発表なしセッションのタイトル検索がONならタイトルをハイライトする", () => {
+    const html = renderToStaticMarkup(
+      <SessionCard
+        bookmarkedPresentationIds={new Set()}
+        bookmarkedSessionIds={new Set()}
+        sessionId="s2"
+        session={data.sessions.s2}
+        presIds={[]}
+        data={data}
+        showAuthors
+        query="オープニング"
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
+        expanded={false}
+        onToggleExpanded={vi.fn()}
+        onScrollToSessionTop={vi.fn()}
+        onPersonClick={vi.fn()}
+        onJumpToSession={vi.fn()}
+        onToggleBookmark={vi.fn()}
+        onToggleSessionBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).toContain("<mark");
   });
 });

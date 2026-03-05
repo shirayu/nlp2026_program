@@ -10,6 +10,8 @@ describe("appSettingsStorage", () => {
     expect(appSettingsStorage.parseAppSettings(null)).toEqual({
       showAuthors: true,
       useSlackAppLinks: true,
+      includeSessionTitleForNoPresentationSessions: true,
+      includeSessionTitleForPresentationSessions: false,
     });
   });
 
@@ -17,6 +19,8 @@ describe("appSettingsStorage", () => {
     expect(appSettingsStorage.parseAppSettings("{broken")).toEqual({
       showAuthors: true,
       useSlackAppLinks: true,
+      includeSessionTitleForNoPresentationSessions: true,
+      includeSessionTitleForPresentationSessions: false,
     });
   });
 
@@ -24,6 +28,8 @@ describe("appSettingsStorage", () => {
     expect(appSettingsStorage.parseAppSettings('{"showAuthors":false}')).toEqual({
       showAuthors: false,
       useSlackAppLinks: true,
+      includeSessionTitleForNoPresentationSessions: true,
+      includeSessionTitleForPresentationSessions: false,
     });
   });
 
@@ -33,7 +39,9 @@ describe("appSettingsStorage", () => {
       value: {
         localStorage: {
           getItem: (key: string) =>
-            key === appSettingsStorageKey ? '{"showAuthors":false,"useSlackAppLinks":false}' : null,
+            key === appSettingsStorageKey
+              ? '{"showAuthors":false,"useSlackAppLinks":false,"includeSessionTitleForNoPresentationSessions":false,"includeSessionTitleForPresentationSessions":true}'
+              : null,
         },
       },
     });
@@ -41,6 +49,8 @@ describe("appSettingsStorage", () => {
     expect(appSettingsStorage.readAppSettings()).toEqual({
       showAuthors: false,
       useSlackAppLinks: false,
+      includeSessionTitleForNoPresentationSessions: false,
+      includeSessionTitleForPresentationSessions: true,
     });
   });
 });

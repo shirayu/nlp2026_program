@@ -28,9 +28,13 @@ export function ProgramOverlays({
   isReloadingData,
   reloadDataStatus,
   useSlackAppLinks,
+  includeSessionTitleForNoPresentationSessions,
+  includeSessionTitleForPresentationSessions,
   onCloseSettings,
   onToggleShowAuthors,
   onToggleUseSlackAppLinks,
+  onToggleIncludeSessionTitleForNoPresentationSessions,
+  onToggleIncludeSessionTitleForPresentationSessions,
 }: {
   personModal: PersonId | null;
   data: ConferenceData;
@@ -55,9 +59,13 @@ export function ProgramOverlays({
   isReloadingData: boolean;
   reloadDataStatus: DataReloadStatus;
   useSlackAppLinks: boolean;
+  includeSessionTitleForNoPresentationSessions: boolean;
+  includeSessionTitleForPresentationSessions: boolean;
   onCloseSettings: () => void;
   onToggleShowAuthors: () => void;
   onToggleUseSlackAppLinks: () => void;
+  onToggleIncludeSessionTitleForNoPresentationSessions: () => void;
+  onToggleIncludeSessionTitleForPresentationSessions: () => void;
 }) {
   return (
     <>
@@ -96,9 +104,13 @@ export function ProgramOverlays({
         open={showSettings}
         showAuthors={showAuthors}
         useSlackAppLinks={useSlackAppLinks}
+        includeSessionTitleForNoPresentationSessions={includeSessionTitleForNoPresentationSessions}
+        includeSessionTitleForPresentationSessions={includeSessionTitleForPresentationSessions}
         onClose={onCloseSettings}
         onToggleShowAuthors={onToggleShowAuthors}
         onToggleUseSlackAppLinks={onToggleUseSlackAppLinks}
+        onToggleIncludeSessionTitleForNoPresentationSessions={onToggleIncludeSessionTitleForNoPresentationSessions}
+        onToggleIncludeSessionTitleForPresentationSessions={onToggleIncludeSessionTitleForPresentationSessions}
       />
     </>
   );

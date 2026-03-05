@@ -8,6 +8,23 @@ import type { ConferenceData, PersonId, PresentationId, SessionId } from "../typ
 import { HighlightedText } from "./HighlightedText";
 import { PresentationCard } from "./PresentationCard";
 
+function getSessionTitleQuery(
+  sessionId: SessionId,
+  session: ConferenceData["sessions"][string],
+  data: ConferenceData,
+  query: string,
+  includeSessionTitleForNoPresentationSessions: boolean,
+  includeSessionTitleForPresentationSessions: boolean,
+): string {
+  const hasPresentations =
+    session.presentation_ids.length > 0 ||
+    Object.values(data.presentations).some((presentation) => presentation.session_id === sessionId);
+  const titleHighlightEnabled = hasPresentations
+    ? includeSessionTitleForPresentationSessions
+    : includeSessionTitleForNoPresentationSessions;
+  return titleHighlightEnabled ? query : "";
+}
+
 export const SessionCard = memo(
   forwardRef<
     HTMLElement,
@@ -21,6 +38,8 @@ export const SessionCard = memo(
       data: ConferenceData;
       showAuthors: boolean;
       query: string;
+      includeSessionTitleForNoPresentationSessions: boolean;
+      includeSessionTitleForPresentationSessions: boolean;
       expanded: boolean;
       onToggleExpanded: () => void;
       onScrollToSessionTop: (sid: SessionId) => void;
@@ -40,6 +59,8 @@ export const SessionCard = memo(
       data,
       showAuthors,
       query,
+      includeSessionTitleForNoPresentationSessions,
+      includeSessionTitleForPresentationSessions,
       expanded,
       onToggleExpanded,
       onScrollToSessionTop,
@@ -58,6 +79,14 @@ export const SessionCard = memo(
       if (!match) return null;
       return data.sessions[match[1]]?.title ?? null;
     })();
+    const sessionTitleQuery = getSessionTitleQuery(
+      sessionId,
+      session,
+      data,
+      query,
+      includeSessionTitleForNoPresentationSessions,
+      includeSessionTitleForPresentationSessions,
+    );
 
     return (
       <section ref={ref} className={`rounded-xl shadow-sm ${roomTheme.surface}`}>
@@ -70,7 +99,7 @@ export const SessionCard = memo(
           />
           <div className="pointer-events-none relative flex items-start justify-between gap-3">
             <h2 className={`min-w-0 flex-1 text-sm font-semibold leading-snug ${roomTheme.title}`}>
-              <HighlightedText text={session.title || sessionId} query={query} />
+              <HighlightedText text={session.title || sessionId} query={sessionTitleQuery} />
             </h2>
             <div className="pointer-events-auto relative z-10 flex shrink-0 items-center gap-1">
               {session.youtube_url && (

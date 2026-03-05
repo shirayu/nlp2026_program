@@ -21,6 +21,8 @@ export function ProgramResults({
   bookmarkedSessionIds,
   sessionSlackLinks,
   showAuthors,
+  includeSessionTitleForNoPresentationSessions,
+  includeSessionTitleForPresentationSessions,
   sessionsVisible,
   sessionRefs,
   onToggleExpanded,
@@ -41,6 +43,8 @@ export function ProgramResults({
   bookmarkedSessionIds: Set<SessionId>;
   sessionSlackLinks: Partial<Record<SessionId, string>>;
   showAuthors: boolean;
+  includeSessionTitleForNoPresentationSessions: boolean;
+  includeSessionTitleForPresentationSessions: boolean;
   sessionsVisible: boolean;
   sessionRefs: RefObject<Record<string, HTMLElement | null>>;
   onToggleExpanded: (sessionId: SessionId) => void;
@@ -75,6 +79,8 @@ export function ProgramResults({
             data={data}
             showAuthors={showAuthors}
             query={trimmedQuery}
+            includeSessionTitleForNoPresentationSessions={includeSessionTitleForNoPresentationSessions}
+            includeSessionTitleForPresentationSessions={includeSessionTitleForPresentationSessions}
             expanded={sessionsVisible}
             onToggleExpanded={() => onToggleExpanded(sessionId)}
             onScrollToSessionTop={onScrollToSessionTop}

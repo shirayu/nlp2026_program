@@ -351,6 +351,63 @@ describe("filterSessions - テキスト検索", () => {
     expect(result).toHaveLength(0);
   });
 
+  it("設定オンなら発表があるセッションでもセッションタイトルでヒットする", () => {
+    const result = filterSessions(data, {
+      ...noFilter,
+      query: "機械学習B",
+      includeSessionTitleForPresentationSessions: true,
+    });
+    expect(result.map((r) => r.sessionId)).toEqual(["s2"]);
+    expect(result[0]?.presIds).toEqual(["pr3"]);
+  });
+
+  it("発表がないセッションはセッションタイトルでヒットする", () => {
+    const dataWithOpening: ConferenceData = {
+      ...data,
+      sessions: {
+        ...data.sessions,
+        opening: {
+          title: "オープニング",
+          date: "2026-03-09",
+          start_time: "16:30",
+          end_time: "17:15",
+          room_ids: ["r1"],
+          chair: "",
+          presentation_ids: [],
+        },
+      },
+    };
+
+    const result = filterSessions(dataWithOpening, { ...noFilter, query: "オープニング" });
+    expect(result.map((r) => r.sessionId)).toEqual(["opening"]);
+    expect(result[0]?.presIds).toEqual([]);
+  });
+
+  it("設定オフなら発表がないセッションはセッションタイトルでヒットしない", () => {
+    const dataWithOpening: ConferenceData = {
+      ...data,
+      sessions: {
+        ...data.sessions,
+        opening: {
+          title: "オープニング",
+          date: "2026-03-09",
+          start_time: "16:30",
+          end_time: "17:15",
+          room_ids: ["r1"],
+          chair: "",
+          presentation_ids: [],
+        },
+      },
+    };
+
+    const result = filterSessions(dataWithOpening, {
+      ...noFilter,
+      query: "オープニング",
+      includeSessionTitleForNoPresentationSessions: false,
+    });
+    expect(result).toHaveLength(0);
+  });
+
   it("座長名ではヒットしない", () => {
     const result = filterSessions(data, { ...noFilter, query: "司会B" });
     expect(result).toHaveLength(0);

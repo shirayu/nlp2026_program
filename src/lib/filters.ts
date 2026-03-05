@@ -12,6 +12,10 @@ export interface FilterOptions {
   selectedDate: string | null;
   selectedTime: string | null;
   selectedRoom: string | null;
+  /** 発表がないセッションのタイトル一致を検索対象に含める */
+  includeSessionTitleForNoPresentationSessions?: boolean;
+  /** 発表があるセッションでもタイトル一致を検索対象に含める */
+  includeSessionTitleForPresentationSessions?: boolean;
   /** 全発表を対象にテキスト検索するか。false のときは絞り込み済みセッションのみ検索 */
   searchAll: boolean;
   /** ブックマーク全体表示中か。true のときは searchAll と組み合わせて場所系フィルタを外す */
@@ -137,9 +141,21 @@ function toFilteredSession(
   sessionId: SessionId,
   session: Session,
   terms: string[],
+  includeSessionTitleForNoPresentationSessions: boolean,
+  includeSessionTitleForPresentationSessions: boolean,
 ): FilteredSession | null {
   const presIds = getSessionPresentationIds(data, sessionId, session);
   if (terms.length === 0) {
+    return { sessionId, session, presIds };
+  }
+
+  const sessionTitleMatched = matchesAllTerms([session.title], terms);
+  if (presIds.length === 0) {
+    if (!includeSessionTitleForNoPresentationSessions) return null;
+    return sessionTitleMatched ? { sessionId, session, presIds } : null;
+  }
+
+  if (includeSessionTitleForPresentationSessions && sessionTitleMatched) {
     return { sessionId, session, presIds };
   }
 
@@ -244,7 +260,16 @@ export function getAvailableRooms(
 
 /** セッション・発表の絞り込み */
 export function filterSessions(data: ConferenceData, opts: FilterOptions): FilteredSession[] {
-  const { query, selectedDate, selectedTime, selectedRoom, searchAll, bookmarkedOnly = false } = opts;
+  const {
+    query,
+    selectedDate,
+    selectedTime,
+    selectedRoom,
+    includeSessionTitleForNoPresentationSessions = true,
+    includeSessionTitleForPresentationSessions = false,
+    searchAll,
+    bookmarkedOnly = false,
+  } = opts;
   const terms = normalizeTerms(query);
   const hasQuery = terms.length > 0;
   const sortedSessions = getSortedSessionEntries(data.sessions);
@@ -265,7 +290,14 @@ export function filterSessions(data: ConferenceData, opts: FilterOptions): Filte
       return [];
     }
 
-    const filteredSession = toFilteredSession(data, sessionId as SessionId, session, terms);
+    const filteredSession = toFilteredSession(
+      data,
+      sessionId as SessionId,
+      session,
+      terms,
+      includeSessionTitleForNoPresentationSessions,
+      includeSessionTitleForPresentationSessions,
+    );
     return filteredSession ? [filteredSession] : [];
   });
 }

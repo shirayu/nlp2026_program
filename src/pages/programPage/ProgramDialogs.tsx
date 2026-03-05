@@ -354,17 +354,25 @@ export function SettingsDialog({
   open,
   showAuthors,
   useSlackAppLinks,
+  includeSessionTitleForNoPresentationSessions,
+  includeSessionTitleForPresentationSessions,
   onClose,
   onToggleShowAuthors,
   onToggleUseSlackAppLinks,
+  onToggleIncludeSessionTitleForNoPresentationSessions,
+  onToggleIncludeSessionTitleForPresentationSessions,
 }: {
   dialogRef: RefObject<HTMLDialogElement | null>;
   open: boolean;
   showAuthors: boolean;
   useSlackAppLinks: boolean;
+  includeSessionTitleForNoPresentationSessions: boolean;
+  includeSessionTitleForPresentationSessions: boolean;
   onClose: () => void;
   onToggleShowAuthors: () => void;
   onToggleUseSlackAppLinks: () => void;
+  onToggleIncludeSessionTitleForNoPresentationSessions: () => void;
+  onToggleIncludeSessionTitleForPresentationSessions: () => void;
 }) {
   const formattedBuildGitDate = formatBuildGitDate(BUILD_GIT_DATE);
   const shouldShowOperatorSection =
@@ -419,6 +427,37 @@ export function SettingsDialog({
                 />
               </button>
             </label>
+            <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
+              <h3 className="text-sm font-semibold text-gray-800">{ja.sessionTitleSearchSettings}</h3>
+              <div className="mt-2 space-y-2">
+                <label className="flex items-center justify-between gap-3">
+                  <span className="text-sm text-gray-700">{ja.includeSessionTitleForNoPresentationSessions}</span>
+                  <button
+                    type="button"
+                    onClick={onToggleIncludeSessionTitleForNoPresentationSessions}
+                    className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${includeSessionTitleForNoPresentationSessions ? "bg-indigo-600" : "bg-gray-300"}`}
+                    aria-pressed={includeSessionTitleForNoPresentationSessions}
+                  >
+                    <span
+                      className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${includeSessionTitleForNoPresentationSessions ? "translate-x-4" : "translate-x-0"}`}
+                    />
+                  </button>
+                </label>
+                <label className="flex items-center justify-between gap-3">
+                  <span className="text-sm text-gray-700">{ja.includeSessionTitleForPresentationSessions}</span>
+                  <button
+                    type="button"
+                    onClick={onToggleIncludeSessionTitleForPresentationSessions}
+                    className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${includeSessionTitleForPresentationSessions ? "bg-indigo-600" : "bg-gray-300"}`}
+                    aria-pressed={includeSessionTitleForPresentationSessions}
+                  >
+                    <span
+                      className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${includeSessionTitleForPresentationSessions ? "translate-x-4" : "translate-x-0"}`}
+                    />
+                  </button>
+                </label>
+              </div>
+            </section>
             <section className="mt-4 rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
               <h3 className="text-sm font-semibold text-gray-800">{ja.iconLegend}</h3>
               <ul className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600">

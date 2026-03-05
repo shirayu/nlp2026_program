@@ -27,7 +27,13 @@ import {
 
 export function useProgramPageState() {
   const { data, sessionSlackChannels, isReloading, reloadStatus, reload } = useConferenceData();
-  const { settings, toggleShowAuthors, toggleUseSlackAppLinks } = useAppSettings();
+  const {
+    settings,
+    toggleShowAuthors,
+    toggleUseSlackAppLinks,
+    toggleIncludeSessionTitleForNoPresentationSessions,
+    toggleIncludeSessionTitleForPresentationSessions,
+  } = useAppSettings();
   const {
     bookmarkIds,
     sessionBookmarkIds,
@@ -156,6 +162,8 @@ export function useProgramPageState() {
       selectedDate: deferredSelectedDate,
       selectedTime: deferredSelectedTime,
       selectedRoom: deferredSelectedRoom,
+      includeSessionTitleForNoPresentationSessions: settings.includeSessionTitleForNoPresentationSessions,
+      includeSessionTitleForPresentationSessions: settings.includeSessionTitleForPresentationSessions,
       searchAll: deferredSearchAll,
       bookmarkedOnly: showBookmarkedOnly,
     });
@@ -166,6 +174,8 @@ export function useProgramPageState() {
     deferredSelectedDate,
     deferredSelectedRoom,
     deferredSelectedTime,
+    settings.includeSessionTitleForNoPresentationSessions,
+    settings.includeSessionTitleForPresentationSessions,
     showBookmarkedOnly,
   ]);
 
@@ -415,6 +425,8 @@ export function useProgramPageState() {
       bookmarkedSessionIds,
       sessionSlackLinks,
       showAuthors: settings.showAuthors,
+      includeSessionTitleForNoPresentationSessions: settings.includeSessionTitleForNoPresentationSessions,
+      includeSessionTitleForPresentationSessions: settings.includeSessionTitleForPresentationSessions,
       sessionsVisible,
       sessionRefs,
       onToggleExpanded: handleToggleExpanded,
@@ -451,12 +463,16 @@ export function useProgramPageState() {
       isReloadingData: isReloading,
       reloadDataStatus: reloadStatus,
       useSlackAppLinks: settings.useSlackAppLinks,
+      includeSessionTitleForNoPresentationSessions: settings.includeSessionTitleForNoPresentationSessions,
+      includeSessionTitleForPresentationSessions: settings.includeSessionTitleForPresentationSessions,
       onCloseSettings: () => startTransition(() => setShowSettings(false)),
       onReloadData: () => {
         void reload().catch(() => {});
       },
       onToggleShowAuthors: toggleShowAuthors,
       onToggleUseSlackAppLinks: toggleUseSlackAppLinks,
+      onToggleIncludeSessionTitleForNoPresentationSessions: toggleIncludeSessionTitleForNoPresentationSessions,
+      onToggleIncludeSessionTitleForPresentationSessions: toggleIncludeSessionTitleForPresentationSessions,
     },
   };
 }

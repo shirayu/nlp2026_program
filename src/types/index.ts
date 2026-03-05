@@ -61,6 +61,8 @@ export interface SlackChannelRef {
 export interface AppSettings {
   showAuthors: boolean;
   useSlackAppLinks: boolean;
+  includeSessionTitleForNoPresentationSessions: boolean;
+  includeSessionTitleForPresentationSessions: boolean;
 }
 
 export interface LastUpdateEntry {

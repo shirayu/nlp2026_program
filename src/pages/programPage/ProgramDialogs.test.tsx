@@ -113,9 +113,13 @@ describe("SettingsDialog", () => {
         open
         showAuthors
         useSlackAppLinks={false}
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
         onClose={() => {}}
         onToggleShowAuthors={() => {}}
         onToggleUseSlackAppLinks={() => {}}
+        onToggleIncludeSessionTitleForNoPresentationSessions={() => {}}
+        onToggleIncludeSessionTitleForPresentationSessions={() => {}}
       />,
     );
 
@@ -134,9 +138,13 @@ describe("SettingsDialog", () => {
         open
         showAuthors
         useSlackAppLinks={false}
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
         onClose={() => {}}
         onToggleShowAuthors={() => {}}
         onToggleUseSlackAppLinks={() => {}}
+        onToggleIncludeSessionTitleForNoPresentationSessions={() => {}}
+        onToggleIncludeSessionTitleForPresentationSessions={() => {}}
       />,
     );
 
@@ -144,5 +152,27 @@ describe("SettingsDialog", () => {
     expect(html).toContain("○ 発表者");
     expect(html).toContain("英語発表");
     expect(html).toContain("オンライン発表");
+  });
+
+  it("セッションタイトル検索設定セクションを表示する", () => {
+    const html = renderToStaticMarkup(
+      <SettingsDialog
+        dialogRef={{ current: null }}
+        open
+        showAuthors
+        useSlackAppLinks={false}
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
+        onClose={() => {}}
+        onToggleShowAuthors={() => {}}
+        onToggleUseSlackAppLinks={() => {}}
+        onToggleIncludeSessionTitleForNoPresentationSessions={() => {}}
+        onToggleIncludeSessionTitleForPresentationSessions={() => {}}
+      />,
+    );
+
+    expect(html).toContain("セッションタイトルを検索対象にする");
+    expect(html).toContain("発表がないセッション");
+    expect(html).toContain("発表があるセッション");
   });
 });

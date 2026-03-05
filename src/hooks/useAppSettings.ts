@@ -6,6 +6,8 @@ const APP_SETTINGS_STORAGE_KEY = "nlp2026-settings";
 const DEFAULT_APP_SETTINGS: AppSettings = {
   showAuthors: true,
   useSlackAppLinks: true,
+  includeSessionTitleForNoPresentationSessions: true,
+  includeSessionTitleForPresentationSessions: false,
 };
 
 function parseBoolean(value: unknown, fallback: boolean): boolean {
@@ -26,6 +28,14 @@ function parseAppSettings(value: string | null): AppSettings {
     return {
       showAuthors: parseBoolean(parsed.showAuthors, DEFAULT_APP_SETTINGS.showAuthors),
       useSlackAppLinks: parseBoolean(parsed.useSlackAppLinks, DEFAULT_APP_SETTINGS.useSlackAppLinks),
+      includeSessionTitleForNoPresentationSessions: parseBoolean(
+        parsed.includeSessionTitleForNoPresentationSessions,
+        DEFAULT_APP_SETTINGS.includeSessionTitleForNoPresentationSessions,
+      ),
+      includeSessionTitleForPresentationSessions: parseBoolean(
+        parsed.includeSessionTitleForPresentationSessions,
+        DEFAULT_APP_SETTINGS.includeSessionTitleForPresentationSessions,
+      ),
     };
   } catch {
     return DEFAULT_APP_SETTINGS;
@@ -59,6 +69,16 @@ export function useAppSettings() {
       setSettings((current) => ({
         ...current,
         useSlackAppLinks: !current.useSlackAppLinks,
+      })),
+    toggleIncludeSessionTitleForNoPresentationSessions: () =>
+      setSettings((current) => ({
+        ...current,
+        includeSessionTitleForNoPresentationSessions: !current.includeSessionTitleForNoPresentationSessions,
+      })),
+    toggleIncludeSessionTitleForPresentationSessions: () =>
+      setSettings((current) => ({
+        ...current,
+        includeSessionTitleForPresentationSessions: !current.includeSessionTitleForPresentationSessions,
       })),
   };
 }

@@ -3,6 +3,7 @@
 import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { filterSessions } from "../../lib/filters";
 import type { ConferenceData } from "../../types";
 import { useProgramPageState } from "./useProgramPageState";
 
@@ -27,6 +28,14 @@ vi.mock("../../hooks/useBookmarks", () => ({
 vi.mock("../../hooks/useSessionJump", () => ({
   useSessionJump: () => mockUseSessionJump(),
 }));
+
+vi.mock("../../lib/filters", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../../lib/filters")>();
+  return {
+    ...actual,
+    filterSessions: vi.fn(actual.filterSessions),
+  };
+});
 
 const baseData: ConferenceData = {
   generated_at: "2026-03-04T09:00:00+09:00",
@@ -107,9 +116,13 @@ describe("useProgramPageState", () => {
       settings: {
         showAuthors: false,
         useSlackAppLinks: false,
+        includeSessionTitleForNoPresentationSessions: true,
+        includeSessionTitleForPresentationSessions: false,
       },
       toggleShowAuthors: vi.fn(),
       toggleUseSlackAppLinks: vi.fn(),
+      toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
+      toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
     });
     mockUseBookmarks.mockReturnValue({
       bookmarkIds: [],
@@ -273,5 +286,34 @@ describe("useProgramPageState", () => {
 
     hook.unmount();
     vi.useRealTimers();
+  });
+
+  it("検索設定2項目を filterSessions に渡す", async () => {
+    mockUseAppSettings.mockReturnValue({
+      settings: {
+        showAuthors: false,
+        useSlackAppLinks: false,
+        includeSessionTitleForNoPresentationSessions: false,
+        includeSessionTitleForPresentationSessions: true,
+      },
+      toggleShowAuthors: vi.fn(),
+      toggleUseSlackAppLinks: vi.fn(),
+      toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
+      toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    const mockedFilterSessions = vi.mocked(filterSessions);
+    expect(mockedFilterSessions).toHaveBeenCalled();
+    const calls = mockedFilterSessions.mock.calls;
+    const lastCall = calls[calls.length - 1];
+    expect(lastCall?.[1]).toMatchObject({
+      includeSessionTitleForNoPresentationSessions: false,
+      includeSessionTitleForPresentationSessions: true,
+    });
+
+    hook.unmount();
   });
 });
