@@ -33,11 +33,11 @@ export function PersonModal({
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40">
       <button type="button" aria-label={ja.closeDisplaySettings} className="absolute inset-0" onClick={onClose} />
       <div className="relative w-full max-w-2xl max-h-[80vh] overflow-y-auto rounded-t-2xl bg-white pb-8">
-        <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
-          <h2 className="text-sm font-bold text-gray-800">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-indigo-100 bg-indigo-50/95 px-4 py-3 backdrop-blur">
+          <h2 className="text-sm font-bold text-indigo-900">
             {ja.personPresentations(person?.name ?? personId, presentations.length)}
           </h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">
+          <button type="button" onClick={onClose} className="text-indigo-400 hover:text-indigo-600">
             <X className="h-5 w-5" />
           </button>
         </div>
