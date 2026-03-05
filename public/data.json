@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-04T16:57:01Z",
+  "generated_at": "2026-03-05T01:31:26Z",
   "persons": {
     "p0001": {
       "name": "相澤 彰子"
@@ -7490,7 +7490,7 @@
       "start_time": "15:10",
       "end_time": "16:40",
       "room_ids": ["r0002"],
-      "chair": "平岡 達也 (MBZUAI)",
+      "chair": "馬 尤咪 (科学大)",
       "presentation_ids": [
         "B3-1",
         "B3-2",
@@ -8410,7 +8410,7 @@
       "start_time": "14:15",
       "end_time": "15:45",
       "room_ids": ["r0004"],
-      "chair": "丹羽 彩奈 (MBZUAI)",
+      "chair": "森田 一 (ソフトバンク)",
       "presentation_ids": [
         "P9-1",
         "P9-2",
