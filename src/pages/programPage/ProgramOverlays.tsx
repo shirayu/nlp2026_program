@@ -81,7 +81,7 @@ export function ProgramOverlays({
         dialogRef={settingsDialogRef}
         open={showSettings}
         dataGeneratedAt={data.generated_at}
-        programMainLastUpdatedAt={data.last_update?.program_main?.time}
+        lastUpdate={data.last_update}
         isReloadingData={isReloadingData}
         reloadDataStatus={reloadDataStatus}
         showAuthors={showAuthors}

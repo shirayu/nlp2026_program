@@ -9,7 +9,10 @@ import {
 } from "../../constants";
 import type { DataReloadStatus } from "../../hooks/useConferenceData";
 import { ja } from "../../locales/ja";
+import type { LastUpdateEntry } from "../../types";
 import { fullscreenDialogClassName } from "./utils";
+
+type LastUpdateRow = { label: string; time: string };
 
 export function formatBuildGitDate(value: string, locale?: string | string[], timeZone?: string): string {
   if (value === "unknown") return value;
@@ -27,6 +30,38 @@ export function formatBuildGitDate(value: string, locale?: string | string[], ti
     timeZone,
     timeZoneName: "short",
   }).format(date);
+}
+
+function shortHash(value: string | null): string {
+  if (!value) return "null";
+  if (value.length <= 6) return value;
+  return `${value.slice(0, 3)}...${value.slice(-3)}`;
+}
+
+function buildLastUpdateRows(lastUpdate?: Record<string, LastUpdateEntry>): {
+  mainRow: LastUpdateRow | null;
+  secondaryRows: LastUpdateRow[];
+} {
+  const rows = [
+    { key: "program_main", label: ja.programMainLastUpdatedAt },
+    { key: "workshop", label: ja.workshopLastUpdatedAt },
+    { key: "invitedpapers", label: ja.invitedpapersLastUpdatedAt },
+    { key: "youtube", label: ja.youtubeLastUpdatedAt },
+  ]
+    .map(({ key, label }) => {
+      const entry = lastUpdate?.[key];
+      if (!entry) return null;
+      return {
+        label,
+        time: `${formatBuildGitDate(entry.time, undefined, "Asia/Tokyo")} (${shortHash(entry.sha256)})`,
+      };
+    })
+    .filter((row): row is LastUpdateRow => row !== null);
+
+  return {
+    mainRow: rows.find((row) => row.label === ja.programMainLastUpdatedAt) ?? null,
+    secondaryRows: rows.filter((row) => row.label !== ja.programMainLastUpdatedAt),
+  };
 }
 
 export function InstallDialog({
@@ -133,7 +168,7 @@ export function SettingsDialog({
   dialogRef,
   open,
   dataGeneratedAt,
-  programMainLastUpdatedAt,
+  lastUpdate,
   isReloadingData,
   reloadDataStatus,
   showAuthors,
@@ -146,7 +181,7 @@ export function SettingsDialog({
   dialogRef: RefObject<HTMLDialogElement | null>;
   open: boolean;
   dataGeneratedAt?: string;
-  programMainLastUpdatedAt?: string;
+  lastUpdate?: Record<string, LastUpdateEntry>;
   isReloadingData: boolean;
   reloadDataStatus: DataReloadStatus;
   showAuthors: boolean;
@@ -158,9 +193,7 @@ export function SettingsDialog({
 }) {
   const formattedBuildGitDate = formatBuildGitDate(BUILD_GIT_DATE);
   const formattedDataGeneratedAt = dataGeneratedAt ? formatBuildGitDate(dataGeneratedAt) : null;
-  const formattedProgramMainLastUpdatedAt = programMainLastUpdatedAt
-    ? formatBuildGitDate(programMainLastUpdatedAt, undefined, "Asia/Tokyo")
-    : null;
+  const { mainRow, secondaryRows } = buildLastUpdateRows(lastUpdate);
 
   return (
     <dialog ref={dialogRef} open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
@@ -243,7 +276,7 @@ export function SettingsDialog({
               </div>
               {reloadDataStatus === "no_change" && <p className="mt-2 text-xs text-gray-500">{ja.reloadNoChanges}</p>}
               {reloadDataStatus === "error" && <p className="mt-2 text-xs text-rose-600">{ja.reloadFailed}</p>}
-              {(formattedDataGeneratedAt || formattedProgramMainLastUpdatedAt) && (
+              {(formattedDataGeneratedAt || mainRow || secondaryRows.length > 0) && (
                 <dl className="mt-3 space-y-2 border-t border-gray-200 pt-3 text-sm">
                   {formattedDataGeneratedAt && (
                     <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
@@ -253,13 +286,22 @@ export function SettingsDialog({
                       </dd>
                     </div>
                   )}
-                  {formattedProgramMainLastUpdatedAt && (
+                  {mainRow && (
                     <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
-                      <dt className="text-gray-500">{ja.programMainLastUpdatedAt}</dt>
-                      <dd className="min-w-0 break-all font-mono text-left text-gray-800">
-                        {formattedProgramMainLastUpdatedAt}
-                      </dd>
+                      <dt className="text-gray-500">{mainRow.label}</dt>
+                      <dd className="min-w-0 break-all font-mono text-left text-gray-800">{mainRow.time}</dd>
                     </div>
+                  )}
+                  {secondaryRows.length > 0 && (
+                    <details className="rounded-lg border border-gray-200 bg-white px-2 py-1">
+                      <summary className="cursor-pointer text-xs text-gray-600">Other Sources</summary>
+                      {secondaryRows.map((row) => (
+                        <div key={row.label} className="mt-2 grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
+                          <dt className="text-gray-500">{row.label}</dt>
+                          <dd className="min-w-0 break-all font-mono text-left text-gray-800">{row.time}</dd>
+                        </div>
+                      ))}
+                    </details>
                   )}
                 </dl>
               )}

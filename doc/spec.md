@@ -16,7 +16,12 @@
 ```json
 {
   "generated_at":  "2026-03-05T01:44:12Z",
-  "last_update":   { "program_main": { "blob_hash": null, "time": "2026-03-04T09:00:00+09:00" } },
+  "last_update":   {
+    "program_main":  { "sha256": "…", "time": "2026-03-04T09:00:00+09:00" },
+    "workshop":      { "sha256": "…", "time": "2026-03-05T08:00:00+09:00" },
+    "invitedpapers": { "sha256": "…", "time": "2026-03-05T08:10:00+09:00" },
+    "youtube":       { "sha256": "…", "time": "2026-03-05T08:20:00+09:00" }
+  },
   "persons":       { "p0001": Person, ... },
   "affiliations":  { "a0001": Affiliation, ... },
   "rooms":         { "r0001": Room, ... },
@@ -29,8 +34,11 @@
 |---|---|---|
 | `generated_at` | `string \| null` | `data.json` の生成日時（UTC の ISO 8601 形式。例: `2026-03-05T01:44:12Z`） |
 | `last_update` | `object \| null` | ソース別の最終更新情報。キーはデータソース名 |
-| `last_update.program_main.blob_hash` | `string \| null` | `program_main` データの blob hash（未設定時は `null`） |
+| `last_update.<source>.sha256` | `string \| null` | 対象ソースファイルの SHA-256 |
 | `last_update.program_main.time` | `string` | `data_for_extraction/original_program.html` の「最終更新日」を JST として解釈した日時（例: `2026-03-04T09:00:00+09:00`） |
+| `last_update.workshop.time` | `string` | `data_for_extraction/workshop.json` の最終更新日時（ファイル更新時刻/JST） |
+| `last_update.invitedpapers.time` | `string` | `data_for_extraction/invitedpapers.json` の最終更新日時（ファイル更新時刻/JST） |
+| `last_update.youtube.time` | `string` | `data_for_extraction/youtube.json` の最終更新日時（ファイル更新時刻/JST） |
 | `persons` | `Record<PersonId, Person>` | 人物マスタ。著者索引を正典とし、索引外の著者も含む |
 | `affiliations` | `Record<AffiliationId, Affiliation>` | 所属機関マスタ |
 | `rooms` | `Record<RoomId, Room>` | 会場マスタ |

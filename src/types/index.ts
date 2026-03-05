@@ -64,7 +64,7 @@ export interface AppSettings {
 }
 
 export interface LastUpdateEntry {
-  blob_hash: string | null;
+  sha256: string | null;
   time: string;
 }
 

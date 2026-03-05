@@ -1,9 +1,21 @@
 {
-  "generated_at": "2026-03-05T05:18:11Z",
+  "generated_at": "2026-03-05T05:24:22Z",
   "last_update": {
     "program_main": {
-      "blob_hash": null,
+      "sha256": "c02f7308dda2ea510afda63be85a9e566cac31235d91206c97fc0a2837a5a981",
       "time": "2026-03-04T09:00:00+09:00"
+    },
+    "workshop": {
+      "sha256": "5a198ed5a4f56e3f79e1495f408f250017db2eefe16813e1d81e7b6d5367ccd3",
+      "time": "2026-03-04T18:59:39+09:00"
+    },
+    "invitedpapers": {
+      "sha256": "1383c3c3c2fd57240adc5d25ae7b760966287c460ef40f20cbd5b68fa2e5b090",
+      "time": "2026-03-04T18:39:47+09:00"
+    },
+    "youtube": {
+      "sha256": "7018232ae40bb9e3b3f845115004c317f06b889d41bd1d661f2ace928a055da9",
+      "time": "2026-03-04T20:17:57+09:00"
     }
   },
   "persons": {

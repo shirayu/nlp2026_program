@@ -12,6 +12,7 @@ Usage:
 """
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -105,15 +106,12 @@ class SourceUpdateTimeExtractor:
             ),
         }
 
-    def extract_all(self) -> dict[str, dict[str, str | None]]:
-        extracted: dict[str, dict[str, str | None]] = {}
+    def extract_all(self) -> dict[str, str]:
+        extracted: dict[str, str] = {}
         for key, pattern in self.patterns.items():
             value = self._extract_jst_datetime(pattern)
             if value is not None:
-                extracted[key] = {
-                    "blob_hash": None,
-                    "time": value,
-                }
+                extracted[key] = value
         return extracted
 
     def _extract_jst_datetime(self, pattern: re.Pattern[str]) -> str | None:
@@ -132,6 +130,16 @@ def normalize_room_name(name: str) -> str:
     if name == "2F 大会議室201・202":
         return "2F"
     return name
+
+
+def compute_sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def to_jst_file_time(path: Path) -> str:
+    jst = timezone(timedelta(hours=9))
+    timestamp = datetime.fromtimestamp(path.stat().st_mtime, tz=jst)
+    return timestamp.replace(microsecond=0).isoformat()
 
 
 def normalize_session_title_key(title: str) -> str:
@@ -1151,11 +1159,18 @@ class SessionRecord(BaseModel):
     youtube_url: str | None = None
 
 
+class LastUpdateRecord(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    sha256: str | None = None
+    time: str
+
+
 class DataJsonRecord(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     generated_at: str | None = None
-    last_update: dict[str, dict[str, str | None]] | None = None
+    last_update: dict[str, LastUpdateRecord] | None = None
     persons: dict[str, PersonRecord]
     affiliations: dict[str, AffiliationRecord]
     rooms: dict[str, RoomRecord]
@@ -1594,9 +1609,27 @@ def main() -> None:
         fix_urls(p.raw_presentations, args.base_url)
     result = normalize(p.raw_sessions, p.raw_presentations, p.raw_persons)
     result["generated_at"] = datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
-    update_times = SourceUpdateTimeExtractor(html_text).extract_all()
-    if update_times:
-        result["last_update"] = update_times
+    source_update_times = SourceUpdateTimeExtractor(html_text).extract_all()
+    last_update: dict[str, dict[str, str | None]] = {}
+
+    def add_last_update_entry(key: str, path: Path, time_override: str | None = None) -> None:
+        if not path.exists():
+            return
+        last_update[key] = {
+            "sha256": compute_sha256(path),
+            "time": time_override or to_jst_file_time(path),
+        }
+
+    add_last_update_entry("program_main", html_path, source_update_times.get("program_main"))
+    if workshop_config_path is not None:
+        add_last_update_entry("workshop", workshop_config_path)
+    if invitedpapers_config_path is not None:
+        add_last_update_entry("invitedpapers", invitedpapers_config_path)
+    if youtube_config_path is not None:
+        add_last_update_entry("youtube", youtube_config_path)
+
+    if last_update:
+        result["last_update"] = last_update
 
     # スケジュール表にのみ存在する特殊イベントをセッションとして追加
     for ev in sp.special_events:
