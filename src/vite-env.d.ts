@@ -6,9 +6,11 @@ interface ImportMetaEnv {
   readonly VITE_BUILD_DATE: string;
   readonly VITE_BUILD_HASH: string;
   readonly VITE_CONFERENCE_DATA_FILE: string;
+  readonly VITE_DATA_VERSION: string;
   readonly VITE_OFFICIAL_SITE_URL: string;
   readonly VITE_PWA_ICON_192_FILE: string;
   readonly VITE_PWA_ICON_512_FILE: string;
+  readonly VITE_SLACK_VERSION: string;
   readonly VITE_SESSION_SLACK_FILE: string;
 }
 

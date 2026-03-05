@@ -1,13 +1,28 @@
+import { execSync } from "node:child_process";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { loadEnv } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import { defineConfig } from "vitest/config";
 
+function resolveBlobVersion(repoPath: string, fallbackVersion: string): string {
+  try {
+    // HEAD 上の blob hash を使い、内容が同じなら URL を変えない。
+    return execSync(`git rev-parse HEAD:${repoPath}`, {
+      cwd: process.cwd(),
+      encoding: "utf-8",
+    }).trim();
+  } catch {
+    // git 情報が取れない環境ではビルド情報をバージョン値に使う。
+    return fallbackVersion;
+  }
+}
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   // GitHub Pages 配備先も .env に寄せ、manifest とアプリ配信パスを同じ定義から作る。
   const base = env.VITE_APP_BASE_PATH;
+  const buildVersion = env.VITE_BUILD_DATE || env.VITE_BUILD_HASH || "";
   const joinBasePath = (basePath: string, filePath: string) => {
     const normalizedBasePath = basePath.endsWith("/") ? basePath : `${basePath}/`;
     const normalizedFilePath = filePath.startsWith("/") ? filePath.slice(1) : filePath;
@@ -15,9 +30,18 @@ export default defineConfig(({ mode }) => {
   };
   const conferenceDataPath = joinBasePath(base, env.VITE_CONFERENCE_DATA_FILE);
   const sessionSlackPath = joinBasePath(base, env.VITE_SESSION_SLACK_FILE);
+  const conferenceDataFileRepoPath = `public/${env.VITE_CONFERENCE_DATA_FILE}`;
+  const sessionSlackFileRepoPath = `public/${env.VITE_SESSION_SLACK_FILE}`;
+
+  const dataVersion = resolveBlobVersion(conferenceDataFileRepoPath, buildVersion);
+  const slackVersion = resolveBlobVersion(sessionSlackFileRepoPath, buildVersion);
 
   return {
     base,
+    define: {
+      "import.meta.env.VITE_DATA_VERSION": JSON.stringify(dataVersion),
+      "import.meta.env.VITE_SLACK_VERSION": JSON.stringify(slackVersion),
+    },
     plugins: [
       react(),
       tailwindcss(),
