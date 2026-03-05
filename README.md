@@ -38,18 +38,23 @@ public/slack.json
 
 ## 開発
 
-```bash
-wget https://www.anlp.jp/proceedings/annual_meeting/2026/ -O data_for_extraction/original_program.html
-task -p
+1. [mise](https://mise.jdx.dev/getting-started.html)をインストール
+2. `mise trust mise.toml`
+3. 開発
 
-task dev
-```
+    ```bash
+    wget https://www.anlp.jp/proceedings/annual_meeting/2026/ -O data_for_extraction/original_program.html
+    task -p
 
-```bash
-# ビルドテスト
-task build
-task preview
-```
+    task dev
+    ```
+
+4. ビルドテスト
+
+    ```bash
+    task build
+    task preview
+    ```
 
 ## GitHub Pages
 
