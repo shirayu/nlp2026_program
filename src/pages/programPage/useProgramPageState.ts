@@ -293,6 +293,7 @@ export function useProgramPageState() {
       showSettings,
       showInstallButton: true,
       showInstallDialog,
+      dataGeneratedAt: data?.generated_at,
       slackUrl: settings.useSlackAppLinks ? slackAppUrl : slackWebUrl,
       slackAppUrl,
       useSlackAppLinks: settings.useSlackAppLinks,

@@ -9,6 +9,7 @@ type TimelineFilterProps = {
   onChange: (time: string | null) => void;
   onSelectNow: () => void;
   nowEnabled: boolean;
+  dataGeneratedAt?: string;
   disabled?: boolean;
 };
 
@@ -77,15 +78,54 @@ function buildTimelineSegments(points: string[], activeSegments: boolean[], past
   }));
 }
 
+function formatDataGeneratedAt(value?: string): { dateLabel: string; timeLabel: string } | null {
+  if (!value) return null;
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+
+  const monthDayParts = new Intl.DateTimeFormat("ja-JP", {
+    month: "numeric",
+    day: "numeric",
+    timeZone: "Asia/Tokyo",
+  }).formatToParts(date);
+  const month = monthDayParts.find((part) => part.type === "month")?.value;
+  const day = monthDayParts.find((part) => part.type === "day")?.value;
+  if (!month || !day) return null;
+
+  const weekday = new Intl.DateTimeFormat("ja-JP", {
+    weekday: "short",
+    timeZone: "Asia/Tokyo",
+  }).format(date);
+
+  const time = new Intl.DateTimeFormat("ja-JP", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Asia/Tokyo",
+  }).format(date);
+
+  return {
+    dateLabel: `${month}/${day}(${weekday})`,
+    timeLabel: time,
+  };
+}
+
 function TimelineActions({
   disabled,
   selectedTime,
   onChange,
   onSelectNow,
   nowEnabled,
-}: Pick<TimelineFilterProps, "disabled" | "selectedTime" | "onChange" | "onSelectNow" | "nowEnabled">) {
+  dataGeneratedAt,
+}: Pick<
+  TimelineFilterProps,
+  "disabled" | "selectedTime" | "onChange" | "onSelectNow" | "nowEnabled" | "dataGeneratedAt"
+>) {
+  const formattedDataGeneratedAt = formatDataGeneratedAt(dataGeneratedAt);
+
   return (
-    <div className="flex items-start justify-between gap-3">
+    <div className="flex items-start gap-3">
       <div className="flex items-center gap-2">
         <p className="text-sm font-semibold text-slate-700">
           {selectedTime ? `${ja.timepoint} ${selectedTime}` : ja.allTimes}
@@ -118,6 +158,12 @@ function TimelineActions({
           {ja.now}
         </button>
       </div>
+      {formattedDataGeneratedAt && (
+        <p className="ml-auto text-left text-[11px] leading-tight text-gray-500">
+          <span className="block">データ最終更新</span>
+          <span className="block">{`${formattedDataGeneratedAt.dateLabel} ${formattedDataGeneratedAt.timeLabel}`}</span>
+        </p>
+      )}
     </div>
   );
 }
@@ -130,6 +176,7 @@ export function TimelineFilter({
   onChange,
   onSelectNow,
   nowEnabled,
+  dataGeneratedAt,
   disabled = false,
 }: TimelineFilterProps) {
   const selectedIndex = selectedTime ? points.indexOf(selectedTime) : -1;
@@ -149,6 +196,7 @@ export function TimelineFilter({
         onChange={onChange}
         onSelectNow={onSelectNow}
         nowEnabled={nowEnabled}
+        dataGeneratedAt={dataGeneratedAt}
       />
 
       {points.length > 0 ? (

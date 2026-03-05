@@ -58,80 +58,82 @@ function FilterHeader({
             <span className="text-xs font-medium text-indigo-500">{ja.programPageSubTitle}</span>
           </a>
         </h1>
-        <div className="flex items-center gap-1">
-          <a
-            href={OFFICIAL_SITE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full p-1.5 text-gray-400 transition-colors hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            aria-label={ja.openOfficialSite}
-          >
-            <Globe className="h-5 w-5" />
-          </a>
-          {slackUrl && (
+        <div className="flex flex-col items-end gap-1">
+          <div className="flex items-center gap-1">
             <a
-              href={slackUrl}
+              href={OFFICIAL_SITE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={(event) => {
-                if (useSlackAppLinks && slackAppUrl) {
-                  openSlackFromSpa(event, slackUrl, slackAppUrl);
-                }
-              }}
               className="rounded-full p-1.5 text-gray-400 transition-colors hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              aria-label={ja.openSlack}
+              aria-label={ja.openOfficialSite}
             >
-              <HashIcon className="h-5 w-5" />
+              <Globe className="h-5 w-5" />
             </a>
-          )}
-          <a
-            href={X_SEARCH_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full p-1.5 text-gray-400 transition-colors hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            aria-label={ja.openXSearch}
-          >
-            <XBrandIcon className="h-5 w-5" />
-          </a>
-          {showInstallButton && (
+            {slackUrl && (
+              <a
+                href={slackUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(event) => {
+                  if (useSlackAppLinks && slackAppUrl) {
+                    openSlackFromSpa(event, slackUrl, slackAppUrl);
+                  }
+                }}
+                className="rounded-full p-1.5 text-gray-400 transition-colors hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                aria-label={ja.openSlack}
+              >
+                <HashIcon className="h-5 w-5" />
+              </a>
+            )}
+            <a
+              href={X_SEARCH_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full p-1.5 text-gray-400 transition-colors hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              aria-label={ja.openXSearch}
+            >
+              <XBrandIcon className="h-5 w-5" />
+            </a>
+            {showInstallButton && (
+              <button
+                type="button"
+                onClick={onOpenInstallDialog}
+                className={`rounded-full p-1.5 transition-colors ${showInstallDialog ? "bg-indigo-100 text-indigo-600" : "text-gray-400 hover:text-gray-600"}`}
+                aria-label={ja.openInstallGuide}
+              >
+                <Download className="h-5 w-5" />
+              </button>
+            )}
             <button
               type="button"
-              onClick={onOpenInstallDialog}
-              className={`rounded-full p-1.5 transition-colors ${showInstallDialog ? "bg-indigo-100 text-indigo-600" : "text-gray-400 hover:text-gray-600"}`}
-              aria-label={ja.openInstallGuide}
+              disabled={bookmarkButtonDisabled}
+              onClick={onToggleBookmarkFilter}
+              className={`relative rounded-full p-1.5 transition-colors ${
+                bookmarkButtonDisabled
+                  ? "cursor-not-allowed text-gray-400"
+                  : bookmarkFilterActive
+                    ? "bg-amber-100 text-amber-600"
+                    : "text-amber-500 hover:text-amber-600"
+              }`}
+              aria-label={ja.openBookmarks}
+              aria-pressed={bookmarkFilterActive}
             >
-              <Download className="h-5 w-5" />
+              <Star className={`h-5 w-5 ${bookmarkFilterActive ? "fill-current" : ""}`} />
+              {bookmarkCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 min-w-4 rounded-full bg-amber-500 px-1 text-center text-[10px] font-bold leading-4 text-white">
+                  {bookmarkCount}
+                </span>
+              )}
             </button>
-          )}
-          <button
-            type="button"
-            disabled={bookmarkButtonDisabled}
-            onClick={onToggleBookmarkFilter}
-            className={`relative rounded-full p-1.5 transition-colors ${
-              bookmarkButtonDisabled
-                ? "cursor-not-allowed text-gray-400"
-                : bookmarkFilterActive
-                  ? "bg-amber-100 text-amber-600"
-                  : "text-amber-500 hover:text-amber-600"
-            }`}
-            aria-label={ja.openBookmarks}
-            aria-pressed={bookmarkFilterActive}
-          >
-            <Star className={`h-5 w-5 ${bookmarkFilterActive ? "fill-current" : ""}`} />
-            {bookmarkCount > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 min-w-4 rounded-full bg-amber-500 px-1 text-center text-[10px] font-bold leading-4 text-white">
-                {bookmarkCount}
-              </span>
-            )}
-          </button>
-          <button
-            type="button"
-            onClick={onOpenSettings}
-            className={`rounded-full p-1.5 transition-colors ${showSettings ? "bg-indigo-100 text-indigo-600" : "text-gray-400 hover:text-gray-600"}`}
-            aria-label={ja.openDisplaySettings}
-          >
-            <Settings className="h-5 w-5" />
-          </button>
+            <button
+              type="button"
+              onClick={onOpenSettings}
+              className={`rounded-full p-1.5 transition-colors ${showSettings ? "bg-indigo-100 text-indigo-600" : "text-gray-400 hover:text-gray-600"}`}
+              aria-label={ja.openDisplaySettings}
+            >
+              <Settings className="h-5 w-5" />
+            </button>
+          </div>
         </div>
       </div>
       <div className="flex gap-2">
@@ -307,6 +309,7 @@ export function ProgramHeader({
   showSettings,
   showInstallButton,
   showInstallDialog,
+  dataGeneratedAt,
   slackUrl,
   slackAppUrl,
   useSlackAppLinks,
@@ -339,6 +342,7 @@ export function ProgramHeader({
   showSettings: boolean;
   showInstallButton: boolean;
   showInstallDialog: boolean;
+  dataGeneratedAt?: string;
   slackUrl: string | null;
   slackAppUrl: string | null;
   useSlackAppLinks: boolean;
@@ -404,6 +408,7 @@ export function ProgramHeader({
               onChange={onSelectTime}
               onSelectNow={onSelectNow}
               nowEnabled={nowEnabled}
+              dataGeneratedAt={dataGeneratedAt}
               disabled={filtersDisabled}
             />
             <RoomChips

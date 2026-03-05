@@ -281,6 +281,48 @@ describe("ProgramHeader", () => {
 
     expect(html).toContain("絞り込み内検索");
   });
+
+  it("data.generated_at を今ボタン行に2行で表示する", () => {
+    const html = renderToStaticMarkup(
+      createElement(ProgramHeader, {
+        query: "",
+        isSearching: false,
+        searchAll: true,
+        bookmarkCount: 0,
+        bookmarkFilterActive: false,
+        showSettings: false,
+        showInstallButton: false,
+        showInstallDialog: false,
+        dataGeneratedAt: "2026-03-05T15:01:00Z",
+        slackUrl: null,
+        slackAppUrl: null,
+        useSlackAppLinks: false,
+        allDates: ["2026-03-09"],
+        filtersDisabled: false,
+        selectedDate: null,
+        showFilters: true,
+        allTimes: ["9:00", "9:05"],
+        timelineSegments: [true],
+        selectedTime: null,
+        nowEnabled: false,
+        rooms: ["A会場"],
+        selectedRoom: null,
+        onQueryCommit: () => {},
+        onToggleSearchAll: () => {},
+        onToggleBookmarkFilter: () => {},
+        onOpenSettings: () => {},
+        onOpenInstallDialog: () => {},
+        onSelectDate: () => {},
+        onToggleFilters: () => {},
+        onSelectTime: () => {},
+        onSelectNow: () => {},
+        onSelectRoom: () => {},
+      }),
+    );
+
+    expect(html).toContain("データ最終更新");
+    expect(html).toContain("3/6(金) 00:01");
+  });
 });
 
 describe("syncSearchAllWithBookmarkFilter", () => {
