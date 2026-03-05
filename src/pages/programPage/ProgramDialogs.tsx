@@ -1,6 +1,7 @@
-import { X as CloseIcon, Globe, Monitor, RefreshCw } from "lucide-react";
+import { X as CloseIcon, Github, Globe, Monitor, RefreshCw } from "lucide-react";
 import type { ReactNode, RefObject } from "react";
 import {
+  AUTHOR_GITHUB_URL,
   AUTHOR_NAME,
   AUTHOR_WEBSITE_URL,
   BUILD_GIT_DATE,
@@ -326,6 +327,15 @@ export function SettingsDialog({
                       className="break-all text-indigo-600 underline decoration-indigo-200 underline-offset-2 hover:text-indigo-700"
                     >
                       {AUTHOR_NAME}
+                    </a>
+                    <a
+                      href={AUTHOR_GITHUB_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={ja.projectRepository}
+                      className="ml-2 inline-flex align-middle text-gray-500 transition-colors hover:text-gray-700"
+                    >
+                      <Github className="h-4 w-4" />
                     </a>
                   </dd>
                 </div>
