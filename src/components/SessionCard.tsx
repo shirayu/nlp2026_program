@@ -93,7 +93,7 @@ export const SessionCard = memo(
         <div className={`sticky top-0 z-10 rounded-t-xl px-4 py-3 shadow-sm ${roomTheme.header} relative`}>
           <button
             type="button"
-            className="absolute inset-0 rounded-t-xl focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            className="absolute inset-0 rounded-t-xl focus:outline-none"
             onClick={() => onScrollToSessionTop(sessionId)}
             aria-label={ja.jumpToSessionTop}
           />
