@@ -19,9 +19,12 @@ describe("SettingsDialog", () => {
         dialogRef={{ current: null }}
         open
         dataGeneratedAt="2026-03-05T01:44:12Z"
+        isReloadingData={false}
+        reloadDataStatus="idle"
         showAuthors
         useSlackAppLinks={false}
         onClose={() => {}}
+        onReloadData={() => {}}
         onToggleShowAuthors={() => {}}
         onToggleUseSlackAppLinks={() => {}}
       />,
@@ -32,5 +35,25 @@ describe("SettingsDialog", () => {
     expect(html).toContain("Git hash");
     expect(html).toContain("Build time");
     expect(html).toContain("Data time");
+  });
+
+  it("再取得結果が no_change のとき更新なしを表示する", () => {
+    const html = renderToStaticMarkup(
+      <SettingsDialog
+        dialogRef={{ current: null }}
+        open
+        dataGeneratedAt="2026-03-05T01:44:12Z"
+        isReloadingData={false}
+        reloadDataStatus="no_change"
+        showAuthors
+        useSlackAppLinks={false}
+        onClose={() => {}}
+        onReloadData={() => {}}
+        onToggleShowAuthors={() => {}}
+        onToggleUseSlackAppLinks={() => {}}
+      />,
+    );
+
+    expect(html).toContain("更新はありませんでした");
   });
 });

@@ -26,7 +26,7 @@ import {
 } from "./utils";
 
 export function useProgramPageState() {
-  const { data, sessionSlackChannels } = useConferenceData();
+  const { data, sessionSlackChannels, isReloading, reloadStatus, reload } = useConferenceData();
   const { settings, toggleShowAuthors, toggleUseSlackAppLinks } = useAppSettings();
   const {
     bookmarkIds,
@@ -357,8 +357,13 @@ export function useProgramPageState() {
       onInstall: () => void handleInstallApp(),
       settingsDialogRef,
       showSettings,
+      isReloadingData: isReloading,
+      reloadDataStatus: reloadStatus,
       useSlackAppLinks: settings.useSlackAppLinks,
       onCloseSettings: () => setShowSettings(false),
+      onReloadData: () => {
+        void reload().catch(() => {});
+      },
       onToggleShowAuthors: toggleShowAuthors,
       onToggleUseSlackAppLinks: toggleUseSlackAppLinks,
     },

@@ -1,5 +1,6 @@
 import type { RefObject } from "react";
 import { PersonModal } from "../../components/PersonModal";
+import type { DataReloadStatus } from "../../hooks/useConferenceData";
 import type { ConferenceData, PersonId, PresentationId, SessionId } from "../../types";
 import { InstallDialog, SettingsDialog } from "./ProgramDialogs";
 
@@ -20,8 +21,11 @@ export function ProgramOverlays({
   onInstall,
   settingsDialogRef,
   showSettings,
+  isReloadingData,
+  reloadDataStatus,
   useSlackAppLinks,
   onCloseSettings,
+  onReloadData,
   onToggleShowAuthors,
   onToggleUseSlackAppLinks,
 }: {
@@ -41,8 +45,11 @@ export function ProgramOverlays({
   onInstall: () => void;
   settingsDialogRef: RefObject<HTMLDialogElement | null>;
   showSettings: boolean;
+  isReloadingData: boolean;
+  reloadDataStatus: DataReloadStatus;
   useSlackAppLinks: boolean;
   onCloseSettings: () => void;
+  onReloadData: () => void;
   onToggleShowAuthors: () => void;
   onToggleUseSlackAppLinks: () => void;
 }) {
@@ -74,9 +81,12 @@ export function ProgramOverlays({
         dialogRef={settingsDialogRef}
         open={showSettings}
         dataGeneratedAt={data.generated_at}
+        isReloadingData={isReloadingData}
+        reloadDataStatus={reloadDataStatus}
         showAuthors={showAuthors}
         useSlackAppLinks={useSlackAppLinks}
         onClose={onCloseSettings}
+        onReloadData={onReloadData}
         onToggleShowAuthors={onToggleShowAuthors}
         onToggleUseSlackAppLinks={onToggleUseSlackAppLinks}
       />

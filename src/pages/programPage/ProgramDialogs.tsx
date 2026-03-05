@@ -1,4 +1,4 @@
-import { X as CloseIcon } from "lucide-react";
+import { X as CloseIcon, RefreshCw } from "lucide-react";
 import type { ReactNode, RefObject } from "react";
 import {
   AUTHOR_NAME,
@@ -7,6 +7,7 @@ import {
   BUILD_GIT_HASH,
   PROJECT_REPOSITORY_URL,
 } from "../../constants";
+import type { DataReloadStatus } from "../../hooks/useConferenceData";
 import { ja } from "../../locales/ja";
 import { fullscreenDialogClassName } from "./utils";
 
@@ -130,18 +131,24 @@ export function SettingsDialog({
   dialogRef,
   open,
   dataGeneratedAt,
+  isReloadingData,
+  reloadDataStatus,
   showAuthors,
   useSlackAppLinks,
   onClose,
+  onReloadData,
   onToggleShowAuthors,
   onToggleUseSlackAppLinks,
 }: {
   dialogRef: RefObject<HTMLDialogElement | null>;
   open: boolean;
   dataGeneratedAt?: string;
+  isReloadingData: boolean;
+  reloadDataStatus: DataReloadStatus;
   showAuthors: boolean;
   useSlackAppLinks: boolean;
   onClose: () => void;
+  onReloadData: () => void;
   onToggleShowAuthors: () => void;
   onToggleUseSlackAppLinks: () => void;
 }) {
@@ -196,6 +203,26 @@ export function SettingsDialog({
                 />
               </button>
             </label>
+            <section className="mt-4 rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold text-gray-800">{ja.reloadData}</p>
+                <button
+                  type="button"
+                  onClick={onReloadData}
+                  disabled={isReloadingData}
+                  className={`inline-flex h-8 items-center gap-1 rounded-full border px-3 text-xs font-semibold ${
+                    isReloadingData
+                      ? "border-gray-200 bg-gray-100 text-gray-400"
+                      : "border-gray-300 bg-white text-gray-600"
+                  }`}
+                >
+                  <RefreshCw className={`h-3.5 w-3.5 ${isReloadingData ? "animate-spin" : ""}`} />
+                  <span>{isReloadingData ? ja.reloadingData : ja.reloadDataShort}</span>
+                </button>
+              </div>
+              {reloadDataStatus === "no_change" && <p className="mt-2 text-xs text-gray-500">{ja.reloadNoChanges}</p>}
+              {reloadDataStatus === "error" && <p className="mt-2 text-xs text-rose-600">{ja.reloadFailed}</p>}
+            </section>
             <section className="mt-4 rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
               <h3 className="text-sm font-semibold text-gray-800">{ja.aboutAuthor}</h3>
               <dl className="mt-2 space-y-2 text-sm">
