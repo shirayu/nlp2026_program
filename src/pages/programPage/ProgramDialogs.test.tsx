@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { BUILD_GIT_HASH } from "../../constants";
-import { formatBuildGitDate, SettingsDialog } from "./ProgramDialogs";
+import { formatBuildGitDate, InstallDialog, SettingsDialog } from "./ProgramDialogs";
 
 describe("formatBuildGitDate", () => {
   it("指定タイムゾーン名つきのローカライズ日時を返す", () => {
@@ -12,10 +12,10 @@ describe("formatBuildGitDate", () => {
   });
 });
 
-describe("SettingsDialog", () => {
-  it("ビルド情報を表示する", () => {
+describe("InstallDialog", () => {
+  it("データ再取得と最終更新情報を表示する", () => {
     const html = renderToStaticMarkup(
-      <SettingsDialog
+      <InstallDialog
         dialogRef={{ current: null }}
         open
         dataGeneratedAt="2026-03-05T01:44:12Z"
@@ -27,22 +27,21 @@ describe("SettingsDialog", () => {
         }}
         isReloadingData={false}
         reloadDataStatus="idle"
-        showAuthors
-        useSlackAppLinks={false}
+        isUpdatingApp={false}
+        appUpdateStatus="idle"
+        installContext={{ isStandalone: false, isIos: false }}
+        hasInstallPrompt={false}
         onClose={() => {}}
         onReloadData={() => {}}
-        onToggleShowAuthors={() => {}}
-        onToggleUseSlackAppLinks={() => {}}
+        onUpdateApp={() => {}}
+        onInstall={() => {}}
       />,
     );
 
-    expect(html).toContain("Software information");
-    expect(html).toContain(BUILD_GIT_HASH);
-    expect(html).toContain("Git hash");
-    expect(html).toContain("Build time");
+    expect(html).toContain("データを再取得");
+    expect(html).toContain("アプリ更新確認");
     expect(html).toContain("Data");
     expect(html).toContain("Main");
-    expect(html).toContain("overflow-y-auto");
     expect(html).toContain("Workshop");
     expect(html).toContain("Invitedpapers");
     expect(html).toContain("YouTube");
@@ -54,9 +53,35 @@ describe("SettingsDialog", () => {
     expect(html.indexOf("データを再取得")).toBeLessThan(html.indexOf("Main"));
   });
 
-  it("アイコン凡例を表示する", () => {
+  it("更新結果メッセージを表示する", () => {
     const html = renderToStaticMarkup(
-      <SettingsDialog
+      <InstallDialog
+        dialogRef={{ current: null }}
+        open
+        dataGeneratedAt="2026-03-05T01:44:12Z"
+        lastUpdate={{
+          program_main: { sha256: "aaa", time: "2026-03-04T09:00:00+09:00" },
+        }}
+        isReloadingData={false}
+        reloadDataStatus="no_change"
+        isUpdatingApp={false}
+        appUpdateStatus="no_change"
+        installContext={{ isStandalone: false, isIos: false }}
+        hasInstallPrompt={false}
+        onClose={() => {}}
+        onReloadData={() => {}}
+        onUpdateApp={() => {}}
+        onInstall={() => {}}
+      />,
+    );
+
+    expect(html).toContain("更新はありませんでした");
+    expect(html).toContain("アプリは最新版です");
+  });
+
+  it("更新あり検知時のメッセージを表示する", () => {
+    const html = renderToStaticMarkup(
+      <InstallDialog
         dialogRef={{ current: null }}
         open
         dataGeneratedAt="2026-03-05T01:44:12Z"
@@ -65,10 +90,50 @@ describe("SettingsDialog", () => {
         }}
         isReloadingData={false}
         reloadDataStatus="idle"
+        isUpdatingApp
+        appUpdateStatus="updating"
+        installContext={{ isStandalone: false, isIos: false }}
+        hasInstallPrompt={false}
+        onClose={() => {}}
+        onReloadData={() => {}}
+        onUpdateApp={() => {}}
+        onInstall={() => {}}
+      />,
+    );
+
+    expect(html).toContain("最新版が見つかりました。更新します");
+  });
+});
+
+describe("SettingsDialog", () => {
+  it("ビルド情報を表示する", () => {
+    const html = renderToStaticMarkup(
+      <SettingsDialog
+        dialogRef={{ current: null }}
+        open
         showAuthors
         useSlackAppLinks={false}
         onClose={() => {}}
-        onReloadData={() => {}}
+        onToggleShowAuthors={() => {}}
+        onToggleUseSlackAppLinks={() => {}}
+      />,
+    );
+
+    expect(html).toContain("Software information");
+    expect(html).toContain(BUILD_GIT_HASH);
+    expect(html).toContain("Git hash");
+    expect(html).toContain("Build time");
+    expect(html).toContain("overflow-y-auto");
+  });
+
+  it("アイコン凡例を表示する", () => {
+    const html = renderToStaticMarkup(
+      <SettingsDialog
+        dialogRef={{ current: null }}
+        open
+        showAuthors
+        useSlackAppLinks={false}
+        onClose={() => {}}
         onToggleShowAuthors={() => {}}
         onToggleUseSlackAppLinks={() => {}}
       />,
@@ -78,28 +143,5 @@ describe("SettingsDialog", () => {
     expect(html).toContain("○ 発表者");
     expect(html).toContain("英語発表");
     expect(html).toContain("オンライン発表");
-  });
-
-  it("再取得結果が no_change のとき更新なしを表示する", () => {
-    const html = renderToStaticMarkup(
-      <SettingsDialog
-        dialogRef={{ current: null }}
-        open
-        dataGeneratedAt="2026-03-05T01:44:12Z"
-        lastUpdate={{
-          program_main: { sha256: "aaa", time: "2026-03-04T09:00:00+09:00" },
-        }}
-        isReloadingData={false}
-        reloadDataStatus="no_change"
-        showAuthors
-        useSlackAppLinks={false}
-        onClose={() => {}}
-        onReloadData={() => {}}
-        onToggleShowAuthors={() => {}}
-        onToggleUseSlackAppLinks={() => {}}
-      />,
-    );
-
-    expect(html).toContain("更新はありませんでした");
   });
 });

@@ -13,6 +13,7 @@ const mockUseSessionJump = vi.fn();
 
 vi.mock("../../hooks/useConferenceData", () => ({
   useConferenceData: () => mockUseConferenceData(),
+  RELOAD_STATUS_AUTO_HIDE_MS: 3000,
 }));
 
 vi.mock("../../hooks/useAppSettings", () => ({
@@ -122,6 +123,13 @@ describe("useProgramPageState", () => {
       setJumpSession: vi.fn(),
       sessionRefs: { current: {} },
     });
+
+    Object.defineProperty(navigator, "serviceWorker", {
+      configurable: true,
+      value: {
+        getRegistration: vi.fn().mockResolvedValue(null),
+      },
+    });
   });
 
   afterEach(() => {
@@ -193,5 +201,77 @@ describe("useProgramPageState", () => {
 
     expect(hook.getRenderCount()).toBe(renderCountAfterFirstSelect);
     hook.unmount();
+  });
+
+  it("アプリ更新確認で更新がなければ no_change をセットする", async () => {
+    vi.useFakeTimers();
+
+    const registration = {
+      update: vi.fn().mockResolvedValue(undefined),
+      waiting: null,
+      installing: null,
+    };
+    const getRegistration = vi.fn().mockResolvedValue(registration);
+    Object.defineProperty(navigator, "serviceWorker", {
+      configurable: true,
+      value: { getRegistration },
+    });
+
+    const hook = setupHook();
+
+    await act(async () => {
+      hook.getLatest().overlayProps.onUpdateApp();
+    });
+    await act(async () => {});
+
+    expect(getRegistration).toHaveBeenCalledTimes(1);
+    expect(registration.update).toHaveBeenCalledTimes(1);
+    expect(hook.getLatest().overlayProps.appUpdateStatus).toBe("no_change");
+
+    await act(async () => {
+      vi.advanceTimersByTime(3000);
+    });
+    expect(hook.getLatest().overlayProps.appUpdateStatus).toBe("idle");
+
+    hook.unmount();
+    vi.useRealTimers();
+  });
+
+  it("アプリ更新確認で waiting worker があれば更新適用処理を呼ぶ", async () => {
+    vi.useFakeTimers();
+
+    const postMessage = vi.fn();
+    const waitingWorker = { postMessage } as unknown as ServiceWorker;
+    const registration = {
+      update: vi.fn().mockResolvedValue(undefined),
+      waiting: waitingWorker,
+      installing: null,
+    };
+    const getRegistration = vi.fn().mockResolvedValue(registration);
+    Object.defineProperty(navigator, "serviceWorker", {
+      configurable: true,
+      value: { getRegistration },
+    });
+
+    const hook = setupHook();
+
+    await act(async () => {
+      hook.getLatest().overlayProps.onUpdateApp();
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().overlayProps.appUpdateStatus).toBe("updating");
+
+    await act(async () => {
+      vi.advanceTimersByTime(400);
+    });
+    await act(async () => {});
+
+    expect(registration.update).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({ type: "SKIP_WAITING" });
+    expect(hook.getLatest().overlayProps.appUpdateStatus).toBe("updating");
+
+    hook.unmount();
+    vi.useRealTimers();
   });
 });

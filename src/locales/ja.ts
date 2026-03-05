@@ -16,6 +16,12 @@ export const ja = {
   reloadingData: "更新中",
   reloadNoChanges: "更新はありませんでした",
   reloadFailed: "データ更新に失敗しました",
+  reloadApp: "アプリ更新確認",
+  reloadAppShort: "確認",
+  reloadingApp: "確認中",
+  reloadAppFoundUpdate: "最新版が見つかりました。更新します",
+  reloadAppNoChanges: "アプリは最新版です",
+  reloadAppFailed: "アプリ更新に失敗しました",
   showAuthors: "著者名を表示",
   useSlackAppLinks: "Slack をアプリリンクで開く",
   searchPlaceholder: "ID・タイトル・著者名・所属で検索",
@@ -41,10 +47,7 @@ export const ja = {
   closeInstallGuide: "ホーム画面への追加案内を閉じる",
   installGuideLead: "ホーム画面に追加すると、予定表を1タップですぐ開けます。",
   installGuideDescription: "一度開いておくと、電波が弱い場所でも使いやすくなります。",
-  installGuideUpdateDescription:
-    "最新版がある場合、アプリを完全に終了し、インターネット接続中に再度起動すると更新されます。",
-  installGuideForceCloseDescription:
-    "完全に終了するには、ホームボタンへ戻るだけでなく、起動中アプリ一覧（タスク画面）から本アプリを上にスワイプして終了してください。",
+  installGuideUpdateDescription: "アプリを完全に終了して再起動した際に、最新版が見つかれば自動更新します。",
   installGuideIosLead: "iPhone / iPad では、Safari の共有メニューからホーム画面に追加できます。",
   installGuideIosSteps: [
     "Safari の共有ボタンをタップします。",
@@ -56,7 +59,6 @@ export const ja = {
   installGuideUnsupportedLead: "このブラウザでは直接インストールの確認画面を開けません。",
   installGuideUnsupportedDescription:
     "Chrome や Edge などの対応ブラウザを使うか、共有メニューからホーム画面への追加を試してください。",
-  later: "あとで",
   installNow: "追加する",
   settings: "設定",
   closeDisplaySettings: "表示設定を閉じる",

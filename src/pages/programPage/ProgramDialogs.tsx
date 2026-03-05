@@ -1,5 +1,5 @@
 import { X as CloseIcon, Github, Globe, Monitor, RefreshCw } from "lucide-react";
-import type { ReactNode, RefObject } from "react";
+import type { RefObject } from "react";
 import {
   BUILD_GIT_DATE,
   BUILD_GIT_HASH,
@@ -14,6 +14,7 @@ import type { LastUpdateEntry } from "../../types";
 import { fullscreenDialogClassName } from "./utils";
 
 type LastUpdateRow = { label: string; time: string };
+type AppUpdateStatus = "idle" | "updating" | "no_change" | "error";
 
 export function formatBuildGitDate(value: string, locale?: string | string[], timeZone?: string): string {
   if (value === "unknown") return value;
@@ -69,33 +70,51 @@ function buildLastUpdateRows(lastUpdate?: Record<string, LastUpdateEntry>): {
   };
 }
 
-export function InstallDialog({
-  dialogRef,
-  open,
-  installContext,
-  hasInstallPrompt,
-  onClose,
-  onInstall,
-}: {
+type InstallContext = { isStandalone: boolean; isIos: boolean };
+
+type InstallDialogProps = {
   dialogRef: RefObject<HTMLDialogElement | null>;
   open: boolean;
-  installContext: { isStandalone: boolean; isIos: boolean };
+  dataGeneratedAt?: string;
+  lastUpdate?: Record<string, LastUpdateEntry>;
+  isReloadingData: boolean;
+  reloadDataStatus: DataReloadStatus;
+  isUpdatingApp: boolean;
+  appUpdateStatus: AppUpdateStatus;
+  installContext: InstallContext;
   hasInstallPrompt: boolean;
   onClose: () => void;
+  onReloadData: () => void;
+  onUpdateApp: () => void;
+  onInstall: () => void;
+};
+
+type LastUpdateDetailsProps = {
+  formattedDataGeneratedAt: string | null;
+  mainRow: LastUpdateRow | null;
+  secondaryRows: LastUpdateRow[];
+};
+
+function InstallActionSection({
+  installContext,
+  hasInstallPrompt,
+  onInstall,
+}: {
+  installContext: InstallContext;
+  hasInstallPrompt: boolean;
   onInstall: () => void;
 }) {
-  const installSectionClassName = "rounded-xl border border-gray-200 bg-gray-50 px-3 py-3";
-
-  let installSectionContent: ReactNode;
   if (installContext.isStandalone) {
-    installSectionContent = (
+    return (
       <>
         <p className="font-bold text-gray-800">{ja.installGuideInstalledLead}</p>
         <p className="mt-2 text-gray-500">{ja.installGuideInstalledDescription}</p>
       </>
     );
-  } else if (installContext.isIos) {
-    installSectionContent = (
+  }
+
+  if (installContext.isIos) {
+    return (
       <>
         <p className="font-bold text-gray-800">{ja.installGuideIosLead}</p>
         <ol className="mt-2 list-decimal space-y-2 pl-5 text-gray-600">
@@ -105,16 +124,11 @@ export function InstallDialog({
         </ol>
       </>
     );
-  } else if (hasInstallPrompt) {
-    installSectionContent = (
-      <div className="flex justify-end gap-2">
-        <button
-          type="button"
-          onClick={onClose}
-          className="rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-        >
-          {ja.later}
-        </button>
+  }
+
+  if (hasInstallPrompt) {
+    return (
+      <div className="flex justify-end">
         <button
           type="button"
           onClick={onInstall}
@@ -124,14 +138,142 @@ export function InstallDialog({
         </button>
       </div>
     );
-  } else {
-    installSectionContent = (
-      <>
-        <p className="font-bold text-gray-800">{ja.installGuideUnsupportedLead}</p>
-        <p className="mt-2 text-gray-500">{ja.installGuideUnsupportedDescription}</p>
-      </>
-    );
   }
+
+  return (
+    <>
+      <p className="font-bold text-gray-800">{ja.installGuideUnsupportedLead}</p>
+      <p className="mt-2 text-gray-500">{ja.installGuideUnsupportedDescription}</p>
+    </>
+  );
+}
+
+function LastUpdateDetails({ formattedDataGeneratedAt, mainRow, secondaryRows }: LastUpdateDetailsProps) {
+  if (!formattedDataGeneratedAt && !mainRow && secondaryRows.length === 0) {
+    return null;
+  }
+
+  return (
+    <dl className="mt-3 space-y-2 border-t border-gray-200 pt-3 text-sm">
+      {formattedDataGeneratedAt && (
+        <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
+          <dt className="text-gray-500">{ja.dataGeneratedAt}</dt>
+          <dd className="min-w-0 break-all font-mono text-left text-gray-800">{formattedDataGeneratedAt}</dd>
+        </div>
+      )}
+      {mainRow && (
+        <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
+          <dt className="text-gray-500">{mainRow.label}</dt>
+          <dd className="min-w-0 break-all font-mono text-left text-gray-800">{mainRow.time}</dd>
+        </div>
+      )}
+      {secondaryRows.length > 0 && (
+        <details className="rounded-lg border border-gray-200 bg-white px-2 py-1">
+          <summary className="cursor-pointer text-xs text-gray-600">{ja.otherSources}</summary>
+          {secondaryRows.map((row) => (
+            <div key={row.label} className="mt-2 grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
+              <dt className="text-gray-500">{row.label}</dt>
+              <dd className="min-w-0 break-all font-mono text-left text-gray-800">{row.time}</dd>
+            </div>
+          ))}
+        </details>
+      )}
+    </dl>
+  );
+}
+
+function DataUpdateSection({
+  isReloadingData,
+  reloadDataStatus,
+  formattedDataGeneratedAt,
+  mainRow,
+  secondaryRows,
+  onReloadData,
+}: {
+  isReloadingData: boolean;
+  reloadDataStatus: DataReloadStatus;
+  formattedDataGeneratedAt: string | null;
+  mainRow: LastUpdateRow | null;
+  secondaryRows: LastUpdateRow[];
+  onReloadData: () => void;
+}) {
+  return (
+    <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm font-semibold text-gray-800">{ja.reloadData}</p>
+        <button
+          type="button"
+          onClick={onReloadData}
+          disabled={isReloadingData}
+          className={`inline-flex h-8 items-center gap-1 rounded-full border px-3 text-xs font-semibold ${
+            isReloadingData ? "border-gray-200 bg-gray-100 text-gray-400" : "border-gray-300 bg-white text-gray-600"
+          }`}
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${isReloadingData ? "animate-spin" : ""}`} />
+          <span>{isReloadingData ? ja.reloadingData : ja.reloadDataShort}</span>
+        </button>
+      </div>
+      {reloadDataStatus === "no_change" && <p className="mt-2 text-xs text-gray-500">{ja.reloadNoChanges}</p>}
+      {reloadDataStatus === "error" && <p className="mt-2 text-xs text-rose-600">{ja.reloadFailed}</p>}
+      <LastUpdateDetails
+        formattedDataGeneratedAt={formattedDataGeneratedAt}
+        mainRow={mainRow}
+        secondaryRows={secondaryRows}
+      />
+    </section>
+  );
+}
+
+function AppUpdateSection({
+  isUpdatingApp,
+  appUpdateStatus,
+  onUpdateApp,
+}: {
+  isUpdatingApp: boolean;
+  appUpdateStatus: AppUpdateStatus;
+  onUpdateApp: () => void;
+}) {
+  return (
+    <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm font-semibold text-gray-800">{ja.reloadApp}</p>
+        <button
+          type="button"
+          onClick={onUpdateApp}
+          disabled={isUpdatingApp}
+          className={`inline-flex h-8 items-center gap-1 rounded-full border px-3 text-xs font-semibold ${
+            isUpdatingApp ? "border-gray-200 bg-gray-100 text-gray-400" : "border-gray-300 bg-white text-gray-600"
+          }`}
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${isUpdatingApp ? "animate-spin" : ""}`} />
+          <span>{isUpdatingApp ? ja.reloadingApp : ja.reloadAppShort}</span>
+        </button>
+      </div>
+      {appUpdateStatus === "updating" && <p className="mt-2 text-xs text-gray-500">{ja.reloadAppFoundUpdate}</p>}
+      {appUpdateStatus === "no_change" && <p className="mt-2 text-xs text-gray-500">{ja.reloadAppNoChanges}</p>}
+      {appUpdateStatus === "error" && <p className="mt-2 text-xs text-rose-600">{ja.reloadAppFailed}</p>}
+    </section>
+  );
+}
+
+export function InstallDialog({
+  dialogRef,
+  open,
+  dataGeneratedAt,
+  lastUpdate,
+  isReloadingData,
+  reloadDataStatus,
+  isUpdatingApp,
+  appUpdateStatus,
+  installContext,
+  hasInstallPrompt,
+  onClose,
+  onReloadData,
+  onUpdateApp,
+  onInstall,
+}: InstallDialogProps) {
+  const formattedDataGeneratedAt = dataGeneratedAt ? formatBuildGitDate(dataGeneratedAt) : null;
+  const { mainRow, secondaryRows } = buildLastUpdateRows(lastUpdate);
 
   return (
     <dialog ref={dialogRef} open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
@@ -162,9 +304,27 @@ export function InstallDialog({
               <p>{ja.installGuideLead}</p>
               <p>{ja.installGuideDescription}</p>
               <p>{ja.installGuideUpdateDescription}</p>
-              <p>{ja.installGuideForceCloseDescription}</p>
             </div>
-            <section className={installSectionClassName}>{installSectionContent}</section>
+            <div>
+              <InstallActionSection
+                installContext={installContext}
+                hasInstallPrompt={hasInstallPrompt}
+                onInstall={onInstall}
+              />
+            </div>
+            <DataUpdateSection
+              isReloadingData={isReloadingData}
+              reloadDataStatus={reloadDataStatus}
+              formattedDataGeneratedAt={formattedDataGeneratedAt}
+              mainRow={mainRow}
+              secondaryRows={secondaryRows}
+              onReloadData={onReloadData}
+            />
+            <AppUpdateSection
+              isUpdatingApp={isUpdatingApp}
+              appUpdateStatus={appUpdateStatus}
+              onUpdateApp={onUpdateApp}
+            />
           </div>
         </div>
       </div>
@@ -175,33 +335,21 @@ export function InstallDialog({
 export function SettingsDialog({
   dialogRef,
   open,
-  dataGeneratedAt,
-  lastUpdate,
-  isReloadingData,
-  reloadDataStatus,
   showAuthors,
   useSlackAppLinks,
   onClose,
-  onReloadData,
   onToggleShowAuthors,
   onToggleUseSlackAppLinks,
 }: {
   dialogRef: RefObject<HTMLDialogElement | null>;
   open: boolean;
-  dataGeneratedAt?: string;
-  lastUpdate?: Record<string, LastUpdateEntry>;
-  isReloadingData: boolean;
-  reloadDataStatus: DataReloadStatus;
   showAuthors: boolean;
   useSlackAppLinks: boolean;
   onClose: () => void;
-  onReloadData: () => void;
   onToggleShowAuthors: () => void;
   onToggleUseSlackAppLinks: () => void;
 }) {
   const formattedBuildGitDate = formatBuildGitDate(BUILD_GIT_DATE);
-  const formattedDataGeneratedAt = dataGeneratedAt ? formatBuildGitDate(dataGeneratedAt) : null;
-  const { mainRow, secondaryRows } = buildLastUpdateRows(lastUpdate);
 
   return (
     <dialog ref={dialogRef} open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
@@ -264,55 +412,6 @@ export function SettingsDialog({
                   <span>{ja.legendOnline}</span>
                 </li>
               </ul>
-            </section>
-            <section className="mt-4 rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-sm font-semibold text-gray-800">{ja.reloadData}</p>
-                <button
-                  type="button"
-                  onClick={onReloadData}
-                  disabled={isReloadingData}
-                  className={`inline-flex h-8 items-center gap-1 rounded-full border px-3 text-xs font-semibold ${
-                    isReloadingData
-                      ? "border-gray-200 bg-gray-100 text-gray-400"
-                      : "border-gray-300 bg-white text-gray-600"
-                  }`}
-                >
-                  <RefreshCw className={`h-3.5 w-3.5 ${isReloadingData ? "animate-spin" : ""}`} />
-                  <span>{isReloadingData ? ja.reloadingData : ja.reloadDataShort}</span>
-                </button>
-              </div>
-              {reloadDataStatus === "no_change" && <p className="mt-2 text-xs text-gray-500">{ja.reloadNoChanges}</p>}
-              {reloadDataStatus === "error" && <p className="mt-2 text-xs text-rose-600">{ja.reloadFailed}</p>}
-              {(formattedDataGeneratedAt || mainRow || secondaryRows.length > 0) && (
-                <dl className="mt-3 space-y-2 border-t border-gray-200 pt-3 text-sm">
-                  {formattedDataGeneratedAt && (
-                    <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
-                      <dt className="text-gray-500">{ja.dataGeneratedAt}</dt>
-                      <dd className="min-w-0 break-all font-mono text-left text-gray-800">
-                        {formattedDataGeneratedAt}
-                      </dd>
-                    </div>
-                  )}
-                  {mainRow && (
-                    <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
-                      <dt className="text-gray-500">{mainRow.label}</dt>
-                      <dd className="min-w-0 break-all font-mono text-left text-gray-800">{mainRow.time}</dd>
-                    </div>
-                  )}
-                  {secondaryRows.length > 0 && (
-                    <details className="rounded-lg border border-gray-200 bg-white px-2 py-1">
-                      <summary className="cursor-pointer text-xs text-gray-600">{ja.otherSources}</summary>
-                      {secondaryRows.map((row) => (
-                        <div key={row.label} className="mt-2 grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
-                          <dt className="text-gray-500">{row.label}</dt>
-                          <dd className="min-w-0 break-all font-mono text-left text-gray-800">{row.time}</dd>
-                        </div>
-                      ))}
-                    </details>
-                  )}
-                </dl>
-              )}
             </section>
             <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
               <h3 className="text-sm font-semibold text-gray-800">{ja.softwareInfo}</h3>

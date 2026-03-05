@@ -1,7 +1,7 @@
 import { startTransition, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { useAppSettings } from "../../hooks/useAppSettings";
 import { useBookmarks } from "../../hooks/useBookmarks";
-import { useConferenceData } from "../../hooks/useConferenceData";
+import { RELOAD_STATUS_AUTO_HIDE_MS, useConferenceData } from "../../hooks/useConferenceData";
 import { useSessionJump } from "../../hooks/useSessionJump";
 import { filterBookmarkedSessions } from "../../lib/bookmarks";
 import { filterSessions, getAvailableDates, getAvailableRooms, getAvailableTimes } from "../../lib/filters";
@@ -46,6 +46,8 @@ export function useProgramPageState() {
   const [showSettings, setShowSettings] = useState(false);
   const [showBookmarkedOnly, setShowBookmarkedOnly] = useState(false);
   const [showInstallDialog, setShowInstallDialog] = useState(false);
+  const [isUpdatingApp, setIsUpdatingApp] = useState(false);
+  const [appUpdateStatus, setAppUpdateStatus] = useState<"idle" | "updating" | "no_change" | "error">("idle");
   const [sessionsExpanded, setSessionsExpanded] = useState(true);
   const [personModal, setPersonModal] = useState<PersonId | null>(null);
   const [installPromptEvent, setInstallPromptEvent] = useState<BeforeInstallPromptEvent | null>(null);
@@ -53,6 +55,7 @@ export function useProgramPageState() {
   const mainRef = useRef<HTMLElement | null>(null);
   const settingsDialogRef = useRef<HTMLDialogElement | null>(null);
   const installDialogRef = useRef<HTMLDialogElement | null>(null);
+  const appUpdateStatusResetTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const deferredQuery = useDeferredValue(query);
   const deferredSelectedDate = useDeferredValue(selectedDate);
   const deferredSelectedRoom = useDeferredValue(selectedRoom);
@@ -136,6 +139,15 @@ export function useProgramPageState() {
       window.removeEventListener("appinstalled", handleAppInstalled);
     };
   }, []);
+
+  useEffect(
+    () => () => {
+      if (appUpdateStatusResetTimerRef.current !== null) {
+        globalThis.clearTimeout(appUpdateStatusResetTimerRef.current);
+      }
+    },
+    [],
+  );
 
   const baseFilteredSessions = useMemo(() => {
     if (!data) return [];
@@ -277,6 +289,85 @@ export function useProgramPageState() {
     }
   }
 
+  function scheduleAppUpdateStatusReset() {
+    if (appUpdateStatusResetTimerRef.current !== null) {
+      globalThis.clearTimeout(appUpdateStatusResetTimerRef.current);
+    }
+    appUpdateStatusResetTimerRef.current = globalThis.setTimeout(() => {
+      setAppUpdateStatus("idle");
+      appUpdateStatusResetTimerRef.current = null;
+    }, RELOAD_STATUS_AUTO_HIDE_MS);
+  }
+
+  async function handleUpdateApp() {
+    if (isUpdatingApp) return;
+
+    setIsUpdatingApp(true);
+    setAppUpdateStatus("idle");
+
+    try {
+      if (!("serviceWorker" in navigator)) {
+        window.location.reload();
+        return;
+      }
+
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (!registration) {
+        window.location.reload();
+        return;
+      }
+
+      await registration.update();
+
+      const waitingWorker = registration.waiting as ServiceWorker | null;
+      if (waitingWorker !== null) {
+        setAppUpdateStatus("updating");
+        await new Promise<void>((resolve) => {
+          globalThis.setTimeout(resolve, 400);
+        });
+        waitingWorker.postMessage({ type: "SKIP_WAITING" });
+        return;
+      }
+
+      const installingWorker = registration.installing;
+      if (installingWorker) {
+        await new Promise<void>((resolve) => {
+          const timeoutId = globalThis.setTimeout(resolve, 2000);
+          const onStateChange = () => {
+            if (
+              registration.waiting ||
+              installingWorker.state === "activated" ||
+              installingWorker.state === "redundant"
+            ) {
+              globalThis.clearTimeout(timeoutId);
+              resolve();
+            }
+          };
+          installingWorker.addEventListener("statechange", onStateChange, { once: true });
+          onStateChange();
+        });
+      }
+
+      const nextWaitingWorker = registration.waiting as ServiceWorker | null;
+      if (nextWaitingWorker !== null) {
+        setAppUpdateStatus("updating");
+        await new Promise<void>((resolve) => {
+          globalThis.setTimeout(resolve, 400);
+        });
+        nextWaitingWorker.postMessage({ type: "SKIP_WAITING" });
+        return;
+      }
+
+      setAppUpdateStatus("no_change");
+      scheduleAppUpdateStatusReset();
+    } catch {
+      setAppUpdateStatus("error");
+      scheduleAppUpdateStatusReset();
+    } finally {
+      setIsUpdatingApp(false);
+    }
+  }
+
   return {
     data,
     headerProps: {
@@ -350,6 +441,11 @@ export function useProgramPageState() {
       hasInstallPrompt: installPromptEvent !== null,
       onCloseInstallDialog: () => startTransition(() => setShowInstallDialog(false)),
       onInstall: () => void handleInstallApp(),
+      isUpdatingApp,
+      appUpdateStatus,
+      onUpdateApp: () => {
+        void handleUpdateApp();
+      },
       settingsDialogRef,
       showSettings,
       isReloadingData: isReloading,
