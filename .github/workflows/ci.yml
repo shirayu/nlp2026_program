@@ -20,6 +20,8 @@ jobs:
   test-and-build:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      MISE_LOCKED: "1"
 
     steps:
       - name: Checkout
