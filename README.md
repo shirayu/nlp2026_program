@@ -36,7 +36,7 @@ public/slack.json
 ]
 ```
 
-### 開発
+## 開発
 
 ```bash
 wget https://www.anlp.jp/proceedings/annual_meeting/2026/ -O data_for_extraction/original_program.html
@@ -45,7 +45,11 @@ task -p
 task dev
 ```
 
-### GitHub Pages
+## GitHub Pages
 
 - GitHub Actions の `CI` workflow で `main` への push 時に `dist/` をデプロイします
 - リポジトリ設定の `Settings > Pages > Source` は `GitHub Actions` を選択してください
+
+## License
+
+AGPL-3.0 license
