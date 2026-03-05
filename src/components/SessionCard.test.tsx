@@ -52,6 +52,7 @@ describe("SessionCard", () => {
         query=""
         expanded={false}
         onToggleExpanded={vi.fn()}
+        onScrollToSessionTop={vi.fn()}
         onPersonClick={vi.fn()}
         onJumpToSession={vi.fn()}
         onToggleBookmark={vi.fn()}
@@ -77,6 +78,7 @@ describe("SessionCard", () => {
         query=""
         expanded={false}
         onToggleExpanded={vi.fn()}
+        onScrollToSessionTop={vi.fn()}
         onPersonClick={vi.fn()}
         onJumpToSession={vi.fn()}
         onToggleBookmark={vi.fn()}
@@ -102,6 +104,7 @@ describe("SessionCard", () => {
         query=""
         expanded={false}
         onToggleExpanded={vi.fn()}
+        onScrollToSessionTop={vi.fn()}
         onPersonClick={vi.fn()}
         onJumpToSession={vi.fn()}
         onToggleBookmark={vi.fn()}
@@ -127,6 +130,7 @@ describe("SessionCard", () => {
         query=""
         expanded={false}
         onToggleExpanded={vi.fn()}
+        onScrollToSessionTop={vi.fn()}
         onPersonClick={vi.fn()}
         onJumpToSession={vi.fn()}
         onToggleBookmark={vi.fn()}
@@ -150,6 +154,7 @@ describe("SessionCard", () => {
         query=""
         expanded={false}
         onToggleExpanded={vi.fn()}
+        onScrollToSessionTop={vi.fn()}
         onPersonClick={vi.fn()}
         onJumpToSession={vi.fn()}
         onToggleBookmark={vi.fn()}
@@ -173,6 +178,7 @@ describe("SessionCard", () => {
         query=""
         expanded={false}
         onToggleExpanded={vi.fn()}
+        onScrollToSessionTop={vi.fn()}
         onPersonClick={vi.fn()}
         onJumpToSession={vi.fn()}
         onToggleBookmark={vi.fn()}
@@ -181,5 +187,30 @@ describe("SessionCard", () => {
     );
 
     expect(html).not.toContain(ja.openSessionYoutube);
+  });
+
+  it("セッションタイトルはボタンではなくヘッダテキストとして描画する", () => {
+    const html = renderToStaticMarkup(
+      <SessionCard
+        bookmarkedPresentationIds={new Set()}
+        bookmarkedSessionIds={new Set()}
+        sessionId="s1"
+        session={data.sessions.s1}
+        presIds={["pr1"]}
+        data={data}
+        showAuthors
+        query=""
+        expanded={false}
+        onToggleExpanded={vi.fn()}
+        onScrollToSessionTop={vi.fn()}
+        onPersonClick={vi.fn()}
+        onJumpToSession={vi.fn()}
+        onToggleBookmark={vi.fn()}
+        onToggleSessionBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).toContain(">セッション1<");
+    expect(html).toContain(`aria-label="${ja.jumpToSessionTop}"`);
   });
 });

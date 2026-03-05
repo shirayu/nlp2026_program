@@ -23,6 +23,7 @@ export const SessionCard = memo(
       query: string;
       expanded: boolean;
       onToggleExpanded: () => void;
+      onScrollToSessionTop: (sid: SessionId) => void;
       onPersonClick: (id: PersonId) => void;
       onJumpToSession: (sid: SessionId) => void;
       onToggleBookmark: (id: PresentationId) => void;
@@ -41,6 +42,7 @@ export const SessionCard = memo(
       query,
       expanded,
       onToggleExpanded,
+      onScrollToSessionTop,
       onPersonClick,
       onJumpToSession,
       onToggleBookmark,
@@ -59,12 +61,18 @@ export const SessionCard = memo(
 
     return (
       <section ref={ref} className={`rounded-xl shadow-sm ${roomTheme.surface}`}>
-        <div className={`sticky top-0 z-10 rounded-t-xl px-4 py-3 shadow-sm ${roomTheme.header}`}>
-          <div className="flex items-start justify-between gap-3">
+        <div className={`sticky top-0 z-10 rounded-t-xl px-4 py-3 shadow-sm ${roomTheme.header} relative`}>
+          <button
+            type="button"
+            className="absolute inset-0 rounded-t-xl focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            onClick={() => onScrollToSessionTop(sessionId)}
+            aria-label={ja.jumpToSessionTop}
+          />
+          <div className="pointer-events-none relative flex items-start justify-between gap-3">
             <h2 className={`min-w-0 flex-1 text-sm font-semibold leading-snug ${roomTheme.title}`}>
               <HighlightedText text={session.title || sessionId} query={query} />
             </h2>
-            <div className="flex shrink-0 items-center gap-1">
+            <div className="pointer-events-auto relative z-10 flex shrink-0 items-center gap-1">
               {session.youtube_url && (
                 <a
                   href={session.youtube_url}

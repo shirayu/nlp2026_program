@@ -24,6 +24,7 @@ export function ProgramResults({
   sessionsVisible,
   sessionRefs,
   onToggleExpanded,
+  onScrollToSessionTop,
   onPersonClick,
   onJumpToSession,
   onToggleBookmark,
@@ -43,6 +44,7 @@ export function ProgramResults({
   sessionsVisible: boolean;
   sessionRefs: RefObject<Record<string, HTMLElement | null>>;
   onToggleExpanded: (sessionId: SessionId) => void;
+  onScrollToSessionTop: (sessionId: SessionId) => void;
   onPersonClick: (personId: PersonId | null) => void;
   onJumpToSession: (sessionId: SessionId) => void;
   onToggleBookmark: (presentationId: PresentationId) => void;
@@ -75,6 +77,7 @@ export function ProgramResults({
             query={trimmedQuery}
             expanded={sessionsVisible}
             onToggleExpanded={() => onToggleExpanded(sessionId)}
+            onScrollToSessionTop={onScrollToSessionTop}
             onPersonClick={onPersonClick}
             onJumpToSession={onJumpToSession}
             onToggleBookmark={onToggleBookmark}

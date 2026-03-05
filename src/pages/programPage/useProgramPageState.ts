@@ -331,6 +331,7 @@ export function useProgramPageState() {
       sessionsVisible,
       sessionRefs,
       onToggleExpanded: handleToggleExpanded,
+      onScrollToSessionTop: scrollSessionToTop,
       onPersonClick: setPersonModal,
       onJumpToSession: handleJumpToSession,
       onToggleBookmark: toggleBookmark,

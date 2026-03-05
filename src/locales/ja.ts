@@ -23,6 +23,7 @@ export const ja = {
   searchResultCount: (count: number) => `ヒット: ${count}件`,
   expandSessionDetails: "セッション詳細をすべて開く",
   collapseSessionDetails: "セッション詳細をすべて閉じる",
+  jumpToSessionTop: "このセッションの先頭へ移動",
   openOfficialSite: "公式サイトを開く",
   openSessionSite: "このセッションの関連リンクを開く",
   openSessionYoutube: "このセッションの YouTube 配信を開く",
