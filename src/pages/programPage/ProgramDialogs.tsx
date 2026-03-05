@@ -1,4 +1,4 @@
-import { X as CloseIcon, RefreshCw } from "lucide-react";
+import { X as CloseIcon, Globe, Monitor, RefreshCw } from "lucide-react";
 import type { ReactNode, RefObject } from "react";
 import {
   AUTHOR_NAME,
@@ -205,6 +205,20 @@ export function SettingsDialog({
                 />
               </button>
             </label>
+            <section className="mt-4 rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
+              <h3 className="text-sm font-semibold text-gray-800">{ja.iconLegend}</h3>
+              <ul className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600">
+                <li>{ja.legendPresenter}</li>
+                <li className="flex items-center gap-1">
+                  <Globe className="h-3.5 w-3.5 text-blue-400" />
+                  <span>{ja.legendEnglish}</span>
+                </li>
+                <li className="flex items-center gap-1">
+                  <Monitor className="h-3.5 w-3.5 text-green-400" />
+                  <span>{ja.legendOnline}</span>
+                </li>
+              </ul>
+            </section>
             <section className="mt-4 rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-sm font-semibold text-gray-800">{ja.reloadData}</p>

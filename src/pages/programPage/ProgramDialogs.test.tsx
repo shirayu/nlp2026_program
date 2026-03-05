@@ -37,6 +37,29 @@ describe("SettingsDialog", () => {
     expect(html).toContain("Data time");
   });
 
+  it("アイコン凡例を表示する", () => {
+    const html = renderToStaticMarkup(
+      <SettingsDialog
+        dialogRef={{ current: null }}
+        open
+        dataGeneratedAt="2026-03-05T01:44:12Z"
+        isReloadingData={false}
+        reloadDataStatus="idle"
+        showAuthors
+        useSlackAppLinks={false}
+        onClose={() => {}}
+        onReloadData={() => {}}
+        onToggleShowAuthors={() => {}}
+        onToggleUseSlackAppLinks={() => {}}
+      />,
+    );
+
+    expect(html).toContain("アイコン凡例");
+    expect(html).toContain("○ 発表者");
+    expect(html).toContain("英語発表");
+    expect(html).toContain("オンライン発表");
+  });
+
   it("再取得結果が no_change のとき更新なしを表示する", () => {
     const html = renderToStaticMarkup(
       <SettingsDialog
