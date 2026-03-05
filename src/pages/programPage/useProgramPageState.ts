@@ -220,26 +220,43 @@ export function useProgramPageState() {
       return;
     }
 
-    setShowBookmarkedOnly((value) => {
-      const nextValue = !value;
-      setSearchAll((current) => syncSearchAllWithBookmarkFilter(current, nextValue));
-      return nextValue;
+    startTransition(() => {
+      setShowBookmarkedOnly((value) => {
+        const nextValue = !value;
+        setSearchAll((current) => syncSearchAllWithBookmarkFilter(current, nextValue));
+        return nextValue;
+      });
     });
     scrollContentToTop();
   }
 
   function selectDate(date: string | null) {
-    setSelectedDate(date);
+    if (date === selectedDate) {
+      return;
+    }
+    startTransition(() => {
+      setSelectedDate(date);
+    });
     scrollContentToTop();
   }
 
   function selectTime(time: string | null) {
-    setSelectedTime(time);
+    if (time === selectedTime) {
+      return;
+    }
+    startTransition(() => {
+      setSelectedTime(time);
+    });
     scrollContentToTop();
   }
 
   function selectRoom(room: string | null) {
-    setSelectedRoom(room);
+    if (room === selectedRoom) {
+      return;
+    }
+    startTransition(() => {
+      setSelectedRoom(room);
+    });
     scrollContentToTop();
   }
 

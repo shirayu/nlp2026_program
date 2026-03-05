@@ -1,5 +1,9 @@
+/** @vitest-environment jsdom */
+
+import { act } from "react";
+import { createRoot } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { TimelineFilter } from "./TimelineFilter";
 
 function countMatches(text: string, pattern: RegExp) {
@@ -7,8 +11,13 @@ function countMatches(text: string, pattern: RegExp) {
 }
 
 describe("TimelineFilter", () => {
+  beforeEach(() => {
+    (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+  });
+
   afterEach(() => {
     vi.useRealTimers();
+    document.body.innerHTML = "";
   });
 
   it("今ボタンは有効時でも強調色を使わない", () => {
@@ -106,5 +115,130 @@ describe("TimelineFilter", () => {
 
     expect(html).not.toContain("bg-gray-600");
     expect(countMatches(html, /bg-teal-200/g)).toBe(3);
+  });
+
+  it("ドラッグ中は onChange を確定せず、pointerup で1回だけ確定する", () => {
+    const onChange = vi.fn();
+    const container = document.createElement("div");
+    document.body.append(container);
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(
+        <TimelineFilter
+          points={["9:00", "9:05", "9:10"]}
+          activeSegments={[true, true]}
+          selectedDate="2026-03-04"
+          selectedTime="9:00"
+          onChange={onChange}
+          onSelectNow={vi.fn()}
+          nowEnabled
+        />,
+      );
+    });
+
+    const slider = container.querySelector('input[type="range"]') as HTMLInputElement;
+
+    act(() => {
+      slider.dispatchEvent(new Event("pointerdown", { bubbles: true }));
+      slider.value = "2";
+      slider.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    expect(onChange).not.toHaveBeenCalled();
+
+    act(() => {
+      slider.dispatchEvent(new Event("pointerup", { bubbles: true }));
+    });
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith("9:10");
+
+    act(() => {
+      root.unmount();
+    });
+  });
+
+  it("selectedTime プロップ更新時はドラフト値を同期する", () => {
+    const container = document.createElement("div");
+    document.body.append(container);
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(
+        <TimelineFilter
+          points={["9:00", "9:05", "9:10"]}
+          activeSegments={[true, true]}
+          selectedDate="2026-03-04"
+          selectedTime="9:05"
+          onChange={vi.fn()}
+          onSelectNow={vi.fn()}
+          nowEnabled
+        />,
+      );
+    });
+
+    const slider = container.querySelector('input[type="range"]') as HTMLInputElement;
+
+    act(() => {
+      slider.dispatchEvent(new Event("pointerdown", { bubbles: true }));
+      slider.value = "2";
+      slider.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    act(() => {
+      root.render(
+        <TimelineFilter
+          points={["9:00", "9:05", "9:10"]}
+          activeSegments={[true, true]}
+          selectedDate="2026-03-04"
+          selectedTime="9:05"
+          onChange={vi.fn()}
+          onSelectNow={vi.fn()}
+          nowEnabled
+        />,
+      );
+    });
+
+    expect(slider.value).toBe("1");
+
+    act(() => {
+      root.unmount();
+    });
+  });
+
+  it("非ドラッグ時の change は即時に onChange を確定する", () => {
+    const onChange = vi.fn();
+    const container = document.createElement("div");
+    document.body.append(container);
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(
+        <TimelineFilter
+          points={["9:00", "9:05", "9:10"]}
+          activeSegments={[true, true]}
+          selectedDate="2026-03-04"
+          selectedTime="9:00"
+          onChange={onChange}
+          onSelectNow={vi.fn()}
+          nowEnabled
+        />,
+      );
+    });
+
+    const slider = container.querySelector('input[type="range"]') as HTMLInputElement;
+    const setNativeValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+    expect(setNativeValue).toBeTypeOf("function");
+
+    act(() => {
+      setNativeValue?.call(slider, "1");
+      slider.dispatchEvent(new InputEvent("input", { bubbles: true }));
+    });
+
+    expect(onChange).toHaveBeenCalled();
+    expect(onChange).toHaveBeenLastCalledWith("9:05");
+
+    act(() => {
+      root.unmount();
+    });
   });
 });

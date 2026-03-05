@@ -1,4 +1,5 @@
 import { RotateCcw } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { ja } from "../locales/ja";
 
 type TimelineFilterProps = {
@@ -181,12 +182,22 @@ export function TimelineFilter({
 }: TimelineFilterProps) {
   const selectedIndex = selectedTime ? points.indexOf(selectedTime) : -1;
   const sliderValue = selectedIndex >= 0 ? selectedIndex : 0;
+  const [draftSliderValue, setDraftSliderValue] = useState(sliderValue);
+  const isPointerDraggingRef = useRef(false);
   const maxIndex = Math.max(points.length - 1, 0);
-  const thumbLeft = maxIndex === 0 ? 0 : (sliderValue / maxIndex) * 100;
+  const thumbLeft = maxIndex === 0 ? 0 : (draftSliderValue / maxIndex) * 100;
   const isUnspecified = selectedTime === null;
   const pastTimes = getPastTimeSet(points, selectedDate, new Date());
   const marks = buildTimelineMarks(points, selectedTime);
   const segments = buildTimelineSegments(points, activeSegments, pastTimes);
+
+  useEffect(() => {
+    setDraftSliderValue(sliderValue);
+  }, [sliderValue]);
+
+  function commitSliderValue(nextValue: number) {
+    onChange(points[nextValue] ?? null);
+  }
 
   return (
     <div className={`border-t border-gray-100 px-3 py-3 ${disabled ? "opacity-50" : ""}`}>
@@ -226,8 +237,31 @@ export function TimelineFilter({
               min={0}
               max={maxIndex}
               step={1}
-              value={sliderValue}
-              onChange={(event) => onChange(points[Number(event.target.value)] ?? null)}
+              value={draftSliderValue}
+              onPointerDown={() => {
+                isPointerDraggingRef.current = true;
+              }}
+              onPointerUp={(event) => {
+                const nextValue = Number((event.currentTarget as HTMLInputElement).value);
+                isPointerDraggingRef.current = false;
+                commitSliderValue(nextValue);
+              }}
+              onPointerCancel={() => {
+                isPointerDraggingRef.current = false;
+                setDraftSliderValue(sliderValue);
+              }}
+              onBlur={(event) => {
+                if (!isPointerDraggingRef.current) return;
+                isPointerDraggingRef.current = false;
+                commitSliderValue(Number(event.currentTarget.value));
+              }}
+              onChange={(event) => {
+                const nextValue = Number(event.target.value);
+                setDraftSliderValue(nextValue);
+                if (!isPointerDraggingRef.current) {
+                  commitSliderValue(nextValue);
+                }
+              }}
               disabled={disabled}
               className={`absolute inset-x-0 top-1/2 h-8 -translate-y-1/2 opacity-0 ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
               aria-label={ja.timepoint}
