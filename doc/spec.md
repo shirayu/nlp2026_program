@@ -105,7 +105,7 @@
 > `presentations[id].oral_session_id` でも同じ関係を逆引きできる。
 
 > **ワークショップの手動補完**  
-> `extract.py` は `data_for_extraction/workshop.json` を読み込み、`WS1` など親ワークショップセッション自体を生成する。   
+> `extract.py` は `data_for_extraction/workshop.json` を読み込み、`WS1` など親ワークショップセッション自体を生成する。
 > さらに `sessions` 配列を持たせると、`WS1-1` のような個別セッションを `sessions` に追加生成する。  
 > 個別セッション内に `presentations` 配列を持たせると、対応する `presentations` / `persons` / `affiliations`
 > も手動追加される。

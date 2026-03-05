@@ -3,6 +3,8 @@
 
 スマホを意識したデザインの非公式のNLP2026 予定表です。
 
+![Screenshot](screenshot.avif)
+
 ## 設定ファイル
 
 ```txt
