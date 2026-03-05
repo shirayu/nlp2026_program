@@ -119,7 +119,8 @@ describe("SettingsDialog", () => {
       />,
     );
 
-    expect(html).toContain("Software information");
+    expect(html).toContain("ソフトウェア情報");
+    expect(html).not.toContain('<h3 class="text-sm font-semibold text-gray-800">運営者</h3>');
     expect(html).toContain(BUILD_GIT_HASH);
     expect(html).toContain("Git hash");
     expect(html).toContain("Build time");

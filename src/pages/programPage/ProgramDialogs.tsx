@@ -6,6 +6,10 @@ import {
   DEVELOPER_GITHUB_URL,
   DEVELOPER_NAME,
   DEVELOPER_WEBSITE_URL,
+  LICENSE_NAME,
+  OPERATOR_NAME,
+  OPERATOR_REPOSITORY_URL,
+  OPERATOR_WEBSITE_URL,
   PROJECT_REPOSITORY_URL,
 } from "../../constants";
 import type { DataReloadStatus } from "../../hooks/useConferenceData";
@@ -48,6 +52,10 @@ function shortHash(value: string | null): string {
 
 function omitHttps(value: string): string {
   return value.replace(/^https?:\/\//, "");
+}
+
+function normalizeComparableUrl(value: string): string {
+  return value.trim().replace(/\/+$/, "").toLowerCase();
 }
 
 function buildLastUpdateRows(lastUpdate?: Record<string, LastUpdateEntry>): {
@@ -359,6 +367,9 @@ export function SettingsDialog({
   onToggleUseSlackAppLinks: () => void;
 }) {
   const formattedBuildGitDate = formatBuildGitDate(BUILD_GIT_DATE);
+  const shouldShowOperatorSection =
+    OPERATOR_NAME !== DEVELOPER_NAME ||
+    normalizeComparableUrl(OPERATOR_REPOSITORY_URL) !== normalizeComparableUrl(PROJECT_REPOSITORY_URL);
 
   return (
     <dialog ref={dialogRef} open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
@@ -422,6 +433,39 @@ export function SettingsDialog({
                 </li>
               </ul>
             </section>
+            {shouldShowOperatorSection && (
+              <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
+                <h3 className="text-sm font-semibold text-gray-800">{ja.operator}</h3>
+                <dl className="mt-2 space-y-2 text-sm">
+                  <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
+                    <dt className="text-gray-500">{ja.operator}</dt>
+                    <dd className="min-w-0 text-left">
+                      <a
+                        href={OPERATOR_WEBSITE_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="break-all text-indigo-600 underline decoration-indigo-200 underline-offset-2 hover:text-indigo-700"
+                      >
+                        {OPERATOR_NAME}
+                      </a>
+                    </dd>
+                  </div>
+                  <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
+                    <dt className="text-gray-500">{ja.projectRepository}</dt>
+                    <dd className="min-w-0 text-left">
+                      <a
+                        href={OPERATOR_REPOSITORY_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="break-all text-indigo-600 underline decoration-indigo-200 underline-offset-2 hover:text-indigo-700"
+                      >
+                        {omitHttps(OPERATOR_REPOSITORY_URL)}
+                      </a>
+                    </dd>
+                  </div>
+                </dl>
+              </section>
+            )}
             <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
               <h3 className="text-sm font-semibold text-gray-800">{ja.softwareInfo}</h3>
               <dl className="mt-2 space-y-2 text-sm">
@@ -462,7 +506,7 @@ export function SettingsDialog({
                 </div>
                 <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
                   <dt className="text-gray-500">{ja.license}</dt>
-                  <dd className="min-w-0 text-left text-gray-800">{ja.licenseName}</dd>
+                  <dd className="min-w-0 text-left text-gray-800">{LICENSE_NAME}</dd>
                 </div>
                 <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-start gap-x-4">
                   <dt className="text-gray-500">{ja.gitHash}</dt>

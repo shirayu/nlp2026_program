@@ -3,12 +3,19 @@ import type { ConferenceData, RoomId, RoomTheme, Session } from "../types";
 export const OFFICIAL_SITE_URL = import.meta.env.VITE_OFFICIAL_SITE_URL;
 export const VENUE_GUIDE_URL = "https://www.anlp.jp/nlp2026/pdf/venue_guide.pdf";
 export const X_SEARCH_URL = "https://x.com/search?q=%23nlp2026";
+export const OPERATOR_NAME = "Yuta Hayashibe";
+export const OPERATOR_WEBSITE_URL = "https://hayashibe.jp/";
+export const OPERATOR_REPOSITORY_URL = "https://github.com/shirayu/nlp2026_program";
+
+// ここは変更しない ///////
 export const DEVELOPER_NAME = "Yuta Hayashibe";
+export const LICENSE_NAME = "AGPL-3.0";
 export const DEVELOPER_WEBSITE_URL = "https://hayashibe.jp";
 export const DEVELOPER_GITHUB_URL = "https://github.com/shirayu";
 export const PROJECT_REPOSITORY_URL = "https://github.com/shirayu/nlp2026_program";
 export const BUILD_GIT_HASH = import.meta.env.VITE_BUILD_HASH || "unknown";
 export const BUILD_GIT_DATE = import.meta.env.VITE_BUILD_DATE || "unknown";
+//////////////////////////
 
 const DEFAULT_ROOM_THEME: RoomTheme = {
   surface: "bg-slate-50",
