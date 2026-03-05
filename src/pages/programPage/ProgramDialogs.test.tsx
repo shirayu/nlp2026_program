@@ -36,7 +36,7 @@ describe("SettingsDialog", () => {
       />,
     );
 
-    expect(html).toContain("ビルド情報");
+    expect(html).toContain("Build information");
     expect(html).toContain(BUILD_GIT_HASH);
     expect(html).toContain("Git hash");
     expect(html).toContain("Build time");
