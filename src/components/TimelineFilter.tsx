@@ -88,7 +88,7 @@ function TimelineActions({
     <div className="flex items-start justify-between gap-3">
       <div className="flex items-center gap-2">
         <p className="text-sm font-semibold text-slate-700">
-          {ja.timepoint} {selectedTime ?? ja.allTimes}
+          {selectedTime ? `${ja.timepoint} ${selectedTime}` : ja.allTimes}
         </p>
         <button
           type="button"
