@@ -42,6 +42,7 @@ describe("SettingsDialog", () => {
     expect(html).toContain("Build time");
     expect(html).toContain("Data");
     expect(html).toContain("Main");
+    expect(html).toContain("overflow-y-auto");
     expect(html).toContain("Workshop");
     expect(html).toContain("Invitedpapers");
     expect(html).toContain("YouTube");

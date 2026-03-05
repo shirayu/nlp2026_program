@@ -134,11 +134,11 @@ export function InstallDialog({
         <button
           type="button"
           aria-label={ja.closeInstallGuide}
-          className="absolute inset-0 bg-black/55"
+          className="fixed inset-0 bg-black/55"
           onClick={onClose}
         />
-        <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white shadow-xl">
-          <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
+        <div className="relative flex max-h-[calc(100vh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
+          <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-indigo-50 px-4 py-3">
             <h2 className="text-sm font-bold text-gray-800">{ja.installApp}</h2>
             <button
               type="button"
@@ -149,7 +149,10 @@ export function InstallDialog({
               <CloseIcon className="h-5 w-5" />
             </button>
           </div>
-          <div className="space-y-4 px-4 py-4 text-sm text-gray-700">
+          <div
+            className="space-y-4 overflow-y-auto px-4 py-4 text-sm text-gray-700"
+            style={{ scrollbarGutter: "stable" }}
+          >
             <div className="space-y-2">
               <p>{ja.installGuideLead}</p>
               <p>{ja.installGuideDescription}</p>
@@ -201,11 +204,11 @@ export function SettingsDialog({
         <button
           type="button"
           aria-label={ja.closeDisplaySettings}
-          className="absolute inset-0 bg-black/55"
+          className="fixed inset-0 bg-black/55"
           onClick={onClose}
         />
-        <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white shadow-xl">
-          <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
+        <div className="relative flex max-h-[calc(100vh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
+          <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-indigo-50 px-4 py-3">
             <h2 className="text-sm font-bold text-gray-800">{ja.displaySettings}</h2>
             <button
               type="button"
@@ -216,7 +219,7 @@ export function SettingsDialog({
               <CloseIcon className="h-5 w-5" />
             </button>
           </div>
-          <div className="space-y-2 px-4 py-4">
+          <div className="space-y-2 overflow-y-auto px-4 py-4" style={{ scrollbarGutter: "stable" }}>
             <label className="flex items-center justify-between">
               <span className="text-sm text-gray-700">{ja.showAuthors}</span>
               <button
