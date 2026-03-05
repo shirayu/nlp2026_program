@@ -22,6 +22,9 @@ export function normalizeTerms(query: string): string[] {
   return [...new Set(query.trim().toLowerCase().split(/\s+/).filter(Boolean))];
 }
 
+const workshopParentSessionSetCache = new WeakMap<Record<SessionId, Session>, ReadonlySet<SessionId>>();
+const sortedSessionEntriesCache = new WeakMap<Record<SessionId, Session>, ReadonlyArray<[SessionId, Session]>>();
+
 function matchesAllTerms(texts: (string | null | undefined)[], terms: string[]): boolean {
   if (terms.length === 0) return true;
   const haystacks = texts
@@ -117,15 +120,13 @@ function shouldSkipLocationFilter(searchAll: boolean, hasQuery: boolean, bookmar
 
 function matchesSessionFilters(
   data: ConferenceData,
-  _sessionId: SessionId,
   session: Session,
   opts: Pick<
     FilterOptions,
     "selectedDate" | "selectedTime" | "selectedRoom" | "searchAll" | "query" | "bookmarkedOnly"
-  >,
+  > & { hasQuery: boolean },
 ): boolean {
-  const hasQuery = normalizeTerms(opts.query).length > 0;
-  if (shouldSkipLocationFilter(opts.searchAll, hasQuery, opts.bookmarkedOnly ?? false)) return true;
+  if (shouldSkipLocationFilter(opts.searchAll, opts.hasQuery, opts.bookmarkedOnly ?? false)) return true;
   if (opts.selectedDate && session.date !== opts.selectedDate) return false;
   if (!isSessionActiveAt(session, opts.selectedTime)) return false;
   return matchesRoomFilter(session, data.rooms, opts.selectedRoom);
@@ -148,9 +149,44 @@ function toFilteredSession(
 }
 
 function isWorkshopParentSession(sessionId: SessionId, sessions: Record<SessionId, Session>): boolean {
-  if (!/^WS\d+$/.test(sessionId)) return false;
-  const childPrefix = `${sessionId}-`;
-  return Object.keys(sessions).some((sid) => sid.startsWith(childPrefix));
+  return getWorkshopParentSessionSet(sessions).has(sessionId);
+}
+
+function getWorkshopParentSessionSet(sessions: Record<SessionId, Session>): ReadonlySet<SessionId> {
+  const cached = workshopParentSessionSetCache.get(sessions);
+  if (cached) return cached;
+
+  const sessionIds = Object.keys(sessions) as SessionId[];
+  const idSet = new Set(sessionIds);
+  const parents = new Set<SessionId>();
+
+  for (const sessionId of sessionIds) {
+    const match = /^(WS\d+)-/.exec(sessionId);
+    if (!match) continue;
+    const parent = match[1] as SessionId;
+    if (idSet.has(parent)) {
+      parents.add(parent);
+    }
+  }
+
+  workshopParentSessionSetCache.set(sessions, parents);
+  return parents;
+}
+
+function getSortedSessionEntries(sessions: Record<SessionId, Session>): ReadonlyArray<[SessionId, Session]> {
+  const cached = sortedSessionEntriesCache.get(sessions);
+  if (cached) return cached;
+
+  const sorted = Object.entries(sessions)
+    .map(([sessionId, session]) => [sessionId as SessionId, session] as [SessionId, Session])
+    .sort(([, a], [, b]) => {
+      const da = `${a.date} ${a.start_time.padStart(5, "0")}`;
+      const db = `${b.date} ${b.start_time.padStart(5, "0")}`;
+      return da.localeCompare(db);
+    });
+
+  sortedSessionEntriesCache.set(sessions, sorted);
+  return sorted;
 }
 
 /** 全日付一覧（フィルタなし） */
@@ -210,18 +246,15 @@ export function getAvailableRooms(
 export function filterSessions(data: ConferenceData, opts: FilterOptions): FilteredSession[] {
   const { query, selectedDate, selectedTime, selectedRoom, searchAll, bookmarkedOnly = false } = opts;
   const terms = normalizeTerms(query);
-
-  const sortedSessions = Object.entries(data.sessions).sort(([, a], [, b]) => {
-    const da = `${a.date} ${a.start_time.padStart(5, "0")}`;
-    const db = `${b.date} ${b.start_time.padStart(5, "0")}`;
-    return da.localeCompare(db);
-  });
+  const hasQuery = terms.length > 0;
+  const sortedSessions = getSortedSessionEntries(data.sessions);
 
   return sortedSessions.flatMap(([sessionId, session]) => {
     if (isWorkshopParentSession(sessionId as SessionId, data.sessions)) return [];
     if (
-      !matchesSessionFilters(data, sessionId as SessionId, session, {
+      !matchesSessionFilters(data, session, {
         query,
+        hasQuery,
         selectedDate,
         selectedTime,
         selectedRoom,
