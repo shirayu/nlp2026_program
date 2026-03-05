@@ -118,6 +118,8 @@ export function InstallDialog({
             <div className="space-y-2">
               <p>{ja.installGuideLead}</p>
               <p>{ja.installGuideDescription}</p>
+              <p>{ja.installGuideUpdateDescription}</p>
+              <p>{ja.installGuideForceCloseDescription}</p>
             </div>
             <section className={installSectionClassName}>{installSectionContent}</section>
           </div>

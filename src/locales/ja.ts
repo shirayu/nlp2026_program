@@ -42,6 +42,10 @@ export const ja = {
   closeInstallGuide: "ホーム画面への追加案内を閉じる",
   installGuideLead: "ホーム画面に追加すると、予定表を1タップですぐ開けます。",
   installGuideDescription: "一度開いておくと、電波が弱い場所でも使いやすくなります。",
+  installGuideUpdateDescription:
+    "最新版がある場合、アプリを完全に終了し、インターネット接続中に再度起動すると更新されます。",
+  installGuideForceCloseDescription:
+    "完全に終了するには、ホームボタンへ戻るだけでなく、起動中アプリ一覧（タスク画面）から本アプリを上にスワイプして終了してください。",
   installGuideIosLead: "iPhone / iPad では、Safari の共有メニューからホーム画面に追加できます。",
   installGuideIosSteps: [
     "Safari の共有ボタンをタップします。",
