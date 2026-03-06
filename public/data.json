@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-03-06T16:31:27Z",
+  "generated_at": "2026-03-06T16:32:50Z",
   "last_update": {
     "program_main": {
       "sha256": "c02f7308dda2ea510afda63be85a9e566cac31235d91206c97fc0a2837a5a981",
       "time": "2026-03-04T09:00:00+09:00"
     },
     "workshop": {
-      "sha256": "77f05c18fd5a121d8516f622ce933bfdd8a77b0cc1a47d603756989290bdb0bc",
-      "time": "2026-03-07T01:31:13+09:00"
+      "sha256": "dc6272c4f4066a5205ab5486ceda6eee710e614471514df178c3e359d3dc2e75",
+      "time": "2026-03-07T01:32:45+09:00"
     },
     "invitedpapers": {
       "sha256": "1383c3c3c2fd57240adc5d25ae7b760966287c460ef40f20cbd5b68fa2e5b090",
@@ -30534,8 +30534,8 @@
           "affiliation_id": null
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "9:00",
+      "end_time": "9:30",
       "pdf_url": null
     },
     "WS3-1-2": {
@@ -30550,8 +30550,8 @@
           "affiliation_id": null
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "9:30",
+      "end_time": "10:00",
       "pdf_url": null
     },
     "WS3-1-3": {
@@ -30566,8 +30566,8 @@
           "affiliation_id": null
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "10:00",
+      "end_time": "10:30",
       "pdf_url": null
     },
     "WS3-1-4": {
@@ -30582,8 +30582,8 @@
           "affiliation_id": null
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "10:45",
+      "end_time": "11:15",
       "pdf_url": null
     },
     "WS3-1-5": {
@@ -30598,8 +30598,8 @@
           "affiliation_id": null
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "11:15",
+      "end_time": "11:45",
       "pdf_url": null
     },
     "WS3-2-1": {
@@ -30630,8 +30630,8 @@
           "affiliation_id": null
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "11:45",
+      "end_time": "12:30",
       "pdf_url": null
     },
     "WS3-3-1": {

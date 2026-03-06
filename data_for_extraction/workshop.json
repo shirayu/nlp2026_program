@@ -299,26 +299,36 @@
           {
             "id": "WS3-1-1",
             "title": "Thoughts on International Conferences: An Interview with Graham Neubig",
+            "start_time": "9:00",
+            "end_time": "9:30",
             "authors": [{ "name": "Graham Neubig" }]
           },
           {
             "id": "WS3-1-2",
             "title": "トップ国際会議の舞台裏：論文はどのように選ばれるのか",
+            "start_time": "9:30",
+            "end_time": "10:00",
             "authors": [{ "name": "Naoaki Okazaki" }]
           },
           {
             "id": "WS3-1-3",
             "title": "ACL Rolling Review Editor-in-Chief として得た経験の共有",
+            "start_time": "10:00",
+            "end_time": "10:30",
             "authors": [{ "name": "Jun Suzuki" }]
           },
           {
             "id": "WS3-1-4",
             "title": "ARRにおけるGreat Reviewの取り方と現状のレビュー環境について",
+            "start_time": "10:45",
+            "end_time": "11:15",
             "authors": [{ "name": "Yusuke Sakai" }]
           },
           {
             "id": "WS3-1-5",
             "title": "国際会議スランプに効く薬",
+            "start_time": "11:15",
+            "end_time": "11:45",
             "authors": [{ "name": "Masahiro Kaneko" }]
           }
         ]
@@ -332,6 +342,8 @@
           {
             "id": "WS3-2-1",
             "title": "Panel Discussion",
+            "start_time": "11:45",
+            "end_time": "12:30",
             "authors": [
               { "name": "Naoaki Okazaki" },
               { "name": "Jun Suzuki" },
