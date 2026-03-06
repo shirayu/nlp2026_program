@@ -66,6 +66,8 @@ class RawPresentation(TypedDict):
     oral_session_ref: str | None
     is_online: bool
     is_english: bool
+    start_time: NotRequired[str]
+    end_time: NotRequired[str]
 
 
 class RawPerson(TypedDict):
@@ -838,6 +840,8 @@ def normalize(
             norm_authors.append({"person_id": person_id, "affiliation_id": aff_id})
 
         presenter_id = name_to_pid.get(entry["presenter_name"]) if entry["presenter_name"] else None
+        start_time = entry.get("start_time") or None
+        end_time = entry.get("end_time") or None
 
         p: JsonDict = {
             "title": entry["title"],
@@ -846,6 +850,8 @@ def normalize(
             "is_english": entry["is_english"],
             "is_online": entry["is_online"],
             "authors": norm_authors,
+            "start_time": start_time,
+            "end_time": end_time,
             "pdf_url": entry["pdf_url"],
         }
         if pid in oral_session_for:
@@ -1011,6 +1017,8 @@ class WorkshopPresentationInput(BaseModel):
     presenter: str | None = None
     is_english: bool = False
     is_online: bool = False
+    start_time: str | None = None
+    end_time: str | None = None
     pdf_url: str | None = None
     zoom_url: str | None = None
     authors: list[WorkshopAuthorInput] = []
@@ -1021,6 +1029,13 @@ class WorkshopPresentationInput(BaseModel):
         if value is None:
             return None
         return _require_non_empty(value, str(info.field_name))
+
+    @field_validator("start_time", "end_time")
+    @classmethod
+    def validate_times(cls, value: str | None, info: ValidationInfo) -> str | None:
+        if value is None:
+            return None
+        return _validate_time(value, str(info.field_name))
 
 
 class WorkshopSessionInput(BaseModel):
@@ -1177,6 +1192,8 @@ class PresentationRecord(BaseModel):
     is_english: bool
     is_online: bool
     authors: list[PresentationAuthorRecord]
+    start_time: str | None = None
+    end_time: str | None = None
     pdf_url: str | None
     zoom_url: str | None = None
     oral_session_id: str | None = None
@@ -1354,6 +1371,8 @@ def apply_workshop_overrides(result: JsonDict, workshop_config: dict[str, Worksh
                     "is_english": presentation.is_english,
                     "is_online": presentation.is_online,
                     "authors": normalized_authors,
+                    "start_time": presentation.start_time,
+                    "end_time": presentation.end_time,
                     "pdf_url": presentation.pdf_url,
                     "zoom_url": presentation.zoom_url,
                 }
@@ -1442,6 +1461,8 @@ def apply_invitedpapers_config(result: JsonDict, invitedpapers_config: list[Work
             "is_english": presentation.is_english,
             "is_online": presentation.is_online,
             "authors": normalized_authors,
+            "start_time": presentation.start_time,
+            "end_time": presentation.end_time,
             "pdf_url": presentation.pdf_url,
             "zoom_url": presentation.zoom_url,
         }

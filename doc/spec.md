@@ -261,6 +261,8 @@
 | `presenter` | `string` | 省略時は `authors[0].name` を発表者として使う |
 | `is_english` | `boolean` | 省略時は `false` |
 | `is_online` | `boolean` | 省略時は `false` |
+| `start_time` | `string \| null` | 発表開始時刻（`H:MM`）。省略時は `null` |
+| `end_time` | `string \| null` | 発表終了時刻（`H:MM`）。省略時は `null` |
 | `pdf_url` | `string \| null` | 省略時は `null` |
 | `zoom_url` | `string \| null` | 省略時は `null` |
 | `authors` | `object[]` | 著者一覧。`persons` / `affiliations` に自動反映される |
@@ -303,6 +305,8 @@
 | `presenter` | `string` | 省略時は `authors[0].name` を発表者として使う |
 | `is_english` | `boolean` | 省略時は `false` |
 | `is_online` | `boolean` | 省略時は `false` |
+| `start_time` | `string \| null` | 発表開始時刻（`H:MM`）。省略時は `null` |
+| `end_time` | `string \| null` | 発表終了時刻（`H:MM`）。省略時は `null` |
 | `pdf_url` | `string \| null` | 省略時は `null` |
 | `zoom_url` | `string \| null` | 省略時は `null` |
 | `authors` | `object[]` | 著者一覧。`persons` / `affiliations` に自動反映される |
@@ -334,6 +338,8 @@
   "presenter_id":    "p0820",
   "is_english":      false,
   "is_online":       false,
+  "start_time":      null,
+  "end_time":        null,
   "oral_session_id": "A2",
   "authors": [
     { "person_id": "p0820", "affiliation_id": "a0001" }
@@ -349,10 +355,16 @@
 | `presenter_id` | `PersonId \| null` | 発表者（HTML上で ○ が付いた著者、または特殊セッションの先頭講演者）の `PersonId`。取得できない場合は `null` |
 | `is_english` | `boolean` | `true`: ◊ マークあり（英語での発表を予定） |
 | `is_online` | `boolean` | `true`: 💻 マークあり（ポスターのオンライン発表を予定） |
+| `start_time` | `string \| null` | 発表開始時刻（`H:MM`）。不明または未設定の場合は `null` |
+| `end_time` | `string \| null` | 発表終了時刻（`H:MM`）。不明または未設定の場合は `null` |
 | `oral_session_id` | `SessionId` &#124; 省略 | 対応する口頭発表セッションのID。口頭登壇がない場合はキー自体が存在しない |
 | `authors` | `PresentationAuthor[]` | 著者リスト。HTML記載順（発表者が先頭とは限らない） |
 | `pdf_url` | `string \| null` | 抄録PDFへのパス（サイトルート相対）。PDFリンクがないセッションは `null` |
 | `zoom_url` | `string \| null` | 発表ごとの Zoom URL。ない場合は `null` |
+
+留意点:
+
+- 今回追加した `presentations[*].start_time` / `end_time` は保持用フィールドであり、現時点では時間フィルタには使用しない
 
 #### PresentationAuthor
 
