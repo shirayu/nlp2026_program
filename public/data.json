@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-03-06T08:38:07Z",
+  "generated_at": "2026-03-06T15:45:27Z",
   "last_update": {
     "program_main": {
       "sha256": "c02f7308dda2ea510afda63be85a9e566cac31235d91206c97fc0a2837a5a981",
       "time": "2026-03-04T09:00:00+09:00"
     },
     "workshop": {
-      "sha256": "5a198ed5a4f56e3f79e1495f408f250017db2eefe16813e1d81e7b6d5367ccd3",
-      "time": "2026-03-04T18:59:39+09:00"
+      "sha256": "c115db0e959b0187b296602ebf5e4d2a4de4e25a40705fb2d61335152b23e36c",
+      "time": "2026-03-07T00:45:26+09:00"
     },
     "invitedpapers": {
       "sha256": "1383c3c3c2fd57240adc5d25ae7b760966287c460ef40f20cbd5b68fa2e5b090",
@@ -29112,7 +29112,7 @@
           "affiliation_id": "a0077"
         }
       ],
-      "pdf_url": null
+      "pdf_url": "https://drive.google.com/file/d/1_mt23FaOxkr43byflvauoz_r8_tOfflZ/view?usp=sharing"
     },
     "WS4-4-1": {
       "title": "リスクイベントの影響説明に向けた評価データセットの提案",
@@ -29134,7 +29134,7 @@
           "affiliation_id": "a0443"
         }
       ],
-      "pdf_url": null
+      "pdf_url": "https://drive.google.com/file/d/1dqRj32G-NcU-f-Wb3GS7L6iR_FF-q6Rc/view?usp=sharing"
     },
     "WS4-5-1": {
       "title": "化学技術の応用領域拡張を目的とした用途探索フレームワーク",
@@ -29168,7 +29168,7 @@
           "affiliation_id": "a0445"
         }
       ],
-      "pdf_url": null
+      "pdf_url": "https://drive.google.com/file/d/1FiP1U-qKTMypRQ1eA7-U04s4qK5FlDav/view?usp=sharing"
     },
     "WS4-6-1": {
       "title": "招待講演: 欅 惇志 先生",
