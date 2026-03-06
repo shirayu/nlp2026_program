@@ -630,13 +630,13 @@ export function SettingsDialog({
                 <h3 className="text-sm font-semibold text-gray-800">{ja.zoomSettings}</h3>
                 <p className="mt-1 text-xs text-gray-600">{ja.zoomCustomUrlDescription}</p>
                 <div className="mt-2 space-y-2">
-                  <label className="block space-y-1 text-sm text-gray-700">
-                    <span>{ja.zoomCustomUrlVenueA}</span>
+                  <label className="flex items-center gap-3 text-sm text-gray-700">
+                    <span className="shrink-0">{ja.venueA}</span>
                     <input
                       type="url"
                       value={venueZoomUrls?.A ?? ""}
                       onChange={(event) => updateVenueZoomUrl("A", event.target.value)}
-                      className={`w-full rounded-lg px-3 py-2 text-sm focus:outline-none ${
+                      className={`min-w-0 flex-1 rounded-lg px-3 py-2 text-sm focus:outline-none ${
                         venueZoomUrls?.A
                           ? "border-emerald-300 bg-emerald-50 text-emerald-900 focus:border-emerald-500"
                           : "border border-gray-200 focus:border-indigo-400"
@@ -644,13 +644,13 @@ export function SettingsDialog({
                       placeholder="https://..."
                     />
                   </label>
-                  <label className="block space-y-1 text-sm text-gray-700">
-                    <span>{ja.zoomCustomUrlVenueB}</span>
+                  <label className="flex items-center gap-3 text-sm text-gray-700">
+                    <span className="shrink-0">{ja.venueB}</span>
                     <input
                       type="url"
                       value={venueZoomUrls?.B ?? ""}
                       onChange={(event) => updateVenueZoomUrl("B", event.target.value)}
-                      className={`w-full rounded-lg px-3 py-2 text-sm focus:outline-none ${
+                      className={`min-w-0 flex-1 rounded-lg px-3 py-2 text-sm focus:outline-none ${
                         venueZoomUrls?.B
                           ? "border-emerald-300 bg-emerald-50 text-emerald-900 focus:border-emerald-500"
                           : "border border-gray-200 focus:border-indigo-400"

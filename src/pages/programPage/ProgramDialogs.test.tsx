@@ -166,8 +166,8 @@ describe("SettingsDialog", () => {
     const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
     expect(html).toContain("Zoom");
-    expect(html).toContain("A会場 URL");
-    expect(html).toContain("B会場 URL");
+    expect(html).toContain("A会場");
+    expect(html).toContain("B会場");
   });
 
   it("大枠の下部にエクスポートボタンを表示する", () => {
