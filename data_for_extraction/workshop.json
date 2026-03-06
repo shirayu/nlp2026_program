@@ -127,11 +127,15 @@
           {
             "id": "WS2-1-1",
             "title": "独自日本語Webコーパス構築のための巡回クロール基盤構築",
+            "start_time": "10:05",
+            "end_time": "10:25",
             "authors": [{ "name": "石原 慧人", "affiliation": "SB Intuitions" }]
           },
           {
             "id": "WS2-1-2",
             "title": "番組映像を活用したマルチモーダルデータセット開発の取り組み",
+            "start_time": "10:25",
+            "end_time": "10:45",
             "authors": [
               { "name": "岡田 拓也", "affiliation": "NHK" },
               { "name": "遠藤 伶", "affiliation": "NHK" },
@@ -146,16 +150,22 @@
           {
             "id": "WS2-1-3",
             "title": "BizDocVQA：根拠領域のアノテーションによる説明可能なビジネス帳票理解の実現と評価",
+            "start_time": "10:45",
+            "end_time": "11:15",
             "authors": [{ "name": "久保 隆宏", "affiliation": "アマゾンウェブサービスジャパン" }]
           },
           {
             "id": "WS2-1-4",
             "title": "論文に基づく歴史学知識資源の公開に向けたデータセット記述の精緻化",
+            "start_time": "11:15",
+            "end_time": "11:35",
             "authors": [{ "name": "亀田 尭宙", "affiliation": "人間文化研究機構" }]
           },
           {
             "id": "WS2-1-5",
             "title": "日本語の科学設問集の複数評価者による難易度付けと評価者間不一致の分析",
+            "start_time": "11:35",
+            "end_time": "11:45",
             "is_online": true,
             "authors": [{ "name": "江原 遥", "affiliation": "東京学芸大" }]
           }
@@ -171,11 +181,15 @@
           {
             "id": "WS2-2-1",
             "title": "軽量な日本語報酬モデル ca-reward-3b-ja の構築と公開",
+            "start_time": "13:00",
+            "end_time": "13:20",
             "authors": [{ "name": "三橋 亮太", "affiliation": "サイバーエージェント" }]
           },
           {
             "id": "WS2-2-2",
             "title": "日本語大規模言語モデルの推論能力向上のための強化学習データセット構築",
+            "start_time": "13:20",
+            "end_time": "13:40",
             "authors": [
               { "name": "太田 晋", "affiliation": "東京科学大" },
               { "name": "片山 結太", "affiliation": "東京科学大" },
@@ -186,11 +200,15 @@
           {
             "id": "WS2-2-3",
             "title": "金融業に特化した生成AIモデルのインストラクションデータ開発プロセス",
+            "start_time": "13:40",
+            "end_time": "14:05",
             "authors": [{ "name": "佐藤 奈穂子", "affiliation": "リコー" }]
           },
           {
             "id": "WS2-2-4",
             "title": "語彙を起点とした完全合成によるドメイン特化指示データセットの構築と金融分野での実証",
+            "start_time": "14:05",
+            "end_time": "14:25",
             "authors": [
               { "name": "大河内 悠磨", "affiliation": "NRI" },
               { "name": "Fabio Milentiansen Sim", "affiliation": "NRIインドネシア" },
@@ -200,6 +218,8 @@
           {
             "id": "WS2-2-5",
             "title": "Deep Research結果に対する細粒度引用と矛盾のアノテーション",
+            "start_time": "14:25",
+            "end_time": "14:35",
             "authors": [
               { "name": "松田 耕史", "affiliation": "SB Intuitions" },
               { "name": "福地 成彦", "affiliation": "SB Intuitions" },
@@ -219,6 +239,8 @@
           {
             "id": "WS2-3-1",
             "title": "日本語インストラクションデータの多様化に向けた高品質な人手データを起点とする合成手法の検討",
+            "start_time": "14:45",
+            "end_time": "15:10",
             "authors": [
               { "name": "宮里 龍平", "affiliation": "電気通信大" },
               { "name": "中山 功太", "affiliation": "NII LLMC" },
@@ -228,6 +250,8 @@
           {
             "id": "WS2-3-2",
             "title": "人間-LLM間のインタラクション分析に向けたコーパス構築のための談話行為アノテーション設計",
+            "start_time": "15:10",
+            "end_time": "15:35",
             "authors": [
               { "name": "永井 宥之", "affiliation": "NAIST" },
               { "name": "伊藤 和浩", "affiliation": "NAIST" },
@@ -240,6 +264,8 @@
           {
             "id": "WS2-3-3",
             "title": "ユーザの個人特性を含む破綻・修復発話文の収集",
+            "start_time": "15:35",
+            "end_time": "15:45",
             "authors": [
               { "name": "坪倉 和哉", "affiliation": "愛知県立大" },
               { "name": "入部 百合絵", "affiliation": "愛知県立大" },

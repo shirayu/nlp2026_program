@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-03-06T16:27:26Z",
+  "generated_at": "2026-03-06T16:31:27Z",
   "last_update": {
     "program_main": {
       "sha256": "c02f7308dda2ea510afda63be85a9e566cac31235d91206c97fc0a2837a5a981",
       "time": "2026-03-04T09:00:00+09:00"
     },
     "workshop": {
-      "sha256": "9e784b89267fa2966ced1c77abf609d7d3ea28e6bec57706c395f811bc1022da",
-      "time": "2026-03-07T01:27:13+09:00"
+      "sha256": "77f05c18fd5a121d8516f622ce933bfdd8a77b0cc1a47d603756989290bdb0bc",
+      "time": "2026-03-07T01:31:13+09:00"
     },
     "invitedpapers": {
       "sha256": "1383c3c3c2fd57240adc5d25ae7b760966287c460ef40f20cbd5b68fa2e5b090",
@@ -30229,8 +30229,8 @@
           "affiliation_id": "a0001"
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "10:05",
+      "end_time": "10:25",
       "pdf_url": null
     },
     "WS2-1-2": {
@@ -30273,8 +30273,8 @@
           "affiliation_id": "a0136"
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "10:25",
+      "end_time": "10:45",
       "pdf_url": null
     },
     "WS2-1-3": {
@@ -30289,8 +30289,8 @@
           "affiliation_id": "a0438"
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "10:45",
+      "end_time": "11:15",
       "pdf_url": null
     },
     "WS2-1-4": {
@@ -30305,8 +30305,8 @@
           "affiliation_id": "a0439"
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "11:15",
+      "end_time": "11:35",
       "pdf_url": null
     },
     "WS2-1-5": {
@@ -30321,8 +30321,8 @@
           "affiliation_id": "a0149"
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "11:35",
+      "end_time": "11:45",
       "pdf_url": null,
       "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
@@ -30338,8 +30338,8 @@
           "affiliation_id": "a0062"
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "13:00",
+      "end_time": "13:20",
       "pdf_url": null
     },
     "WS2-2-2": {
@@ -30366,8 +30366,8 @@
           "affiliation_id": "a0442"
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "13:20",
+      "end_time": "13:40",
       "pdf_url": null
     },
     "WS2-2-3": {
@@ -30382,8 +30382,8 @@
           "affiliation_id": "a0138"
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "13:40",
+      "end_time": "14:05",
       "pdf_url": null
     },
     "WS2-2-4": {
@@ -30406,8 +30406,8 @@
           "affiliation_id": "a0346"
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "14:05",
+      "end_time": "14:25",
       "pdf_url": null
     },
     "WS2-2-5": {
@@ -30434,8 +30434,8 @@
           "affiliation_id": "a0001"
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "14:25",
+      "end_time": "14:35",
       "pdf_url": null
     },
     "WS2-3-1": {
@@ -30458,8 +30458,8 @@
           "affiliation_id": "a0254"
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "14:45",
+      "end_time": "15:10",
       "pdf_url": null
     },
     "WS2-3-2": {
@@ -30494,8 +30494,8 @@
           "affiliation_id": "a0023"
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "15:10",
+      "end_time": "15:35",
       "pdf_url": null
     },
     "WS2-3-3": {
@@ -30518,8 +30518,8 @@
           "affiliation_id": "a0055"
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "15:35",
+      "end_time": "15:45",
       "pdf_url": null
     },
     "WS3-1-1": {
