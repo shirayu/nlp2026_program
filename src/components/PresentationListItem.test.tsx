@@ -105,4 +105,31 @@ describe("PresentationListItem", () => {
     expect(html).toContain('href="https://example.com/custom-a"');
     expect(html).not.toContain('href="https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"');
   });
+
+  it("発表に時刻がある場合はタイトル横に括弧付きで表示する", () => {
+    const withTime: ConferenceData = {
+      ...data,
+      presentations: {
+        ...data.presentations,
+        pr1: {
+          ...data.presentations.pr1,
+          start_time: "9:45",
+          end_time: "10:15",
+        },
+      },
+    };
+    const html = renderToStaticMarkup(
+      <PresentationListItem
+        pid="pr1"
+        data={withTime}
+        bookmarked={false}
+        showAuthors
+        query=""
+        onToggleBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).toContain("オンラインポスター発表");
+    expect(html).toContain("（9:45-10:15）");
+  });
 });

@@ -49,6 +49,8 @@ export interface Presentation {
   presenter_id: PersonId | null;
   is_english: boolean;
   is_online: boolean;
+  start_time?: string | null;
+  end_time?: string | null;
   oral_session_id?: SessionId;
   authors: PresentationAuthor[];
   pdf_url: string | null;

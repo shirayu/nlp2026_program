@@ -83,6 +83,7 @@ function PresentationFlags({ isEnglish, isOnline }: { isEnglish: boolean; isOnli
 
 function PresentationSummary({
   title,
+  timeText,
   query,
   showAuthors,
   presenterName,
@@ -91,6 +92,7 @@ function PresentationSummary({
   secondaryContent,
 }: {
   title: string;
+  timeText: string | null;
   query: string;
   showAuthors: boolean;
   presenterName: string;
@@ -102,6 +104,11 @@ function PresentationSummary({
     <div className="min-w-0">
       <p className="text-sm font-medium leading-snug text-gray-800">
         <HighlightedText text={title} query={query} />
+        {timeText && (
+          <span className="ml-1 text-xs font-normal text-gray-500">
+            （<HighlightedText text={timeText} query={query} />）
+          </span>
+        )}
       </p>
       {showAuthors ? (
         <PresentationMeta presenterName={presenterName} query={query} isEnglish={isEnglish} isOnline={isOnline} />
@@ -333,6 +340,7 @@ export function PresentationListItem({
   const pdfUrl = p.pdf_url ?? null;
   const presentationZoomUrl = resolvePresentationZoomUrl(p, data, p.zoom_url ?? null, venueZoomUrls);
   const presentationZoomAppUrl = presentationZoomUrl ? toSlackMessageAppUrl(presentationZoomUrl, slackTeamId) : null;
+  const timeText = p.start_time && p.end_time ? `${p.start_time}-${p.end_time}` : (p.start_time ?? p.end_time ?? null);
   const toggleOpen = () => setOpen((value) => !value);
 
   return (
@@ -359,6 +367,7 @@ export function PresentationListItem({
         <button type="button" className="col-start-2 min-w-0 text-left" onClick={toggleOpen} aria-expanded={open}>
           <PresentationSummary
             title={p.title}
+            timeText={timeText}
             query={query}
             showAuthors={showAuthors}
             presenterName={presenterName}
