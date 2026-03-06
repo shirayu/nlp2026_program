@@ -2,7 +2,7 @@ import { X } from "lucide-react";
 import { sessionRoomsLabel } from "../constants";
 import { formatSessionDateTime } from "../lib/date";
 import { ja } from "../locales/ja";
-import type { ConferenceData, PersonId, PresentationId, SessionId } from "../types";
+import type { ConferenceData, PersonId, PresentationId, SessionId, VenueZoomUrls } from "../types";
 import { PresentationListItem } from "./PresentationListItem";
 
 export function PersonModal({
@@ -12,6 +12,7 @@ export function PersonModal({
   showAuthors,
   useSlackAppLinks = false,
   slackTeamId = null,
+  venueZoomUrls,
   onClose,
   onPersonClick,
   onJumpToSession,
@@ -23,6 +24,7 @@ export function PersonModal({
   showAuthors: boolean;
   useSlackAppLinks?: boolean;
   slackTeamId?: string | null;
+  venueZoomUrls?: VenueZoomUrls;
   onClose: () => void;
   onPersonClick: (id: PersonId) => void;
   onJumpToSession: (sid: SessionId) => void;
@@ -59,6 +61,7 @@ export function PersonModal({
                 query=""
                 useSlackAppLinks={useSlackAppLinks}
                 slackTeamId={slackTeamId}
+                venueZoomUrls={venueZoomUrls}
                 onPersonClick={onPersonClick}
                 onJumpToSession={onJumpToSession}
                 onToggleBookmark={onToggleBookmark}

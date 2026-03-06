@@ -2,7 +2,7 @@ import type { RefObject } from "react";
 import { PersonModal } from "../../components/PersonModal";
 import type { DataReloadStatus } from "../../hooks/useConferenceData";
 import type { BackupEntry } from "../../lib/appDataBackup";
-import type { ConferenceData, PersonId, PresentationId, SessionId } from "../../types";
+import type { ConferenceData, PersonId, PresentationId, SessionId, VenueZoomUrls } from "../../types";
 import {
   ClearAllDataConfirmDialog,
   InstallDialog,
@@ -37,11 +37,13 @@ export function ProgramOverlays({
   isReloadingData,
   reloadDataStatus,
   useSlackAppLinks,
+  venueZoomUrls,
   includeSessionTitleForNoPresentationSessions,
   includeSessionTitleForPresentationSessions,
   onCloseSettings,
   onToggleShowAuthors,
   onToggleUseSlackAppLinks,
+  onSetVenueZoomUrls,
   onToggleIncludeSessionTitleForNoPresentationSessions,
   onToggleIncludeSessionTitleForPresentationSessions,
   onExportSettings,
@@ -87,11 +89,13 @@ export function ProgramOverlays({
   isReloadingData: boolean;
   reloadDataStatus: DataReloadStatus;
   useSlackAppLinks: boolean;
+  venueZoomUrls?: VenueZoomUrls;
   includeSessionTitleForNoPresentationSessions: boolean;
   includeSessionTitleForPresentationSessions: boolean;
   onCloseSettings: () => void;
   onToggleShowAuthors: () => void;
   onToggleUseSlackAppLinks: () => void;
+  onSetVenueZoomUrls: (value: VenueZoomUrls | undefined) => void;
   onToggleIncludeSessionTitleForNoPresentationSessions: () => void;
   onToggleIncludeSessionTitleForPresentationSessions: () => void;
   onExportSettings: () => void;
@@ -123,6 +127,7 @@ export function ProgramOverlays({
           showAuthors={showAuthors}
           useSlackAppLinks={useSlackAppLinks}
           slackTeamId={slackTeamId}
+          venueZoomUrls={venueZoomUrls}
           onClose={onClosePersonModal}
           onPersonClick={onPersonClick}
           onJumpToSession={onJumpToSessionFromPerson}
@@ -152,11 +157,13 @@ export function ProgramOverlays({
         open={showSettings}
         showAuthors={showAuthors}
         useSlackAppLinks={useSlackAppLinks}
+        venueZoomUrls={venueZoomUrls}
         includeSessionTitleForNoPresentationSessions={includeSessionTitleForNoPresentationSessions}
         includeSessionTitleForPresentationSessions={includeSessionTitleForPresentationSessions}
         onClose={onCloseSettings}
         onToggleShowAuthors={onToggleShowAuthors}
         onToggleUseSlackAppLinks={onToggleUseSlackAppLinks}
+        onSetVenueZoomUrls={onSetVenueZoomUrls}
         onToggleIncludeSessionTitleForNoPresentationSessions={onToggleIncludeSessionTitleForNoPresentationSessions}
         onToggleIncludeSessionTitleForPresentationSessions={onToggleIncludeSessionTitleForPresentationSessions}
         onExport={onExportSettings}

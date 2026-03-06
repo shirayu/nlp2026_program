@@ -28,7 +28,7 @@ import {
   mapSlackChannelsToUrls,
 } from "../../lib/slack";
 import { ja } from "../../locales/ja";
-import type { PersonId, SessionId } from "../../types";
+import type { PersonId, SessionId, VenueZoomUrls } from "../../types";
 import {
   type BeforeInstallPromptEvent,
   getNextScheduleTimePoint,
@@ -476,6 +476,10 @@ export function useProgramPageState() {
     setPendingImportEncoded(null);
   }
 
+  function handleSetVenueZoomUrls(venueZoomUrls: VenueZoomUrls | undefined) {
+    setSettings((current) => ({ ...current, venueZoomUrls }));
+  }
+
   return {
     data,
     headerProps: {
@@ -524,6 +528,7 @@ export function useProgramPageState() {
       sessionSlackLinks,
       useSlackAppLinks: settings.useSlackAppLinks,
       slackTeamId,
+      venueZoomUrls: settings.venueZoomUrls,
       showAuthors: settings.showAuthors,
       includeSessionTitleForNoPresentationSessions: settings.includeSessionTitleForNoPresentationSessions,
       includeSessionTitleForPresentationSessions: settings.includeSessionTitleForPresentationSessions,
@@ -564,6 +569,7 @@ export function useProgramPageState() {
       isReloadingData: isReloading,
       reloadDataStatus: reloadStatus,
       useSlackAppLinks: settings.useSlackAppLinks,
+      venueZoomUrls: settings.venueZoomUrls,
       includeSessionTitleForNoPresentationSessions: settings.includeSessionTitleForNoPresentationSessions,
       includeSessionTitleForPresentationSessions: settings.includeSessionTitleForPresentationSessions,
       onCloseSettings: () => startTransition(() => setShowSettings(false)),
@@ -572,6 +578,7 @@ export function useProgramPageState() {
       },
       onToggleShowAuthors: toggleShowAuthors,
       onToggleUseSlackAppLinks: toggleUseSlackAppLinks,
+      onSetVenueZoomUrls: handleSetVenueZoomUrls,
       onToggleIncludeSessionTitleForNoPresentationSessions: toggleIncludeSessionTitleForNoPresentationSessions,
       onToggleIncludeSessionTitleForPresentationSessions: toggleIncludeSessionTitleForPresentationSessions,
       onExportSettings: handleExportSettings,

@@ -1,4 +1,4 @@
-import { AlertTriangle, X as CloseIcon, Github, Globe, Monitor, RefreshCw, Share2 } from "lucide-react";
+import { AlertTriangle, X as CloseIcon, Github, Globe, Monitor, RefreshCw } from "lucide-react";
 import type { RefObject } from "react";
 import { useState } from "react";
 import {
@@ -16,7 +16,7 @@ import {
 import type { DataReloadStatus } from "../../hooks/useConferenceData";
 import type { BackupEntry } from "../../lib/appDataBackup";
 import { ja } from "../../locales/ja";
-import type { LastUpdateEntry } from "../../types";
+import type { LastUpdateEntry, VenueZoomUrls } from "../../types";
 import { fullscreenDialogClassName } from "./utils";
 
 type LastUpdateRow = { label: string; time: string };
@@ -391,6 +391,9 @@ export function SettingsExportDialog({
           </div>
           <div className="space-y-3 px-4 py-4">
             <p className="text-sm text-gray-700">{ja.exportAppDataDescription}</p>
+            <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">
+              {ja.exportAppDataZoomCustomUrlExcluded}
+            </p>
             <textarea
               readOnly
               value={exportUrl}
@@ -495,27 +498,31 @@ export function SettingsDialog({
   open,
   showAuthors,
   useSlackAppLinks,
+  venueZoomUrls,
   includeSessionTitleForNoPresentationSessions,
   includeSessionTitleForPresentationSessions,
   onClose,
   onToggleShowAuthors,
   onToggleUseSlackAppLinks,
+  onSetVenueZoomUrls,
   onToggleIncludeSessionTitleForNoPresentationSessions,
   onToggleIncludeSessionTitleForPresentationSessions,
   onExport,
-  hasBackup,
-  onRestore,
+  hasBackup: _hasBackup,
+  onRestore: _onRestore,
   onClearAllData,
 }: {
   dialogRef: RefObject<HTMLDialogElement | null>;
   open: boolean;
   showAuthors: boolean;
   useSlackAppLinks: boolean;
+  venueZoomUrls?: VenueZoomUrls;
   includeSessionTitleForNoPresentationSessions: boolean;
   includeSessionTitleForPresentationSessions: boolean;
   onClose: () => void;
   onToggleShowAuthors: () => void;
   onToggleUseSlackAppLinks: () => void;
+  onSetVenueZoomUrls: (value: VenueZoomUrls | undefined) => void;
   onToggleIncludeSessionTitleForNoPresentationSessions: () => void;
   onToggleIncludeSessionTitleForPresentationSessions: () => void;
   onExport: () => void;
@@ -527,6 +534,17 @@ export function SettingsDialog({
   const shouldShowOperatorSection =
     OPERATOR_NAME !== DEVELOPER_NAME ||
     normalizeComparableUrl(OPERATOR_REPOSITORY_URL) !== normalizeComparableUrl(PROJECT_REPOSITORY_URL);
+
+  function updateVenueZoomUrl(key: keyof VenueZoomUrls, value: string) {
+    const trimmed = value.trim();
+    const next = { ...(venueZoomUrls ?? {}) };
+    if (trimmed) {
+      next[key] = trimmed;
+    } else {
+      delete next[key];
+    }
+    onSetVenueZoomUrls(Object.keys(next).length > 0 ? next : undefined);
+  }
 
   return (
     <dialog ref={dialogRef} open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
@@ -550,62 +568,98 @@ export function SettingsDialog({
             </button>
           </div>
           <div className="min-h-0 space-y-2 overflow-y-auto px-4 py-4" style={{ scrollbarGutter: "stable" }}>
-            <label className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">{ja.showAuthors}</span>
-              <button
-                type="button"
-                onClick={onToggleShowAuthors}
-                className={`relative inline-flex h-5 w-9 rounded-full transition-colors ${showAuthors ? "bg-indigo-600" : "bg-gray-300"}`}
-                aria-pressed={showAuthors}
-              >
-                <span
-                  className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showAuthors ? "translate-x-4" : "translate-x-0"}`}
-                />
-              </button>
-            </label>
-            <label className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">{ja.useSlackAppLinks}</span>
-              <button
-                type="button"
-                onClick={onToggleUseSlackAppLinks}
-                className={`relative inline-flex h-5 w-9 rounded-full transition-colors ${useSlackAppLinks ? "bg-indigo-600" : "bg-gray-300"}`}
-                aria-pressed={useSlackAppLinks}
-              >
-                <span
-                  className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${useSlackAppLinks ? "translate-x-4" : "translate-x-0"}`}
-                />
-              </button>
-            </label>
-            <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
-              <h3 className="text-sm font-semibold text-gray-800">{ja.sessionTitleSearchSettings}</h3>
-              <div className="mt-2 space-y-2">
-                <label className="flex items-center justify-between gap-3">
-                  <span className="text-sm text-gray-700">{ja.includeSessionTitleForNoPresentationSessions}</span>
-                  <button
-                    type="button"
-                    onClick={onToggleIncludeSessionTitleForNoPresentationSessions}
-                    className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${includeSessionTitleForNoPresentationSessions ? "bg-indigo-600" : "bg-gray-300"}`}
-                    aria-pressed={includeSessionTitleForNoPresentationSessions}
-                  >
-                    <span
-                      className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${includeSessionTitleForNoPresentationSessions ? "translate-x-4" : "translate-x-0"}`}
+            <section className="space-y-3 rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
+              <label className="flex items-center justify-between">
+                <span className="text-sm text-gray-700">{ja.showAuthors}</span>
+                <button
+                  type="button"
+                  onClick={onToggleShowAuthors}
+                  className={`relative inline-flex h-5 w-9 rounded-full transition-colors ${showAuthors ? "bg-indigo-600" : "bg-gray-300"}`}
+                  aria-pressed={showAuthors}
+                >
+                  <span
+                    className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showAuthors ? "translate-x-4" : "translate-x-0"}`}
+                  />
+                </button>
+              </label>
+              <label className="flex items-center justify-between">
+                <span className="text-sm text-gray-700">{ja.useSlackAppLinks}</span>
+                <button
+                  type="button"
+                  onClick={onToggleUseSlackAppLinks}
+                  className={`relative inline-flex h-5 w-9 rounded-full transition-colors ${useSlackAppLinks ? "bg-indigo-600" : "bg-gray-300"}`}
+                  aria-pressed={useSlackAppLinks}
+                >
+                  <span
+                    className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${useSlackAppLinks ? "translate-x-4" : "translate-x-0"}`}
+                  />
+                </button>
+              </label>
+              <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
+                <h3 className="text-sm font-semibold text-gray-800">{ja.sessionTitleSearchSettings}</h3>
+                <div className="mt-2 space-y-2">
+                  <label className="flex items-center justify-between gap-3">
+                    <span className="text-sm text-gray-700">{ja.includeSessionTitleForNoPresentationSessions}</span>
+                    <button
+                      type="button"
+                      onClick={onToggleIncludeSessionTitleForNoPresentationSessions}
+                      className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${includeSessionTitleForNoPresentationSessions ? "bg-indigo-600" : "bg-gray-300"}`}
+                      aria-pressed={includeSessionTitleForNoPresentationSessions}
+                    >
+                      <span
+                        className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${includeSessionTitleForNoPresentationSessions ? "translate-x-4" : "translate-x-0"}`}
+                      />
+                    </button>
+                  </label>
+                  <label className="flex items-center justify-between gap-3">
+                    <span className="text-sm text-gray-700">{ja.includeSessionTitleForPresentationSessions}</span>
+                    <button
+                      type="button"
+                      onClick={onToggleIncludeSessionTitleForPresentationSessions}
+                      className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${includeSessionTitleForPresentationSessions ? "bg-indigo-600" : "bg-gray-300"}`}
+                      aria-pressed={includeSessionTitleForPresentationSessions}
+                    >
+                      <span
+                        className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${includeSessionTitleForPresentationSessions ? "translate-x-4" : "translate-x-0"}`}
+                      />
+                    </button>
+                  </label>
+                </div>
+              </section>
+              <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
+                <h3 className="text-sm font-semibold text-gray-800">{ja.zoomSettings}</h3>
+                <p className="mt-1 text-xs text-gray-600">{ja.zoomCustomUrlDescription}</p>
+                <div className="mt-2 space-y-2">
+                  <label className="block space-y-1 text-sm text-gray-700">
+                    <span>{ja.zoomCustomUrlVenueA}</span>
+                    <input
+                      type="url"
+                      value={venueZoomUrls?.A ?? ""}
+                      onChange={(event) => updateVenueZoomUrl("A", event.target.value)}
+                      className={`w-full rounded-lg px-3 py-2 text-sm focus:outline-none ${
+                        venueZoomUrls?.A
+                          ? "border-emerald-300 bg-emerald-50 text-emerald-900 focus:border-emerald-500"
+                          : "border border-gray-200 focus:border-indigo-400"
+                      }`}
+                      placeholder="https://..."
                     />
-                  </button>
-                </label>
-                <label className="flex items-center justify-between gap-3">
-                  <span className="text-sm text-gray-700">{ja.includeSessionTitleForPresentationSessions}</span>
-                  <button
-                    type="button"
-                    onClick={onToggleIncludeSessionTitleForPresentationSessions}
-                    className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${includeSessionTitleForPresentationSessions ? "bg-indigo-600" : "bg-gray-300"}`}
-                    aria-pressed={includeSessionTitleForPresentationSessions}
-                  >
-                    <span
-                      className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${includeSessionTitleForPresentationSessions ? "translate-x-4" : "translate-x-0"}`}
+                  </label>
+                  <label className="block space-y-1 text-sm text-gray-700">
+                    <span>{ja.zoomCustomUrlVenueB}</span>
+                    <input
+                      type="url"
+                      value={venueZoomUrls?.B ?? ""}
+                      onChange={(event) => updateVenueZoomUrl("B", event.target.value)}
+                      className={`w-full rounded-lg px-3 py-2 text-sm focus:outline-none ${
+                        venueZoomUrls?.B
+                          ? "border-emerald-300 bg-emerald-50 text-emerald-900 focus:border-emerald-500"
+                          : "border border-gray-200 focus:border-indigo-400"
+                      }`}
+                      placeholder="https://..."
                     />
-                  </button>
-                </label>
-              </div>
+                  </label>
+                </div>
+              </section>
             </section>
             <section className="mt-4 rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
               <h3 className="text-sm font-semibold text-gray-800">{ja.iconLegend}</h3>
@@ -621,7 +675,6 @@ export function SettingsDialog({
                 </li>
               </ul>
             </section>
-            <ExportSection hasBackup={hasBackup} onRestore={onRestore} onExport={onExport} />
             {shouldShowOperatorSection && (
               <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
                 <h3 className="text-sm font-semibold text-gray-800">{ja.operator}</h3>
@@ -707,46 +760,23 @@ export function SettingsDialog({
                 </div>
               </dl>
             </section>
+            <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
+              <h3 className="text-sm font-semibold text-gray-800">{ja.exportDataSectionTitle}</h3>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={onExport}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-indigo-300 hover:text-indigo-600"
+                >
+                  {ja.exportAppData}
+                </button>
+              </div>
+            </section>
             <ClearAllDataSection onClearAllData={onClearAllData} />
           </div>
         </div>
       </div>
     </dialog>
-  );
-}
-
-function ExportSection({
-  hasBackup,
-  onRestore,
-  onExport,
-}: {
-  hasBackup: boolean;
-  onRestore: () => void;
-  onExport: () => void;
-}) {
-  return (
-    <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
-      <h3 className="text-sm font-semibold text-gray-800">{ja.exportAppDataDialogTitle}</h3>
-      <div className="mt-2 flex justify-end gap-2">
-        {hasBackup && (
-          <button
-            type="button"
-            onClick={onRestore}
-            className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-amber-400 hover:text-amber-700"
-          >
-            {ja.restoreBackup}
-          </button>
-        )}
-        <button
-          type="button"
-          onClick={onExport}
-          className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-indigo-300 hover:text-indigo-600"
-        >
-          <Share2 className="h-3.5 w-3.5" />
-          {ja.exportAppData}
-        </button>
-      </div>
-    </section>
   );
 }
 

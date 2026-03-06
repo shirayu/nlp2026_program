@@ -9,14 +9,16 @@ const data: ConferenceData = {
     p1: { name: "山田 花子" },
   },
   affiliations: {},
-  rooms: {},
+  rooms: {
+    r1: { name: "A会場" },
+  },
   sessions: {
     s1: {
       title: "ポスター1",
       date: "2026-03-09",
       start_time: "13:00",
       end_time: "14:00",
-      room_ids: [],
+      room_ids: ["r1"],
       chair: "",
       presentation_ids: ["pr1"],
     },
@@ -85,5 +87,22 @@ describe("PresentationListItem", () => {
     );
 
     expect(html).not.toContain(ja.openPresentationZoom);
+  });
+
+  it("A会場のカスタムURLが設定されている場合は zoom_url より優先する", () => {
+    const html = renderToStaticMarkup(
+      <PresentationListItem
+        pid="pr1"
+        data={data}
+        bookmarked={false}
+        showAuthors
+        query=""
+        venueZoomUrls={{ A: "https://example.com/custom-a" }}
+        onToggleBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).toContain('href="https://example.com/custom-a"');
+    expect(html).not.toContain('href="https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"');
   });
 });

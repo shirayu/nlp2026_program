@@ -40,7 +40,7 @@ describe("appSettingsStorage", () => {
         localStorage: {
           getItem: (key: string) =>
             key === appSettingsStorageKey
-              ? '{"showAuthors":false,"useSlackAppLinks":false,"includeSessionTitleForNoPresentationSessions":false,"includeSessionTitleForPresentationSessions":true}'
+              ? '{"showAuthors":false,"useSlackAppLinks":false,"includeSessionTitleForNoPresentationSessions":false,"includeSessionTitleForPresentationSessions":true,"venueZoomUrls":{"A":"https://example.com/a"}}'
               : null,
         },
       },
@@ -51,6 +51,17 @@ describe("appSettingsStorage", () => {
       useSlackAppLinks: false,
       includeSessionTitleForNoPresentationSessions: false,
       includeSessionTitleForPresentationSessions: true,
+      venueZoomUrls: { A: "https://example.com/a" },
+    });
+  });
+
+  it("venueZoomUrls が空文字なら設定から除外する", () => {
+    expect(appSettingsStorage.parseAppSettings('{"venueZoomUrls":{"A":"  ","B":"https://example.com/b"}}')).toEqual({
+      showAuthors: true,
+      useSlackAppLinks: true,
+      includeSessionTitleForNoPresentationSessions: true,
+      includeSessionTitleForPresentationSessions: false,
+      venueZoomUrls: { B: "https://example.com/b" },
     });
   });
 });

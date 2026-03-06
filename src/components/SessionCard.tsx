@@ -3,10 +3,11 @@ import { forwardRef, memo } from "react";
 import { getRoomTheme, getSessionRoomNames, sessionRoomsLabel } from "../constants";
 import { formatSessionDateTime } from "../lib/date";
 import { toSlackMessageAppUrl } from "../lib/slack";
+import { resolveSessionZoomUrl } from "../lib/zoom";
 import { ja } from "../locales/ja";
 import { HashIcon, YoutubeIcon, ZoomIcon } from "../pages/programPage/icons";
 import { openSlackFromSpa } from "../pages/programPage/utils";
-import type { ConferenceData, PersonId, PresentationId, SessionId } from "../types";
+import type { ConferenceData, PersonId, PresentationId, SessionId, VenueZoomUrls } from "../types";
 import { HighlightedText } from "./HighlightedText";
 import { PresentationCard } from "./PresentationCard";
 
@@ -174,6 +175,7 @@ function SessionPresentationList({
   query,
   useSlackAppLinks,
   slackTeamId,
+  venueZoomUrls,
   onPersonClick,
   onJumpToSession,
   onToggleBookmark,
@@ -186,6 +188,7 @@ function SessionPresentationList({
   query: string;
   useSlackAppLinks: boolean;
   slackTeamId: string | null;
+  venueZoomUrls?: VenueZoomUrls;
   onPersonClick: (id: PersonId) => void;
   onJumpToSession: (sid: SessionId) => void;
   onToggleBookmark: (id: PresentationId) => void;
@@ -207,6 +210,7 @@ function SessionPresentationList({
             query={query}
             useSlackAppLinks={useSlackAppLinks}
             slackTeamId={slackTeamId}
+            venueZoomUrls={venueZoomUrls}
             onPersonClick={onPersonClick}
             onJumpToSession={onJumpToSession}
             onToggleBookmark={onToggleBookmark}
@@ -230,6 +234,7 @@ export const SessionCard = memo(
       sessionSlackUrl?: string;
       useSlackAppLinks?: boolean;
       slackTeamId?: string | null;
+      venueZoomUrls?: VenueZoomUrls;
       presIds: PresentationId[];
       data: ConferenceData;
       showAuthors: boolean;
@@ -253,6 +258,7 @@ export const SessionCard = memo(
       sessionSlackUrl,
       useSlackAppLinks = false,
       slackTeamId = null,
+      venueZoomUrls,
       presIds,
       data,
       showAuthors,
@@ -285,7 +291,7 @@ export const SessionCard = memo(
       includeSessionTitleForNoPresentationSessions,
       includeSessionTitleForPresentationSessions,
     );
-    const sessionZoomUrl = session.zoom_url ?? null;
+    const sessionZoomUrl = resolveSessionZoomUrl(session, data.rooms, session.zoom_url ?? null, venueZoomUrls);
     const sessionZoomAppUrl = sessionZoomUrl ? toSlackMessageAppUrl(sessionZoomUrl, slackTeamId) : null;
 
     return (
@@ -332,6 +338,7 @@ export const SessionCard = memo(
           query={query}
           useSlackAppLinks={useSlackAppLinks}
           slackTeamId={slackTeamId}
+          venueZoomUrls={venueZoomUrls}
           onPersonClick={onPersonClick}
           onJumpToSession={onJumpToSession}
           onToggleBookmark={onToggleBookmark}

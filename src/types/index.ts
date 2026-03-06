@@ -65,6 +65,12 @@ export interface AppSettings {
   useSlackAppLinks: boolean;
   includeSessionTitleForNoPresentationSessions: boolean;
   includeSessionTitleForPresentationSessions: boolean;
+  venueZoomUrls?: VenueZoomUrls;
+}
+
+export interface VenueZoomUrls {
+  A?: string;
+  B?: string;
 }
 
 export interface ExportPayload {

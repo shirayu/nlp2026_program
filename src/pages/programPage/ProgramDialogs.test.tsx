@@ -7,6 +7,7 @@ import {
   InstallDialog,
   RestoreBackupConfirmDialog,
   SettingsDialog,
+  SettingsExportDialog,
   SettingsImportConfirmDialog,
 } from "./ProgramDialogs";
 
@@ -117,11 +118,13 @@ const defaultSettingsDialogProps = {
   open: true,
   showAuthors: true,
   useSlackAppLinks: false,
+  venueZoomUrls: undefined,
   includeSessionTitleForNoPresentationSessions: true,
   includeSessionTitleForPresentationSessions: false,
   onClose: () => {},
   onToggleShowAuthors: () => {},
   onToggleUseSlackAppLinks: () => {},
+  onSetVenueZoomUrls: () => {},
   onToggleIncludeSessionTitleForNoPresentationSessions: () => {},
   onToggleIncludeSessionTitleForPresentationSessions: () => {},
   onExport: () => {},
@@ -159,16 +162,19 @@ describe("SettingsDialog", () => {
     expect(html).toContain("発表情報が有るセッション");
   });
 
-  it("hasBackup=false のとき復元ボタンを表示しない", () => {
-    const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} hasBackup={false} />);
+  it("Zoom カスタムURL設定セクションを表示する", () => {
+    const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
-    expect(html).not.toContain("復元");
+    expect(html).toContain("Zoom");
+    expect(html).toContain("A会場 URL");
+    expect(html).toContain("B会場 URL");
   });
 
-  it("hasBackup=true のとき復元ボタンを表示する", () => {
-    const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} hasBackup={true} />);
+  it("大枠の下部にエクスポートボタンを表示する", () => {
+    const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
-    expect(html).toContain("復元");
+    expect(html).toContain("エクスポート");
+    expect(html).not.toContain("設定・ブックマークのエクスポート</h3>");
   });
 
   it("全てのデータを削除ボタンを常に表示する", () => {
@@ -188,6 +194,16 @@ describe("SettingsDialog", () => {
     const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
     expect(html.indexOf("データのリセット")).toBeGreaterThan(html.indexOf("ソフトウェア情報"));
+  });
+});
+
+describe("SettingsExportDialog", () => {
+  it("Zoom カスタムURLがエクスポート対象外である注意書きを表示する", () => {
+    const html = renderToStaticMarkup(
+      <SettingsExportDialog open exportUrl="https://example.com/#import_settings=abc" onClose={() => {}} />,
+    );
+
+    expect(html).toContain("Zoom カスタムURLは含まれません。");
   });
 });
 

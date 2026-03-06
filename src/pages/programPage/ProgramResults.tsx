@@ -1,7 +1,7 @@
 import type { RefObject } from "react";
 import { SessionCard } from "../../components/SessionCard";
 import { ja } from "../../locales/ja";
-import type { ConferenceData, PersonId, PresentationId, SessionId } from "../../types";
+import type { ConferenceData, PersonId, PresentationId, SessionId, VenueZoomUrls } from "../../types";
 
 type FilteredSession = {
   sessionId: SessionId;
@@ -22,6 +22,7 @@ export function ProgramResults({
   sessionSlackLinks,
   useSlackAppLinks = false,
   slackTeamId = null,
+  venueZoomUrls,
   showAuthors,
   includeSessionTitleForNoPresentationSessions,
   includeSessionTitleForPresentationSessions,
@@ -46,6 +47,7 @@ export function ProgramResults({
   sessionSlackLinks: Partial<Record<SessionId, string>>;
   useSlackAppLinks?: boolean;
   slackTeamId?: string | null;
+  venueZoomUrls?: VenueZoomUrls;
   showAuthors: boolean;
   includeSessionTitleForNoPresentationSessions: boolean;
   includeSessionTitleForPresentationSessions: boolean;
@@ -81,6 +83,7 @@ export function ProgramResults({
             sessionSlackUrl={sessionSlackLinks[sessionId]}
             useSlackAppLinks={useSlackAppLinks}
             slackTeamId={slackTeamId}
+            venueZoomUrls={venueZoomUrls}
             presIds={presIds}
             data={data}
             showAuthors={showAuthors}

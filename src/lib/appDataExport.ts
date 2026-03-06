@@ -13,7 +13,14 @@ function fromBase64url(encoded: string): string {
 }
 
 export function encodePayload(payload: ExportPayload): string {
-  return toBase64url(JSON.stringify(payload));
+  const sanitizedSettings = { ...payload.settings };
+  Reflect.deleteProperty(sanitizedSettings, "venueZoomUrls");
+  return toBase64url(
+    JSON.stringify({
+      ...payload,
+      settings: sanitizedSettings,
+    }),
+  );
 }
 
 export function decodePayload(encoded: string): ExportPayload | null {

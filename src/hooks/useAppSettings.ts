@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { AppSettings } from "../types";
+import type { AppSettings, VenueZoomUrls } from "../types";
 
 const APP_SETTINGS_STORAGE_KEY = "nlp2026-settings";
 
@@ -14,6 +14,25 @@ function parseBoolean(value: unknown, fallback: boolean): boolean {
   return typeof value === "boolean" ? value : fallback;
 }
 
+function parseNonEmptyString(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
+function parseVenueZoomUrls(value: unknown): VenueZoomUrls | undefined {
+  if (!value || typeof value !== "object") return undefined;
+
+  const a = parseNonEmptyString((value as { A?: unknown }).A);
+  const b = parseNonEmptyString((value as { B?: unknown }).B);
+  if (!a && !b) return undefined;
+
+  return {
+    ...(a ? { A: a } : {}),
+    ...(b ? { B: b } : {}),
+  };
+}
+
 function parseAppSettings(value: string | null): AppSettings {
   if (!value) {
     return DEFAULT_APP_SETTINGS;
@@ -24,6 +43,8 @@ function parseAppSettings(value: string | null): AppSettings {
     if (!parsed || typeof parsed !== "object") {
       return DEFAULT_APP_SETTINGS;
     }
+
+    const venueZoomUrls = parseVenueZoomUrls((parsed as { venueZoomUrls?: unknown }).venueZoomUrls);
 
     return {
       showAuthors: parseBoolean(parsed.showAuthors, DEFAULT_APP_SETTINGS.showAuthors),
@@ -36,6 +57,7 @@ function parseAppSettings(value: string | null): AppSettings {
         parsed.includeSessionTitleForPresentationSessions,
         DEFAULT_APP_SETTINGS.includeSessionTitleForPresentationSessions,
       ),
+      ...(venueZoomUrls ? { venueZoomUrls } : {}),
     };
   } catch {
     return DEFAULT_APP_SETTINGS;

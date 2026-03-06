@@ -16,6 +16,9 @@ const fullPayload: ExportPayload = {
     useSlackAppLinks: false,
     includeSessionTitleForNoPresentationSessions: false,
     includeSessionTitleForPresentationSessions: true,
+    venueZoomUrls: {
+      A: "https://example.com/custom-a",
+    },
   },
   bookmarks: {
     presentationIds: ["p1", "p2"],
@@ -23,9 +26,19 @@ const fullPayload: ExportPayload = {
   },
 };
 
+const fullPayloadWithoutVenueZoom = {
+  ...fullPayload,
+  settings: {
+    showAuthors: true,
+    useSlackAppLinks: false,
+    includeSessionTitleForNoPresentationSessions: false,
+    includeSessionTitleForPresentationSessions: true,
+  },
+};
+
 describe("encodePayload / decodePayload", () => {
   it("エンコード → デコードで元のペイロードに戻る", () => {
-    expect(decodePayload(encodePayload(fullPayload))).toEqual(fullPayload);
+    expect(decodePayload(encodePayload(fullPayload))).toEqual(fullPayloadWithoutVenueZoom);
   });
 
   it("エンコード結果に Base64url 安全でない文字が含まれない", () => {
@@ -38,7 +51,10 @@ describe("encodePayload / decodePayload", () => {
       ...fullPayload,
       bookmarks: { presentationIds: [], sessionIds: [] },
     };
-    expect(decodePayload(encodePayload(payload))).toEqual(payload);
+    expect(decodePayload(encodePayload(payload))).toEqual({
+      ...fullPayloadWithoutVenueZoom,
+      bookmarks: { presentationIds: [], sessionIds: [] },
+    });
   });
 
   it("settings が不完全な場合はデフォルト値で補完される", () => {
@@ -97,7 +113,7 @@ describe("buildExportUrl", () => {
     const url = buildExportUrl(fullPayload);
     const hash = new URL(url).hash.slice(1);
     const encoded = hash.replace("import_settings=", "");
-    expect(decodePayload(encoded)).toEqual(fullPayload);
+    expect(decodePayload(encoded)).toEqual(fullPayloadWithoutVenueZoom);
   });
 
   it("既存のフラグメントは import_settings に上書きされる", () => {

@@ -2,10 +2,11 @@ import { ChevronDown, FileText, Globe, Monitor, Star } from "lucide-react";
 import { type ReactNode, useEffect, useState } from "react";
 import { hasPresentationHiddenSearchMatch } from "../lib/filters";
 import { toSlackMessageAppUrl } from "../lib/slack";
+import { resolvePresentationZoomUrl } from "../lib/zoom";
 import { ja } from "../locales/ja";
 import { ZoomIcon } from "../pages/programPage/icons";
 import { openSlackFromSpa } from "../pages/programPage/utils";
-import type { ConferenceData, PersonId, PresentationId, SessionId } from "../types";
+import type { ConferenceData, PersonId, PresentationId, SessionId, VenueZoomUrls } from "../types";
 import { HighlightedText } from "./HighlightedText";
 
 interface ResolvedAuthor {
@@ -291,6 +292,7 @@ export function PresentationListItem({
   query,
   useSlackAppLinks = false,
   slackTeamId = null,
+  venueZoomUrls,
   onToggleBookmark,
   onJumpToSession,
   onPersonClick,
@@ -305,6 +307,7 @@ export function PresentationListItem({
   query: string;
   useSlackAppLinks?: boolean;
   slackTeamId?: string | null;
+  venueZoomUrls?: VenueZoomUrls;
   onToggleBookmark: (id: PresentationId) => void;
   onJumpToSession?: (sid: SessionId) => void;
   onPersonClick?: (id: PersonId) => void;
@@ -324,7 +327,7 @@ export function PresentationListItem({
 
   const { presentation: p, presenterName, authorList, hasDetails } = resolved;
   const pdfUrl = p.pdf_url ?? null;
-  const presentationZoomUrl = p.zoom_url ?? null;
+  const presentationZoomUrl = resolvePresentationZoomUrl(p, data, p.zoom_url ?? null, venueZoomUrls);
   const presentationZoomAppUrl = presentationZoomUrl ? toSlackMessageAppUrl(presentationZoomUrl, slackTeamId) : null;
   const toggleOpen = () => setOpen((value) => !value);
 
