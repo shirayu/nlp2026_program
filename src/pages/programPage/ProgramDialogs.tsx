@@ -14,6 +14,7 @@ import {
   PROJECT_REPOSITORY_URL,
 } from "../../constants";
 import type { DataReloadStatus } from "../../hooks/useConferenceData";
+import type { BackupEntry } from "../../lib/appDataBackup";
 import { ja } from "../../locales/ja";
 import type { LastUpdateEntry } from "../../types";
 import { fullscreenDialogClassName } from "./utils";
@@ -459,7 +460,10 @@ export function SettingsImportConfirmDialog({
             {isInvalid ? (
               <p className="text-sm text-red-600">{ja.importAppDataInvalid}</p>
             ) : (
-              <p className="text-sm text-gray-700">{ja.importAppDataWarning}</p>
+              <div className="space-y-2">
+                <p className="text-sm text-gray-700">{ja.importAppDataWarning}</p>
+                <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">{ja.importAppDataBackupNote}</p>
+              </div>
             )}
             <div className="flex justify-end gap-2">
               <button
@@ -499,6 +503,9 @@ export function SettingsDialog({
   onToggleIncludeSessionTitleForNoPresentationSessions,
   onToggleIncludeSessionTitleForPresentationSessions,
   onExport,
+  hasBackup,
+  onRestore,
+  onClearAllData,
 }: {
   dialogRef: RefObject<HTMLDialogElement | null>;
   open: boolean;
@@ -512,6 +519,9 @@ export function SettingsDialog({
   onToggleIncludeSessionTitleForNoPresentationSessions: () => void;
   onToggleIncludeSessionTitleForPresentationSessions: () => void;
   onExport: () => void;
+  hasBackup: boolean;
+  onRestore: () => void;
+  onClearAllData: () => void;
 }) {
   const formattedBuildGitDate = formatBuildGitDate(BUILD_GIT_DATE);
   const shouldShowOperatorSection =
@@ -611,19 +621,7 @@ export function SettingsDialog({
                 </li>
               </ul>
             </section>
-            <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
-              <h3 className="text-sm font-semibold text-gray-800">{ja.exportAppDataDialogTitle}</h3>
-              <div className="mt-2 flex justify-end">
-                <button
-                  type="button"
-                  onClick={onExport}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-indigo-300 hover:text-indigo-600"
-                >
-                  <Share2 className="h-3.5 w-3.5" />
-                  {ja.exportAppData}
-                </button>
-              </div>
-            </section>
+            <ExportSection hasBackup={hasBackup} onRestore={onRestore} onExport={onExport} />
             {shouldShowOperatorSection && (
               <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
                 <h3 className="text-sm font-semibold text-gray-800">{ja.operator}</h3>
@@ -709,6 +707,186 @@ export function SettingsDialog({
                 </div>
               </dl>
             </section>
+            <ClearAllDataSection onClearAllData={onClearAllData} />
+          </div>
+        </div>
+      </div>
+    </dialog>
+  );
+}
+
+function ExportSection({
+  hasBackup,
+  onRestore,
+  onExport,
+}: {
+  hasBackup: boolean;
+  onRestore: () => void;
+  onExport: () => void;
+}) {
+  return (
+    <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
+      <h3 className="text-sm font-semibold text-gray-800">{ja.exportAppDataDialogTitle}</h3>
+      <div className="mt-2 flex justify-end gap-2">
+        {hasBackup && (
+          <button
+            type="button"
+            onClick={onRestore}
+            className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-amber-400 hover:text-amber-700"
+          >
+            {ja.restoreBackup}
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={onExport}
+          className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-indigo-300 hover:text-indigo-600"
+        >
+          <Share2 className="h-3.5 w-3.5" />
+          {ja.exportAppData}
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function ClearAllDataSection({ onClearAllData }: { onClearAllData: () => void }) {
+  return (
+    <section className="rounded-xl border border-red-200 bg-red-50 px-3 py-3">
+      <h3 className="text-sm font-semibold text-red-800">{ja.clearAllDataSection}</h3>
+      <p className="mt-1 text-xs text-red-600">{ja.clearAllDataDescription}</p>
+      <div className="mt-2 flex justify-end">
+        <button
+          type="button"
+          onClick={onClearAllData}
+          className="inline-flex items-center gap-1.5 rounded-full border border-red-300 bg-white px-3 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-600 hover:text-white"
+        >
+          {ja.clearAllData}
+        </button>
+      </div>
+    </section>
+  );
+}
+
+const backupKindLabel: Record<BackupEntry["kind"], string> = {
+  before_import: ja.restoreBackupKindBeforeImport,
+  before_restore: ja.restoreBackupKindBeforeRestore,
+};
+
+export function RestoreBackupConfirmDialog({
+  open,
+  entries,
+  onConfirm,
+  onCancel,
+}: {
+  open: boolean;
+  entries: BackupEntry[];
+  onConfirm: (kind: BackupEntry["kind"]) => void;
+  onCancel: () => void;
+}) {
+  return (
+    <dialog open={open} onClose={onCancel} onCancel={onCancel} className={fullscreenDialogClassName}>
+      <div className="flex min-h-dvh items-center justify-center p-4" style={dialogFramePaddingStyle}>
+        <button
+          type="button"
+          aria-label={ja.restoreBackupCancel}
+          className="fixed inset-0 bg-black/55"
+          onClick={onCancel}
+        />
+        <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
+          <div className="flex items-center justify-between border-b border-amber-200 bg-amber-50 px-4 py-3">
+            <h2 className="text-sm font-bold text-amber-800">{ja.restoreBackupSection}</h2>
+            <button
+              type="button"
+              onClick={onCancel}
+              className="text-gray-400 transition-colors hover:text-gray-600"
+              aria-label={ja.restoreBackupCancel}
+            >
+              <CloseIcon className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="space-y-4 px-4 py-4">
+            <p className="text-sm text-gray-700">{ja.restoreBackupDescription}</p>
+            <ul className="space-y-2">
+              {entries.map((entry) => (
+                <li key={entry.kind}>
+                  <button
+                    type="button"
+                    onClick={() => onConfirm(entry.kind)}
+                    className="w-full rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-left text-sm font-medium text-amber-800 transition-colors hover:bg-amber-100"
+                  >
+                    {backupKindLabel[entry.kind]}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={onCancel}
+                className="rounded-full border border-gray-300 px-4 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50"
+              >
+                {ja.restoreBackupCancel}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </dialog>
+  );
+}
+
+export function ClearAllDataConfirmDialog({
+  open,
+  onConfirm,
+  onCancel,
+}: {
+  open: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <dialog open={open} onClose={onCancel} onCancel={onCancel} className={fullscreenDialogClassName}>
+      <div className="flex min-h-dvh items-center justify-center p-4" style={dialogFramePaddingStyle}>
+        <button
+          type="button"
+          aria-label={ja.clearAllDataCancel}
+          className="fixed inset-0 bg-black/55"
+          onClick={onCancel}
+        />
+        <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
+          <div className="flex items-center justify-between border-b border-red-200 bg-red-50 px-4 py-3">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-red-600" />
+              <h2 className="text-sm font-bold text-red-800">{ja.clearAllDataSection}</h2>
+            </div>
+            <button
+              type="button"
+              onClick={onCancel}
+              className="text-gray-400 transition-colors hover:text-gray-600"
+              aria-label={ja.clearAllDataCancel}
+            >
+              <CloseIcon className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="space-y-4 px-4 py-4">
+            <p className="text-sm text-gray-700">{ja.clearAllDataDescription}</p>
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={onCancel}
+                className="rounded-full border border-gray-300 px-4 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50"
+              >
+                {ja.clearAllDataCancel}
+              </button>
+              <button
+                type="button"
+                onClick={onConfirm}
+                className="rounded-full bg-red-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-700"
+              >
+                {ja.clearAllDataConfirm}
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -1,8 +1,16 @@
 import type { RefObject } from "react";
 import { PersonModal } from "../../components/PersonModal";
 import type { DataReloadStatus } from "../../hooks/useConferenceData";
+import type { BackupEntry } from "../../lib/appDataBackup";
 import type { ConferenceData, PersonId, PresentationId, SessionId } from "../../types";
-import { InstallDialog, SettingsDialog, SettingsExportDialog, SettingsImportConfirmDialog } from "./ProgramDialogs";
+import {
+  ClearAllDataConfirmDialog,
+  InstallDialog,
+  RestoreBackupConfirmDialog,
+  SettingsDialog,
+  SettingsExportDialog,
+  SettingsImportConfirmDialog,
+} from "./ProgramDialogs";
 
 export function ProgramOverlays({
   personModal,
@@ -43,6 +51,16 @@ export function ProgramOverlays({
   importInvalid,
   onConfirmImport,
   onCancelImport,
+  backupEntries,
+  hasBackup,
+  onRestoreBackup,
+  onClearAllData,
+  showRestoreConfirm,
+  onConfirmRestore,
+  onCancelRestore,
+  showClearAllDataConfirm,
+  onConfirmClearAllData,
+  onCancelClearAllData,
 }: {
   personModal: PersonId | null;
   data: ConferenceData;
@@ -82,6 +100,16 @@ export function ProgramOverlays({
   importInvalid: boolean;
   onConfirmImport: () => void;
   onCancelImport: () => void;
+  backupEntries: BackupEntry[];
+  hasBackup: boolean;
+  onRestoreBackup: () => void;
+  onClearAllData: () => void;
+  showRestoreConfirm: boolean;
+  onConfirmRestore: (kind: BackupEntry["kind"]) => void;
+  onCancelRestore: () => void;
+  showClearAllDataConfirm: boolean;
+  onConfirmClearAllData: () => void;
+  onCancelClearAllData: () => void;
 }) {
   return (
     <>
@@ -128,6 +156,9 @@ export function ProgramOverlays({
         onToggleIncludeSessionTitleForNoPresentationSessions={onToggleIncludeSessionTitleForNoPresentationSessions}
         onToggleIncludeSessionTitleForPresentationSessions={onToggleIncludeSessionTitleForPresentationSessions}
         onExport={onExportSettings}
+        hasBackup={hasBackup}
+        onRestore={onRestoreBackup}
+        onClearAllData={onClearAllData}
       />
 
       <SettingsExportDialog open={showSettingsExport} exportUrl={exportUrl} onClose={onCloseSettingsExport} />
@@ -137,6 +168,19 @@ export function ProgramOverlays({
         isInvalid={importInvalid}
         onConfirm={onConfirmImport}
         onCancel={onCancelImport}
+      />
+
+      <RestoreBackupConfirmDialog
+        open={showRestoreConfirm}
+        entries={backupEntries}
+        onConfirm={onConfirmRestore}
+        onCancel={onCancelRestore}
+      />
+
+      <ClearAllDataConfirmDialog
+        open={showClearAllDataConfirm}
+        onConfirm={onConfirmClearAllData}
+        onCancel={onCancelClearAllData}
       />
     </>
   );

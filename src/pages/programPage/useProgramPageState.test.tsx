@@ -17,13 +17,21 @@ vi.mock("../../hooks/useConferenceData", () => ({
   RELOAD_STATUS_AUTO_HIDE_MS: 3000,
 }));
 
-vi.mock("../../hooks/useAppSettings", () => ({
-  useAppSettings: () => mockUseAppSettings(),
-}));
+vi.mock("../../hooks/useAppSettings", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../../hooks/useAppSettings")>();
+  return {
+    ...actual,
+    useAppSettings: () => mockUseAppSettings(),
+  };
+});
 
-vi.mock("../../hooks/useBookmarks", () => ({
-  useBookmarks: () => mockUseBookmarks(),
-}));
+vi.mock("../../hooks/useBookmarks", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../../hooks/useBookmarks")>();
+  return {
+    ...actual,
+    useBookmarks: () => mockUseBookmarks(),
+  };
+});
 
 vi.mock("../../hooks/useSessionJump", () => ({
   useSessionJump: () => mockUseSessionJump(),
