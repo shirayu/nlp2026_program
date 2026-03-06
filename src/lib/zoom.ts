@@ -28,6 +28,10 @@ export function resolveSessionZoomUrl(
   sessionZoomUrl: string | null,
   venueZoomUrls?: VenueZoomUrls,
 ): string | null {
+  if (!sessionZoomUrl) {
+    return null;
+  }
+
   return getCustomVenueZoomUrl(session, rooms, venueZoomUrls) ?? sessionZoomUrl ?? null;
 }
 

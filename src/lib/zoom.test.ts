@@ -73,6 +73,14 @@ describe("resolveSessionZoomUrl", () => {
 
     expect(resolved).toBe("https://example.com/default-c");
   });
+
+  it("session zoom_url がない場合はカスタムURLがあっても null を返す", () => {
+    const resolved = resolveSessionZoomUrl(data.sessions.sA, data.rooms, null, {
+      A: "https://example.com/custom-a",
+    });
+
+    expect(resolved).toBeNull();
+  });
 });
 
 describe("resolvePresentationZoomUrl", () => {
@@ -90,5 +98,13 @@ describe("resolvePresentationZoomUrl", () => {
     });
 
     expect(resolved).toBe("https://example.com/presentation-c");
+  });
+
+  it("presentation zoom_url がない場合はカスタムURLがあっても null を返す", () => {
+    const resolved = resolvePresentationZoomUrl(data.presentations.pA, data, null, {
+      A: "https://example.com/custom-a",
+    });
+
+    expect(resolved).toBeNull();
   });
 });
