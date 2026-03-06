@@ -1,3 +1,4 @@
+import { ZOOM_IMPORT_HASHES } from "../constants";
 import { appSettingsStorage } from "../hooks/useAppSettings";
 import { bookmarksStorage } from "../hooks/useBookmarks";
 import type { ExportPayload, VenueZoomUrls } from "../types";
@@ -89,6 +90,21 @@ function hasOnlyAllowedZoomDomains(venueZoomUrls: VenueZoomUrls | undefined): bo
   return values.every((value) => isAllowedZoomImportUrl(value));
 }
 
+function canonicalizeVenueZoomUrls(venueZoomUrls: VenueZoomUrls | undefined): string {
+  return JSON.stringify({
+    A: venueZoomUrls?.A?.trim() ?? "",
+    B: venueZoomUrls?.B?.trim() ?? "",
+  });
+}
+
+export async function buildZoomImportHash(venueZoomUrls: VenueZoomUrls | undefined): Promise<string> {
+  const input = canonicalizeVenueZoomUrls(venueZoomUrls);
+  const bytes = new TextEncoder().encode(input);
+  const digest = await globalThis.crypto.subtle.digest("SHA-256", bytes);
+  const hex = Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+  return hex;
+}
+
 export function stripImportFragment(): void {
   stripByPrefix(IMPORT_FRAGMENT_PREFIX, IMPORT_PENDING_KEY);
 }
@@ -105,7 +121,7 @@ export function extractZoomImportFragment(): string | null {
   return extractByPrefix(IMPORT_ZOOM_FRAGMENT_PREFIX);
 }
 
-export function decodeZoomPayload(encoded: string): VenueZoomUrls | undefined | null {
+export async function decodeZoomPayload(encoded: string): Promise<VenueZoomUrls | undefined | null> {
   try {
     const json = fromBase64url(encoded);
     const parsed = JSON.parse(json);
@@ -116,6 +132,11 @@ export function decodeZoomPayload(encoded: string): VenueZoomUrls | undefined | 
     ).venueZoomUrls;
 
     if (!hasOnlyAllowedZoomDomains(venueZoomUrls)) return null;
+    const allowedHashes = new Set(ZOOM_IMPORT_HASHES.map((value) => value.trim().toLowerCase()).filter(Boolean));
+    if (allowedHashes.size > 0) {
+      const actualHash = await buildZoomImportHash(venueZoomUrls);
+      if (!allowedHashes.has(actualHash)) return null;
+    }
     return venueZoomUrls;
   } catch {
     return null;

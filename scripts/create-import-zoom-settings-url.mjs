@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { webcrypto } from "node:crypto";
 import { pathToFileURL } from "node:url";
 
 const IMPORT_ZOOM_FRAGMENT_PREFIX = "import_zoom_settings=";
@@ -74,7 +75,21 @@ function isAllowedZoomImportUrl(value) {
   }
 }
 
-export function buildImportZoomSettingsUrl(args) {
+function canonicalizeVenueZoomUrls(venueZoomUrls) {
+  return JSON.stringify({
+    A: typeof venueZoomUrls.A === "string" ? venueZoomUrls.A.trim() : "",
+    B: typeof venueZoomUrls.B === "string" ? venueZoomUrls.B.trim() : "",
+  });
+}
+
+export async function buildZoomImportHash(venueZoomUrls) {
+  const input = canonicalizeVenueZoomUrls(venueZoomUrls);
+  const bytes = new TextEncoder().encode(input);
+  const digest = await webcrypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+export async function buildImportZoomSettingsUrl(args) {
   if (!args.baseUrl) {
     throw new Error("--base-url is required");
   }
@@ -95,13 +110,17 @@ export function buildImportZoomSettingsUrl(args) {
   }
 
   const payload = { venueZoomUrls };
+  const hash = await buildZoomImportHash(venueZoomUrls);
   const encoded = toBase64url(JSON.stringify(payload));
   const url = new URL(args.baseUrl);
   url.hash = `${IMPORT_ZOOM_FRAGMENT_PREFIX}${encoded}`;
-  return url.toString();
+  return {
+    hash,
+    url: url.toString(),
+  };
 }
 
-export function run(argv = process.argv.slice(2)) {
+export async function run(argv = process.argv.slice(2)) {
   const args = parseArgs(argv);
 
   if (args.help) {
@@ -109,15 +128,15 @@ export function run(argv = process.argv.slice(2)) {
     return;
   }
 
-  console.log(buildImportZoomSettingsUrl(args));
+  const result = await buildImportZoomSettingsUrl(args);
+  console.log(`ZOOM_IMPORT_HASH=${result.hash}`);
+  console.log(result.url);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  try {
-    run();
-  } catch (error) {
+  void run().catch((error) => {
     const message = error instanceof Error ? error.message : String(error);
     console.error(`Error: ${message}`);
     process.exit(1);
-  }
+  });
 }

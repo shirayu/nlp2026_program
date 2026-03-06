@@ -67,6 +67,9 @@ pnpm run create:import-zoom-settings-url -- \
   --b-url "https://zoom.us/j/22222222222?pwd=bbbb"
 ```
 
+出力の1行目 `ZOOM_IMPORT_HASH=...` を `src/constants/index.ts` の `ZOOM_IMPORT_HASHES` に追加してください。  
+アプリ側は `SubtleCrypto (SHA-256)` で同じハッシュを再計算し、一致しない `#import_zoom_settings=` は拒否します。
+
 ## GitHub Pages
 
 - GitHub Actions の `CI` workflow で `main` への push 時に `dist/` をデプロイします

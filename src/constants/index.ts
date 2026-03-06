@@ -6,6 +6,7 @@ export const X_SEARCH_URL = "https://x.com/search?q=%23nlp2026";
 export const OPERATOR_NAME = "Yuta Hayashibe";
 export const OPERATOR_WEBSITE_URL = "https://hayashibe.jp/";
 export const OPERATOR_REPOSITORY_URL = "https://github.com/shirayu/nlp2026_program";
+export const ZOOM_IMPORT_HASHES = ["93927badc390c9d367174e07e25e2aa53415c6cbe0da3115ea6efdcf21b70b11"];
 
 // ここは変更しない ///////
 export const DEVELOPER_NAME = "Yuta Hayashibe";

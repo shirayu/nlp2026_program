@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildImportZoomSettingsUrl, parseArgs } from "./create-import-zoom-settings-url.mjs";
+import { buildImportZoomSettingsUrl, buildZoomImportHash, parseArgs } from "./create-import-zoom-settings-url.mjs";
 
 function decodeHashPayload(url) {
   const hash = new URL(url).hash.slice(1);
@@ -9,14 +9,18 @@ function decodeHashPayload(url) {
 }
 
 describe("create-import-zoom-settings-url", () => {
-  it("A/B会場URLを含む import_zoom_settings URL を生成できる", () => {
-    const url = buildImportZoomSettingsUrl({
+  it("A/B会場URLを含む import_zoom_settings URL を生成できる", async () => {
+    const result = await buildImportZoomSettingsUrl({
       baseUrl: "https://example.github.io/nlp2026/",
       aUrl: "https://zoom.us/j/111?pwd=aaa",
       bUrl: "https://zoom.us/j/222?pwd=bbb",
       help: false,
     });
+    const url = result.url;
     expect(url).toContain("#import_zoom_settings=");
+    expect(result.hash).toBe(
+      await buildZoomImportHash({ A: "https://zoom.us/j/111?pwd=aaa", B: "https://zoom.us/j/222?pwd=bbb" }),
+    );
     expect(decodeHashPayload(url)).toEqual({
       venueZoomUrls: {
         A: "https://zoom.us/j/111?pwd=aaa",
@@ -25,13 +29,14 @@ describe("create-import-zoom-settings-url", () => {
     });
   });
 
-  it("A/Bのどちらか片方だけでも生成できる", () => {
-    const url = buildImportZoomSettingsUrl({
+  it("A/Bのどちらか片方だけでも生成できる", async () => {
+    const result = await buildImportZoomSettingsUrl({
       baseUrl: "https://example.github.io/nlp2026/",
       aUrl: "https://us02web.zoom.us/j/111?pwd=aaa",
       bUrl: "",
       help: false,
     });
+    const url = result.url;
     expect(decodeHashPayload(url)).toEqual({
       venueZoomUrls: {
         A: "https://us02web.zoom.us/j/111?pwd=aaa",
@@ -39,37 +44,37 @@ describe("create-import-zoom-settings-url", () => {
     });
   });
 
-  it("zoom.us / *.zoom.us 以外のURLはエラー", () => {
-    expect(() =>
+  it("zoom.us / *.zoom.us 以外のURLはエラー", async () => {
+    await expect(() =>
       buildImportZoomSettingsUrl({
         baseUrl: "https://example.github.io/nlp2026/",
         aUrl: "https://example.com/room-a",
         bUrl: "",
         help: false,
       }),
-    ).toThrow("--a-url must be a zoom.us or *.zoom.us URL with /j/ path");
+    ).rejects.toThrow("--a-url must be a zoom.us or *.zoom.us URL with /j/ path");
   });
 
-  it("/j/ 以外のパスはエラー", () => {
-    expect(() =>
+  it("/j/ 以外のパスはエラー", async () => {
+    await expect(() =>
       buildImportZoomSettingsUrl({
         baseUrl: "https://example.github.io/nlp2026/",
         aUrl: "https://zoom.us/wc/join/111?pwd=aaa",
         bUrl: "",
         help: false,
       }),
-    ).toThrow("--a-url must be a zoom.us or *.zoom.us URL with /j/ path");
+    ).rejects.toThrow("--a-url must be a zoom.us or *.zoom.us URL with /j/ path");
   });
 
-  it("A/Bが未指定ならエラー", () => {
-    expect(() =>
+  it("A/Bが未指定ならエラー", async () => {
+    await expect(() =>
       buildImportZoomSettingsUrl({
         baseUrl: "https://example.github.io/nlp2026/",
         aUrl: "",
         bUrl: "",
         help: false,
       }),
-    ).toThrow("At least one of --a-url or --b-url is required");
+    ).rejects.toThrow("At least one of --a-url or --b-url is required");
   });
 
   it("pnpm run 経由の '--' を無視して引数を解釈できる", () => {

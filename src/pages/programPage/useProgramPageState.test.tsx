@@ -47,7 +47,7 @@ const mockStripZoomImportFragment = vi.fn();
 const mockClearImportPendingFlag = vi.fn();
 const mockClearZoomImportPendingFlag = vi.fn();
 const mockDecodePayload = vi.fn(() => null as import("../../types").ExportPayload | null);
-const mockDecodeZoomPayload = vi.fn(() => null as import("../../types").VenueZoomUrls | undefined | null);
+const mockDecodeZoomPayload = vi.fn(async () => null as import("../../types").VenueZoomUrls | undefined | null);
 const mockBuildExportUrl = vi.fn(() => "https://example.com/#import_settings=abc");
 
 vi.mock("../../lib/appDataExport", () => ({
@@ -174,7 +174,7 @@ describe("useProgramPageState", () => {
     mockExtractImportFragment.mockReturnValue(null);
     mockExtractZoomImportFragment.mockReturnValue(null);
     mockDecodePayload.mockReturnValue(null);
-    mockDecodeZoomPayload.mockReturnValue(null);
+    mockDecodeZoomPayload.mockResolvedValue(null);
 
     Object.defineProperty(navigator, "serviceWorker", {
       configurable: true,
@@ -352,7 +352,7 @@ describe("useProgramPageState", () => {
 
   it("起動時に import_zoom_settings フラグメントがあれば Zoom インポート確認ダイアログを開く", async () => {
     mockExtractZoomImportFragment.mockReturnValue("validzoom");
-    mockDecodeZoomPayload.mockReturnValue({
+    mockDecodeZoomPayload.mockResolvedValue({
       A: "https://example.com/a",
     });
 
@@ -363,6 +363,24 @@ describe("useProgramPageState", () => {
     expect(hook.getLatest().overlayProps.importInvalid).toBe(false);
     expect(hook.getLatest().overlayProps.importTarget).toBe("zoom");
     expect(mockStripZoomImportFragment).toHaveBeenCalled();
+
+    hook.unmount();
+  });
+
+  it("Zoom インポート時は decode 後に strip される", async () => {
+    mockExtractZoomImportFragment.mockReturnValue("validzoom");
+    mockDecodeZoomPayload.mockImplementation(async () => {
+      expect(mockStripZoomImportFragment).not.toHaveBeenCalled();
+      return { A: "https://example.com/a" };
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    expect(mockDecodeZoomPayload).toHaveBeenCalled();
+    expect(mockStripZoomImportFragment).toHaveBeenCalled();
+    expect(hook.getLatest().overlayProps.showSettingsImportConfirm).toBe(true);
+    expect(hook.getLatest().overlayProps.importTarget).toBe("zoom");
 
     hook.unmount();
   });
@@ -433,7 +451,7 @@ describe("useProgramPageState", () => {
     const setSettings = vi.fn();
     const setBookmarks = vi.fn();
     mockExtractZoomImportFragment.mockReturnValue("validzoom");
-    mockDecodeZoomPayload.mockReturnValue({ A: "https://example.com/room-a", B: "https://example.com/room-b" });
+    mockDecodeZoomPayload.mockResolvedValue({ A: "https://example.com/room-a", B: "https://example.com/room-b" });
     mockUseAppSettings.mockReturnValue({
       settings: {
         showAuthors: false,

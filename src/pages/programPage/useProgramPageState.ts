@@ -86,7 +86,7 @@ export function useProgramPageState() {
   const [importInvalid, setImportInvalid] = useState(false);
   const [importTarget, setImportTarget] = useState<"settings" | "zoom">("settings");
   const [pendingSettingsImport, setPendingSettingsImport] = useState<ReturnType<typeof decodePayload> | null>(null);
-  const [pendingZoomImport, setPendingZoomImport] = useState<ReturnType<typeof decodeZoomPayload> | null>(null);
+  const [pendingZoomImport, setPendingZoomImport] = useState<VenueZoomUrls | undefined | null>(null);
   const [backupEntries, setBackupEntries] = useState<BackupEntry[]>(() =>
     typeof window !== "undefined" ? listBackups() : [],
   );
@@ -190,40 +190,65 @@ export function useProgramPageState() {
   );
 
   useEffect(() => {
-    const settingsEncoded = extractImportFragment();
-    if (settingsEncoded !== null) {
-      stripImportFragment();
-      const decoded = decodePayload(settingsEncoded);
+    let canceled = false;
+
+    function applySettingsImportState(decoded: ReturnType<typeof decodePayload> | null) {
       setImportTarget("settings");
+      setPendingZoomImport(null);
       if (decoded) {
         setPendingSettingsImport(decoded);
-        setPendingZoomImport(null);
         setImportInvalid(false);
       } else {
         setPendingSettingsImport(null);
-        setPendingZoomImport(null);
         setImportInvalid(true);
       }
       setShowSettingsImportConfirm(true);
-      return;
     }
 
-    const zoomEncoded = extractZoomImportFragment();
-    if (zoomEncoded !== null) {
-      stripZoomImportFragment();
-      const decoded = decodeZoomPayload(zoomEncoded);
+    function applyZoomImportState(decoded: Awaited<ReturnType<typeof decodeZoomPayload>>) {
       setImportTarget("zoom");
+      setPendingSettingsImport(null);
       if (decoded !== null) {
-        setPendingSettingsImport(null);
         setPendingZoomImport(decoded);
         setImportInvalid(false);
       } else {
-        setPendingSettingsImport(null);
         setPendingZoomImport(null);
         setImportInvalid(true);
       }
       setShowSettingsImportConfirm(true);
     }
+
+    async function handleZoomImport() {
+      const zoomEncoded = extractZoomImportFragment();
+      if (zoomEncoded === null) return;
+      const decoded = await decodeZoomPayload(zoomEncoded);
+      if (canceled) return;
+      stripZoomImportFragment();
+      applyZoomImportState(decoded);
+    }
+
+    async function setupImportState() {
+      const settingsEncoded = extractImportFragment();
+      if (settingsEncoded !== null) {
+        const decoded = decodePayload(settingsEncoded);
+        if (canceled) return;
+        stripImportFragment();
+        applySettingsImportState(decoded);
+        return;
+      }
+
+      await handleZoomImport();
+    }
+
+    void setupImportState();
+    const onHashChange = () => {
+      void setupImportState();
+    };
+    window.addEventListener("hashchange", onHashChange);
+    return () => {
+      canceled = true;
+      window.removeEventListener("hashchange", onHashChange);
+    };
   }, []);
 
   const baseFilteredSessions = useMemo(() => {

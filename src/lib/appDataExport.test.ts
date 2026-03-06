@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ExportPayload } from "../types";
+
+vi.mock("../constants", () => ({
+  ZOOM_IMPORT_HASHES: [],
+}));
+
 import {
   buildExportUrl,
   clearImportPendingFlag,
@@ -176,11 +181,11 @@ describe("extractZoomImportFragment / decodeZoomPayload", () => {
     expect(extractZoomImportFragment()).toBe(encoded);
   });
 
-  it("不正な zoom データのデコードは null を返す", () => {
-    expect(decodeZoomPayload("not-valid")).toBeNull();
+  it("不正な zoom データのデコードは null を返す", async () => {
+    await expect(decodeZoomPayload("not-valid")).resolves.toBeNull();
   });
 
-  it("zoom データをデコードできる", () => {
+  it("zoom データをデコードできる", async () => {
     const encoded = btoa(
       JSON.stringify({
         venueZoomUrls: { A: "https://zoom.us/j/111?pwd=aaa", B: "https://us02web.zoom.us/j/222?pwd=bbb" },
@@ -189,13 +194,13 @@ describe("extractZoomImportFragment / decodeZoomPayload", () => {
       .replace(/\+/g, "-")
       .replace(/\//g, "_")
       .replace(/=/g, "");
-    expect(decodeZoomPayload(encoded)).toEqual({
+    await expect(decodeZoomPayload(encoded)).resolves.toEqual({
       A: "https://zoom.us/j/111?pwd=aaa",
       B: "https://us02web.zoom.us/j/222?pwd=bbb",
     });
   });
 
-  it("zoom.us / *.zoom.us 以外のドメインを含むと null を返す", () => {
+  it("zoom.us / *.zoom.us 以外のドメインを含むと null を返す", async () => {
     const encoded = btoa(
       JSON.stringify({
         venueZoomUrls: { A: "https://zoom.us/j/111?pwd=aaa", B: "https://example.com/room-b" },
@@ -204,10 +209,10 @@ describe("extractZoomImportFragment / decodeZoomPayload", () => {
       .replace(/\+/g, "-")
       .replace(/\//g, "_")
       .replace(/=/g, "");
-    expect(decodeZoomPayload(encoded)).toBeNull();
+    await expect(decodeZoomPayload(encoded)).resolves.toBeNull();
   });
 
-  it("/j/ で始まらないパスを含むと null を返す", () => {
+  it("/j/ で始まらないパスを含むと null を返す", async () => {
     const encoded = btoa(
       JSON.stringify({
         venueZoomUrls: { A: "https://zoom.us/wc/join/111?pwd=aaa", B: "https://us02web.zoom.us/j/222?pwd=bbb" },
@@ -216,7 +221,7 @@ describe("extractZoomImportFragment / decodeZoomPayload", () => {
       .replace(/\+/g, "-")
       .replace(/\//g, "_")
       .replace(/=/g, "");
-    expect(decodeZoomPayload(encoded)).toBeNull();
+    await expect(decodeZoomPayload(encoded)).resolves.toBeNull();
   });
 });
 
