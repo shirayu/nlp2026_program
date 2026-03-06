@@ -120,6 +120,7 @@ describe("SettingsDialog", () => {
         onToggleUseSlackAppLinks={() => {}}
         onToggleIncludeSessionTitleForNoPresentationSessions={() => {}}
         onToggleIncludeSessionTitleForPresentationSessions={() => {}}
+        onExport={() => {}}
       />,
     );
 
@@ -145,6 +146,7 @@ describe("SettingsDialog", () => {
         onToggleUseSlackAppLinks={() => {}}
         onToggleIncludeSessionTitleForNoPresentationSessions={() => {}}
         onToggleIncludeSessionTitleForPresentationSessions={() => {}}
+        onExport={() => {}}
       />,
     );
 
@@ -168,6 +170,7 @@ describe("SettingsDialog", () => {
         onToggleUseSlackAppLinks={() => {}}
         onToggleIncludeSessionTitleForNoPresentationSessions={() => {}}
         onToggleIncludeSessionTitleForPresentationSessions={() => {}}
+        onExport={() => {}}
       />,
     );
 

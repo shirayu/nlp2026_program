@@ -2,7 +2,7 @@ import type { RefObject } from "react";
 import { PersonModal } from "../../components/PersonModal";
 import type { DataReloadStatus } from "../../hooks/useConferenceData";
 import type { ConferenceData, PersonId, PresentationId, SessionId } from "../../types";
-import { InstallDialog, SettingsDialog } from "./ProgramDialogs";
+import { InstallDialog, SettingsDialog, SettingsExportDialog, SettingsImportConfirmDialog } from "./ProgramDialogs";
 
 export function ProgramOverlays({
   personModal,
@@ -35,6 +35,14 @@ export function ProgramOverlays({
   onToggleUseSlackAppLinks,
   onToggleIncludeSessionTitleForNoPresentationSessions,
   onToggleIncludeSessionTitleForPresentationSessions,
+  onExportSettings,
+  showSettingsExport,
+  exportUrl,
+  onCloseSettingsExport,
+  showSettingsImportConfirm,
+  importInvalid,
+  onConfirmImport,
+  onCancelImport,
 }: {
   personModal: PersonId | null;
   data: ConferenceData;
@@ -66,6 +74,14 @@ export function ProgramOverlays({
   onToggleUseSlackAppLinks: () => void;
   onToggleIncludeSessionTitleForNoPresentationSessions: () => void;
   onToggleIncludeSessionTitleForPresentationSessions: () => void;
+  onExportSettings: () => void;
+  showSettingsExport: boolean;
+  exportUrl: string;
+  onCloseSettingsExport: () => void;
+  showSettingsImportConfirm: boolean;
+  importInvalid: boolean;
+  onConfirmImport: () => void;
+  onCancelImport: () => void;
 }) {
   return (
     <>
@@ -111,6 +127,16 @@ export function ProgramOverlays({
         onToggleUseSlackAppLinks={onToggleUseSlackAppLinks}
         onToggleIncludeSessionTitleForNoPresentationSessions={onToggleIncludeSessionTitleForNoPresentationSessions}
         onToggleIncludeSessionTitleForPresentationSessions={onToggleIncludeSessionTitleForPresentationSessions}
+        onExport={onExportSettings}
+      />
+
+      <SettingsExportDialog open={showSettingsExport} exportUrl={exportUrl} onClose={onCloseSettingsExport} />
+
+      <SettingsImportConfirmDialog
+        open={showSettingsImportConfirm}
+        isInvalid={importInvalid}
+        onConfirm={onConfirmImport}
+        onCancel={onCancelImport}
       />
     </>
   );

@@ -1,5 +1,6 @@
-import { X as CloseIcon, Github, Globe, Monitor, RefreshCw } from "lucide-react";
+import { AlertTriangle, X as CloseIcon, Github, Globe, Monitor, RefreshCw, Share2 } from "lucide-react";
 import type { RefObject } from "react";
+import { useState } from "react";
 import {
   BUILD_GIT_DATE,
   BUILD_GIT_HASH,
@@ -349,6 +350,142 @@ export function InstallDialog({
   );
 }
 
+export function SettingsExportDialog({
+  open,
+  exportUrl,
+  onClose,
+}: {
+  open: boolean;
+  exportUrl: string;
+  onClose: () => void;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  async function handleCopy() {
+    await navigator.clipboard.writeText(exportUrl);
+    setCopied(true);
+    globalThis.setTimeout(() => setCopied(false), 2000);
+  }
+
+  return (
+    <dialog open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
+      <div className="flex min-h-dvh items-center justify-center p-4" style={dialogFramePaddingStyle}>
+        <button
+          type="button"
+          aria-label={ja.exportAppDataClose}
+          className="fixed inset-0 bg-black/55"
+          onClick={onClose}
+        />
+        <div className="relative flex max-h-[calc(100dvh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
+          <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-indigo-50 px-4 py-3">
+            <h2 className="text-sm font-bold text-gray-800">{ja.exportAppDataDialogTitle}</h2>
+            <button
+              type="button"
+              onClick={onClose}
+              className="text-gray-400 transition-colors hover:text-gray-600"
+              aria-label={ja.exportAppDataClose}
+            >
+              <CloseIcon className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="space-y-3 px-4 py-4">
+            <p className="text-sm text-gray-700">{ja.exportAppDataDescription}</p>
+            <textarea
+              readOnly
+              value={exportUrl}
+              rows={4}
+              className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 font-mono text-xs text-gray-800 focus:outline-none"
+              onFocus={(e) => e.target.select()}
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-full border border-gray-300 px-4 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50"
+              >
+                {ja.exportAppDataClose}
+              </button>
+              <button
+                type="button"
+                onClick={() => void handleCopy()}
+                className="rounded-full bg-indigo-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+              >
+                {copied ? ja.exportAppDataCopied : ja.exportAppDataCopy}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </dialog>
+  );
+}
+
+export function SettingsImportConfirmDialog({
+  open,
+  isInvalid,
+  onConfirm,
+  onCancel,
+}: {
+  open: boolean;
+  isInvalid: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <dialog open={open} onClose={onCancel} onCancel={onCancel} className={fullscreenDialogClassName}>
+      <div className="flex min-h-dvh items-center justify-center p-4" style={dialogFramePaddingStyle}>
+        <button
+          type="button"
+          aria-label={ja.importAppDataCancel}
+          className="fixed inset-0 bg-black/55"
+          onClick={onCancel}
+        />
+        <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
+          <div className="flex items-center justify-between border-b border-red-200 bg-red-50 px-4 py-3">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-red-600" />
+              <h2 className="text-sm font-bold text-red-800">{ja.importAppDataDialogTitle}</h2>
+            </div>
+            <button
+              type="button"
+              onClick={onCancel}
+              className="text-gray-400 transition-colors hover:text-gray-600"
+              aria-label={ja.importAppDataCancel}
+            >
+              <CloseIcon className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="space-y-4 px-4 py-4">
+            {isInvalid ? (
+              <p className="text-sm text-red-600">{ja.importAppDataInvalid}</p>
+            ) : (
+              <p className="text-sm text-gray-700">{ja.importAppDataWarning}</p>
+            )}
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={onCancel}
+                className="rounded-full border border-gray-300 px-4 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50"
+              >
+                {ja.importAppDataCancel}
+              </button>
+              {!isInvalid && (
+                <button
+                  type="button"
+                  onClick={onConfirm}
+                  className="rounded-full bg-red-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-700"
+                >
+                  {ja.importAppDataConfirm}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </dialog>
+  );
+}
+
 export function SettingsDialog({
   dialogRef,
   open,
@@ -361,6 +498,7 @@ export function SettingsDialog({
   onToggleUseSlackAppLinks,
   onToggleIncludeSessionTitleForNoPresentationSessions,
   onToggleIncludeSessionTitleForPresentationSessions,
+  onExport,
 }: {
   dialogRef: RefObject<HTMLDialogElement | null>;
   open: boolean;
@@ -373,6 +511,7 @@ export function SettingsDialog({
   onToggleUseSlackAppLinks: () => void;
   onToggleIncludeSessionTitleForNoPresentationSessions: () => void;
   onToggleIncludeSessionTitleForPresentationSessions: () => void;
+  onExport: () => void;
 }) {
   const formattedBuildGitDate = formatBuildGitDate(BUILD_GIT_DATE);
   const shouldShowOperatorSection =
@@ -471,6 +610,19 @@ export function SettingsDialog({
                   <span>{ja.legendOnline}</span>
                 </li>
               </ul>
+            </section>
+            <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
+              <h3 className="text-sm font-semibold text-gray-800">{ja.exportAppDataDialogTitle}</h3>
+              <div className="mt-2 flex justify-end">
+                <button
+                  type="button"
+                  onClick={onExport}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-indigo-300 hover:text-indigo-600"
+                >
+                  <Share2 className="h-3.5 w-3.5" />
+                  {ja.exportAppData}
+                </button>
+              </div>
             </section>
             {shouldShowOperatorSection && (
               <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
