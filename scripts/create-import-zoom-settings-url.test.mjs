@@ -47,7 +47,18 @@ describe("create-import-zoom-settings-url", () => {
         bUrl: "",
         help: false,
       }),
-    ).toThrow("--a-url must be a zoom.us or *.zoom.us URL");
+    ).toThrow("--a-url must be a zoom.us or *.zoom.us URL with /j/ path");
+  });
+
+  it("/j/ 以外のパスはエラー", () => {
+    expect(() =>
+      buildImportZoomSettingsUrl({
+        baseUrl: "https://example.github.io/nlp2026/",
+        aUrl: "https://zoom.us/wc/join/111?pwd=aaa",
+        bUrl: "",
+        help: false,
+      }),
+    ).toThrow("--a-url must be a zoom.us or *.zoom.us URL with /j/ path");
   });
 
   it("A/Bが未指定ならエラー", () => {

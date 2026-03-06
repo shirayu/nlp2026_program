@@ -206,6 +206,18 @@ describe("extractZoomImportFragment / decodeZoomPayload", () => {
       .replace(/=/g, "");
     expect(decodeZoomPayload(encoded)).toBeNull();
   });
+
+  it("/j/ で始まらないパスを含むと null を返す", () => {
+    const encoded = btoa(
+      JSON.stringify({
+        venueZoomUrls: { A: "https://zoom.us/wc/join/111?pwd=aaa", B: "https://us02web.zoom.us/j/222?pwd=bbb" },
+      }),
+    )
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=/g, "");
+    expect(decodeZoomPayload(encoded)).toBeNull();
+  });
 });
 
 function makeSessionStorage() {

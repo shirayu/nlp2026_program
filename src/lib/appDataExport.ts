@@ -75,8 +75,9 @@ function isPendingByKey(pendingKey: string): boolean {
 
 function isAllowedZoomImportUrl(value: string): boolean {
   try {
-    const host = new URL(value).hostname.toLowerCase();
-    return host === "zoom.us" || host.endsWith(".zoom.us");
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase();
+    return (host === "zoom.us" || host.endsWith(".zoom.us")) && url.pathname.startsWith("/j/");
   } catch {
     return false;
   }

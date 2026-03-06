@@ -10,8 +10,8 @@ function printHelp() {
 
 Options:
   --base-url  Base URL to attach hash fragment. Example: https://example.github.io/nlp2026/
-  --a-url     Zoom custom URL for venue A (zoom.us or *.zoom.us)
-  --b-url     Zoom custom URL for venue B (zoom.us or *.zoom.us)
+  --a-url     Zoom custom URL for venue A (zoom.us or *.zoom.us, and path starts with /j/)
+  --b-url     Zoom custom URL for venue B (zoom.us or *.zoom.us, and path starts with /j/)
   --help      Show this help
 `);
 }
@@ -66,8 +66,9 @@ function normalizeUrl(value) {
 
 function isAllowedZoomImportUrl(value) {
   try {
-    const host = new URL(value).hostname.toLowerCase();
-    return host === "zoom.us" || host.endsWith(".zoom.us");
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase();
+    return (host === "zoom.us" || host.endsWith(".zoom.us")) && url.pathname.startsWith("/j/");
   } catch {
     return false;
   }
@@ -82,10 +83,10 @@ export function buildImportZoomSettingsUrl(args) {
   const aUrl = normalizeUrl(args.aUrl);
   const bUrl = normalizeUrl(args.bUrl);
   if (aUrl && !isAllowedZoomImportUrl(aUrl)) {
-    throw new Error("--a-url must be a zoom.us or *.zoom.us URL");
+    throw new Error("--a-url must be a zoom.us or *.zoom.us URL with /j/ path");
   }
   if (bUrl && !isAllowedZoomImportUrl(bUrl)) {
-    throw new Error("--b-url must be a zoom.us or *.zoom.us URL");
+    throw new Error("--b-url must be a zoom.us or *.zoom.us URL with /j/ path");
   }
   if (aUrl) venueZoomUrls.A = aUrl;
   if (bUrl) venueZoomUrls.B = bUrl;
