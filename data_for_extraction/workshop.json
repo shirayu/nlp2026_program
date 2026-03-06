@@ -15,48 +15,68 @@
       },
       {
         "id": "WS1-2",
-        "title": "WS1 タスク紹介 + 審査員挨拶",
+        "title": "WS1 自由型タスク",
         "start_time": "9:45",
-        "end_time": "10:15"
+        "end_time": "13:45",
+        "presentations": [
+          {
+            "id": "WS1-2-1",
+            "title": "タスク紹介 + 審査員挨拶"
+          },
+          {
+            "id": "WS1-2-2",
+            "title": "ショートプレゼン"
+          },
+          {
+            "id": "WS1-2-3",
+            "title": "自由型タスクポスター発表"
+          },
+          {
+            "id": "WS1-2-4",
+            "title": "休憩 & 審査時間"
+          },
+          {
+            "id": "WS1-2-5",
+            "title": "表彰"
+          },
+          {
+            "id": "WS1-2-6",
+            "title": "審査員総評",
+            "authors": [
+              { "name": "三田 雅人", "affiliation": "株式会社リクルート" },
+              { "name": "森下 睦", "affiliation": "フューチャー株式会社" },
+              { "name": "山田 育矢", "affiliation": "株式会社Studio Ousia" },
+              { "name": "宮尾 祐介", "affiliation": "東京大学" }
+            ]
+          }
+        ]
       },
       {
         "id": "WS1-3",
-        "title": "WS1 ショートプレゼン",
-        "start_time": "10:15",
-        "end_time": "11:00"
+        "title": "WS1 数学タスク",
+        "start_time": "13:45",
+        "end_time": "16:20",
+        "presentations": [
+          {
+            "id": "WS1-3-1",
+            "title": "タスク紹介 + 順位発表"
+          },
+          {
+            "id": "WS1-3-2",
+            "title": "オンライン参加チームのプレゼン+動画上映"
+          },
+          {
+            "id": "WS1-3-3",
+            "title": "休憩"
+          },
+          {
+            "id": "WS1-3-4",
+            "title": "数学タスクポスター発表"
+          }
+        ]
       },
       {
         "id": "WS1-4",
-        "title": "WS1 自由型タスクポスター発表",
-        "start_time": "11:00",
-        "end_time": "12:15"
-      },
-      {
-        "id": "WS1-5",
-        "title": "WS1 表彰",
-        "start_time": "13:15",
-        "end_time": "13:45"
-      },
-      {
-        "id": "WS1-6",
-        "title": "WS1 タスク紹介 + 順位発表",
-        "start_time": "13:45",
-        "end_time": "14:30"
-      },
-      {
-        "id": "WS1-7",
-        "title": "WS1 オンライン参加チームのプレゼン+動画上映",
-        "start_time": "14:30",
-        "end_time": "14:50"
-      },
-      {
-        "id": "WS1-8",
-        "title": "WS1 数学タスクポスター発表",
-        "start_time": "15:05",
-        "end_time": "16:20"
-      },
-      {
-        "id": "WS1-9",
         "title": "WS1 総評",
         "start_time": "16:20",
         "end_time": "16:40"

@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-03-06T16:09:21Z",
+  "generated_at": "2026-03-06T16:12:55Z",
   "last_update": {
     "program_main": {
       "sha256": "c02f7308dda2ea510afda63be85a9e566cac31235d91206c97fc0a2837a5a981",
       "time": "2026-03-04T09:00:00+09:00"
     },
     "workshop": {
-      "sha256": "e5df2943a2bfbd874e21d86ee52e9d3f2109aad3994fb2e858176bced34e2a33",
-      "time": "2026-03-07T01:09:05+09:00"
+      "sha256": "e84ea29d2cdf5bdcb82706edf54ab92034ef9eab1554e950518cab7e088abde1",
+      "time": "2026-03-07T01:12:40+09:00"
     },
     "invitedpapers": {
       "sha256": "1383c3c3c2fd57240adc5d25ae7b760966287c460ef40f20cbd5b68fa2e5b090",
@@ -5696,84 +5696,87 @@
       "name": "Kruengkrai Canasai"
     },
     "p1893": {
-      "name": "石原 慧人"
+      "name": "山田 育矢"
     },
     "p1894": {
-      "name": "宮﨑 太郎"
+      "name": "石原 慧人"
     },
     "p1895": {
-      "name": "久保 隆宏"
+      "name": "宮﨑 太郎"
     },
     "p1896": {
-      "name": "亀田 尭宙"
+      "name": "久保 隆宏"
     },
     "p1897": {
-      "name": "三橋 亮太"
+      "name": "亀田 尭宙"
     },
     "p1898": {
-      "name": "佐藤 奈穂子"
+      "name": "三橋 亮太"
     },
     "p1899": {
-      "name": "上之薗 有夏"
+      "name": "佐藤 奈穂子"
     },
     "p1900": {
-      "name": "吉田 奈央"
+      "name": "上之薗 有夏"
     },
     "p1901": {
-      "name": "山崎 由佳"
+      "name": "吉田 奈央"
     },
     "p1902": {
-      "name": "白石 暖哉"
+      "name": "山崎 由佳"
     },
     "p1903": {
-      "name": "入部 百合絵"
+      "name": "白石 暖哉"
     },
     "p1904": {
-      "name": "Graham Neubig"
+      "name": "入部 百合絵"
     },
     "p1905": {
-      "name": "Jun Suzuki"
+      "name": "Graham Neubig"
     },
     "p1906": {
-      "name": "Keisuke Sakaguchi"
+      "name": "Jun Suzuki"
     },
     "p1907": {
-      "name": "Sho Takase"
+      "name": "Keisuke Sakaguchi"
     },
     "p1908": {
-      "name": "Takashi Wada"
+      "name": "Sho Takase"
     },
     "p1909": {
-      "name": "Yui Oka"
+      "name": "Takashi Wada"
     },
     "p1910": {
-      "name": "Kazuma Kobayashi"
+      "name": "Yui Oka"
     },
     "p1911": {
-      "name": "Kazuki Hayashi"
+      "name": "Kazuma Kobayashi"
     },
     "p1912": {
-      "name": "鷲田 祐一"
+      "name": "Kazuki Hayashi"
     },
     "p1913": {
-      "name": "朱晨成"
+      "name": "鷲田 祐一"
     },
     "p1914": {
-      "name": "高橋拓誠"
+      "name": "朱晨成"
     },
     "p1915": {
-      "name": "谷口友紀"
+      "name": "高橋拓誠"
     },
     "p1916": {
-      "name": "大熊智子"
+      "name": "谷口友紀"
     },
     "p1917": {
-      "name": "中川 大輔"
+      "name": "大熊智子"
     },
     "p1918": {
-      "name": "及川 圭太"
+      "name": "中川 大輔"
     },
     "p1919": {
+      "name": "及川 圭太"
+    },
+    "p1920": {
       "name": "箕田 拓水"
     }
   },
@@ -7078,48 +7081,57 @@
       "name": "慶應大/東北大"
     },
     "a0434": {
-      "name": "アマゾンウェブサービスジャパン"
+      "name": "株式会社リクルート"
     },
     "a0435": {
-      "name": "人間文化研究機構"
+      "name": "フューチャー株式会社"
     },
     "a0436": {
-      "name": "東京科学大"
+      "name": "株式会社Studio Ousia"
     },
     "a0437": {
-      "name": "東京科学大・産総研"
-    },
-    "a0438": {
-      "name": "東京科学大・産総研・NII LLMC"
-    },
-    "a0439": {
-      "name": "電気通信大"
-    },
-    "a0440": {
-      "name": "NII LLMC"
-    },
-    "a0441": {
-      "name": "京都大学"
-    },
-    "a0442": {
-      "name": "愛知県立大"
-    },
-    "a0443": {
-      "name": "ZOZO Research"
-    },
-    "a0444": {
-      "name": "NTT/Tohoku University"
-    },
-    "a0445": {
-      "name": "NCC/NII LLMC"
-    },
-    "a0446": {
       "name": "東京大学"
     },
+    "a0438": {
+      "name": "アマゾンウェブサービスジャパン"
+    },
+    "a0439": {
+      "name": "人間文化研究機構"
+    },
+    "a0440": {
+      "name": "東京科学大"
+    },
+    "a0441": {
+      "name": "東京科学大・産総研"
+    },
+    "a0442": {
+      "name": "東京科学大・産総研・NII LLMC"
+    },
+    "a0443": {
+      "name": "電気通信大"
+    },
+    "a0444": {
+      "name": "NII LLMC"
+    },
+    "a0445": {
+      "name": "京都大学"
+    },
+    "a0446": {
+      "name": "愛知県立大"
+    },
     "a0447": {
-      "name": "ストックマーク、電通大"
+      "name": "ZOZO Research"
     },
     "a0448": {
+      "name": "NTT/Tohoku University"
+    },
+    "a0449": {
+      "name": "NCC/NII LLMC"
+    },
+    "a0450": {
+      "name": "ストックマーク、電通大"
+    },
+    "a0451": {
       "name": "日本ガイシ"
     }
   },
@@ -8585,76 +8597,26 @@
       "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
     },
     "WS1-2": {
-      "title": "WS1 タスク紹介 + 審査員挨拶",
+      "title": "WS1 自由型タスク",
       "date": "2026-03-13",
       "start_time": "9:45",
-      "end_time": "10:15",
-      "room_ids": ["r0010"],
-      "chair": "",
-      "presentation_ids": [],
-      "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
-    },
-    "WS1-3": {
-      "title": "WS1 ショートプレゼン",
-      "date": "2026-03-13",
-      "start_time": "10:15",
-      "end_time": "11:00",
-      "room_ids": ["r0010"],
-      "chair": "",
-      "presentation_ids": [],
-      "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
-    },
-    "WS1-4": {
-      "title": "WS1 自由型タスクポスター発表",
-      "date": "2026-03-13",
-      "start_time": "11:00",
-      "end_time": "12:15",
-      "room_ids": ["r0010"],
-      "chair": "",
-      "presentation_ids": [],
-      "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
-    },
-    "WS1-5": {
-      "title": "WS1 表彰",
-      "date": "2026-03-13",
-      "start_time": "13:15",
       "end_time": "13:45",
       "room_ids": ["r0010"],
       "chair": "",
-      "presentation_ids": [],
+      "presentation_ids": ["WS1-2-1", "WS1-2-2", "WS1-2-3", "WS1-2-4", "WS1-2-5", "WS1-2-6"],
       "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
     },
-    "WS1-6": {
-      "title": "WS1 タスク紹介 + 順位発表",
+    "WS1-3": {
+      "title": "WS1 数学タスク",
       "date": "2026-03-13",
       "start_time": "13:45",
-      "end_time": "14:30",
-      "room_ids": ["r0010"],
-      "chair": "",
-      "presentation_ids": [],
-      "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
-    },
-    "WS1-7": {
-      "title": "WS1 オンライン参加チームのプレゼン+動画上映",
-      "date": "2026-03-13",
-      "start_time": "14:30",
-      "end_time": "14:50",
-      "room_ids": ["r0010"],
-      "chair": "",
-      "presentation_ids": [],
-      "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
-    },
-    "WS1-8": {
-      "title": "WS1 数学タスクポスター発表",
-      "date": "2026-03-13",
-      "start_time": "15:05",
       "end_time": "16:20",
       "room_ids": ["r0010"],
       "chair": "",
-      "presentation_ids": [],
+      "presentation_ids": ["WS1-3-1", "WS1-3-2", "WS1-3-3", "WS1-3-4"],
       "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
     },
-    "WS1-9": {
+    "WS1-4": {
       "title": "WS1 総評",
       "date": "2026-03-13",
       "start_time": "16:20",
@@ -28562,15 +28524,122 @@
       ],
       "pdf_url": "https://www.anlp.jp/proceedings/annual_meeting/2026/pdf_dir/Q9-23.pdf"
     },
-    "WS2-1-1": {
-      "title": "独自日本語Webコーパス構築のための巡回クロール基盤構築",
-      "session_id": "WS2-1",
-      "presenter_id": "p1893",
+    "WS1-2-1": {
+      "title": "タスク紹介 + 審査員挨拶",
+      "session_id": "WS1-2",
+      "presenter_id": null,
+      "is_english": false,
+      "is_online": false,
+      "authors": [],
+      "pdf_url": null
+    },
+    "WS1-2-2": {
+      "title": "ショートプレゼン",
+      "session_id": "WS1-2",
+      "presenter_id": null,
+      "is_english": false,
+      "is_online": false,
+      "authors": [],
+      "pdf_url": null
+    },
+    "WS1-2-3": {
+      "title": "自由型タスクポスター発表",
+      "session_id": "WS1-2",
+      "presenter_id": null,
+      "is_english": false,
+      "is_online": false,
+      "authors": [],
+      "pdf_url": null
+    },
+    "WS1-2-4": {
+      "title": "休憩 & 審査時間",
+      "session_id": "WS1-2",
+      "presenter_id": null,
+      "is_english": false,
+      "is_online": false,
+      "authors": [],
+      "pdf_url": null
+    },
+    "WS1-2-5": {
+      "title": "表彰",
+      "session_id": "WS1-2",
+      "presenter_id": null,
+      "is_english": false,
+      "is_online": false,
+      "authors": [],
+      "pdf_url": null
+    },
+    "WS1-2-6": {
+      "title": "審査員総評",
+      "session_id": "WS1-2",
+      "presenter_id": "p1244",
       "is_english": false,
       "is_online": false,
       "authors": [
         {
+          "person_id": "p1244",
+          "affiliation_id": "a0434"
+        },
+        {
+          "person_id": "p1314",
+          "affiliation_id": "a0435"
+        },
+        {
           "person_id": "p1893",
+          "affiliation_id": "a0436"
+        },
+        {
+          "person_id": "p1257",
+          "affiliation_id": "a0437"
+        }
+      ],
+      "pdf_url": null
+    },
+    "WS1-3-1": {
+      "title": "タスク紹介 + 順位発表",
+      "session_id": "WS1-3",
+      "presenter_id": null,
+      "is_english": false,
+      "is_online": false,
+      "authors": [],
+      "pdf_url": null
+    },
+    "WS1-3-2": {
+      "title": "オンライン参加チームのプレゼン+動画上映",
+      "session_id": "WS1-3",
+      "presenter_id": null,
+      "is_english": false,
+      "is_online": false,
+      "authors": [],
+      "pdf_url": null
+    },
+    "WS1-3-3": {
+      "title": "休憩",
+      "session_id": "WS1-3",
+      "presenter_id": null,
+      "is_english": false,
+      "is_online": false,
+      "authors": [],
+      "pdf_url": null
+    },
+    "WS1-3-4": {
+      "title": "数学タスクポスター発表",
+      "session_id": "WS1-3",
+      "presenter_id": null,
+      "is_english": false,
+      "is_online": false,
+      "authors": [],
+      "pdf_url": null
+    },
+    "WS2-1-1": {
+      "title": "独自日本語Webコーパス構築のための巡回クロール基盤構築",
+      "session_id": "WS2-1",
+      "presenter_id": "p1894",
+      "is_english": false,
+      "is_online": false,
+      "authors": [
+        {
+          "person_id": "p1894",
           "affiliation_id": "a0001"
         }
       ],
@@ -28608,7 +28677,7 @@
           "affiliation_id": "a0136"
         },
         {
-          "person_id": "p1894",
+          "person_id": "p1895",
           "affiliation_id": "a0136"
         },
         {
@@ -28621,13 +28690,13 @@
     "WS2-1-3": {
       "title": "BizDocVQA：根拠領域のアノテーションによる説明可能なビジネス帳票理解の実現と評価",
       "session_id": "WS2-1",
-      "presenter_id": "p1895",
+      "presenter_id": "p1896",
       "is_english": false,
       "is_online": false,
       "authors": [
         {
-          "person_id": "p1895",
-          "affiliation_id": "a0434"
+          "person_id": "p1896",
+          "affiliation_id": "a0438"
         }
       ],
       "pdf_url": null
@@ -28635,13 +28704,13 @@
     "WS2-1-4": {
       "title": "論文に基づく歴史学知識資源の公開に向けたデータセット記述の精緻化",
       "session_id": "WS2-1",
-      "presenter_id": "p1896",
+      "presenter_id": "p1897",
       "is_english": false,
       "is_online": false,
       "authors": [
         {
-          "person_id": "p1896",
-          "affiliation_id": "a0435"
+          "person_id": "p1897",
+          "affiliation_id": "a0439"
         }
       ],
       "pdf_url": null
@@ -28664,12 +28733,12 @@
     "WS2-2-1": {
       "title": "軽量な日本語報酬モデル ca-reward-3b-ja の構築と公開",
       "session_id": "WS2-2",
-      "presenter_id": "p1897",
+      "presenter_id": "p1898",
       "is_english": false,
       "is_online": false,
       "authors": [
         {
-          "person_id": "p1897",
+          "person_id": "p1898",
           "affiliation_id": "a0062"
         }
       ],
@@ -28684,19 +28753,19 @@
       "authors": [
         {
           "person_id": "p0244",
-          "affiliation_id": "a0436"
+          "affiliation_id": "a0440"
         },
         {
           "person_id": "p0352",
-          "affiliation_id": "a0436"
+          "affiliation_id": "a0440"
         },
         {
           "person_id": "p1234",
-          "affiliation_id": "a0437"
+          "affiliation_id": "a0441"
         },
         {
           "person_id": "p0276",
-          "affiliation_id": "a0438"
+          "affiliation_id": "a0442"
         }
       ],
       "pdf_url": null
@@ -28704,12 +28773,12 @@
     "WS2-2-3": {
       "title": "金融業に特化した生成AIモデルのインストラクションデータ開発プロセス",
       "session_id": "WS2-2",
-      "presenter_id": "p1898",
+      "presenter_id": "p1899",
       "is_english": false,
       "is_online": false,
       "authors": [
         {
-          "person_id": "p1898",
+          "person_id": "p1899",
           "affiliation_id": "a0138"
         }
       ],
@@ -28753,11 +28822,11 @@
           "affiliation_id": "a0001"
         },
         {
-          "person_id": "p1899",
+          "person_id": "p1900",
           "affiliation_id": "a0001"
         },
         {
-          "person_id": "p1900",
+          "person_id": "p1901",
           "affiliation_id": "a0001"
         }
       ],
@@ -28772,11 +28841,11 @@
       "authors": [
         {
           "person_id": "p1264",
-          "affiliation_id": "a0439"
+          "affiliation_id": "a0443"
         },
         {
           "person_id": "p0959",
-          "affiliation_id": "a0440"
+          "affiliation_id": "a0444"
         },
         {
           "person_id": "p0748",
@@ -28801,12 +28870,12 @@
           "affiliation_id": "a0023"
         },
         {
-          "person_id": "p1901",
-          "affiliation_id": "a0441"
+          "person_id": "p1902",
+          "affiliation_id": "a0445"
         },
         {
-          "person_id": "p1902",
-          "affiliation_id": "a0441"
+          "person_id": "p1903",
+          "affiliation_id": "a0445"
         },
         {
           "person_id": "p1444",
@@ -28828,11 +28897,11 @@
       "authors": [
         {
           "person_id": "p0894",
-          "affiliation_id": "a0442"
+          "affiliation_id": "a0446"
         },
         {
-          "person_id": "p1903",
-          "affiliation_id": "a0442"
+          "person_id": "p1904",
+          "affiliation_id": "a0446"
         },
         {
           "person_id": "p0442",
@@ -28844,12 +28913,12 @@
     "WS3-1-1": {
       "title": "Thoughts on International Conferences: An Interview with Graham Neubig",
       "session_id": "WS3-1",
-      "presenter_id": "p1904",
+      "presenter_id": "p1905",
       "is_english": false,
       "is_online": false,
       "authors": [
         {
-          "person_id": "p1904",
+          "person_id": "p1905",
           "affiliation_id": null
         }
       ],
@@ -28872,12 +28941,12 @@
     "WS3-1-3": {
       "title": "ACL Rolling Review Editor-in-Chief として得た経験の共有",
       "session_id": "WS3-1",
-      "presenter_id": "p1905",
+      "presenter_id": "p1906",
       "is_english": false,
       "is_online": false,
       "authors": [
         {
-          "person_id": "p1905",
+          "person_id": "p1906",
           "affiliation_id": null
         }
       ],
@@ -28923,7 +28992,7 @@
           "affiliation_id": null
         },
         {
-          "person_id": "p1905",
+          "person_id": "p1906",
           "affiliation_id": null
         },
         {
@@ -28931,11 +29000,11 @@
           "affiliation_id": null
         },
         {
-          "person_id": "p1906",
+          "person_id": "p1907",
           "affiliation_id": null
         },
         {
-          "person_id": "p1907",
+          "person_id": "p1908",
           "affiliation_id": null
         }
       ],
@@ -28944,32 +29013,18 @@
     "WS3-3-1": {
       "title": "Experience Talk",
       "session_id": "WS3-3",
-      "presenter_id": "p1908",
-      "is_english": false,
-      "is_online": false,
-      "authors": [
-        {
-          "person_id": "p1908",
-          "affiliation_id": "a0443"
-        }
-      ],
-      "pdf_url": null
-    },
-    "WS3-3-2": {
-      "title": "Experience Talk",
-      "session_id": "WS3-3",
       "presenter_id": "p1909",
       "is_english": false,
       "is_online": false,
       "authors": [
         {
           "person_id": "p1909",
-          "affiliation_id": "a0444"
+          "affiliation_id": "a0447"
         }
       ],
       "pdf_url": null
     },
-    "WS3-3-3": {
+    "WS3-3-2": {
       "title": "Experience Talk",
       "session_id": "WS3-3",
       "presenter_id": "p1910",
@@ -28978,12 +29033,12 @@
       "authors": [
         {
           "person_id": "p1910",
-          "affiliation_id": "a0445"
+          "affiliation_id": "a0448"
         }
       ],
       "pdf_url": null
     },
-    "WS3-3-4": {
+    "WS3-3-3": {
       "title": "Experience Talk",
       "session_id": "WS3-3",
       "presenter_id": "p1911",
@@ -28992,6 +29047,20 @@
       "authors": [
         {
           "person_id": "p1911",
+          "affiliation_id": "a0449"
+        }
+      ],
+      "pdf_url": null
+    },
+    "WS3-3-4": {
+      "title": "Experience Talk",
+      "session_id": "WS3-3",
+      "presenter_id": "p1912",
+      "is_english": false,
+      "is_online": false,
+      "authors": [
+        {
+          "person_id": "p1912",
           "affiliation_id": "a0023"
         }
       ],
@@ -29027,12 +29096,12 @@
     "WS4-2-1": {
       "title": "招待講演: 鷲田祐一 先生",
       "session_id": "WS4-2",
-      "presenter_id": "p1912",
+      "presenter_id": "p1913",
       "is_english": false,
       "is_online": false,
       "authors": [
         {
-          "person_id": "p1912",
+          "person_id": "p1913",
           "affiliation_id": null
         }
       ],
@@ -29041,14 +29110,10 @@
     "WS4-3-1": {
       "title": "ビジネスアイデアの新規性自動評価に向けた事例分析",
       "session_id": "WS4-3",
-      "presenter_id": "p1913",
+      "presenter_id": "p1914",
       "is_english": false,
       "is_online": false,
       "authors": [
-        {
-          "person_id": "p1913",
-          "affiliation_id": "a0077"
-        },
         {
           "person_id": "p1914",
           "affiliation_id": "a0077"
@@ -29059,6 +29124,10 @@
         },
         {
           "person_id": "p1916",
+          "affiliation_id": "a0077"
+        },
+        {
+          "person_id": "p1917",
           "affiliation_id": "a0077"
         }
       ],
@@ -29073,15 +29142,15 @@
       "authors": [
         {
           "person_id": "p1668",
-          "affiliation_id": "a0446"
+          "affiliation_id": "a0437"
         },
         {
           "person_id": "p0026",
-          "affiliation_id": "a0446"
+          "affiliation_id": "a0437"
         },
         {
           "person_id": "p1257",
-          "affiliation_id": "a0446"
+          "affiliation_id": "a0437"
         }
       ],
       "pdf_url": "https://drive.google.com/file/d/1dqRj32G-NcU-f-Wb3GS7L6iR_FF-q6Rc/view?usp=sharing"
@@ -29095,14 +29164,14 @@
       "authors": [
         {
           "person_id": "p0695",
-          "affiliation_id": "a0447"
+          "affiliation_id": "a0450"
         },
         {
           "person_id": "p1103",
           "affiliation_id": "a0214"
         },
         {
-          "person_id": "p1917",
+          "person_id": "p1918",
           "affiliation_id": "a0214"
         },
         {
@@ -29110,12 +29179,12 @@
           "affiliation_id": "a0214"
         },
         {
-          "person_id": "p1918",
-          "affiliation_id": "a0448"
+          "person_id": "p1919",
+          "affiliation_id": "a0451"
         },
         {
-          "person_id": "p1919",
-          "affiliation_id": "a0448"
+          "person_id": "p1920",
+          "affiliation_id": "a0451"
         }
       ],
       "pdf_url": "https://drive.google.com/file/d/1FiP1U-qKTMypRQ1eA7-U04s4qK5FlDav/view?usp=sharing"
