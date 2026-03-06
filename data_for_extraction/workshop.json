@@ -428,6 +428,8 @@
           {
             "id": "WS4-2-1",
             "title": "招待講演: 鷲田祐一 先生",
+            "start_time": "9:10",
+            "end_time": "10:00",
             "authors": [{ "name": "鷲田 祐一" }]
           }
         ]
@@ -441,6 +443,8 @@
           {
             "id": "WS4-3-1",
             "title": "ビジネスアイデアの新規性自動評価に向けた事例分析",
+            "start_time": "10:00",
+            "end_time": "10:20",
             "pdf_url": "https://drive.google.com/file/d/1_mt23FaOxkr43byflvauoz_r8_tOfflZ/view?usp=sharing",
             "authors": [
               { "name": "朱晨成", "affiliation": "旭化成" },
@@ -452,6 +456,8 @@
           {
             "id": "WS4-3-2",
             "title": "リスクイベントの影響説明に向けた評価データセットの提案",
+            "start_time": "10:20",
+            "end_time": "10:40",
             "pdf_url": "https://drive.google.com/file/d/1dqRj32G-NcU-f-Wb3GS7L6iR_FF-q6Rc/view?usp=sharing",
             "authors": [
               { "name": "Namgi Han", "affiliation": "東京大学" },
@@ -462,6 +468,8 @@
           {
             "id": "WS4-3-3",
             "title": "化学技術の応用領域拡張を目的とした用途探索フレームワーク",
+            "start_time": "10:40",
+            "end_time": "11:00",
             "pdf_url": "https://drive.google.com/file/d/1FiP1U-qKTMypRQ1eA7-U04s4qK5FlDav/view?usp=sharing",
             "authors": [
               { "name": "進藤 尚希", "affiliation": "ストックマーク、電通大" },
@@ -483,6 +491,8 @@
           {
             "id": "WS4-4-1",
             "title": "招待講演: 欅 惇志 先生",
+            "start_time": "11:10",
+            "end_time": "12:00",
             "authors": [{ "name": "欅 惇志" }]
           }
         ]
@@ -495,15 +505,21 @@
         "presentations": [
           {
             "id": "WS4-5-1",
-            "title": "shared task PBIG: オープニング"
+            "title": "shared task PBIG: オープニング",
+            "start_time": "12:00",
+            "end_time": "12:10"
           },
           {
             "id": "WS4-5-2",
-            "title": "システム紹介 ① e-gen"
+            "title": "システム紹介 ① e-gen",
+            "start_time": "12:10",
+            "end_time": "12:25"
           },
           {
             "id": "WS4-5-3",
-            "title": "システム紹介② ソルティライチ"
+            "title": "システム紹介② ソルティライチ",
+            "start_time": "12:25",
+            "end_time": "12:40"
           }
         ]
       },

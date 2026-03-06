@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-03-06T16:32:50Z",
+  "generated_at": "2026-03-06T16:34:04Z",
   "last_update": {
     "program_main": {
       "sha256": "c02f7308dda2ea510afda63be85a9e566cac31235d91206c97fc0a2837a5a981",
       "time": "2026-03-04T09:00:00+09:00"
     },
     "workshop": {
-      "sha256": "dc6272c4f4066a5205ab5486ceda6eee710e614471514df178c3e359d3dc2e75",
-      "time": "2026-03-07T01:32:45+09:00"
+      "sha256": "748b4df6888926cf71d2a7da656cc8fb4fae725d2dae621c252da46ff3550ffb",
+      "time": "2026-03-07T01:33:56+09:00"
     },
     "invitedpapers": {
       "sha256": "1383c3c3c2fd57240adc5d25ae7b760966287c460ef40f20cbd5b68fa2e5b090",
@@ -30743,8 +30743,8 @@
           "affiliation_id": null
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "9:10",
+      "end_time": "10:00",
       "pdf_url": null
     },
     "WS4-3-1": {
@@ -30771,8 +30771,8 @@
           "affiliation_id": "a0077"
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "10:00",
+      "end_time": "10:20",
       "pdf_url": "https://drive.google.com/file/d/1_mt23FaOxkr43byflvauoz_r8_tOfflZ/view?usp=sharing"
     },
     "WS4-3-2": {
@@ -30795,8 +30795,8 @@
           "affiliation_id": "a0437"
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "10:20",
+      "end_time": "10:40",
       "pdf_url": "https://drive.google.com/file/d/1dqRj32G-NcU-f-Wb3GS7L6iR_FF-q6Rc/view?usp=sharing"
     },
     "WS4-3-3": {
@@ -30831,8 +30831,8 @@
           "affiliation_id": "a0451"
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "10:40",
+      "end_time": "11:00",
       "pdf_url": "https://drive.google.com/file/d/1FiP1U-qKTMypRQ1eA7-U04s4qK5FlDav/view?usp=sharing"
     },
     "WS4-4-1": {
@@ -30847,8 +30847,8 @@
           "affiliation_id": null
         }
       ],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "11:10",
+      "end_time": "12:00",
       "pdf_url": null
     },
     "WS4-5-1": {
@@ -30858,8 +30858,8 @@
       "is_english": false,
       "is_online": false,
       "authors": [],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "12:00",
+      "end_time": "12:10",
       "pdf_url": null
     },
     "WS4-5-2": {
@@ -30869,8 +30869,8 @@
       "is_english": false,
       "is_online": false,
       "authors": [],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "12:10",
+      "end_time": "12:25",
       "pdf_url": null
     },
     "WS4-5-3": {
@@ -30880,8 +30880,8 @@
       "is_english": false,
       "is_online": false,
       "authors": [],
-      "start_time": null,
-      "end_time": null,
+      "start_time": "12:25",
+      "end_time": "12:40",
       "pdf_url": null
     },
     "invitedpapers-1": {
