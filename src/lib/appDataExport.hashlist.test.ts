@@ -18,6 +18,7 @@ describe("decodeZoomPayload with ZOOM_IMPORT_HASHES", () => {
   it("許可リスト内のハッシュならデコードできる", async () => {
     vi.resetModules();
     vi.doMock("../constants", () => ({
+      APP_LOCALSTORAGE_PREFIX: "nlp2026-",
       ZOOM_IMPORT_HASHES: ["deadbeef", "cafebabe"],
     }));
     const mod = await import("./appDataExport");
@@ -26,6 +27,7 @@ describe("decodeZoomPayload with ZOOM_IMPORT_HASHES", () => {
 
     vi.resetModules();
     vi.doMock("../constants", () => ({
+      APP_LOCALSTORAGE_PREFIX: "nlp2026-",
       ZOOM_IMPORT_HASHES: ["deadbeef", actualHash],
     }));
     const modWithMatchedHash = await import("./appDataExport");
@@ -37,6 +39,7 @@ describe("decodeZoomPayload with ZOOM_IMPORT_HASHES", () => {
   it("許可リスト外のハッシュなら null を返す", async () => {
     vi.resetModules();
     vi.doMock("../constants", () => ({
+      APP_LOCALSTORAGE_PREFIX: "nlp2026-",
       ZOOM_IMPORT_HASHES: ["aaaaaaaa", "bbbbbbbb"],
     }));
     const mod = await import("./appDataExport");

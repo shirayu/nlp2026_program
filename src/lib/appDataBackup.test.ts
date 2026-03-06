@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { APP_LOCALSTORAGE_PREFIX } from "../constants";
 import { appSettingsStorageKey } from "../hooks/useAppSettings";
 import { bookmarksStorageKey } from "../hooks/useBookmarks";
 import type { ExportPayload } from "../types";
@@ -29,6 +30,10 @@ const settingsB = {
 };
 const bookmarksB = { presentationIds: ["b1"], sessionIds: [] };
 const payloadB: ExportPayload = { settings: settingsB, bookmarks: bookmarksB };
+
+it("バックアップ保存キーは APP_LOCALSTORAGE_PREFIX を先頭に付与する", () => {
+  expect(backupStorageKey).toBe(`${APP_LOCALSTORAGE_PREFIX}backup`);
+});
 
 function makeLocalStorage() {
   const store: Record<string, string> = {};

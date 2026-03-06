@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ExportPayload } from "../types";
 
 vi.mock("../constants", () => ({
+  APP_LOCALSTORAGE_PREFIX: "nlp2026-",
   ZOOM_IMPORT_HASHES: [],
 }));
 

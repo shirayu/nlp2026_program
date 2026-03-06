@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
+import { APP_LOCALSTORAGE_PREFIX } from "../constants";
 import { appSettingsStorage, appSettingsStorageKey } from "./useAppSettings";
 
 describe("appSettingsStorage", () => {
@@ -63,5 +64,9 @@ describe("appSettingsStorage", () => {
       includeSessionTitleForPresentationSessions: false,
       venueZoomUrls: { B: "https://example.com/b" },
     });
+  });
+
+  it("保存キーは APP_LOCALSTORAGE_PREFIX を先頭に付与する", () => {
+    expect(appSettingsStorageKey).toBe(`${APP_LOCALSTORAGE_PREFIX}settings`);
   });
 });

@@ -1,8 +1,9 @@
+import { APP_LOCALSTORAGE_PREFIX } from "../constants";
 import { appSettingsStorage, appSettingsStorageKey } from "../hooks/useAppSettings";
 import { bookmarksStorage, bookmarksStorageKey } from "../hooks/useBookmarks";
 import type { ExportPayload } from "../types";
 
-const BACKUP_STORAGE_KEY = "nlp2026-backup";
+const BACKUP_STORAGE_KEY = `${APP_LOCALSTORAGE_PREFIX}backup`;
 
 export type BackupKind = "before_import" | "before_restore";
 

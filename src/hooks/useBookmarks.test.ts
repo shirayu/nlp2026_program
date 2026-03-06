@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
+import { APP_LOCALSTORAGE_PREFIX } from "../constants";
 import { bookmarksStorage, bookmarksStorageKey } from "./useBookmarks";
 
 describe("bookmarksStorage", () => {
@@ -51,5 +52,9 @@ describe("bookmarksStorage", () => {
       presentationIds: ["P10"],
       sessionIds: ["S10", "S11"],
     });
+  });
+
+  it("保存キーは APP_LOCALSTORAGE_PREFIX を先頭に付与する", () => {
+    expect(bookmarksStorageKey).toBe(`${APP_LOCALSTORAGE_PREFIX}bookmarks`);
   });
 });

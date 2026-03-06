@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
+import { APP_LOCALSTORAGE_PREFIX } from "../constants";
 import type { PresentationId, SessionId } from "../types";
 
-const BOOKMARK_STORAGE_KEY = "nlp2026-bookmarks";
+const BOOKMARK_STORAGE_KEY = `${APP_LOCALSTORAGE_PREFIX}bookmarks`;
 
 type StoredBookmarks = {
   presentationIds: PresentationId[];

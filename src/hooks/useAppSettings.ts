@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import { APP_LOCALSTORAGE_PREFIX } from "../constants";
 import type { AppSettings, VenueZoomUrls } from "../types";
 
-const APP_SETTINGS_STORAGE_KEY = "nlp2026-settings";
+const APP_SETTINGS_STORAGE_KEY = `${APP_LOCALSTORAGE_PREFIX}settings`;
 
 const DEFAULT_APP_SETTINGS: AppSettings = {
   showAuthors: true,
