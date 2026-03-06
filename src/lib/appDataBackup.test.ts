@@ -211,14 +211,16 @@ describe("saveBeforeRestore", () => {
     expect(entry?.bookmarks).toEqual(bookmarksB);
   });
 
-  it("before_restore がすでにある場合は上書きしない", () => {
+  it("before_restore がすでにある場合は現在の状態で上書きする", () => {
     fakeStorage.setItem(backupStorageKey, JSON.stringify([{ kind: "before_restore", payload: payloadB }]));
     fakeStorage.setItem(appSettingsStorageKey, JSON.stringify(settingsA));
+    fakeStorage.setItem(bookmarksStorageKey, JSON.stringify(bookmarksA));
 
     saveBeforeRestore();
 
     const entry = loadBackup("before_restore");
-    expect(entry?.settings).toEqual(settingsB); // 元のまま
+    expect(entry?.settings).toEqual(settingsA);
+    expect(entry?.bookmarks).toEqual(bookmarksA);
   });
 
   it("before_import はそのまま保持される", () => {
@@ -229,6 +231,20 @@ describe("saveBeforeRestore", () => {
 
     expect(loadBackup("before_import")?.settings).toEqual(settingsA); // 残っている
     expect(loadBackup("before_restore")?.settings).toEqual(settingsB);
+  });
+
+  it("saveBeforeRestore を連続実行すると before_restore は最新状態に更新される", () => {
+    fakeStorage.setItem(appSettingsStorageKey, JSON.stringify(settingsA));
+    fakeStorage.setItem(bookmarksStorageKey, JSON.stringify(bookmarksA));
+    saveBeforeRestore();
+    expect(loadBackup("before_restore")?.settings).toEqual(settingsA);
+
+    fakeStorage.setItem(appSettingsStorageKey, JSON.stringify(settingsB));
+    fakeStorage.setItem(bookmarksStorageKey, JSON.stringify(bookmarksB));
+    saveBeforeRestore();
+
+    expect(loadBackup("before_restore")?.settings).toEqual(settingsB);
+    expect(loadBackup("before_restore")?.bookmarks).toEqual(bookmarksB);
   });
 });
 

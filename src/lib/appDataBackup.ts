@@ -53,6 +53,20 @@ function saveIfAbsent(kind: BackupKind): void {
   saveEntries([...entries, { kind, payload: readCurrentPayload() }]);
 }
 
+/** 現在の状態を指定の種別でバックアップに保存する。同じ kind があれば上書きする。 */
+function upsert(kind: BackupKind): void {
+  const payload = readCurrentPayload();
+  const entries = loadEntries();
+  const index = entries.findIndex((e) => e.kind === kind);
+  if (index === -1) {
+    saveEntries([...entries, { kind, payload }]);
+    return;
+  }
+  const nextEntries = [...entries];
+  nextEntries[index] = { kind, payload };
+  saveEntries(nextEntries);
+}
+
 /**
  * インポート前のバックアップを保存する。
  * すでに before_import が存在する場合は上書きしない（最初のインポート前を永続保持）。
@@ -63,10 +77,10 @@ export function saveBeforeImport(): void {
 
 /**
  * 復元前のバックアップを保存する。
- * すでに before_restore が存在する場合は上書きしない。
+ * before_restore は毎回復元直前の状態で上書きする。
  */
 export function saveBeforeRestore(): void {
-  saveIfAbsent("before_restore");
+  upsert("before_restore");
 }
 
 /** 保存されているバックアップ一覧を返す（最大2件）。 */
