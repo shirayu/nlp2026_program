@@ -35,7 +35,7 @@ export const ja = {
   sessionTitleSearchSettings: "セッションタイトルを検索対象にする",
   includeSessionTitleForNoPresentationSessions: "発表情報が無いセッション",
   includeSessionTitleForPresentationSessions: "発表情報が有るセッション",
-  showTimeAtPresentationLevel: "時間情報があれば発表単位で表示",
+  showTimeAtPresentationLevel: "発表単位で表示（時間情報がある場合）",
   searchPlaceholder: "ID・タイトル・著者名・所属で検索",
   clearSearch: "検索語をクリア",
   searchAll: "全日程検索",
