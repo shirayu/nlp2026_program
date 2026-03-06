@@ -1,0 +1,107 @@
+#!/usr/bin/env node
+
+import { pathToFileURL } from "node:url";
+
+const IMPORT_ZOOM_FRAGMENT_PREFIX = "import_zoom_settings=";
+
+function printHelp() {
+  console.log(`Usage:
+  node scripts/create-import-zoom-settings-url.mjs --base-url <url> [--a-url <url>] [--b-url <url>]
+
+Options:
+  --base-url  Base URL to attach hash fragment. Example: https://example.github.io/nlp2026/
+  --a-url     Zoom custom URL for venue A
+  --b-url     Zoom custom URL for venue B
+  --help      Show this help
+`);
+}
+
+export function parseArgs(argv) {
+  const args = {
+    baseUrl: "",
+    aUrl: "",
+    bUrl: "",
+    help: false,
+  };
+
+  for (let i = 0; i < argv.length; i += 1) {
+    const token = argv[i];
+    if (token === "--") {
+      continue;
+    }
+    if (token === "--help" || token === "-h") {
+      args.help = true;
+      continue;
+    }
+    if (token === "--base-url") {
+      args.baseUrl = argv[i + 1] ?? "";
+      i += 1;
+      continue;
+    }
+    if (token === "--a-url") {
+      args.aUrl = argv[i + 1] ?? "";
+      i += 1;
+      continue;
+    }
+    if (token === "--b-url") {
+      args.bUrl = argv[i + 1] ?? "";
+      i += 1;
+      continue;
+    }
+
+    throw new Error(`Unknown option: ${token}`);
+  }
+
+  return args;
+}
+
+function toBase64url(text) {
+  return Buffer.from(text, "utf8").toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+}
+
+function normalizeUrl(value) {
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : "";
+}
+
+export function buildImportZoomSettingsUrl(args) {
+  if (!args.baseUrl) {
+    throw new Error("--base-url is required");
+  }
+
+  const venueZoomUrls = {};
+  const aUrl = normalizeUrl(args.aUrl);
+  const bUrl = normalizeUrl(args.bUrl);
+  if (aUrl) venueZoomUrls.A = aUrl;
+  if (bUrl) venueZoomUrls.B = bUrl;
+  if (!("A" in venueZoomUrls) && !("B" in venueZoomUrls)) {
+    throw new Error("At least one of --a-url or --b-url is required");
+  }
+
+  const payload = { venueZoomUrls };
+  const encoded = toBase64url(JSON.stringify(payload));
+  const url = new URL(args.baseUrl);
+  url.hash = `${IMPORT_ZOOM_FRAGMENT_PREFIX}${encoded}`;
+  return url.toString();
+}
+
+export function run(argv = process.argv.slice(2)) {
+  const args = parseArgs(argv);
+
+  if (args.help) {
+    printHelp();
+    return;
+  }
+
+  console.log(buildImportZoomSettingsUrl(args));
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  try {
+    run();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`Error: ${message}`);
+    process.exit(1);
+  }
+}

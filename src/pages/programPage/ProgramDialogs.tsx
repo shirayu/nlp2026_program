@@ -427,14 +427,21 @@ export function SettingsExportDialog({
 export function SettingsImportConfirmDialog({
   open,
   isInvalid,
+  target = "settings",
   onConfirm,
   onCancel,
 }: {
   open: boolean;
   isInvalid: boolean;
+  target?: "settings" | "zoom";
   onConfirm: () => void;
   onCancel: () => void;
 }) {
+  const title = target === "zoom" ? ja.importZoomDataDialogTitle : ja.importAppDataDialogTitle;
+  const warning = target === "zoom" ? ja.importZoomDataWarning : ja.importAppDataWarning;
+  const invalidMessage = target === "zoom" ? ja.importZoomDataInvalid : ja.importAppDataInvalid;
+  const showBackupNote = target === "settings";
+
   return (
     <dialog open={open} onClose={onCancel} onCancel={onCancel} className={fullscreenDialogClassName}>
       <div className="flex min-h-dvh items-center justify-center p-4" style={dialogFramePaddingStyle}>
@@ -448,7 +455,7 @@ export function SettingsImportConfirmDialog({
           <div className="flex items-center justify-between border-b border-red-200 bg-red-50 px-4 py-3">
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-red-600" />
-              <h2 className="text-sm font-bold text-red-800">{ja.importAppDataDialogTitle}</h2>
+              <h2 className="text-sm font-bold text-red-800">{title}</h2>
             </div>
             <button
               type="button"
@@ -461,11 +468,15 @@ export function SettingsImportConfirmDialog({
           </div>
           <div className="space-y-4 px-4 py-4">
             {isInvalid ? (
-              <p className="text-sm text-red-600">{ja.importAppDataInvalid}</p>
+              <p className="text-sm text-red-600">{invalidMessage}</p>
             ) : (
               <div className="space-y-2">
-                <p className="text-sm text-gray-700">{ja.importAppDataWarning}</p>
-                <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">{ja.importAppDataBackupNote}</p>
+                <p className="text-sm text-gray-700">{warning}</p>
+                {showBackupNote && (
+                  <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">
+                    {ja.importAppDataBackupNote}
+                  </p>
+                )}
               </div>
             )}
             <div className="flex justify-end gap-2">

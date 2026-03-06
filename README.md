@@ -56,6 +56,17 @@ public/slack.json
     task preview
     ```
 
+## Zoom インポートURL生成CLI
+
+`#import_zoom_settings=` 付きの URL を生成できます。
+
+```bash
+pnpm run create:import-zoom-settings-url -- \
+  --base-url "https://example.github.io/nlp2026/" \
+  --a-url "https://zoom.us/j/11111111111?pwd=aaaa" \
+  --b-url "https://zoom.us/j/22222222222?pwd=bbbb"
+```
+
 ## GitHub Pages
 
 - GitHub Actions の `CI` workflow で `main` への push 時に `dist/` をデプロイします

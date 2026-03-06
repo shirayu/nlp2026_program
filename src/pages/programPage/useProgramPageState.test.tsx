@@ -41,16 +41,24 @@ vi.mock("../../hooks/useSessionJump", () => ({
 }));
 
 const mockExtractImportFragment = vi.fn(() => null as string | null);
+const mockExtractZoomImportFragment = vi.fn(() => null as string | null);
 const mockStripImportFragment = vi.fn();
+const mockStripZoomImportFragment = vi.fn();
 const mockClearImportPendingFlag = vi.fn();
+const mockClearZoomImportPendingFlag = vi.fn();
 const mockDecodePayload = vi.fn(() => null as import("../../types").ExportPayload | null);
+const mockDecodeZoomPayload = vi.fn(() => null as import("../../types").VenueZoomUrls | undefined | null);
 const mockBuildExportUrl = vi.fn(() => "https://example.com/#import_settings=abc");
 
 vi.mock("../../lib/appDataExport", () => ({
   extractImportFragment: () => mockExtractImportFragment(),
+  extractZoomImportFragment: () => mockExtractZoomImportFragment(),
   stripImportFragment: () => mockStripImportFragment(),
+  stripZoomImportFragment: () => mockStripZoomImportFragment(),
   clearImportPendingFlag: () => mockClearImportPendingFlag(),
+  clearZoomImportPendingFlag: () => mockClearZoomImportPendingFlag(),
   decodePayload: (...args: Parameters<typeof mockDecodePayload>) => mockDecodePayload(...args),
+  decodeZoomPayload: (...args: Parameters<typeof mockDecodeZoomPayload>) => mockDecodeZoomPayload(...args),
   buildExportUrl: (...args: Parameters<typeof mockBuildExportUrl>) => mockBuildExportUrl(...args),
 }));
 
@@ -163,6 +171,10 @@ describe("useProgramPageState", () => {
       setJumpSession: vi.fn(),
       sessionRefs: { current: {} },
     });
+    mockExtractImportFragment.mockReturnValue(null);
+    mockExtractZoomImportFragment.mockReturnValue(null);
+    mockDecodePayload.mockReturnValue(null);
+    mockDecodeZoomPayload.mockReturnValue(null);
 
     Object.defineProperty(navigator, "serviceWorker", {
       configurable: true,
@@ -338,6 +350,23 @@ describe("useProgramPageState", () => {
     hook.unmount();
   });
 
+  it("起動時に import_zoom_settings フラグメントがあれば Zoom インポート確認ダイアログを開く", async () => {
+    mockExtractZoomImportFragment.mockReturnValue("validzoom");
+    mockDecodeZoomPayload.mockReturnValue({
+      A: "https://example.com/a",
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    expect(hook.getLatest().overlayProps.showSettingsImportConfirm).toBe(true);
+    expect(hook.getLatest().overlayProps.importInvalid).toBe(false);
+    expect(hook.getLatest().overlayProps.importTarget).toBe("zoom");
+    expect(mockStripZoomImportFragment).toHaveBeenCalled();
+
+    hook.unmount();
+  });
+
   it("起動時に import_settings フラグメントがデコード失敗なら isInvalid=true でダイアログを開く", async () => {
     mockExtractImportFragment.mockReturnValue("broken");
     mockDecodePayload.mockReturnValue(null);
@@ -395,6 +424,49 @@ describe("useProgramPageState", () => {
 
     expect(setSettings).toHaveBeenCalledWith(decodedSettings);
     expect(setBookmarks).toHaveBeenCalledWith(decodedBookmarks);
+    expect(hook.getLatest().overlayProps.showSettingsImportConfirm).toBe(false);
+
+    hook.unmount();
+  });
+
+  it("Zoom インポート確定で venueZoomUrls のみ更新され、ブックマークは変更しない", async () => {
+    const setSettings = vi.fn();
+    const setBookmarks = vi.fn();
+    mockExtractZoomImportFragment.mockReturnValue("validzoom");
+    mockDecodeZoomPayload.mockReturnValue({ A: "https://example.com/room-a", B: "https://example.com/room-b" });
+    mockUseAppSettings.mockReturnValue({
+      settings: {
+        showAuthors: false,
+        useSlackAppLinks: false,
+        includeSessionTitleForNoPresentationSessions: true,
+        includeSessionTitleForPresentationSessions: false,
+      },
+      setSettings,
+      toggleShowAuthors: vi.fn(),
+      toggleUseSlackAppLinks: vi.fn(),
+      toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
+      toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
+    });
+    mockUseBookmarks.mockReturnValue({
+      bookmarkIds: [],
+      sessionBookmarkIds: [],
+      bookmarkedPresentationIds: new Set<string>(),
+      bookmarkedSessionIds: new Set<string>(),
+      setBookmarks,
+      toggleBookmark: vi.fn(),
+      toggleSessionBookmark: vi.fn(),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().overlayProps.onConfirmImport();
+    });
+
+    expect(setSettings).toHaveBeenCalledTimes(1);
+    expect(typeof setSettings.mock.calls[0]?.[0]).toBe("function");
+    expect(setBookmarks).not.toHaveBeenCalled();
     expect(hook.getLatest().overlayProps.showSettingsImportConfirm).toBe(false);
 
     hook.unmount();

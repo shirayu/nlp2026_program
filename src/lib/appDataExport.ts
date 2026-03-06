@@ -1,8 +1,9 @@
 import { appSettingsStorage } from "../hooks/useAppSettings";
 import { bookmarksStorage } from "../hooks/useBookmarks";
-import type { ExportPayload } from "../types";
+import type { ExportPayload, VenueZoomUrls } from "../types";
 
 const IMPORT_FRAGMENT_PREFIX = "import_settings=";
+const IMPORT_ZOOM_FRAGMENT_PREFIX = "import_zoom_settings=";
 
 function toBase64url(json: string): string {
   return btoa(json).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
@@ -45,24 +46,75 @@ export function buildExportUrl(payload: ExportPayload): string {
 }
 
 export function extractImportFragment(): string | null {
-  const hash = window.location.hash.slice(1); // remove leading '#'
-  if (!hash.startsWith(IMPORT_FRAGMENT_PREFIX)) return null;
-  return hash.slice(IMPORT_FRAGMENT_PREFIX.length);
+  return extractByPrefix(IMPORT_FRAGMENT_PREFIX);
 }
 
 const IMPORT_PENDING_KEY = "import_settings_pending";
+const IMPORT_ZOOM_PENDING_KEY = "import_zoom_settings_pending";
 
-export function stripImportFragment(): void {
-  if (window.location.hash.slice(1).startsWith(IMPORT_FRAGMENT_PREFIX)) {
-    window.sessionStorage.setItem(IMPORT_PENDING_KEY, "1");
+function extractByPrefix(prefix: string): string | null {
+  const hash = window.location.hash.slice(1); // remove leading '#'
+  if (!hash.startsWith(prefix)) return null;
+  return hash.slice(prefix.length);
+}
+
+function stripByPrefix(prefix: string, pendingKey: string): void {
+  if (window.location.hash.slice(1).startsWith(prefix)) {
+    window.sessionStorage.setItem(pendingKey, "1");
     window.history.replaceState(null, "", window.location.pathname + window.location.search);
   }
 }
 
+function clearPendingFlagByKey(pendingKey: string): void {
+  window.sessionStorage.removeItem(pendingKey);
+}
+
+function isPendingByKey(pendingKey: string): boolean {
+  return window.sessionStorage.getItem(pendingKey) === "1";
+}
+
+export function stripImportFragment(): void {
+  stripByPrefix(IMPORT_FRAGMENT_PREFIX, IMPORT_PENDING_KEY);
+}
+
 export function clearImportPendingFlag(): void {
-  window.sessionStorage.removeItem(IMPORT_PENDING_KEY);
+  clearPendingFlagByKey(IMPORT_PENDING_KEY);
 }
 
 export function isImportPending(): boolean {
-  return window.sessionStorage.getItem(IMPORT_PENDING_KEY) === "1";
+  return isPendingByKey(IMPORT_PENDING_KEY);
+}
+
+export function extractZoomImportFragment(): string | null {
+  return extractByPrefix(IMPORT_ZOOM_FRAGMENT_PREFIX);
+}
+
+export function decodeZoomPayload(encoded: string): VenueZoomUrls | undefined | null {
+  try {
+    const json = fromBase64url(encoded);
+    const parsed = JSON.parse(json);
+    if (!parsed || typeof parsed !== "object") return null;
+
+    return appSettingsStorage.parseAppSettings(
+      JSON.stringify({ venueZoomUrls: (parsed as { venueZoomUrls?: unknown }).venueZoomUrls }),
+    ).venueZoomUrls;
+  } catch {
+    return null;
+  }
+}
+
+export function stripZoomImportFragment(): void {
+  stripByPrefix(IMPORT_ZOOM_FRAGMENT_PREFIX, IMPORT_ZOOM_PENDING_KEY);
+}
+
+export function clearZoomImportPendingFlag(): void {
+  clearPendingFlagByKey(IMPORT_ZOOM_PENDING_KEY);
+}
+
+export function isZoomImportPending(): boolean {
+  return isPendingByKey(IMPORT_ZOOM_PENDING_KEY);
+}
+
+export function isAnyImportPending(): boolean {
+  return isImportPending() || isZoomImportPending();
 }

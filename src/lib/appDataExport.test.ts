@@ -3,11 +3,17 @@ import type { ExportPayload } from "../types";
 import {
   buildExportUrl,
   clearImportPendingFlag,
+  clearZoomImportPendingFlag,
   decodePayload,
+  decodeZoomPayload,
   encodePayload,
   extractImportFragment,
+  extractZoomImportFragment,
+  isAnyImportPending,
   isImportPending,
+  isZoomImportPending,
   stripImportFragment,
+  stripZoomImportFragment,
 } from "./appDataExport";
 
 const fullPayload: ExportPayload = {
@@ -154,6 +160,38 @@ describe("extractImportFragment", () => {
   });
 });
 
+describe("extractZoomImportFragment / decodeZoomPayload", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("import_zoom_settings= フラグメントがあればエンコード文字列を返す", () => {
+    const encoded = btoa(JSON.stringify({ venueZoomUrls: { A: "https://example.com/a" } }))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=/g, "");
+    vi.stubGlobal("window", {
+      location: { hash: `#import_zoom_settings=${encoded}` },
+    });
+    expect(extractZoomImportFragment()).toBe(encoded);
+  });
+
+  it("不正な zoom データのデコードは null を返す", () => {
+    expect(decodeZoomPayload("not-valid")).toBeNull();
+  });
+
+  it("zoom データをデコードできる", () => {
+    const encoded = btoa(JSON.stringify({ venueZoomUrls: { A: "https://example.com/a", B: "https://example.com/b" } }))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=/g, "");
+    expect(decodeZoomPayload(encoded)).toEqual({
+      A: "https://example.com/a",
+      B: "https://example.com/b",
+    });
+  });
+});
+
 function makeSessionStorage() {
   const store: Record<string, string> = {};
   return {
@@ -254,5 +292,40 @@ describe("isImportPending / clearImportPendingFlag", () => {
     storage.setItem("import_settings_pending", "1");
     vi.stubGlobal("window", { sessionStorage: storage });
     expect(isImportPending()).toBe(true);
+  });
+});
+
+describe("zoom import pending", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("import_zoom_settings フラグメントを除去すると pending が true になる", () => {
+    const replaceState = vi.fn();
+    vi.stubGlobal("window", {
+      location: { hash: "#import_zoom_settings=abc", pathname: "/nlp2026/", search: "" },
+      history: { replaceState },
+      sessionStorage: makeSessionStorage(),
+    });
+    stripZoomImportFragment();
+    expect(replaceState).toHaveBeenCalledWith(null, "", "/nlp2026/");
+    expect(isZoomImportPending()).toBe(true);
+    expect(isAnyImportPending()).toBe(true);
+  });
+
+  it("clearZoomImportPendingFlag 後は false を返す", () => {
+    const storage = makeSessionStorage();
+    storage.setItem("import_zoom_settings_pending", "1");
+    vi.stubGlobal("window", { sessionStorage: storage });
+    clearZoomImportPendingFlag();
+    expect(isZoomImportPending()).toBe(false);
+  });
+
+  it("通常 import pending が true でも isAnyImportPending は true", () => {
+    const storage = makeSessionStorage();
+    storage.setItem("import_settings_pending", "1");
+    vi.stubGlobal("window", { sessionStorage: storage });
+    expect(isImportPending()).toBe(true);
+    expect(isAnyImportPending()).toBe(true);
   });
 });

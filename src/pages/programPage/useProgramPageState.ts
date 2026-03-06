@@ -15,9 +15,13 @@ import {
 import {
   buildExportUrl,
   clearImportPendingFlag,
+  clearZoomImportPendingFlag,
   decodePayload,
+  decodeZoomPayload,
   extractImportFragment,
+  extractZoomImportFragment,
   stripImportFragment,
+  stripZoomImportFragment,
 } from "../../lib/appDataExport";
 import { filterBookmarkedSessions } from "../../lib/bookmarks";
 import { filterSessions, getAvailableDates, getAvailableRooms, getAvailableTimes } from "../../lib/filters";
@@ -80,7 +84,9 @@ export function useProgramPageState() {
   const [exportUrl, setExportUrl] = useState("");
   const [showSettingsImportConfirm, setShowSettingsImportConfirm] = useState(false);
   const [importInvalid, setImportInvalid] = useState(false);
-  const [pendingImportEncoded, setPendingImportEncoded] = useState<string | null>(null);
+  const [importTarget, setImportTarget] = useState<"settings" | "zoom">("settings");
+  const [pendingSettingsImport, setPendingSettingsImport] = useState<ReturnType<typeof decodePayload> | null>(null);
+  const [pendingZoomImport, setPendingZoomImport] = useState<ReturnType<typeof decodeZoomPayload> | null>(null);
   const [backupEntries, setBackupEntries] = useState<BackupEntry[]>(() =>
     typeof window !== "undefined" ? listBackups() : [],
   );
@@ -184,14 +190,36 @@ export function useProgramPageState() {
   );
 
   useEffect(() => {
-    const encoded = extractImportFragment();
-    if (encoded !== null) {
+    const settingsEncoded = extractImportFragment();
+    if (settingsEncoded !== null) {
       stripImportFragment();
-      const decoded = decodePayload(encoded);
+      const decoded = decodePayload(settingsEncoded);
+      setImportTarget("settings");
       if (decoded) {
-        setPendingImportEncoded(encoded);
+        setPendingSettingsImport(decoded);
+        setPendingZoomImport(null);
         setImportInvalid(false);
       } else {
+        setPendingSettingsImport(null);
+        setPendingZoomImport(null);
+        setImportInvalid(true);
+      }
+      setShowSettingsImportConfirm(true);
+      return;
+    }
+
+    const zoomEncoded = extractZoomImportFragment();
+    if (zoomEncoded !== null) {
+      stripZoomImportFragment();
+      const decoded = decodeZoomPayload(zoomEncoded);
+      setImportTarget("zoom");
+      if (decoded !== null) {
+        setPendingSettingsImport(null);
+        setPendingZoomImport(decoded);
+        setImportInvalid(false);
+      } else {
+        setPendingSettingsImport(null);
+        setPendingZoomImport(null);
         setImportInvalid(true);
       }
       setShowSettingsImportConfirm(true);
@@ -435,18 +463,22 @@ export function useProgramPageState() {
   }
 
   function handleConfirmImport() {
-    if (pendingImportEncoded) {
-      const decoded = decodePayload(pendingImportEncoded);
-      if (decoded) {
+    if (pendingSettingsImport) {
+      if (importTarget === "settings") {
         saveBeforeImport();
-        setSettings(decoded.settings);
-        setBookmarks(decoded.bookmarks);
+        setSettings(pendingSettingsImport.settings);
+        setBookmarks(pendingSettingsImport.bookmarks);
         setBackupEntries(listBackups());
       }
     }
+    if (importTarget === "zoom" && pendingZoomImport !== null) {
+      setSettings((current) => ({ ...current, venueZoomUrls: pendingZoomImport || undefined }));
+    }
     clearImportPendingFlag();
+    clearZoomImportPendingFlag();
     setShowSettingsImportConfirm(false);
-    setPendingImportEncoded(null);
+    setPendingSettingsImport(null);
+    setPendingZoomImport(null);
   }
 
   function handleConfirmRestoreBackup(kind: BackupEntry["kind"]) {
@@ -472,8 +504,10 @@ export function useProgramPageState() {
 
   function handleCancelImport() {
     clearImportPendingFlag();
+    clearZoomImportPendingFlag();
     setShowSettingsImportConfirm(false);
-    setPendingImportEncoded(null);
+    setPendingSettingsImport(null);
+    setPendingZoomImport(null);
   }
 
   function handleSetVenueZoomUrls(venueZoomUrls: VenueZoomUrls | undefined) {
@@ -587,6 +621,7 @@ export function useProgramPageState() {
       onCloseSettingsExport: () => setShowSettingsExport(false),
       showSettingsImportConfirm,
       importInvalid,
+      importTarget,
       onConfirmImport: handleConfirmImport,
       onCancelImport: handleCancelImport,
       backupEntries,

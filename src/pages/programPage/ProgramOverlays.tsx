@@ -52,6 +52,7 @@ export function ProgramOverlays({
   onCloseSettingsExport,
   showSettingsImportConfirm,
   importInvalid,
+  importTarget,
   onConfirmImport,
   onCancelImport,
   backupEntries,
@@ -104,6 +105,7 @@ export function ProgramOverlays({
   onCloseSettingsExport: () => void;
   showSettingsImportConfirm: boolean;
   importInvalid: boolean;
+  importTarget: "settings" | "zoom";
   onConfirmImport: () => void;
   onCancelImport: () => void;
   backupEntries: BackupEntry[];
@@ -177,6 +179,7 @@ export function ProgramOverlays({
       <SettingsImportConfirmDialog
         open={showSettingsImportConfirm}
         isInvalid={importInvalid}
+        target={importTarget}
         onConfirm={onConfirmImport}
         onCancel={onCancelImport}
       />
