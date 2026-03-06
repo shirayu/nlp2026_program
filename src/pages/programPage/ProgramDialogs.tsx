@@ -1,6 +1,6 @@
 import { AlertTriangle, X as CloseIcon, Github, Globe, Monitor, RefreshCw } from "lucide-react";
 import type { RefObject } from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   BUILD_GIT_DATE,
   BUILD_GIT_HASH,
@@ -58,6 +58,133 @@ function omitHttps(value: string): string {
 
 function normalizeComparableUrl(value: string): string {
   return value.trim().replace(/\/+$/, "").toLowerCase();
+}
+
+function normalizeVenueZoomUrlsFromDrafts(
+  drafts: Partial<Record<keyof VenueZoomUrls, string>>,
+): VenueZoomUrls | undefined {
+  const next: VenueZoomUrls = {};
+  (["A", "B"] as const).forEach((key) => {
+    const trimmed = drafts[key]?.trim() ?? "";
+    if (trimmed) {
+      next[key] = trimmed;
+    }
+  });
+  return Object.keys(next).length > 0 ? next : undefined;
+}
+
+function areVenueZoomUrlsEqual(a: VenueZoomUrls | undefined, b: VenueZoomUrls | undefined): boolean {
+  return (a?.A ?? "") === (b?.A ?? "") && (a?.B ?? "") === (b?.B ?? "");
+}
+
+function useVenueZoomDrafts({
+  venueZoomUrls,
+  onSetVenueZoomUrls,
+}: {
+  venueZoomUrls?: VenueZoomUrls;
+  onSetVenueZoomUrls: (value: VenueZoomUrls | undefined) => void;
+}) {
+  const [venueZoomDrafts, setVenueZoomDrafts] = useState<Partial<Record<keyof VenueZoomUrls, string>>>({
+    A: venueZoomUrls?.A ?? "",
+    B: venueZoomUrls?.B ?? "",
+  });
+  const onSetVenueZoomUrlsRef = useRef(onSetVenueZoomUrls);
+
+  useEffect(() => {
+    onSetVenueZoomUrlsRef.current = onSetVenueZoomUrls;
+  }, [onSetVenueZoomUrls]);
+
+  useEffect(() => {
+    const nextDrafts = {
+      A: venueZoomUrls?.A ?? "",
+      B: venueZoomUrls?.B ?? "",
+    };
+    setVenueZoomDrafts((currentDrafts) => {
+      if (currentDrafts.A === nextDrafts.A && currentDrafts.B === nextDrafts.B) {
+        return currentDrafts;
+      }
+      return nextDrafts;
+    });
+  }, [venueZoomUrls?.A, venueZoomUrls?.B]);
+
+  useEffect(() => {
+    const normalized = normalizeVenueZoomUrlsFromDrafts(venueZoomDrafts);
+    if (areVenueZoomUrlsEqual(normalized, venueZoomUrls)) return;
+    const timerId = window.setTimeout(() => {
+      onSetVenueZoomUrlsRef.current(normalized);
+    }, 250);
+    return () => {
+      window.clearTimeout(timerId);
+    };
+  }, [venueZoomDrafts, venueZoomUrls]);
+
+  function updateVenueZoomUrl(key: keyof VenueZoomUrls, value: string) {
+    setVenueZoomDrafts((currentDrafts) => ({
+      ...currentDrafts,
+      [key]: value,
+    }));
+  }
+
+  function flushVenueZoomDrafts() {
+    const normalized = normalizeVenueZoomUrlsFromDrafts(venueZoomDrafts);
+    if (areVenueZoomUrlsEqual(normalized, venueZoomUrls)) return;
+    onSetVenueZoomUrls(normalized);
+  }
+
+  return {
+    venueZoomDrafts,
+    updateVenueZoomUrl,
+    flushVenueZoomDrafts,
+  };
+}
+
+function ZoomCustomUrlSection({
+  venueZoomDrafts,
+  updateVenueZoomUrl,
+  flushVenueZoomDrafts,
+}: {
+  venueZoomDrafts: Partial<Record<keyof VenueZoomUrls, string>>;
+  updateVenueZoomUrl: (key: keyof VenueZoomUrls, value: string) => void;
+  flushVenueZoomDrafts: () => void;
+}) {
+  return (
+    <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
+      <h3 className="text-sm font-semibold text-gray-800">{ja.zoomSettings}</h3>
+      <p className="mt-1 text-xs text-gray-600">{ja.zoomCustomUrlDescription}</p>
+      <div className="mt-2 space-y-2">
+        <label className="flex items-center gap-3 text-sm text-gray-700">
+          <span className="shrink-0">{ja.venueA}</span>
+          <input
+            type="url"
+            value={venueZoomDrafts.A ?? ""}
+            onChange={(event) => updateVenueZoomUrl("A", event.target.value)}
+            onBlur={flushVenueZoomDrafts}
+            className={`min-w-0 flex-1 rounded-lg px-3 py-2 text-sm focus:outline-none ${
+              (venueZoomDrafts.A ?? "").trim()
+                ? "border-emerald-300 bg-emerald-50 text-emerald-900 focus:border-emerald-500"
+                : "border border-gray-200 focus:border-indigo-400"
+            }`}
+            placeholder="https://..."
+          />
+        </label>
+        <label className="flex items-center gap-3 text-sm text-gray-700">
+          <span className="shrink-0">{ja.venueB}</span>
+          <input
+            type="url"
+            value={venueZoomDrafts.B ?? ""}
+            onChange={(event) => updateVenueZoomUrl("B", event.target.value)}
+            onBlur={flushVenueZoomDrafts}
+            className={`min-w-0 flex-1 rounded-lg px-3 py-2 text-sm focus:outline-none ${
+              (venueZoomDrafts.B ?? "").trim()
+                ? "border-emerald-300 bg-emerald-50 text-emerald-900 focus:border-emerald-500"
+                : "border border-gray-200 focus:border-indigo-400"
+            }`}
+            placeholder="https://..."
+          />
+        </label>
+      </div>
+    </section>
+  );
 }
 
 function buildLastUpdateRows(lastUpdate?: Record<string, LastUpdateEntry>): {
@@ -542,20 +669,14 @@ export function SettingsDialog({
   onClearAllData: () => void;
 }) {
   const formattedBuildGitDate = formatBuildGitDate(BUILD_GIT_DATE);
+  const { venueZoomDrafts, updateVenueZoomUrl, flushVenueZoomDrafts } = useVenueZoomDrafts({
+    venueZoomUrls,
+    onSetVenueZoomUrls,
+  });
+
   const shouldShowOperatorSection =
     OPERATOR_NAME !== DEVELOPER_NAME ||
     normalizeComparableUrl(OPERATOR_REPOSITORY_URL) !== normalizeComparableUrl(PROJECT_REPOSITORY_URL);
-
-  function updateVenueZoomUrl(key: keyof VenueZoomUrls, value: string) {
-    const trimmed = value.trim();
-    const next = { ...(venueZoomUrls ?? {}) };
-    if (trimmed) {
-      next[key] = trimmed;
-    } else {
-      delete next[key];
-    }
-    onSetVenueZoomUrls(Object.keys(next).length > 0 ? next : undefined);
-  }
 
   return (
     <dialog ref={dialogRef} open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
@@ -637,40 +758,11 @@ export function SettingsDialog({
                   </label>
                 </div>
               </section>
-              <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
-                <h3 className="text-sm font-semibold text-gray-800">{ja.zoomSettings}</h3>
-                <p className="mt-1 text-xs text-gray-600">{ja.zoomCustomUrlDescription}</p>
-                <div className="mt-2 space-y-2">
-                  <label className="flex items-center gap-3 text-sm text-gray-700">
-                    <span className="shrink-0">{ja.venueA}</span>
-                    <input
-                      type="url"
-                      value={venueZoomUrls?.A ?? ""}
-                      onChange={(event) => updateVenueZoomUrl("A", event.target.value)}
-                      className={`min-w-0 flex-1 rounded-lg px-3 py-2 text-sm focus:outline-none ${
-                        venueZoomUrls?.A
-                          ? "border-emerald-300 bg-emerald-50 text-emerald-900 focus:border-emerald-500"
-                          : "border border-gray-200 focus:border-indigo-400"
-                      }`}
-                      placeholder="https://..."
-                    />
-                  </label>
-                  <label className="flex items-center gap-3 text-sm text-gray-700">
-                    <span className="shrink-0">{ja.venueB}</span>
-                    <input
-                      type="url"
-                      value={venueZoomUrls?.B ?? ""}
-                      onChange={(event) => updateVenueZoomUrl("B", event.target.value)}
-                      className={`min-w-0 flex-1 rounded-lg px-3 py-2 text-sm focus:outline-none ${
-                        venueZoomUrls?.B
-                          ? "border-emerald-300 bg-emerald-50 text-emerald-900 focus:border-emerald-500"
-                          : "border border-gray-200 focus:border-indigo-400"
-                      }`}
-                      placeholder="https://..."
-                    />
-                  </label>
-                </div>
-              </section>
+              <ZoomCustomUrlSection
+                venueZoomDrafts={venueZoomDrafts}
+                updateVenueZoomUrl={updateVenueZoomUrl}
+                flushVenueZoomDrafts={flushVenueZoomDrafts}
+              />
             </section>
             <section className="mt-4 rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
               <h3 className="text-sm font-semibold text-gray-800">{ja.iconLegend}</h3>
