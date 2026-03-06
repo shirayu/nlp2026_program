@@ -17,6 +17,7 @@ export function ProgramOverlays({
   data,
   bookmarkedPresentationIds,
   showAuthors,
+  slackTeamId = null,
   onClosePersonModal,
   onPersonClick,
   onJumpToSessionFromPerson,
@@ -66,6 +67,7 @@ export function ProgramOverlays({
   data: ConferenceData;
   bookmarkedPresentationIds: Set<PresentationId>;
   showAuthors: boolean;
+  slackTeamId?: string | null;
   onClosePersonModal: () => void;
   onPersonClick: (personId: PersonId | null) => void;
   onJumpToSessionFromPerson: (sessionId: SessionId) => void;
@@ -119,6 +121,8 @@ export function ProgramOverlays({
           data={data}
           bookmarkedPresentationIds={bookmarkedPresentationIds}
           showAuthors={showAuthors}
+          useSlackAppLinks={useSlackAppLinks}
+          slackTeamId={slackTeamId}
           onClose={onClosePersonModal}
           onPersonClick={onPersonClick}
           onJumpToSession={onJumpToSessionFromPerson}

@@ -7,6 +7,8 @@ export function PresentationCard({
   bookmarked,
   showAuthors,
   query,
+  useSlackAppLinks,
+  slackTeamId,
   onPersonClick,
   onJumpToSession,
   onToggleBookmark,
@@ -16,6 +18,8 @@ export function PresentationCard({
   bookmarked: boolean;
   showAuthors: boolean;
   query: string;
+  useSlackAppLinks?: boolean;
+  slackTeamId?: string | null;
   onPersonClick: (id: PersonId) => void;
   onJumpToSession: (sid: SessionId) => void;
   onToggleBookmark: (id: PresentationId) => void;
@@ -27,6 +31,8 @@ export function PresentationCard({
       bookmarked={bookmarked}
       showAuthors={showAuthors}
       query={query}
+      useSlackAppLinks={useSlackAppLinks}
+      slackTeamId={slackTeamId}
       onPersonClick={onPersonClick}
       onJumpToSession={onJumpToSession}
       onToggleBookmark={onToggleBookmark}

@@ -1,7 +1,10 @@
 import { ChevronDown, FileText, Globe, Monitor, Star } from "lucide-react";
 import { type ReactNode, useEffect, useState } from "react";
 import { hasPresentationHiddenSearchMatch } from "../lib/filters";
+import { toSlackMessageAppUrl } from "../lib/slack";
 import { ja } from "../locales/ja";
+import { ZoomIcon } from "../pages/programPage/icons";
+import { openSlackFromSpa } from "../pages/programPage/utils";
 import type { ConferenceData, PersonId, PresentationId, SessionId } from "../types";
 import { HighlightedText } from "./HighlightedText";
 
@@ -209,12 +212,85 @@ function PresentationDetails({
   );
 }
 
+function PresentationActionLinks({
+  pdfUrl,
+  presentationZoomUrl,
+  presentationZoomAppUrl,
+  useSlackAppLinks,
+}: {
+  pdfUrl: string | null;
+  presentationZoomUrl: string | null;
+  presentationZoomAppUrl: string | null;
+  useSlackAppLinks: boolean;
+}) {
+  return (
+    <>
+      {pdfUrl && (
+        <a
+          href={pdfUrl}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={ja.abstractPdf}
+          className="mt-0.5 shrink-0 rounded p-1 text-indigo-500 transition-colors hover:bg-indigo-50 hover:text-indigo-700"
+          onClick={(event) => event.stopPropagation()}
+        >
+          <FileText className="h-4 w-4" />
+        </a>
+      )}
+      {presentationZoomUrl && (
+        <a
+          href={useSlackAppLinks && presentationZoomAppUrl ? presentationZoomAppUrl : presentationZoomUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={ja.openPresentationZoom}
+          className="mt-0.5 shrink-0 rounded p-1 text-sky-600 transition-colors hover:bg-sky-50 hover:text-sky-700"
+          onClick={(event) => {
+            event.stopPropagation();
+            if (useSlackAppLinks && presentationZoomAppUrl) {
+              openSlackFromSpa(event, presentationZoomUrl, presentationZoomAppUrl);
+            }
+          }}
+        >
+          <ZoomIcon className="h-4 w-4" />
+        </a>
+      )}
+    </>
+  );
+}
+
+function PresentationExpandButton({
+  open,
+  hasDetails,
+  onClick,
+}: {
+  open: boolean;
+  hasDetails: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className="mt-0.5 shrink-0 rounded p-1 text-gray-400 transition-colors hover:bg-slate-100 hover:text-gray-600"
+      onClick={onClick}
+      aria-expanded={open}
+      aria-label={open ? ja.collapsePresentationDetails : ja.expandPresentationDetails}
+      disabled={!hasDetails}
+    >
+      <ChevronDown
+        className={`h-4 w-4 transition-transform duration-200 ${open ? "rotate-180" : ""} ${hasDetails ? "" : "opacity-40"}`}
+      />
+    </button>
+  );
+}
+
 export function PresentationListItem({
   pid,
   data,
   bookmarked,
   showAuthors,
   query,
+  useSlackAppLinks = false,
+  slackTeamId = null,
   onToggleBookmark,
   onJumpToSession,
   onPersonClick,
@@ -227,6 +303,8 @@ export function PresentationListItem({
   bookmarked: boolean;
   showAuthors: boolean;
   query: string;
+  useSlackAppLinks?: boolean;
+  slackTeamId?: string | null;
   onToggleBookmark: (id: PresentationId) => void;
   onJumpToSession?: (sid: SessionId) => void;
   onPersonClick?: (id: PersonId) => void;
@@ -239,20 +317,16 @@ export function PresentationListItem({
   const shouldAutoOpen = resolved?.hasDetails && hasPresentationHiddenSearchMatch(data, pid, query, showAuthors);
 
   useEffect(() => {
-    if (shouldAutoOpen) {
-      setOpen(true);
-    }
+    setOpen((value) => value || Boolean(shouldAutoOpen));
   }, [shouldAutoOpen]);
 
   if (!resolved) return null;
 
   const { presentation: p, presenterName, authorList, hasDetails } = resolved;
-
-  function toggleOpen() {
-    if (hasDetails) {
-      setOpen((value) => !value);
-    }
-  }
+  const pdfUrl = p.pdf_url ?? null;
+  const presentationZoomUrl = p.zoom_url ?? null;
+  const presentationZoomAppUrl = presentationZoomUrl ? toSlackMessageAppUrl(presentationZoomUrl, slackTeamId) : null;
+  const toggleOpen = () => setOpen((value) => !value);
 
   return (
     <li className={className ?? `px-4 py-2 ${open ? "bg-white/55" : "bg-transparent even:bg-white/35"}`}>
@@ -286,33 +360,13 @@ export function PresentationListItem({
             secondaryContent={secondaryContent}
           />
         </button>
-
-        {p.pdf_url && (
-          <a
-            href={p.pdf_url}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={ja.abstractPdf}
-            className="mt-0.5 shrink-0 rounded p-1 text-indigo-500 transition-colors hover:bg-indigo-50 hover:text-indigo-700"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <FileText className="h-4 w-4" />
-          </a>
-        )}
-        <button
-          type="button"
-          className="mt-0.5 shrink-0 rounded p-1 text-gray-400 transition-colors hover:bg-slate-100 hover:text-gray-600"
-          onClick={toggleOpen}
-          aria-expanded={open}
-          aria-label={open ? ja.collapsePresentationDetails : ja.expandPresentationDetails}
-          disabled={!hasDetails}
-        >
-          <ChevronDown
-            className={`h-4 w-4 transition-transform duration-200 ${open ? "rotate-180" : ""} ${
-              hasDetails ? "" : "opacity-40"
-            }`}
-          />
-        </button>
+        <PresentationActionLinks
+          pdfUrl={pdfUrl}
+          presentationZoomUrl={presentationZoomUrl}
+          presentationZoomAppUrl={presentationZoomAppUrl}
+          useSlackAppLinks={useSlackAppLinks}
+        />
+        <PresentationExpandButton open={open} hasDetails={hasDetails} onClick={toggleOpen} />
       </div>
 
       <PresentationDetails

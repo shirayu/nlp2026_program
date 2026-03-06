@@ -43,3 +43,38 @@ export function getFirstSlackTeamId(channels: Partial<Record<SessionId, SlackCha
   }
   return null;
 }
+
+function toSlackMessageTs(raw: string): string {
+  if (raw.length <= 10) return raw;
+  const seconds = raw.slice(0, 10);
+  const micros = raw.slice(10, 16).padEnd(6, "0");
+  return `${seconds}.${micros}`;
+}
+
+export function buildSlackMessageAppUrl(team: string, channelId: string, messageTs: string): string {
+  const params = new URLSearchParams({
+    team,
+    id: channelId,
+    message: messageTs,
+  });
+  return `slack://channel?${params.toString()}`;
+}
+
+export function toSlackMessageAppUrl(messageUrl: string, team: string | null): string | null {
+  if (!team) return null;
+
+  let url: URL;
+  try {
+    url = new URL(messageUrl);
+  } catch {
+    return null;
+  }
+
+  if (!url.hostname.endsWith("slack.com")) return null;
+  const match = url.pathname.match(/^\/archives\/([^/]+)\/p(\d{10,})$/);
+  if (!match) return null;
+
+  const channelId = decodeURIComponent(match[1]);
+  const messageTs = toSlackMessageTs(match[2]);
+  return buildSlackMessageAppUrl(team, channelId, messageTs);
+}

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-06T08:16:56Z",
+  "generated_at": "2026-03-06T08:38:07Z",
   "last_update": {
     "program_main": {
       "sha256": "c02f7308dda2ea510afda63be85a9e566cac31235d91206c97fc0a2837a5a981",
@@ -7148,7 +7148,8 @@
       "end_time": "14:30",
       "room_ids": ["r0001"],
       "chair": "",
-      "presentation_ids": ["T1-1"]
+      "presentation_ids": ["T1-1"],
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "T2": {
       "title": "チュートリアル２",
@@ -7157,7 +7158,8 @@
       "end_time": "14:30",
       "room_ids": ["r0002"],
       "chair": "",
-      "presentation_ids": ["T2-1"]
+      "presentation_ids": ["T2-1"],
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "T3": {
       "title": "チュートリアル３",
@@ -7166,7 +7168,8 @@
       "end_time": "16:15",
       "room_ids": ["r0001"],
       "chair": "",
-      "presentation_ids": ["T3-1"]
+      "presentation_ids": ["T3-1"],
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "T4": {
       "title": "チュートリアル４",
@@ -7175,7 +7178,8 @@
       "end_time": "16:15",
       "room_ids": ["r0002"],
       "chair": "",
-      "presentation_ids": ["T4-1"]
+      "presentation_ids": ["T4-1"],
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "invited1": {
       "title": "招待講演１",
@@ -7185,7 +7189,8 @@
       "room_ids": ["r0001"],
       "chair": "",
       "presentation_ids": ["invited1-1"],
-      "youtube_url": "https://www.youtube.com/@anlpyoutubechannel7888/streams"
+      "youtube_url": "https://www.youtube.com/@anlpyoutubechannel7888/streams",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "invited2": {
       "title": "招待講演２",
@@ -7195,7 +7200,8 @@
       "room_ids": ["r0001"],
       "chair": "",
       "presentation_ids": ["invited2-1"],
-      "youtube_url": "https://www.youtube.com/@anlpyoutubechannel7888/streams"
+      "youtube_url": "https://www.youtube.com/@anlpyoutubechannel7888/streams",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "invitedpapers": {
       "title": "招待論文",
@@ -7204,7 +7210,8 @@
       "end_time": "19:00",
       "room_ids": ["r0001"],
       "chair": "宮尾 祐介 (東大)",
-      "presentation_ids": ["invitedpapers-1", "invitedpapers-2", "invitedpapers-3"]
+      "presentation_ids": ["invitedpapers-1", "invitedpapers-2", "invitedpapers-3"],
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "A1": {
       "title": "A1:口頭発表1",
@@ -7213,7 +7220,8 @@
       "end_time": "11:00",
       "room_ids": ["r0001"],
       "chair": "船越 孝太郎 (科学大)",
-      "presentation_ids": ["B2-3", "B2-7", "C4-12", "B2-16"]
+      "presentation_ids": ["B2-3", "B2-7", "C4-12", "B2-16"],
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "B1": {
       "title": "B1:NLPモデルの評価・安全性・信頼性",
@@ -7360,7 +7368,8 @@
       "end_time": "12:45",
       "room_ids": ["r0001"],
       "chair": "大内 啓樹 (NAIST)",
-      "presentation_ids": ["C1-1", "Q1-4", "Q1-5"]
+      "presentation_ids": ["C1-1", "Q1-4", "Q1-5"],
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "B2": {
       "title": "B2:NLPモデルの評価・安全性・信頼性",
@@ -7500,7 +7509,8 @@
       "end_time": "16:40",
       "room_ids": ["r0001"],
       "chair": "松崎 拓也 (東京理科大)",
-      "presentation_ids": ["B4-1", "TS2-1", "TS2-15", "B2-17"]
+      "presentation_ids": ["B4-1", "TS2-1", "TS2-15", "B2-17"],
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "B3": {
       "title": "B3:NLPモデルの評価・安全性・信頼性 / NLPモデルの解釈可能性・分析",
@@ -7648,7 +7658,8 @@
       "end_time": "18:25",
       "room_ids": ["r0001"],
       "chair": "中澤 敏明 (東大)",
-      "presentation_ids": ["Q3-10", "P3-10", "C3-15"]
+      "presentation_ids": ["Q3-10", "P3-10", "C3-15"],
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "B4": {
       "title": "B4:NLPモデルの評価・安全性・信頼性 / NLPモデルの解釈可能性・分析",
@@ -7787,7 +7798,8 @@
       "end_time": "11:00",
       "room_ids": ["r0001"],
       "chair": "徳久 良子 (愛工大/理研)",
-      "presentation_ids": ["B6-15", "C4-15", "B6-20", "C7-20"]
+      "presentation_ids": ["B6-15", "C4-15", "B6-20", "C7-20"],
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "B5": {
       "title": "B5:NLPモデルの解釈可能性・分析",
@@ -7933,7 +7945,8 @@
       "end_time": "12:45",
       "room_ids": ["r0001"],
       "chair": "高村 大也 (産総研)",
-      "presentation_ids": ["Q7-3", "C8-8", "B5-14"]
+      "presentation_ids": ["Q7-3", "C8-8", "B5-14"],
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "B6": {
       "title": "B6:NLPモデルの解釈可能性・分析",
@@ -8073,7 +8086,8 @@
       "end_time": "11:00",
       "room_ids": ["r0001"],
       "chair": "平尾 努 (金大)",
-      "presentation_ids": ["B6-13", "Q6-15", "P9-19", "C6-23"]
+      "presentation_ids": ["B6-13", "Q6-15", "P9-19", "C6-23"],
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "B7": {
       "title": "B7:NLPモデルの解釈可能性・分析 / NLPのための効率的・低リソース手法",
@@ -8225,7 +8239,8 @@
       "end_time": "12:45",
       "room_ids": ["r0001"],
       "chair": "斉藤 いつみ (東北大)",
-      "presentation_ids": ["P9-5", "P9-7", "Q9-15"]
+      "presentation_ids": ["P9-5", "P9-7", "Q9-15"],
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "B8": {
       "title": "B8:NLPモデルの評価・安全性・信頼性",
@@ -8356,7 +8371,8 @@
       "end_time": "15:45",
       "room_ids": ["r0001"],
       "chair": "金山 博 (IBM)",
-      "presentation_ids": ["B6-10", "C8-13", "C6-16", "P7-20"]
+      "presentation_ids": ["B6-10", "C8-13", "C6-16", "P7-20"],
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "B9": {
       "title": "B9:NLPモデルのための評価・安全性・信頼性 / NLPモデルの解釈可能性・分析 / NLPのための効率的・低リソース手法",
@@ -8494,7 +8510,8 @@
       "end_time": "17:15",
       "room_ids": ["r0001"],
       "chair": "",
-      "presentation_ids": []
+      "presentation_ids": [],
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "sponsor": {
       "title": "スポンサーミートアップ",
@@ -8504,7 +8521,8 @@
       "room_ids": ["r0006", "r0007", "r0008"],
       "chair": "",
       "presentation_ids": [],
-      "url": "https://www.anlp.jp/nlp2026/#sponsor"
+      "url": "https://www.anlp.jp/nlp2026/#sponsor",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "reception": {
       "title": "懇親会",
@@ -8522,7 +8540,8 @@
       "end_time": "18:00",
       "room_ids": ["r0001"],
       "chair": "",
-      "presentation_ids": []
+      "presentation_ids": [],
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "WS1": {
       "title": "第2回「大規模言語モデルのファインチューニング技術と評価」",
@@ -12389,7 +12408,8 @@
           "affiliation_id": "a0149"
         }
       ],
-      "pdf_url": "https://www.anlp.jp/proceedings/annual_meeting/2026/pdf_dir/C2-25.pdf"
+      "pdf_url": "https://www.anlp.jp/proceedings/annual_meeting/2026/pdf_dir/C2-25.pdf",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "P2-1": {
       "title": "Renga Street: Top-kクエリ処理アルゴリズムによる高速類似文字列検索の実装",
@@ -25686,7 +25706,8 @@
           "affiliation_id": "a0149"
         }
       ],
-      "pdf_url": "https://www.anlp.jp/proceedings/annual_meeting/2026/pdf_dir/C8-21.pdf"
+      "pdf_url": "https://www.anlp.jp/proceedings/annual_meeting/2026/pdf_dir/C8-21.pdf",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "P8-1": {
       "title": "カタカナ語の意味分類におけるFine-Tuningの有効性検証 : 頻度と多義性が精度に与える影響",
@@ -28756,7 +28777,8 @@
           "affiliation_id": "a0149"
         }
       ],
-      "pdf_url": null
+      "pdf_url": null,
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "WS2-6-1": {
       "title": "軽量な日本語報酬モデル ca-reward-3b-ja の構築と公開",

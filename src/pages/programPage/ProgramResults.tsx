@@ -20,6 +20,8 @@ export function ProgramResults({
   bookmarkedPresentationIds,
   bookmarkedSessionIds,
   sessionSlackLinks,
+  useSlackAppLinks = false,
+  slackTeamId = null,
   showAuthors,
   includeSessionTitleForNoPresentationSessions,
   includeSessionTitleForPresentationSessions,
@@ -42,6 +44,8 @@ export function ProgramResults({
   bookmarkedPresentationIds: Set<PresentationId>;
   bookmarkedSessionIds: Set<SessionId>;
   sessionSlackLinks: Partial<Record<SessionId, string>>;
+  useSlackAppLinks?: boolean;
+  slackTeamId?: string | null;
   showAuthors: boolean;
   includeSessionTitleForNoPresentationSessions: boolean;
   includeSessionTitleForPresentationSessions: boolean;
@@ -75,6 +79,8 @@ export function ProgramResults({
             sessionId={sessionId}
             session={session}
             sessionSlackUrl={sessionSlackLinks[sessionId]}
+            useSlackAppLinks={useSlackAppLinks}
+            slackTeamId={slackTeamId}
             presIds={presIds}
             data={data}
             showAuthors={showAuthors}

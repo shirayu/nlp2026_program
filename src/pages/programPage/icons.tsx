@@ -36,3 +36,18 @@ export function YoutubeIcon(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function ZoomIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
+      <rect x="3" y="6.5" width="11.5" height="11" rx="2.5" stroke="currentColor" strokeWidth="1.8" />
+      <path
+        d="M14.5 10.2 20.2 8v8l-5.7-2.2V10.2Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}

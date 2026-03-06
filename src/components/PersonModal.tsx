@@ -10,6 +10,8 @@ export function PersonModal({
   data,
   bookmarkedPresentationIds,
   showAuthors,
+  useSlackAppLinks = false,
+  slackTeamId = null,
   onClose,
   onPersonClick,
   onJumpToSession,
@@ -19,6 +21,8 @@ export function PersonModal({
   data: ConferenceData;
   bookmarkedPresentationIds: Set<PresentationId>;
   showAuthors: boolean;
+  useSlackAppLinks?: boolean;
+  slackTeamId?: string | null;
   onClose: () => void;
   onPersonClick: (id: PersonId) => void;
   onJumpToSession: (sid: SessionId) => void;
@@ -53,6 +57,8 @@ export function PersonModal({
                 bookmarked={bookmarkedPresentationIds.has(pid as PresentationId)}
                 showAuthors={showAuthors}
                 query=""
+                useSlackAppLinks={useSlackAppLinks}
+                slackTeamId={slackTeamId}
                 onPersonClick={onPersonClick}
                 onJumpToSession={onJumpToSession}
                 onToggleBookmark={onToggleBookmark}

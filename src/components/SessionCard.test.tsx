@@ -21,6 +21,7 @@ const data: ConferenceData = {
       room_ids: ["r1"],
       url: "https://example.com/session",
       youtube_url: "https://www.youtube.com/watch?v=test",
+      zoom_url: "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469",
       chair: "",
       presentation_ids: ["pr1"],
     },
@@ -101,6 +102,61 @@ describe("SessionCard", () => {
 
     expect(html).toContain('href="https://www.youtube.com/watch?v=test"');
     expect(html).toContain(ja.openSessionYoutube);
+  });
+
+  it("zoom_url があるときは Zoom リンクを表示する", () => {
+    const html = renderToStaticMarkup(
+      <SessionCard
+        bookmarkedPresentationIds={new Set()}
+        bookmarkedSessionIds={new Set()}
+        sessionId="s1"
+        session={data.sessions.s1}
+        presIds={["pr1"]}
+        data={data}
+        showAuthors
+        query=""
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
+        expanded={false}
+        onToggleExpanded={vi.fn()}
+        onScrollToSessionTop={vi.fn()}
+        onPersonClick={vi.fn()}
+        onJumpToSession={vi.fn()}
+        onToggleBookmark={vi.fn()}
+        onToggleSessionBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).toContain('href="https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"');
+    expect(html).toContain(ja.openSessionZoom);
+  });
+
+  it("Slack アプリリンク設定ON時は zoom_url を app deep link に変換して表示する", () => {
+    const html = renderToStaticMarkup(
+      <SessionCard
+        bookmarkedPresentationIds={new Set()}
+        bookmarkedSessionIds={new Set()}
+        sessionId="s1"
+        session={data.sessions.s1}
+        useSlackAppLinks
+        slackTeamId="T123"
+        presIds={["pr1"]}
+        data={data}
+        showAuthors
+        query=""
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
+        expanded={false}
+        onToggleExpanded={vi.fn()}
+        onScrollToSessionTop={vi.fn()}
+        onPersonClick={vi.fn()}
+        onJumpToSession={vi.fn()}
+        onToggleBookmark={vi.fn()}
+        onToggleSessionBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).toContain('href="slack://channel?team=T123&amp;id=C0AGJAH4JV6&amp;message=1771937430.225469"');
   });
 
   it("Slack リンクは新規タブで開く", () => {

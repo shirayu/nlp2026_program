@@ -522,6 +522,8 @@ export function useProgramPageState() {
       bookmarkedPresentationIds,
       bookmarkedSessionIds,
       sessionSlackLinks,
+      useSlackAppLinks: settings.useSlackAppLinks,
+      slackTeamId,
       showAuthors: settings.showAuthors,
       includeSessionTitleForNoPresentationSessions: settings.includeSessionTitleForNoPresentationSessions,
       includeSessionTitleForPresentationSessions: settings.includeSessionTitleForPresentationSessions,
@@ -538,6 +540,7 @@ export function useProgramPageState() {
       personModal,
       bookmarkedPresentationIds,
       showAuthors: settings.showAuthors,
+      slackTeamId,
       onClosePersonModal: () => setPersonModal(null),
       onPersonClick: setPersonModal,
       onJumpToSessionFromPerson: (sid: SessionId) => {

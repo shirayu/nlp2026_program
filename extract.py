@@ -898,6 +898,7 @@ _SPECIAL_EVENT_URLS: dict[str, str] = {
 }
 
 _WS_ZEN_DIGIT = {"１": 1, "２": 2, "３": 3, "４": 4}
+_ZOOM_FALLBACK_SLACK_URL = "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
 
 
 def _special_event_id(title: str) -> str:
@@ -907,6 +908,35 @@ def _special_event_id(title: str) -> str:
     if m:
         return f"WS{_WS_ZEN_DIGIT[m.group(1)]}"
     return re.sub(r"[^\w]", "_", unicodedata.normalize("NFKC", title))[:16]
+
+
+def should_assign_session_zoom_url(session_id: str) -> bool:
+    """Zoom(代替Slack) URL を付与するセッションを判定する。"""
+    if re.fullmatch(r"A\d+", session_id):
+        return True  # 口頭発表
+    if re.fullmatch(r"T\d+", session_id):
+        return True  # チュートリアル
+
+    # TODO: 一旦外す
+    # if re.fullmatch(r"WS\d+(?:-\d+)?", session_id):
+    #     return True  # ワークショップ（親・個別）
+
+    if session_id in {"opening", "invited", "invitedpapers", "closing", "sponsor"}:
+        return True  # 全体セッション（オープニング・招待系）
+    if re.fullmatch(r"invited\d+", session_id):
+        return True  # 招待講演
+    return False
+
+
+def apply_zoom_url_defaults(result: JsonDict, fallback_url: str) -> None:
+    """指定ルールに合う session/presentation へ zoom_url を既定付与する。"""
+    for session_id, session in result["sessions"].items():
+        if should_assign_session_zoom_url(session_id) and not session.get("zoom_url"):
+            session["zoom_url"] = fallback_url
+
+    for presentation in result["presentations"].values():
+        if presentation.get("is_online") and not presentation.get("zoom_url"):
+            presentation["zoom_url"] = fallback_url
 
 
 _TIME_RE = re.compile(r"^\d{1,2}:\d{2}$")
@@ -1677,6 +1707,7 @@ def main() -> None:
     apply_workshop_overrides(result, workshop_config)
     apply_invitedpapers_config(result, invitedpapers_config)
     apply_youtube_config(result, youtube_config)
+    apply_zoom_url_defaults(result, _ZOOM_FALLBACK_SLACK_URL)
 
     pres = result["presentations"]
     oral_count = sum(1 for p in pres.values() if p.get("oral_session_id"))
