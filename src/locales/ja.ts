@@ -113,6 +113,7 @@ export const ja = {
   exportAppDataClose: "閉じる",
   importAppDataDialogTitle: "設定のインポート",
   importAppDataWarning: "この操作により現在の設定・ブックマークが上書きされます。続けますか？",
+  importAppDataVenueZoomPreserved: "Zoom カスタムURL は上書きされず、現在の設定を維持します。",
   importAppDataBackupNote: "誤ってインポートしても、設定画面の「復元」ボタンでインポート前の状態に戻せます。",
   importZoomDataDialogTitle: "Zoom URL のインポート",
   importZoomDataWarning: "この操作により現在の Zoom カスタムURL が上書きされます。続けますか？",

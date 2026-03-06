@@ -491,7 +491,13 @@ export function useProgramPageState() {
     if (pendingSettingsImport) {
       if (importTarget === "settings") {
         saveBeforeImport();
-        setSettings(pendingSettingsImport.settings);
+        const nextSettings = { ...pendingSettingsImport.settings };
+        if (settings.venueZoomUrls) {
+          nextSettings.venueZoomUrls = settings.venueZoomUrls;
+        } else {
+          Reflect.deleteProperty(nextSettings, "venueZoomUrls");
+        }
+        setSettings(nextSettings);
         setBookmarks(pendingSettingsImport.bookmarks);
         setBackupEntries(listBackups());
       }

@@ -568,6 +568,7 @@ export function SettingsImportConfirmDialog({
   const warning = target === "zoom" ? ja.importZoomDataWarning : ja.importAppDataWarning;
   const invalidMessage = target === "zoom" ? ja.importZoomDataInvalid : ja.importAppDataInvalid;
   const showBackupNote = target === "settings";
+  const showVenueZoomPreservedNote = target === "settings";
 
   return (
     <dialog open={open} onClose={onCancel} onCancel={onCancel} className={fullscreenDialogClassName}>
@@ -599,6 +600,11 @@ export function SettingsImportConfirmDialog({
             ) : (
               <div className="space-y-2">
                 <p className="text-sm text-gray-700">{warning}</p>
+                {showVenueZoomPreservedNote && (
+                  <p className="rounded-lg bg-sky-50 px-3 py-2 text-xs text-sky-700">
+                    {ja.importAppDataVenueZoomPreserved}
+                  </p>
+                )}
                 {showBackupNote && (
                   <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">
                     {ja.importAppDataBackupNote}

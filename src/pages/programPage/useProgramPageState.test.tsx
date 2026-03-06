@@ -447,6 +447,65 @@ describe("useProgramPageState", () => {
     hook.unmount();
   });
 
+  it("設定インポート時は既存 venueZoomUrls を維持し、インポート値を上書きしない", async () => {
+    const decodedSettings = {
+      showAuthors: true,
+      useSlackAppLinks: false,
+      includeSessionTitleForNoPresentationSessions: false,
+      includeSessionTitleForPresentationSessions: true,
+      venueZoomUrls: {
+        A: "https://zoom.us/j/imported-a",
+      },
+    };
+    const currentVenueZoomUrls = {
+      A: "https://zoom.us/j/current-a",
+      B: "https://zoom.us/j/current-b",
+    };
+    const decodedBookmarks = { presentationIds: ["p1", "p2"], sessionIds: ["s1"] };
+    const setSettings = vi.fn();
+    const setBookmarks = vi.fn();
+    mockExtractImportFragment.mockReturnValue("validencoded");
+    mockDecodePayload.mockReturnValue({ settings: decodedSettings, bookmarks: decodedBookmarks });
+    mockUseAppSettings.mockReturnValue({
+      settings: {
+        showAuthors: false,
+        useSlackAppLinks: false,
+        includeSessionTitleForNoPresentationSessions: true,
+        includeSessionTitleForPresentationSessions: false,
+        venueZoomUrls: currentVenueZoomUrls,
+      },
+      setSettings,
+      toggleShowAuthors: vi.fn(),
+      toggleUseSlackAppLinks: vi.fn(),
+      toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
+      toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
+    });
+    mockUseBookmarks.mockReturnValue({
+      bookmarkIds: [],
+      sessionBookmarkIds: [],
+      bookmarkedPresentationIds: new Set<string>(),
+      bookmarkedSessionIds: new Set<string>(),
+      setBookmarks,
+      toggleBookmark: vi.fn(),
+      toggleSessionBookmark: vi.fn(),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().overlayProps.onConfirmImport();
+    });
+
+    expect(setSettings).toHaveBeenCalledWith({
+      ...decodedSettings,
+      venueZoomUrls: currentVenueZoomUrls,
+    });
+    expect(setBookmarks).toHaveBeenCalledWith(decodedBookmarks);
+
+    hook.unmount();
+  });
+
   it("Zoom インポート確定で venueZoomUrls のみ更新され、ブックマークは変更しない", async () => {
     const setSettings = vi.fn();
     const setBookmarks = vi.fn();

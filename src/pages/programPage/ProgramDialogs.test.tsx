@@ -208,14 +208,25 @@ describe("SettingsExportDialog", () => {
 });
 
 describe("SettingsImportConfirmDialog", () => {
-  it("インポート警告とバックアップ案内を表示する", () => {
+  it("設定インポートでは維持メッセージとバックアップ案内を表示する", () => {
     const html = renderToStaticMarkup(
       <SettingsImportConfirmDialog open isInvalid={false} onConfirm={() => {}} onCancel={() => {}} />,
     );
 
     expect(html).toContain("上書きされます");
+    expect(html).toContain("Zoom カスタムURL は上書きされず、現在の設定を維持します。");
     expect(html).toContain("復元");
     expect(html).toContain("インポートする");
+  });
+
+  it("Zoom インポートでは設定インポート専用メッセージを表示しない", () => {
+    const html = renderToStaticMarkup(
+      <SettingsImportConfirmDialog open isInvalid={false} target="zoom" onConfirm={() => {}} onCancel={() => {}} />,
+    );
+
+    expect(html).toContain("Zoom カスタムURL が上書きされます");
+    expect(html).not.toContain("現在の設定を維持します");
+    expect(html).not.toContain("復元");
   });
 
   it("isInvalid のときエラーメッセージを表示しインポートボタンを非表示にする", () => {
