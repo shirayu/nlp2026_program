@@ -450,7 +450,9 @@ export function useProgramPageState() {
   }
 
   function handleConfirmRestoreBackup(kind: BackupEntry["kind"]) {
-    saveBeforeRestore();
+    if (kind !== "before_restore") {
+      saveBeforeRestore();
+    }
     const backup = loadBackup(kind);
     if (backup) {
       setSettings(backup.settings);

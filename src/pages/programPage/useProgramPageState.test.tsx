@@ -3,6 +3,9 @@
 import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { appSettingsStorageKey } from "../../hooks/useAppSettings";
+import { bookmarksStorageKey } from "../../hooks/useBookmarks";
+import { backupStorageKey, loadBackup } from "../../lib/appDataBackup";
 import { filterSessions } from "../../lib/filters";
 import type { ConferenceData } from "../../types";
 import { useProgramPageState } from "./useProgramPageState";
@@ -172,6 +175,7 @@ describe("useProgramPageState", () => {
   afterEach(() => {
     vi.clearAllMocks();
     document.body.innerHTML = "";
+    localStorage.clear();
   });
 
   it("selectDate は同じ日付の再選択で再レンダーしない", async () => {
@@ -468,6 +472,110 @@ describe("useProgramPageState", () => {
     hook.unmount();
   });
 
+  it("before_restore から復元すると before_restore は上書きされず状態Aに戻れる", async () => {
+    const settingsA = {
+      showAuthors: true,
+      useSlackAppLinks: false,
+      includeSessionTitleForNoPresentationSessions: false,
+      includeSessionTitleForPresentationSessions: true,
+    };
+    const settingsB = {
+      showAuthors: false,
+      useSlackAppLinks: true,
+      includeSessionTitleForNoPresentationSessions: true,
+      includeSessionTitleForPresentationSessions: false,
+    };
+    const bookmarksA = { presentationIds: ["a1"], sessionIds: [] };
+    const bookmarksB = { presentationIds: ["b1"], sessionIds: [] };
+
+    // before_restore に状態A、現在は状態B
+    localStorage.setItem(
+      backupStorageKey,
+      JSON.stringify([{ kind: "before_restore", payload: { settings: settingsA, bookmarks: bookmarksA } }]),
+    );
+    localStorage.setItem(appSettingsStorageKey, JSON.stringify(settingsB));
+    localStorage.setItem(bookmarksStorageKey, JSON.stringify(bookmarksB));
+
+    const setSettings = vi.fn();
+    mockUseAppSettings.mockReturnValue({
+      settings: settingsB,
+      setSettings,
+      toggleShowAuthors: vi.fn(),
+      toggleUseSlackAppLinks: vi.fn(),
+      toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
+      toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    // before_restore を選んで復元
+    act(() => {
+      hook.getLatest().overlayProps.onConfirmRestore("before_restore");
+    });
+
+    // 状態Aに復元されている
+    expect(setSettings).toHaveBeenCalledWith(settingsA);
+
+    // before_restore は上書きされず状態Aのまま保持されている
+    const afterRestore = loadBackup("before_restore");
+    expect(afterRestore?.settings).toEqual(settingsA);
+
+    hook.unmount();
+  });
+
+  it("before_import から復元すると before_restore に復元前の状態が保存される", async () => {
+    const settingsA = {
+      showAuthors: true,
+      useSlackAppLinks: false,
+      includeSessionTitleForNoPresentationSessions: false,
+      includeSessionTitleForPresentationSessions: true,
+    };
+    const settingsB = {
+      showAuthors: false,
+      useSlackAppLinks: true,
+      includeSessionTitleForNoPresentationSessions: true,
+      includeSessionTitleForPresentationSessions: false,
+    };
+    const bookmarksA = { presentationIds: ["a1"], sessionIds: [] };
+    const bookmarksB = { presentationIds: ["b1"], sessionIds: [] };
+
+    // before_import に状態A、現在は状態B
+    localStorage.setItem(
+      backupStorageKey,
+      JSON.stringify([{ kind: "before_import", payload: { settings: settingsA, bookmarks: bookmarksA } }]),
+    );
+    localStorage.setItem(appSettingsStorageKey, JSON.stringify(settingsB));
+    localStorage.setItem(bookmarksStorageKey, JSON.stringify(bookmarksB));
+
+    const setSettings = vi.fn();
+    mockUseAppSettings.mockReturnValue({
+      settings: settingsB,
+      setSettings,
+      toggleShowAuthors: vi.fn(),
+      toggleUseSlackAppLinks: vi.fn(),
+      toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
+      toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    // before_import を選んで復元
+    act(() => {
+      hook.getLatest().overlayProps.onConfirmRestore("before_import");
+    });
+
+    // 状態Aに復元されている
+    expect(setSettings).toHaveBeenCalledWith(settingsA);
+
+    // 復元前の状態B が before_restore に保存されている
+    const beforeRestore = loadBackup("before_restore");
+    expect(beforeRestore?.settings).toEqual(settingsB);
+
+    hook.unmount();
+  });
+
   it("エクスポートボタンで showSettingsExport が true になり URL が生成される", async () => {
     const hook = setupHook();
     await act(async () => {});
@@ -511,5 +619,104 @@ describe("useProgramPageState", () => {
     });
 
     hook.unmount();
+  });
+
+  describe("復元の行き来シナリオ", () => {
+    const settingsA = {
+      showAuthors: true,
+      useSlackAppLinks: false,
+      includeSessionTitleForNoPresentationSessions: false,
+      includeSessionTitleForPresentationSessions: true,
+    };
+    const settingsB = {
+      showAuthors: false,
+      useSlackAppLinks: true,
+      includeSessionTitleForNoPresentationSessions: true,
+      includeSessionTitleForPresentationSessions: false,
+    };
+    const bookmarksA = { presentationIds: ["a1"], sessionIds: [] };
+    const bookmarksB = { presentationIds: ["b1"], sessionIds: [] };
+
+    function setupWithState(settings: typeof settingsA, bookmarks: typeof bookmarksA) {
+      localStorage.setItem(appSettingsStorageKey, JSON.stringify(settings));
+      localStorage.setItem(bookmarksStorageKey, JSON.stringify(bookmarks));
+      mockUseAppSettings.mockReturnValue({
+        settings,
+        setSettings: vi.fn((next) => {
+          // setSettings が呼ばれたら localStorage も更新してバックアップ読み書きに反映
+          localStorage.setItem(appSettingsStorageKey, JSON.stringify(next));
+        }),
+        toggleShowAuthors: vi.fn(),
+        toggleUseSlackAppLinks: vi.fn(),
+        toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
+        toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
+      });
+    }
+
+    it("状態B → A復元 → B復元 → A復元 と何度でも行き来できる", async () => {
+      // before_import に状態A、現在は状態B
+      localStorage.setItem(
+        backupStorageKey,
+        JSON.stringify([{ kind: "before_import", payload: { settings: settingsA, bookmarks: bookmarksA } }]),
+      );
+      setupWithState(settingsB, bookmarksB);
+
+      const hook = setupHook();
+      await act(async () => {});
+
+      // ① before_import(A) を復元 → 現在=A、before_restore=B が保存される
+      act(() => {
+        hook.getLatest().overlayProps.onConfirmRestore("before_import");
+      });
+      expect(loadBackup("before_import")?.settings).toEqual(settingsA);
+      expect(loadBackup("before_restore")?.settings).toEqual(settingsB);
+
+      // ② before_restore(B) を復元 → 現在=B、before_restore は上書きされない
+      act(() => {
+        hook.getLatest().overlayProps.onConfirmRestore("before_restore");
+      });
+      expect(loadBackup("before_restore")?.settings).toEqual(settingsB);
+
+      // ③ before_import(A) を再度復元 → 現在=A、before_restore は状態B のまま
+      act(() => {
+        hook.getLatest().overlayProps.onConfirmRestore("before_import");
+      });
+      expect(loadBackup("before_import")?.settings).toEqual(settingsA);
+      expect(loadBackup("before_restore")?.settings).toEqual(settingsB);
+
+      hook.unmount();
+    });
+
+    it("復元後に手動で変更を加えると、その変更前には戻れなくなる", async () => {
+      // before_import に状態A、現在は状態B
+      localStorage.setItem(
+        backupStorageKey,
+        JSON.stringify([{ kind: "before_import", payload: { settings: settingsA, bookmarks: bookmarksA } }]),
+      );
+      setupWithState(settingsB, bookmarksB);
+
+      const hook = setupHook();
+      await act(async () => {});
+
+      // ① before_import(A) を復元 → before_restore=B
+      act(() => {
+        hook.getLatest().overlayProps.onConfirmRestore("before_import");
+      });
+      expect(loadBackup("before_restore")?.settings).toEqual(settingsB);
+
+      // ② 復元後に手動で変更を加える（状態Cになる）
+      const settingsC = { ...settingsA, showAuthors: false };
+      localStorage.setItem(appSettingsStorageKey, JSON.stringify(settingsC));
+
+      // ③ before_import(A) を再復元 → saveBeforeRestore が走り before_restore=C に上書き
+      act(() => {
+        hook.getLatest().overlayProps.onConfirmRestore("before_import");
+      });
+      // before_restore は状態C（変更後）になり、状態B には戻れなくなる
+      expect(loadBackup("before_restore")?.settings).toEqual(settingsC);
+      expect(loadBackup("before_restore")?.settings).not.toEqual(settingsB);
+
+      hook.unmount();
+    });
   });
 });
