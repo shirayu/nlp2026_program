@@ -31,8 +31,9 @@ export interface Session {
   start_time: string;
   end_time: string;
   room_ids: RoomId[];
-  url?: string;
-  youtube_url?: string;
+  url?: string | null;
+  youtube_url?: string | null;
+  zoom_url?: string | null;
   chair: string;
   presentation_ids: PresentationId[];
 }
@@ -51,6 +52,7 @@ export interface Presentation {
   oral_session_id?: SessionId;
   authors: PresentationAuthor[];
   pdf_url: string | null;
+  zoom_url?: string | null;
 }
 
 export interface SlackChannelRef {

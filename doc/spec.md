@@ -111,6 +111,7 @@
 | `presentation_ids` | `PresentationId[]` | このセッションで発表された論文IDのリスト（HTML記載順）。イベント系セッションでは空配列 |
 | `url` | `string \| null`  | 一般の外部サイトURL |
 | `youtube_url` | `string \| null`  | YouTube 配信URL |
+| `zoom_url` | `string \| null`  | Zoom URL (非公開URLなのでSlackメッセージリンクへ代替)|
 
 > **口頭セッション（A1〜A9）の `presentation_ids`**  
 > 口頭発表として登壇した論文（ホームセッションは別のポスターセッション）が列挙される。  
@@ -189,8 +190,9 @@
 | `end_time` | `string` | 親ワークショップの終了時刻 (`H:MM`) |
 | `rooms` | `string[]` | 親ワークショップの会場名。`data_for_extraction/original_program.html` と同じ表記で記述する |
 | `chair` | `string` | 親ワークショップの座長 |
-| `url` | `string` | 親ワークショップの一般URL |
-| `youtube_url` | `string` | 親ワークショップの YouTube 配信URL |
+| `url` | `string \| null` | 親ワークショップの一般URL |
+| `youtube_url` | `string \| null` | 親ワークショップの YouTube 配信URL |
+| `zoom_url` | `string \| null` | 親ワークショップの Zoom URL |
 | `sessions` | `object[]` | 個別セッションの追加定義 |
 
 補足:
@@ -212,14 +214,15 @@
 | `date` | `string` | 省略時は親ワークショップの `date` を継承 |
 | `chair` | `string` | 省略可 |
 | `rooms` | `string[]` | 省略時は親ワークショップの `rooms` を継承 |
-| `url` | `string` | 省略時は親ワークショップの `url` を継承 |
-| `youtube_url` | `string` | 省略時は親ワークショップの `youtube_url` を継承 |
+| `url` | `string \| null` | 省略時は親ワークショップの `url` を継承 |
+| `youtube_url` | `string \| null` | 省略時は親ワークショップの `youtube_url` を継承 |
+| `zoom_url` | `string \| null` | 省略時は親ワークショップの `zoom_url` を継承 |
 | `presentations` | `object[]` | 個別発表の手動定義。定義時は `data.json.presentations` にも追加される |
 
 補足:
 
 - `start_time` / `end_time` は必須で、`H:MM` 形式
-- `date`, `chair`, `rooms`, `url`, `youtube_url` は省略可能
+- `date`, `chair`, `rooms`, `url`, `youtube_url`, `zoom_url` は省略可能
 - `rooms` を省略した場合は親ワークショップの `rooms` を継承する
 - `presentations` を省略した場合は空配列として扱う
 
@@ -259,6 +262,7 @@
 | `is_english` | `boolean` | 省略時は `false` |
 | `is_online` | `boolean` | 省略時は `false` |
 | `pdf_url` | `string \| null` | 省略時は `null` |
+| `zoom_url` | `string \| null` | 省略時は `null` |
 | `authors` | `object[]` | 著者一覧。`persons` / `affiliations` に自動反映される |
 
 #### data_for_extraction/invitedpapers.json
@@ -300,6 +304,7 @@
 | `is_english` | `boolean` | 省略時は `false` |
 | `is_online` | `boolean` | 省略時は `false` |
 | `pdf_url` | `string \| null` | 省略時は `null` |
+| `zoom_url` | `string \| null` | 省略時は `null` |
 | `authors` | `object[]` | 著者一覧。`persons` / `affiliations` に自動反映される |
 
 補足:
@@ -347,6 +352,7 @@
 | `oral_session_id` | `SessionId` &#124; 省略 | 対応する口頭発表セッションのID。口頭登壇がない場合はキー自体が存在しない |
 | `authors` | `PresentationAuthor[]` | 著者リスト。HTML記載順（発表者が先頭とは限らない） |
 | `pdf_url` | `string \| null` | 抄録PDFへのパス（サイトルート相対）。PDFリンクがないセッションは `null` |
+| `zoom_url` | `string \| null` | 発表ごとの Zoom URL。ない場合は `null` |
 
 #### PresentationAuthor
 

@@ -982,9 +982,10 @@ class WorkshopPresentationInput(BaseModel):
     is_english: bool = False
     is_online: bool = False
     pdf_url: str | None = None
+    zoom_url: str | None = None
     authors: list[WorkshopAuthorInput] = []
 
-    @field_validator("id", "title", "presenter")
+    @field_validator("id", "title", "presenter", "zoom_url")
     @classmethod
     def validate_text_fields(cls, value: str | None, info: ValidationInfo) -> str | None:
         if value is None:
@@ -1004,9 +1005,10 @@ class WorkshopSessionInput(BaseModel):
     rooms: list[str] | None = None
     url: str | None = None
     youtube_url: str | None = None
+    zoom_url: str | None = None
     presentations: list[WorkshopPresentationInput] = []
 
-    @field_validator("id", "title", "chair", "url", "youtube_url")
+    @field_validator("id", "title", "chair", "url", "youtube_url", "zoom_url")
     @classmethod
     def validate_text_fields(cls, value: str | None, info: ValidationInfo) -> str | None:
         if value is None:
@@ -1046,9 +1048,10 @@ class WorkshopConfigEntry(BaseModel):
     chair: str | None = None
     url: str | None = None
     youtube_url: str | None = None
+    zoom_url: str | None = None
     sessions: list[WorkshopSessionInput] = []
 
-    @field_validator("title", "chair", "url", "youtube_url")
+    @field_validator("title", "chair", "url", "youtube_url", "zoom_url")
     @classmethod
     def validate_text_fields(cls, value: str | None, info: ValidationInfo) -> str | None:
         if value is None:
@@ -1145,6 +1148,7 @@ class PresentationRecord(BaseModel):
     is_online: bool
     authors: list[PresentationAuthorRecord]
     pdf_url: str | None
+    zoom_url: str | None = None
     oral_session_id: str | None = None
 
 
@@ -1160,6 +1164,7 @@ class SessionRecord(BaseModel):
     presentation_ids: list[str]
     url: str | None = None
     youtube_url: str | None = None
+    zoom_url: str | None = None
 
 
 class LastUpdateRecord(BaseModel):
@@ -1270,6 +1275,8 @@ def apply_workshop_overrides(result: JsonDict, workshop_config: dict[str, Worksh
             session["url"] = override.url
         if override.youtube_url:
             session["youtube_url"] = override.youtube_url
+        if override.zoom_url:
+            session["zoom_url"] = override.zoom_url
         result["sessions"][sid] = session
 
         child_prefix = f"{sid}-"
@@ -1318,6 +1325,7 @@ def apply_workshop_overrides(result: JsonDict, workshop_config: dict[str, Worksh
                     "is_online": presentation.is_online,
                     "authors": normalized_authors,
                     "pdf_url": presentation.pdf_url,
+                    "zoom_url": presentation.zoom_url,
                 }
                 presentation_ids.append(pid)
 
@@ -1338,6 +1346,10 @@ def apply_workshop_overrides(result: JsonDict, workshop_config: dict[str, Worksh
                 entry["youtube_url"] = child.youtube_url
             elif session.get("youtube_url"):
                 entry["youtube_url"] = session["youtube_url"]
+            if child.zoom_url:
+                entry["zoom_url"] = child.zoom_url
+            elif session.get("zoom_url"):
+                entry["zoom_url"] = session["zoom_url"]
 
             result["sessions"][child_sid] = entry
 
@@ -1401,6 +1413,7 @@ def apply_invitedpapers_config(result: JsonDict, invitedpapers_config: list[Work
             "is_online": presentation.is_online,
             "authors": normalized_authors,
             "pdf_url": presentation.pdf_url,
+            "zoom_url": presentation.zoom_url,
         }
         presentation_ids.append(pid)
 
@@ -1676,9 +1689,13 @@ def main() -> None:
             session.pop("url", None)
         if session.get("youtube_url") is None:
             session.pop("youtube_url", None)
+        if session.get("zoom_url") is None:
+            session.pop("zoom_url", None)
     for presentation in validated_result["presentations"].values():
         if presentation.get("oral_session_id") is None:
             presentation.pop("oral_session_id", None)
+        if presentation.get("zoom_url") is None:
+            presentation.pop("zoom_url", None)
 
     out_path = Path(args.out)
     out_path.write_text(json.dumps(validated_result, ensure_ascii=False, indent=2), encoding="utf-8")
