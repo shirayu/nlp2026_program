@@ -20,6 +20,8 @@ jobs:
   test-and-build:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    outputs:
+      artifact_hash: ${{ steps.artifact-hash.outputs.artifact_hash }}
     env:
       MISE_LOCKED: "1"
 
@@ -81,6 +83,19 @@ jobs:
             exit 1
           fi
 
+      - name: Compute artifact hash
+        id: artifact-hash
+        run: |
+          artifact_hash="$(
+            find dist -type f -print0 \
+              | sort -z \
+              | xargs -0 sha256sum \
+              | sha256sum \
+              | cut -d' ' -f1
+          )"
+          echo "artifact_hash=$artifact_hash" >> "$GITHUB_OUTPUT"
+          echo "Artifact hash: $artifact_hash"
+
       - name: Upload Pages artifact
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
@@ -97,6 +112,27 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
+      - name: Restore deployed hash cache
+        id: deployed-hash-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: /tmp/pages-artifact-hash
+          key: pages-artifact-${{ needs.test-and-build.outputs.artifact_hash }}
+
       - name: Deploy to GitHub Pages
         id: deployment
+        if: steps.deployed-hash-cache.outputs.cache-hit != 'true'
         uses: actions/deploy-pages@v4
+
+      - name: Write deployed hash marker
+        if: steps.deployed-hash-cache.outputs.cache-hit != 'true' && steps.deployment.outcome == 'success'
+        run: |
+          mkdir -p /tmp/pages-artifact-hash
+          echo "${{ needs.test-and-build.outputs.artifact_hash }}" > /tmp/pages-artifact-hash/hash.txt
+
+      - name: Save deployed hash cache
+        if: steps.deployed-hash-cache.outputs.cache-hit != 'true' && steps.deployment.outcome == 'success'
+        uses: actions/cache/save@v4
+        with:
+          path: /tmp/pages-artifact-hash
+          key: pages-artifact-${{ needs.test-and-build.outputs.artifact_hash }}
