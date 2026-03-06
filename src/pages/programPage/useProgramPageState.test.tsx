@@ -17,16 +17,36 @@ vi.mock("../../hooks/useConferenceData", () => ({
   RELOAD_STATUS_AUTO_HIDE_MS: 3000,
 }));
 
-vi.mock("../../hooks/useAppSettings", () => ({
-  useAppSettings: () => mockUseAppSettings(),
-}));
+vi.mock("../../hooks/useAppSettings", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../../hooks/useAppSettings")>();
+  return {
+    ...actual,
+    useAppSettings: () => mockUseAppSettings(),
+  };
+});
 
-vi.mock("../../hooks/useBookmarks", () => ({
-  useBookmarks: () => mockUseBookmarks(),
-}));
+vi.mock("../../hooks/useBookmarks", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../../hooks/useBookmarks")>();
+  return {
+    ...actual,
+    useBookmarks: () => mockUseBookmarks(),
+  };
+});
 
 vi.mock("../../hooks/useSessionJump", () => ({
   useSessionJump: () => mockUseSessionJump(),
+}));
+
+const mockExtractImportFragment = vi.fn(() => null as string | null);
+const mockStripImportFragment = vi.fn();
+const mockDecodePayload = vi.fn(() => null as import("../../types").ExportPayload | null);
+const mockBuildExportUrl = vi.fn(() => "https://example.com/#import_settings=abc");
+
+vi.mock("../../lib/appDataExport", () => ({
+  extractImportFragment: () => mockExtractImportFragment(),
+  stripImportFragment: () => mockStripImportFragment(),
+  decodePayload: (...args: Parameters<typeof mockDecodePayload>) => mockDecodePayload(...args),
+  buildExportUrl: (...args: Parameters<typeof mockBuildExportUrl>) => mockBuildExportUrl(...args),
 }));
 
 vi.mock("../../lib/filters", async (importOriginal) => {
@@ -119,6 +139,7 @@ describe("useProgramPageState", () => {
         includeSessionTitleForNoPresentationSessions: true,
         includeSessionTitleForPresentationSessions: false,
       },
+      setSettings: vi.fn(),
       toggleShowAuthors: vi.fn(),
       toggleUseSlackAppLinks: vi.fn(),
       toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
@@ -129,6 +150,7 @@ describe("useProgramPageState", () => {
       sessionBookmarkIds: [],
       bookmarkedPresentationIds: new Set<string>(),
       bookmarkedSessionIds: new Set<string>(),
+      setBookmarks: vi.fn(),
       toggleBookmark: vi.fn(),
       toggleSessionBookmark: vi.fn(),
     });
@@ -288,6 +310,129 @@ describe("useProgramPageState", () => {
     vi.useRealTimers();
   });
 
+  it("起動時に import_settings フラグメントがあればインポート確認ダイアログを開く", async () => {
+    mockExtractImportFragment.mockReturnValue("validencoded");
+    mockDecodePayload.mockReturnValue({
+      settings: {
+        showAuthors: true,
+        useSlackAppLinks: false,
+        includeSessionTitleForNoPresentationSessions: false,
+        includeSessionTitleForPresentationSessions: true,
+      },
+      bookmarks: { presentationIds: ["p1"], sessionIds: ["s1"] },
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    expect(hook.getLatest().overlayProps.showSettingsImportConfirm).toBe(true);
+    expect(hook.getLatest().overlayProps.importInvalid).toBe(false);
+    expect(mockStripImportFragment).toHaveBeenCalled();
+
+    hook.unmount();
+  });
+
+  it("起動時に import_settings フラグメントがデコード失敗なら isInvalid=true でダイアログを開く", async () => {
+    mockExtractImportFragment.mockReturnValue("broken");
+    mockDecodePayload.mockReturnValue(null);
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    expect(hook.getLatest().overlayProps.showSettingsImportConfirm).toBe(true);
+    expect(hook.getLatest().overlayProps.importInvalid).toBe(true);
+
+    hook.unmount();
+  });
+
+  it("インポート確認で setSettings・setBookmarks が呼ばれ、ダイアログが閉じる", async () => {
+    const decodedSettings = {
+      showAuthors: true,
+      useSlackAppLinks: false,
+      includeSessionTitleForNoPresentationSessions: false,
+      includeSessionTitleForPresentationSessions: true,
+    };
+    const decodedBookmarks = { presentationIds: ["p1", "p2"], sessionIds: ["s1"] };
+    const setSettings = vi.fn();
+    const setBookmarks = vi.fn();
+    mockExtractImportFragment.mockReturnValue("validencoded");
+    mockDecodePayload.mockReturnValue({ settings: decodedSettings, bookmarks: decodedBookmarks });
+    mockUseAppSettings.mockReturnValue({
+      settings: {
+        showAuthors: false,
+        useSlackAppLinks: false,
+        includeSessionTitleForNoPresentationSessions: true,
+        includeSessionTitleForPresentationSessions: false,
+      },
+      setSettings,
+      toggleShowAuthors: vi.fn(),
+      toggleUseSlackAppLinks: vi.fn(),
+      toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
+      toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
+    });
+    mockUseBookmarks.mockReturnValue({
+      bookmarkIds: [],
+      sessionBookmarkIds: [],
+      bookmarkedPresentationIds: new Set<string>(),
+      bookmarkedSessionIds: new Set<string>(),
+      setBookmarks,
+      toggleBookmark: vi.fn(),
+      toggleSessionBookmark: vi.fn(),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().overlayProps.onConfirmImport();
+    });
+
+    expect(setSettings).toHaveBeenCalledWith(decodedSettings);
+    expect(setBookmarks).toHaveBeenCalledWith(decodedBookmarks);
+    expect(hook.getLatest().overlayProps.showSettingsImportConfirm).toBe(false);
+
+    hook.unmount();
+  });
+
+  it("インポートキャンセルでダイアログが閉じる", async () => {
+    mockExtractImportFragment.mockReturnValue("validencoded");
+    mockDecodePayload.mockReturnValue({
+      settings: {
+        showAuthors: true,
+        useSlackAppLinks: false,
+        includeSessionTitleForNoPresentationSessions: false,
+        includeSessionTitleForPresentationSessions: true,
+      },
+      bookmarks: { presentationIds: [], sessionIds: [] },
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().overlayProps.onCancelImport();
+    });
+
+    expect(hook.getLatest().overlayProps.showSettingsImportConfirm).toBe(false);
+
+    hook.unmount();
+  });
+
+  it("エクスポートボタンで showSettingsExport が true になり URL が生成される", async () => {
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().overlayProps.onExportSettings();
+    });
+
+    expect(hook.getLatest().overlayProps.showSettingsExport).toBe(true);
+    expect(hook.getLatest().overlayProps.exportUrl).toBe("https://example.com/#import_settings=abc");
+    expect(mockBuildExportUrl).toHaveBeenCalled();
+
+    hook.unmount();
+  });
+
   it("検索設定2項目を filterSessions に渡す", async () => {
     mockUseAppSettings.mockReturnValue({
       settings: {
@@ -296,6 +441,7 @@ describe("useProgramPageState", () => {
         includeSessionTitleForNoPresentationSessions: false,
         includeSessionTitleForPresentationSessions: true,
       },
+      setSettings: vi.fn(),
       toggleShowAuthors: vi.fn(),
       toggleUseSlackAppLinks: vi.fn(),
       toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),

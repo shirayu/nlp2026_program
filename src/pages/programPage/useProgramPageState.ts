@@ -1,8 +1,18 @@
 import { startTransition, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
-import { useAppSettings } from "../../hooks/useAppSettings";
+import { appSettingsStorage, useAppSettings } from "../../hooks/useAppSettings";
 import { useBookmarks } from "../../hooks/useBookmarks";
 import { RELOAD_STATUS_AUTO_HIDE_MS, useConferenceData } from "../../hooks/useConferenceData";
 import { useSessionJump } from "../../hooks/useSessionJump";
+import {
+  type BackupEntry,
+  clearAllData,
+  hasAnyBackup,
+  listBackups,
+  loadBackup,
+  saveBeforeImport,
+  saveBeforeRestore,
+} from "../../lib/appDataBackup";
+import { buildExportUrl, decodePayload, extractImportFragment, stripImportFragment } from "../../lib/appDataExport";
 import { filterBookmarkedSessions } from "../../lib/bookmarks";
 import { filterSessions, getAvailableDates, getAvailableRooms, getAvailableTimes } from "../../lib/filters";
 import {
@@ -29,6 +39,7 @@ export function useProgramPageState() {
   const { data, sessionSlackChannels, isReloading, reloadStatus, reload } = useConferenceData();
   const {
     settings,
+    setSettings,
     toggleShowAuthors,
     toggleUseSlackAppLinks,
     toggleIncludeSessionTitleForNoPresentationSessions,
@@ -39,6 +50,7 @@ export function useProgramPageState() {
     sessionBookmarkIds,
     bookmarkedPresentationIds,
     bookmarkedSessionIds,
+    setBookmarks,
     toggleBookmark,
     toggleSessionBookmark,
   } = useBookmarks();
@@ -58,6 +70,16 @@ export function useProgramPageState() {
   const [personModal, setPersonModal] = useState<PersonId | null>(null);
   const [installPromptEvent, setInstallPromptEvent] = useState<BeforeInstallPromptEvent | null>(null);
   const [installContext, setInstallContext] = useState({ isStandalone: false, isIos: false });
+  const [showSettingsExport, setShowSettingsExport] = useState(false);
+  const [exportUrl, setExportUrl] = useState("");
+  const [showSettingsImportConfirm, setShowSettingsImportConfirm] = useState(false);
+  const [importInvalid, setImportInvalid] = useState(false);
+  const [pendingImportEncoded, setPendingImportEncoded] = useState<string | null>(null);
+  const [backupEntries, setBackupEntries] = useState<BackupEntry[]>(() =>
+    typeof window !== "undefined" ? listBackups() : [],
+  );
+  const [showRestoreConfirm, setShowRestoreConfirm] = useState(false);
+  const [showClearAllDataConfirm, setShowClearAllDataConfirm] = useState(false);
   const mainRef = useRef<HTMLElement | null>(null);
   const settingsDialogRef = useRef<HTMLDialogElement | null>(null);
   const installDialogRef = useRef<HTMLDialogElement | null>(null);
@@ -154,6 +176,21 @@ export function useProgramPageState() {
     },
     [],
   );
+
+  useEffect(() => {
+    const encoded = extractImportFragment();
+    if (encoded !== null) {
+      stripImportFragment();
+      const decoded = decodePayload(encoded);
+      if (decoded) {
+        setPendingImportEncoded(encoded);
+        setImportInvalid(false);
+      } else {
+        setImportInvalid(true);
+      }
+      setShowSettingsImportConfirm(true);
+    }
+  }, []);
 
   const baseFilteredSessions = useMemo(() => {
     if (!data) return [];
@@ -378,6 +415,57 @@ export function useProgramPageState() {
     }
   }
 
+  function handleExportSettings() {
+    setExportUrl(
+      buildExportUrl({
+        settings,
+        bookmarks: {
+          presentationIds: bookmarkIds,
+          sessionIds: sessionBookmarkIds,
+        },
+      }),
+    );
+    setShowSettingsExport(true);
+  }
+
+  function handleConfirmImport() {
+    if (pendingImportEncoded) {
+      const decoded = decodePayload(pendingImportEncoded);
+      if (decoded) {
+        saveBeforeImport();
+        setSettings(decoded.settings);
+        setBookmarks(decoded.bookmarks);
+        setBackupEntries(listBackups());
+      }
+    }
+    setShowSettingsImportConfirm(false);
+    setPendingImportEncoded(null);
+  }
+
+  function handleConfirmRestoreBackup(kind: BackupEntry["kind"]) {
+    saveBeforeRestore();
+    const backup = loadBackup(kind);
+    if (backup) {
+      setSettings(backup.settings);
+      setBookmarks(backup.bookmarks);
+    }
+    setBackupEntries(listBackups());
+    setShowRestoreConfirm(false);
+  }
+
+  function handleConfirmClearAllData() {
+    clearAllData();
+    setSettings(appSettingsStorage.defaults);
+    setBookmarks({ presentationIds: [], sessionIds: [] });
+    setBackupEntries([]);
+    setShowClearAllDataConfirm(false);
+  }
+
+  function handleCancelImport() {
+    setShowSettingsImportConfirm(false);
+    setPendingImportEncoded(null);
+  }
+
   return {
     data,
     headerProps: {
@@ -473,6 +561,24 @@ export function useProgramPageState() {
       onToggleUseSlackAppLinks: toggleUseSlackAppLinks,
       onToggleIncludeSessionTitleForNoPresentationSessions: toggleIncludeSessionTitleForNoPresentationSessions,
       onToggleIncludeSessionTitleForPresentationSessions: toggleIncludeSessionTitleForPresentationSessions,
+      onExportSettings: handleExportSettings,
+      showSettingsExport,
+      exportUrl,
+      onCloseSettingsExport: () => setShowSettingsExport(false),
+      showSettingsImportConfirm,
+      importInvalid,
+      onConfirmImport: handleConfirmImport,
+      onCancelImport: handleCancelImport,
+      backupEntries,
+      hasBackup: hasAnyBackup(),
+      onRestoreBackup: () => setShowRestoreConfirm(true),
+      onClearAllData: () => setShowClearAllDataConfirm(true),
+      showRestoreConfirm,
+      onConfirmRestore: handleConfirmRestoreBackup,
+      onCancelRestore: () => setShowRestoreConfirm(false),
+      showClearAllDataConfirm,
+      onConfirmClearAllData: handleConfirmClearAllData,
+      onCancelClearAllData: () => setShowClearAllDataConfirm(false),
     },
   };
 }

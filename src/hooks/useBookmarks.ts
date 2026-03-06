@@ -106,6 +106,7 @@ export function useBookmarks() {
     sessionBookmarkIds: bookmarks.sessionIds,
     bookmarkedPresentationIds,
     bookmarkedSessionIds,
+    setBookmarks,
     clearBookmarks,
     isBookmarked,
     isSessionBookmarked,

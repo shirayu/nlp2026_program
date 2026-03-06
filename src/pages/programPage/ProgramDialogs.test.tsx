@@ -1,7 +1,14 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { BUILD_GIT_HASH } from "../../constants";
-import { formatBuildGitDate, InstallDialog, SettingsDialog } from "./ProgramDialogs";
+import {
+  ClearAllDataConfirmDialog,
+  formatBuildGitDate,
+  InstallDialog,
+  RestoreBackupConfirmDialog,
+  SettingsDialog,
+  SettingsImportConfirmDialog,
+} from "./ProgramDialogs";
 
 describe("formatBuildGitDate", () => {
   it("指定タイムゾーン名つきのローカライズ日時を返す", () => {
@@ -105,23 +112,27 @@ describe("InstallDialog", () => {
   });
 });
 
+const defaultSettingsDialogProps = {
+  dialogRef: { current: null } as { current: null },
+  open: true,
+  showAuthors: true,
+  useSlackAppLinks: false,
+  includeSessionTitleForNoPresentationSessions: true,
+  includeSessionTitleForPresentationSessions: false,
+  onClose: () => {},
+  onToggleShowAuthors: () => {},
+  onToggleUseSlackAppLinks: () => {},
+  onToggleIncludeSessionTitleForNoPresentationSessions: () => {},
+  onToggleIncludeSessionTitleForPresentationSessions: () => {},
+  onExport: () => {},
+  hasBackup: false,
+  onRestore: () => {},
+  onClearAllData: () => {},
+};
+
 describe("SettingsDialog", () => {
   it("ビルド情報を表示する", () => {
-    const html = renderToStaticMarkup(
-      <SettingsDialog
-        dialogRef={{ current: null }}
-        open
-        showAuthors
-        useSlackAppLinks={false}
-        includeSessionTitleForNoPresentationSessions
-        includeSessionTitleForPresentationSessions={false}
-        onClose={() => {}}
-        onToggleShowAuthors={() => {}}
-        onToggleUseSlackAppLinks={() => {}}
-        onToggleIncludeSessionTitleForNoPresentationSessions={() => {}}
-        onToggleIncludeSessionTitleForPresentationSessions={() => {}}
-      />,
-    );
+    const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
     expect(html).toContain("ソフトウェア情報");
     expect(html).not.toContain('<h3 class="text-sm font-semibold text-gray-800">運営者</h3>');
@@ -132,21 +143,7 @@ describe("SettingsDialog", () => {
   });
 
   it("アイコン凡例を表示する", () => {
-    const html = renderToStaticMarkup(
-      <SettingsDialog
-        dialogRef={{ current: null }}
-        open
-        showAuthors
-        useSlackAppLinks={false}
-        includeSessionTitleForNoPresentationSessions
-        includeSessionTitleForPresentationSessions={false}
-        onClose={() => {}}
-        onToggleShowAuthors={() => {}}
-        onToggleUseSlackAppLinks={() => {}}
-        onToggleIncludeSessionTitleForNoPresentationSessions={() => {}}
-        onToggleIncludeSessionTitleForPresentationSessions={() => {}}
-      />,
-    );
+    const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
     expect(html).toContain("アイコン凡例");
     expect(html).toContain("○ 発表者");
@@ -155,24 +152,139 @@ describe("SettingsDialog", () => {
   });
 
   it("セッションタイトル検索設定セクションを表示する", () => {
-    const html = renderToStaticMarkup(
-      <SettingsDialog
-        dialogRef={{ current: null }}
-        open
-        showAuthors
-        useSlackAppLinks={false}
-        includeSessionTitleForNoPresentationSessions
-        includeSessionTitleForPresentationSessions={false}
-        onClose={() => {}}
-        onToggleShowAuthors={() => {}}
-        onToggleUseSlackAppLinks={() => {}}
-        onToggleIncludeSessionTitleForNoPresentationSessions={() => {}}
-        onToggleIncludeSessionTitleForPresentationSessions={() => {}}
-      />,
-    );
+    const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
     expect(html).toContain("セッションタイトルを検索対象にする");
     expect(html).toContain("発表情報が無いセッション");
     expect(html).toContain("発表情報が有るセッション");
+  });
+
+  it("hasBackup=false のとき復元ボタンを表示しない", () => {
+    const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} hasBackup={false} />);
+
+    expect(html).not.toContain("復元");
+  });
+
+  it("hasBackup=true のとき復元ボタンを表示する", () => {
+    const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} hasBackup={true} />);
+
+    expect(html).toContain("復元");
+  });
+
+  it("全てのデータを削除ボタンを常に表示する", () => {
+    const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
+
+    expect(html).toContain("全てのデータを削除");
+    expect(html).toContain("データのリセット");
+  });
+
+  it("全データ削除セクションはエクスポートセクションより後に表示される", () => {
+    const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
+
+    expect(html.indexOf("データのリセット")).toBeGreaterThan(html.indexOf("エクスポート"));
+  });
+
+  it("全データ削除セクションはソフトウェア情報より後に表示される", () => {
+    const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
+
+    expect(html.indexOf("データのリセット")).toBeGreaterThan(html.indexOf("ソフトウェア情報"));
+  });
+});
+
+describe("SettingsImportConfirmDialog", () => {
+  it("インポート警告とバックアップ案内を表示する", () => {
+    const html = renderToStaticMarkup(
+      <SettingsImportConfirmDialog open isInvalid={false} onConfirm={() => {}} onCancel={() => {}} />,
+    );
+
+    expect(html).toContain("上書きされます");
+    expect(html).toContain("復元");
+    expect(html).toContain("インポートする");
+  });
+
+  it("isInvalid のときエラーメッセージを表示しインポートボタンを非表示にする", () => {
+    const html = renderToStaticMarkup(
+      <SettingsImportConfirmDialog open isInvalid onConfirm={() => {}} onCancel={() => {}} />,
+    );
+
+    expect(html).toContain("無効なため");
+    expect(html).not.toContain("インポートする");
+  });
+});
+
+describe("RestoreBackupConfirmDialog", () => {
+  it("before_import のみの場合、インポート前の選択肢だけを表示する", () => {
+    const html = renderToStaticMarkup(
+      <RestoreBackupConfirmDialog
+        open
+        entries={[
+          {
+            kind: "before_import",
+            payload: {
+              settings: {
+                showAuthors: true,
+                useSlackAppLinks: false,
+                includeSessionTitleForNoPresentationSessions: true,
+                includeSessionTitleForPresentationSessions: false,
+              },
+              bookmarks: { presentationIds: [], sessionIds: [] },
+            },
+          },
+        ]}
+        onConfirm={() => {}}
+        onCancel={() => {}}
+      />,
+    );
+
+    expect(html).toContain("バックアップから復元");
+    expect(html).toContain("インポート前の状態");
+    expect(html).not.toContain("復元前の状態");
+    expect(html).toContain("キャンセル");
+  });
+
+  it("2世代ある場合、両方の選択肢を表示する", () => {
+    const payload = {
+      settings: {
+        showAuthors: true,
+        useSlackAppLinks: false,
+        includeSessionTitleForNoPresentationSessions: true,
+        includeSessionTitleForPresentationSessions: false,
+      },
+      bookmarks: { presentationIds: [], sessionIds: [] },
+    };
+    const html = renderToStaticMarkup(
+      <RestoreBackupConfirmDialog
+        open
+        entries={[
+          { kind: "before_import", payload },
+          { kind: "before_restore", payload },
+        ]}
+        onConfirm={() => {}}
+        onCancel={() => {}}
+      />,
+    );
+
+    expect(html).toContain("インポート前の状態");
+    expect(html).toContain("復元前の状態");
+  });
+
+  it("エントリが空の場合、選択肢を表示しない", () => {
+    const html = renderToStaticMarkup(
+      <RestoreBackupConfirmDialog open entries={[]} onConfirm={() => {}} onCancel={() => {}} />,
+    );
+
+    expect(html).not.toContain("インポート前の状態");
+    expect(html).not.toContain("復元前の状態");
+    expect(html).toContain("キャンセル");
+  });
+});
+
+describe("ClearAllDataConfirmDialog", () => {
+  it("削除の説明と確認・キャンセルボタンを表示する", () => {
+    const html = renderToStaticMarkup(<ClearAllDataConfirmDialog open onConfirm={() => {}} onCancel={() => {}} />);
+
+    expect(html).toContain("データのリセット");
+    expect(html).toContain("削除する");
+    expect(html).toContain("キャンセル");
   });
 });

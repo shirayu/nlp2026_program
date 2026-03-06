@@ -65,6 +65,14 @@ export interface AppSettings {
   includeSessionTitleForPresentationSessions: boolean;
 }
 
+export interface ExportPayload {
+  settings: AppSettings;
+  bookmarks: {
+    presentationIds: PresentationId[];
+    sessionIds: SessionId[];
+  };
+}
+
 export interface LastUpdateEntry {
   sha256: string | null;
   time: string;

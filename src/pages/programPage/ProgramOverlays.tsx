@@ -1,8 +1,16 @@
 import type { RefObject } from "react";
 import { PersonModal } from "../../components/PersonModal";
 import type { DataReloadStatus } from "../../hooks/useConferenceData";
+import type { BackupEntry } from "../../lib/appDataBackup";
 import type { ConferenceData, PersonId, PresentationId, SessionId } from "../../types";
-import { InstallDialog, SettingsDialog } from "./ProgramDialogs";
+import {
+  ClearAllDataConfirmDialog,
+  InstallDialog,
+  RestoreBackupConfirmDialog,
+  SettingsDialog,
+  SettingsExportDialog,
+  SettingsImportConfirmDialog,
+} from "./ProgramDialogs";
 
 export function ProgramOverlays({
   personModal,
@@ -35,6 +43,24 @@ export function ProgramOverlays({
   onToggleUseSlackAppLinks,
   onToggleIncludeSessionTitleForNoPresentationSessions,
   onToggleIncludeSessionTitleForPresentationSessions,
+  onExportSettings,
+  showSettingsExport,
+  exportUrl,
+  onCloseSettingsExport,
+  showSettingsImportConfirm,
+  importInvalid,
+  onConfirmImport,
+  onCancelImport,
+  backupEntries,
+  hasBackup,
+  onRestoreBackup,
+  onClearAllData,
+  showRestoreConfirm,
+  onConfirmRestore,
+  onCancelRestore,
+  showClearAllDataConfirm,
+  onConfirmClearAllData,
+  onCancelClearAllData,
 }: {
   personModal: PersonId | null;
   data: ConferenceData;
@@ -66,6 +92,24 @@ export function ProgramOverlays({
   onToggleUseSlackAppLinks: () => void;
   onToggleIncludeSessionTitleForNoPresentationSessions: () => void;
   onToggleIncludeSessionTitleForPresentationSessions: () => void;
+  onExportSettings: () => void;
+  showSettingsExport: boolean;
+  exportUrl: string;
+  onCloseSettingsExport: () => void;
+  showSettingsImportConfirm: boolean;
+  importInvalid: boolean;
+  onConfirmImport: () => void;
+  onCancelImport: () => void;
+  backupEntries: BackupEntry[];
+  hasBackup: boolean;
+  onRestoreBackup: () => void;
+  onClearAllData: () => void;
+  showRestoreConfirm: boolean;
+  onConfirmRestore: (kind: BackupEntry["kind"]) => void;
+  onCancelRestore: () => void;
+  showClearAllDataConfirm: boolean;
+  onConfirmClearAllData: () => void;
+  onCancelClearAllData: () => void;
 }) {
   return (
     <>
@@ -111,6 +155,32 @@ export function ProgramOverlays({
         onToggleUseSlackAppLinks={onToggleUseSlackAppLinks}
         onToggleIncludeSessionTitleForNoPresentationSessions={onToggleIncludeSessionTitleForNoPresentationSessions}
         onToggleIncludeSessionTitleForPresentationSessions={onToggleIncludeSessionTitleForPresentationSessions}
+        onExport={onExportSettings}
+        hasBackup={hasBackup}
+        onRestore={onRestoreBackup}
+        onClearAllData={onClearAllData}
+      />
+
+      <SettingsExportDialog open={showSettingsExport} exportUrl={exportUrl} onClose={onCloseSettingsExport} />
+
+      <SettingsImportConfirmDialog
+        open={showSettingsImportConfirm}
+        isInvalid={importInvalid}
+        onConfirm={onConfirmImport}
+        onCancel={onCancelImport}
+      />
+
+      <RestoreBackupConfirmDialog
+        open={showRestoreConfirm}
+        entries={backupEntries}
+        onConfirm={onConfirmRestore}
+        onCancel={onCancelRestore}
+      />
+
+      <ClearAllDataConfirmDialog
+        open={showClearAllDataConfirm}
+        onConfirm={onConfirmClearAllData}
+        onCancel={onCancelClearAllData}
       />
     </>
   );
