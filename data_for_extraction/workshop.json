@@ -316,77 +316,45 @@
     "sessions": [
       {
         "id": "WS3-1",
-        "title": "WS3 Graham Neubig: Thoughts on International Conferences",
+        "title": "WS3 Talk Session",
         "start_time": "9:00",
-        "end_time": "9:30",
+        "end_time": "11:00",
         "presentations": [
           {
             "id": "WS3-1-1",
             "title": "Thoughts on International Conferences: An Interview with Graham Neubig",
             "authors": [{ "name": "Graham Neubig" }]
-          }
-        ]
-      },
-      {
-        "id": "WS3-2",
-        "title": "WS3 Naoaki Okazaki",
-        "start_time": "9:30",
-        "end_time": "10:00",
-        "presentations": [
+          },
           {
-            "id": "WS3-2-1",
-            "title": "(TBA)",
+            "id": "WS3-1-2",
+            "title": "トップ国際会議の舞台裏：論文はどのように選ばれるのか",
             "authors": [{ "name": "Naoaki Okazaki" }]
-          }
-        ]
-      },
-      {
-        "id": "WS3-3",
-        "title": "WS3 Jun Suzuki: ACL Rolling Review Editor-in-Chief として得た経験の共有",
-        "start_time": "10:00",
-        "end_time": "10:30",
-        "presentations": [
+          },
           {
-            "id": "WS3-3-1",
+            "id": "WS3-1-3",
             "title": "ACL Rolling Review Editor-in-Chief として得た経験の共有",
             "authors": [{ "name": "Jun Suzuki" }]
-          }
-        ]
-      },
-      {
-        "id": "WS3-4",
-        "title": "WS3 Yusuke Sakai",
-        "start_time": "10:45",
-        "end_time": "11:15",
-        "presentations": [
+          },
           {
-            "id": "WS3-4-1",
-            "title": "(TBA)",
+            "id": "WS3-1-4",
+            "title": "ARRにおけるGreat Reviewの取り方と現状のレビュー環境について",
             "authors": [{ "name": "Yusuke Sakai" }]
-          }
-        ]
-      },
-      {
-        "id": "WS3-5",
-        "title": "WS3 Masahiro Kaneko",
-        "start_time": "11:15",
-        "end_time": "11:45",
-        "presentations": [
+          },
           {
-            "id": "WS3-5-1",
-            "title": "(TBA)",
+            "id": "WS3-1-5",
+            "title": "国際会議スランプに効く薬",
             "authors": [{ "name": "Masahiro Kaneko" }]
           }
         ]
       },
       {
-        "id": "WS3-6",
+        "id": "WS3-2",
         "title": "WS3 Panel Discussion",
         "start_time": "11:45",
         "end_time": "12:30",
         "presentations": [
           {
-            "id": "WS3-6-1",
+            "id": "WS3-2-1",
             "title": "Panel Discussion",
             "authors": [
               { "name": "Naoaki Okazaki" },
@@ -399,22 +367,51 @@
         ]
       },
       {
-        "id": "WS3-7",
+        "id": "WS3-3",
         "title": "WS3 Talk for Experience",
         "start_time": "13:30",
-        "end_time": "15:00"
+        "end_time": "15:00",
+        "presentations": [
+          {
+            "id": "WS3-3-1",
+            "title": "Experience Talk",
+            "authors": [{ "name": "Takashi Wada", "affiliation": "ZOZO Research" }]
+          },
+          {
+            "id": "WS3-3-2",
+            "title": "Experience Talk",
+            "authors": [{ "name": "Yui Oka", "affiliation": "NTT/Tohoku University" }]
+          },
+          {
+            "id": "WS3-3-3",
+            "title": "Experience Talk",
+            "authors": [{ "name": "Kazuma Kobayashi", "affiliation": "NCC/NII LLMC" }]
+          },
+          {
+            "id": "WS3-3-4",
+            "title": "Experience Talk",
+            "authors": [{ "name": "Kazuki Hayashi", "affiliation": "NAIST" }]
+          }
+        ]
       },
       {
-        "id": "WS3-8",
+        "id": "WS3-4",
         "title": "WS3 Hands-on Session",
         "start_time": "15:15",
         "end_time": "16:45",
         "chair": "Taro Watanabe",
         "presentations": [
           {
-            "id": "WS3-8-1",
-            "title": "Hands-on Session",
-            "authors": [{ "name": "Taro Watanabe" }]
+            "id": "WS3-4-1",
+            "title": "Topic Selection"
+          },
+          {
+            "id": "WS3-4-2",
+            "title": "How to Write a Paper"
+          },
+          {
+            "id": "WS3-4-3",
+            "title": "Rebuttal Methods"
           }
         ]
       }
