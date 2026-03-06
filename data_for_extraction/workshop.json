@@ -79,27 +79,18 @@
       },
       {
         "id": "WS2-1",
-        "title": "WS2 午前＜1＞ 独自日本語Webコーパス構築のための巡回クロール基盤構築",
+        "title": "WS2 午前＜1＞",
         "start_time": "10:05",
-        "end_time": "10:25",
+        "end_time": "11:45",
         "chair": "河原 大輔 (早稲田大)",
         "presentations": [
           {
             "id": "WS2-1-1",
             "title": "独自日本語Webコーパス構築のための巡回クロール基盤構築",
             "authors": [{ "name": "石原 慧人", "affiliation": "SB Intuitions" }]
-          }
-        ]
-      },
-      {
-        "id": "WS2-2",
-        "title": "WS2 午前＜1＞ 番組映像を活用したマルチモーダルデータセット開発の取り組み",
-        "start_time": "10:25",
-        "end_time": "10:45",
-        "chair": "河原 大輔 (早稲田大)",
-        "presentations": [
+          },
           {
-            "id": "WS2-2-1",
+            "id": "WS2-1-2",
             "title": "番組映像を活用したマルチモーダルデータセット開発の取り組み",
             "authors": [
               { "name": "岡田 拓也", "affiliation": "NHK" },
@@ -111,46 +102,19 @@
               { "name": "宮﨑 太郎", "affiliation": "NHK" },
               { "name": "河合 吉彦", "affiliation": "NHK" }
             ]
-          }
-        ]
-      },
-      {
-        "id": "WS2-3",
-        "title": "WS2 午前＜1＞ BizDocVQA：根拠領域のアノテーションによる説明可能なビジネス帳票理解の実現と評価",
-        "start_time": "10:45",
-        "end_time": "11:15",
-        "chair": "河原 大輔 (早稲田大)",
-        "presentations": [
+          },
           {
-            "id": "WS2-3-1",
+            "id": "WS2-1-3",
             "title": "BizDocVQA：根拠領域のアノテーションによる説明可能なビジネス帳票理解の実現と評価",
             "authors": [{ "name": "久保 隆宏", "affiliation": "アマゾンウェブサービスジャパン" }]
-          }
-        ]
-      },
-      {
-        "id": "WS2-4",
-        "title": "WS2 午前＜1＞ 論文に基づく歴史学知識資源の公開に向けたデータセット記述の精緻化",
-        "start_time": "11:15",
-        "end_time": "11:35",
-        "chair": "河原 大輔 (早稲田大)",
-        "presentations": [
+          },
           {
-            "id": "WS2-4-1",
+            "id": "WS2-1-4",
             "title": "論文に基づく歴史学知識資源の公開に向けたデータセット記述の精緻化",
             "authors": [{ "name": "亀田 尭宙", "affiliation": "人間文化研究機構" }]
-          }
-        ]
-      },
-      {
-        "id": "WS2-5",
-        "title": "WS2 午前＜1＞ 日本語の科学設問集の複数評価者による難易度付けと評価者間不一致の分析",
-        "start_time": "11:35",
-        "end_time": "11:45",
-        "chair": "河原 大輔 (早稲田大)",
-        "presentations": [
+          },
           {
-            "id": "WS2-5-1",
+            "id": "WS2-1-5",
             "title": "日本語の科学設問集の複数評価者による難易度付けと評価者間不一致の分析",
             "is_online": true,
             "authors": [{ "name": "江原 遥", "affiliation": "東京学芸大" }]
@@ -158,28 +122,19 @@
         ]
       },
       {
-        "id": "WS2-6",
-        "title": "WS2 午後＜1＞ 軽量な日本語報酬モデル ca-reward-3b-ja の構築と公開",
+        "id": "WS2-2",
+        "title": "WS2 午後＜1＞",
         "start_time": "13:00",
-        "end_time": "13:20",
+        "end_time": "14:35",
         "chair": "柴田 知秀 (SB Intuitions)",
         "presentations": [
           {
-            "id": "WS2-6-1",
+            "id": "WS2-2-1",
             "title": "軽量な日本語報酬モデル ca-reward-3b-ja の構築と公開",
             "authors": [{ "name": "三橋 亮太", "affiliation": "サイバーエージェント" }]
-          }
-        ]
-      },
-      {
-        "id": "WS2-7",
-        "title": "WS2 午後＜1＞ 日本語大規模言語モデルの推論能力向上のための強化学習データセット構築",
-        "start_time": "13:20",
-        "end_time": "13:40",
-        "chair": "柴田 知秀 (SB Intuitions)",
-        "presentations": [
+          },
           {
-            "id": "WS2-7-1",
+            "id": "WS2-2-2",
             "title": "日本語大規模言語モデルの推論能力向上のための強化学習データセット構築",
             "authors": [
               { "name": "太田 晋", "affiliation": "東京科学大" },
@@ -187,50 +142,23 @@
               { "name": "水木 栄", "affiliation": "東京科学大・産総研" },
               { "name": "岡崎 直観", "affiliation": "東京科学大・産総研・NII LLMC" }
             ]
-          }
-        ]
-      },
-      {
-        "id": "WS2-8",
-        "title": "WS2 午後＜1＞ 金融業に特化した生成AIモデルのインストラクションデータ開発プロセス",
-        "start_time": "13:40",
-        "end_time": "14:05",
-        "chair": "柴田 知秀 (SB Intuitions)",
-        "presentations": [
+          },
           {
-            "id": "WS2-8-1",
+            "id": "WS2-2-3",
             "title": "金融業に特化した生成AIモデルのインストラクションデータ開発プロセス",
             "authors": [{ "name": "佐藤 奈穂子", "affiliation": "リコー" }]
-          }
-        ]
-      },
-      {
-        "id": "WS2-9",
-        "title": "WS2 午後＜1＞ 語彙を起点とした完全合成によるドメイン特化指示データセットの構築と金融分野での実証",
-        "start_time": "14:05",
-        "end_time": "14:25",
-        "chair": "柴田 知秀 (SB Intuitions)",
-        "presentations": [
+          },
           {
-            "id": "WS2-9-1",
+            "id": "WS2-2-4",
             "title": "語彙を起点とした完全合成によるドメイン特化指示データセットの構築と金融分野での実証",
             "authors": [
               { "name": "大河内 悠磨", "affiliation": "NRI" },
               { "name": "Fabio Milentiansen Sim", "affiliation": "NRIインドネシア" },
               { "name": "岡田 智靖", "affiliation": "NRI" }
             ]
-          }
-        ]
-      },
-      {
-        "id": "WS2-10",
-        "title": "WS2 午後＜1＞ Deep Research結果に対する細粒度引用と矛盾のアノテーション",
-        "start_time": "14:25",
-        "end_time": "14:35",
-        "chair": "柴田 知秀 (SB Intuitions)",
-        "presentations": [
+          },
           {
-            "id": "WS2-10-1",
+            "id": "WS2-2-5",
             "title": "Deep Research結果に対する細粒度引用と矛盾のアノテーション",
             "authors": [
               { "name": "松田 耕史", "affiliation": "SB Intuitions" },
@@ -242,32 +170,23 @@
         ]
       },
       {
-        "id": "WS2-11",
-        "title": "WS2 午後＜2＞ 日本語インストラクションデータの多様化に向けた高品質な人手データを起点とする合成手法の検討",
+        "id": "WS2-3",
+        "title": "WS2 午後＜2＞",
         "start_time": "14:45",
-        "end_time": "15:10",
+        "end_time": "15:45",
         "chair": "松田 寛 (Megagon Labs)",
         "presentations": [
           {
-            "id": "WS2-11-1",
+            "id": "WS2-3-1",
             "title": "日本語インストラクションデータの多様化に向けた高品質な人手データを起点とする合成手法の検討",
             "authors": [
               { "name": "宮里 龍平", "affiliation": "電気通信大" },
               { "name": "中山 功太", "affiliation": "NII LLMC" },
               { "name": "関根 聡", "affiliation": "いちから" }
             ]
-          }
-        ]
-      },
-      {
-        "id": "WS2-12",
-        "title": "WS2 午後＜2＞ 人間-LLM間のインタラクション分析に向けたコーパス構築のための談話行為アノテーション設計",
-        "start_time": "15:10",
-        "end_time": "15:35",
-        "chair": "松田 寛 (Megagon Labs)",
-        "presentations": [
+          },
           {
-            "id": "WS2-12-1",
+            "id": "WS2-3-2",
             "title": "人間-LLM間のインタラクション分析に向けたコーパス構築のための談話行為アノテーション設計",
             "authors": [
               { "name": "永井 宥之", "affiliation": "NAIST" },
@@ -277,18 +196,9 @@
               { "name": "若宮 翔子", "affiliation": "NAIST" },
               { "name": "荒牧 英治", "affiliation": "NAIST" }
             ]
-          }
-        ]
-      },
-      {
-        "id": "WS2-13",
-        "title": "WS2 午後＜2＞ ユーザの個人特性を含む破綻・修復発話文の収集",
-        "start_time": "15:35",
-        "end_time": "15:45",
-        "chair": "松田 寛 (Megagon Labs)",
-        "presentations": [
+          },
           {
-            "id": "WS2-13-1",
+            "id": "WS2-3-3",
             "title": "ユーザの個人特性を含む破綻・修復発話文の収集",
             "authors": [
               { "name": "坪倉 和哉", "affiliation": "愛知県立大" },
@@ -299,7 +209,7 @@
         ]
       },
       {
-        "id": "WS2-14",
+        "id": "WS2-4",
         "title": "WS2 総合討論・クロージング",
         "start_time": "15:45",
         "end_time": "16:00"

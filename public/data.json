@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-03-06T16:01:19Z",
+  "generated_at": "2026-03-06T16:09:21Z",
   "last_update": {
     "program_main": {
       "sha256": "c02f7308dda2ea510afda63be85a9e566cac31235d91206c97fc0a2837a5a981",
       "time": "2026-03-04T09:00:00+09:00"
     },
     "workshop": {
-      "sha256": "d7fe5a8f9224d774e00ec3c5978d1f08d51463e05216fc2a48f4ff0dee0e6d46",
-      "time": "2026-03-07T01:01:08+09:00"
+      "sha256": "e5df2943a2bfbd874e21d86ee52e9d3f2109aad3994fb2e858176bced34e2a33",
+      "time": "2026-03-07T01:09:05+09:00"
     },
     "invitedpapers": {
       "sha256": "1383c3c3c2fd57240adc5d25ae7b760966287c460ef40f20cbd5b68fa2e5b090",
@@ -8685,136 +8685,36 @@
       "url": "https://jedworkshop.github.io/JLR2026/program/"
     },
     "WS2-1": {
-      "title": "WS2 午前＜1＞ 独自日本語Webコーパス構築のための巡回クロール基盤構築",
+      "title": "WS2 午前＜1＞",
       "date": "2026-03-13",
       "start_time": "10:05",
-      "end_time": "10:25",
-      "room_ids": ["r0011"],
-      "chair": "河原 大輔 (早稲田大)",
-      "presentation_ids": ["WS2-1-1"],
-      "url": "https://jedworkshop.github.io/JLR2026/program/"
-    },
-    "WS2-2": {
-      "title": "WS2 午前＜1＞ 番組映像を活用したマルチモーダルデータセット開発の取り組み",
-      "date": "2026-03-13",
-      "start_time": "10:25",
-      "end_time": "10:45",
-      "room_ids": ["r0011"],
-      "chair": "河原 大輔 (早稲田大)",
-      "presentation_ids": ["WS2-2-1"],
-      "url": "https://jedworkshop.github.io/JLR2026/program/"
-    },
-    "WS2-3": {
-      "title": "WS2 午前＜1＞ BizDocVQA：根拠領域のアノテーションによる説明可能なビジネス帳票理解の実現と評価",
-      "date": "2026-03-13",
-      "start_time": "10:45",
-      "end_time": "11:15",
-      "room_ids": ["r0011"],
-      "chair": "河原 大輔 (早稲田大)",
-      "presentation_ids": ["WS2-3-1"],
-      "url": "https://jedworkshop.github.io/JLR2026/program/"
-    },
-    "WS2-4": {
-      "title": "WS2 午前＜1＞ 論文に基づく歴史学知識資源の公開に向けたデータセット記述の精緻化",
-      "date": "2026-03-13",
-      "start_time": "11:15",
-      "end_time": "11:35",
-      "room_ids": ["r0011"],
-      "chair": "河原 大輔 (早稲田大)",
-      "presentation_ids": ["WS2-4-1"],
-      "url": "https://jedworkshop.github.io/JLR2026/program/"
-    },
-    "WS2-5": {
-      "title": "WS2 午前＜1＞ 日本語の科学設問集の複数評価者による難易度付けと評価者間不一致の分析",
-      "date": "2026-03-13",
-      "start_time": "11:35",
       "end_time": "11:45",
       "room_ids": ["r0011"],
       "chair": "河原 大輔 (早稲田大)",
-      "presentation_ids": ["WS2-5-1"],
+      "presentation_ids": ["WS2-1-1", "WS2-1-2", "WS2-1-3", "WS2-1-4", "WS2-1-5"],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
     },
-    "WS2-6": {
-      "title": "WS2 午後＜1＞ 軽量な日本語報酬モデル ca-reward-3b-ja の構築と公開",
+    "WS2-2": {
+      "title": "WS2 午後＜1＞",
       "date": "2026-03-13",
       "start_time": "13:00",
-      "end_time": "13:20",
-      "room_ids": ["r0011"],
-      "chair": "柴田 知秀 (SB Intuitions)",
-      "presentation_ids": ["WS2-6-1"],
-      "url": "https://jedworkshop.github.io/JLR2026/program/"
-    },
-    "WS2-7": {
-      "title": "WS2 午後＜1＞ 日本語大規模言語モデルの推論能力向上のための強化学習データセット構築",
-      "date": "2026-03-13",
-      "start_time": "13:20",
-      "end_time": "13:40",
-      "room_ids": ["r0011"],
-      "chair": "柴田 知秀 (SB Intuitions)",
-      "presentation_ids": ["WS2-7-1"],
-      "url": "https://jedworkshop.github.io/JLR2026/program/"
-    },
-    "WS2-8": {
-      "title": "WS2 午後＜1＞ 金融業に特化した生成AIモデルのインストラクションデータ開発プロセス",
-      "date": "2026-03-13",
-      "start_time": "13:40",
-      "end_time": "14:05",
-      "room_ids": ["r0011"],
-      "chair": "柴田 知秀 (SB Intuitions)",
-      "presentation_ids": ["WS2-8-1"],
-      "url": "https://jedworkshop.github.io/JLR2026/program/"
-    },
-    "WS2-9": {
-      "title": "WS2 午後＜1＞ 語彙を起点とした完全合成によるドメイン特化指示データセットの構築と金融分野での実証",
-      "date": "2026-03-13",
-      "start_time": "14:05",
-      "end_time": "14:25",
-      "room_ids": ["r0011"],
-      "chair": "柴田 知秀 (SB Intuitions)",
-      "presentation_ids": ["WS2-9-1"],
-      "url": "https://jedworkshop.github.io/JLR2026/program/"
-    },
-    "WS2-10": {
-      "title": "WS2 午後＜1＞ Deep Research結果に対する細粒度引用と矛盾のアノテーション",
-      "date": "2026-03-13",
-      "start_time": "14:25",
       "end_time": "14:35",
       "room_ids": ["r0011"],
       "chair": "柴田 知秀 (SB Intuitions)",
-      "presentation_ids": ["WS2-10-1"],
+      "presentation_ids": ["WS2-2-1", "WS2-2-2", "WS2-2-3", "WS2-2-4", "WS2-2-5"],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
     },
-    "WS2-11": {
-      "title": "WS2 午後＜2＞ 日本語インストラクションデータの多様化に向けた高品質な人手データを起点とする合成手法の検討",
+    "WS2-3": {
+      "title": "WS2 午後＜2＞",
       "date": "2026-03-13",
       "start_time": "14:45",
-      "end_time": "15:10",
-      "room_ids": ["r0011"],
-      "chair": "松田 寛 (Megagon Labs)",
-      "presentation_ids": ["WS2-11-1"],
-      "url": "https://jedworkshop.github.io/JLR2026/program/"
-    },
-    "WS2-12": {
-      "title": "WS2 午後＜2＞ 人間-LLM間のインタラクション分析に向けたコーパス構築のための談話行為アノテーション設計",
-      "date": "2026-03-13",
-      "start_time": "15:10",
-      "end_time": "15:35",
-      "room_ids": ["r0011"],
-      "chair": "松田 寛 (Megagon Labs)",
-      "presentation_ids": ["WS2-12-1"],
-      "url": "https://jedworkshop.github.io/JLR2026/program/"
-    },
-    "WS2-13": {
-      "title": "WS2 午後＜2＞ ユーザの個人特性を含む破綻・修復発話文の収集",
-      "date": "2026-03-13",
-      "start_time": "15:35",
       "end_time": "15:45",
       "room_ids": ["r0011"],
       "chair": "松田 寛 (Megagon Labs)",
-      "presentation_ids": ["WS2-13-1"],
+      "presentation_ids": ["WS2-3-1", "WS2-3-2", "WS2-3-3"],
       "url": "https://jedworkshop.github.io/JLR2026/program/"
     },
-    "WS2-14": {
+    "WS2-4": {
       "title": "WS2 総合討論・クロージング",
       "date": "2026-03-13",
       "start_time": "15:45",
@@ -28676,9 +28576,9 @@
       ],
       "pdf_url": null
     },
-    "WS2-2-1": {
+    "WS2-1-2": {
       "title": "番組映像を活用したマルチモーダルデータセット開発の取り組み",
-      "session_id": "WS2-2",
+      "session_id": "WS2-1",
       "presenter_id": "p0278",
       "is_english": false,
       "is_online": false,
@@ -28718,9 +28618,9 @@
       ],
       "pdf_url": null
     },
-    "WS2-3-1": {
+    "WS2-1-3": {
       "title": "BizDocVQA：根拠領域のアノテーションによる説明可能なビジネス帳票理解の実現と評価",
-      "session_id": "WS2-3",
+      "session_id": "WS2-1",
       "presenter_id": "p1895",
       "is_english": false,
       "is_online": false,
@@ -28732,9 +28632,9 @@
       ],
       "pdf_url": null
     },
-    "WS2-4-1": {
+    "WS2-1-4": {
       "title": "論文に基づく歴史学知識資源の公開に向けたデータセット記述の精緻化",
-      "session_id": "WS2-4",
+      "session_id": "WS2-1",
       "presenter_id": "p1896",
       "is_english": false,
       "is_online": false,
@@ -28746,9 +28646,9 @@
       ],
       "pdf_url": null
     },
-    "WS2-5-1": {
+    "WS2-1-5": {
       "title": "日本語の科学設問集の複数評価者による難易度付けと評価者間不一致の分析",
-      "session_id": "WS2-5",
+      "session_id": "WS2-1",
       "presenter_id": "p0224",
       "is_english": false,
       "is_online": true,
@@ -28761,9 +28661,9 @@
       "pdf_url": null,
       "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
-    "WS2-6-1": {
+    "WS2-2-1": {
       "title": "軽量な日本語報酬モデル ca-reward-3b-ja の構築と公開",
-      "session_id": "WS2-6",
+      "session_id": "WS2-2",
       "presenter_id": "p1897",
       "is_english": false,
       "is_online": false,
@@ -28775,9 +28675,9 @@
       ],
       "pdf_url": null
     },
-    "WS2-7-1": {
+    "WS2-2-2": {
       "title": "日本語大規模言語モデルの推論能力向上のための強化学習データセット構築",
-      "session_id": "WS2-7",
+      "session_id": "WS2-2",
       "presenter_id": "p0244",
       "is_english": false,
       "is_online": false,
@@ -28801,9 +28701,9 @@
       ],
       "pdf_url": null
     },
-    "WS2-8-1": {
+    "WS2-2-3": {
       "title": "金融業に特化した生成AIモデルのインストラクションデータ開発プロセス",
-      "session_id": "WS2-8",
+      "session_id": "WS2-2",
       "presenter_id": "p1898",
       "is_english": false,
       "is_online": false,
@@ -28815,9 +28715,9 @@
       ],
       "pdf_url": null
     },
-    "WS2-9-1": {
+    "WS2-2-4": {
       "title": "語彙を起点とした完全合成によるドメイン特化指示データセットの構築と金融分野での実証",
-      "session_id": "WS2-9",
+      "session_id": "WS2-2",
       "presenter_id": "p0237",
       "is_english": false,
       "is_online": false,
@@ -28837,9 +28737,9 @@
       ],
       "pdf_url": null
     },
-    "WS2-10-1": {
+    "WS2-2-5": {
       "title": "Deep Research結果に対する細粒度引用と矛盾のアノテーション",
-      "session_id": "WS2-10",
+      "session_id": "WS2-2",
       "presenter_id": "p1209",
       "is_english": false,
       "is_online": false,
@@ -28863,9 +28763,9 @@
       ],
       "pdf_url": null
     },
-    "WS2-11-1": {
+    "WS2-3-1": {
       "title": "日本語インストラクションデータの多様化に向けた高品質な人手データを起点とする合成手法の検討",
-      "session_id": "WS2-11",
+      "session_id": "WS2-3",
       "presenter_id": "p1264",
       "is_english": false,
       "is_online": false,
@@ -28885,9 +28785,9 @@
       ],
       "pdf_url": null
     },
-    "WS2-12-1": {
+    "WS2-3-2": {
       "title": "人間-LLM間のインタラクション分析に向けたコーパス構築のための談話行為アノテーション設計",
-      "session_id": "WS2-12",
+      "session_id": "WS2-3",
       "presenter_id": "p0963",
       "is_english": false,
       "is_online": false,
@@ -28919,9 +28819,9 @@
       ],
       "pdf_url": null
     },
-    "WS2-13-1": {
+    "WS2-3-3": {
       "title": "ユーザの個人特性を含む破綻・修復発話文の収集",
-      "session_id": "WS2-13",
+      "session_id": "WS2-3",
       "presenter_id": "p0894",
       "is_english": false,
       "is_online": false,
