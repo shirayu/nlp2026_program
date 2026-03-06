@@ -376,9 +376,9 @@
       },
       {
         "id": "WS4-3",
-        "title": "WS4 一般論文発表: ビジネスアイデアの新規性自動評価に向けた事例分析",
+        "title": "WS4 一般論文発表",
         "start_time": "10:00",
-        "end_time": "10:20",
+        "end_time": "11:00",
         "presentations": [
           {
             "id": "WS4-3-1",
@@ -390,17 +390,9 @@
               { "name": "谷口友紀", "affiliation": "旭化成" },
               { "name": "大熊智子", "affiliation": "旭化成" }
             ]
-          }
-        ]
-      },
-      {
-        "id": "WS4-4",
-        "title": "WS4 一般論文発表: リスクイベントの影響説明に向けた評価データセットの提案",
-        "start_time": "10:20",
-        "end_time": "10:40",
-        "presentations": [
+          },
           {
-            "id": "WS4-4-1",
+            "id": "WS4-3-2",
             "title": "リスクイベントの影響説明に向けた評価データセットの提案",
             "pdf_url": "https://drive.google.com/file/d/1dqRj32G-NcU-f-Wb3GS7L6iR_FF-q6Rc/view?usp=sharing",
             "authors": [
@@ -408,17 +400,9 @@
               { "name": "朝倉 卓人", "affiliation": "東京大学" },
               { "name": "宮尾 祐介", "affiliation": "東京大学" }
             ]
-          }
-        ]
-      },
-      {
-        "id": "WS4-5",
-        "title": "WS4 一般論文発表: 化学技術の応用領域拡張を目的とした用途探索フレームワーク",
-        "start_time": "10:40",
-        "end_time": "11:00",
-        "presentations": [
+          },
           {
-            "id": "WS4-5-1",
+            "id": "WS4-3-3",
             "title": "化学技術の応用領域拡張を目的とした用途探索フレームワーク",
             "pdf_url": "https://drive.google.com/file/d/1FiP1U-qKTMypRQ1eA7-U04s4qK5FlDav/view?usp=sharing",
             "authors": [
@@ -433,38 +417,40 @@
         ]
       },
       {
-        "id": "WS4-6",
+        "id": "WS4-4",
         "title": "WS4 招待講演: 欅 惇志 先生",
         "start_time": "11:10",
         "end_time": "12:00",
         "presentations": [
           {
-            "id": "WS4-6-1",
+            "id": "WS4-4-1",
             "title": "招待講演: 欅 惇志 先生",
             "authors": [{ "name": "欅 惇志" }]
           }
         ]
       },
       {
-        "id": "WS4-7",
-        "title": "WS4 shared task PBIG: オープニング",
+        "id": "WS4-5",
+        "title": "WS4 Shared Task システム紹介",
         "start_time": "12:00",
-        "end_time": "12:10"
+        "end_time": "12:40",
+        "presentations": [
+          {
+            "id": "WS4-5-1",
+            "title": "shared task PBIG: オープニング"
+          },
+          {
+            "id": "WS4-5-2",
+            "title": "システム紹介 ① e-gen"
+          },
+          {
+            "id": "WS4-5-3",
+            "title": "システム紹介② ソルティライチ"
+          }
+        ]
       },
       {
-        "id": "WS4-8",
-        "title": "WS4 システム紹介 ① e-gen",
-        "start_time": "12:10",
-        "end_time": "12:25"
-      },
-      {
-        "id": "WS4-9",
-        "title": "WS4 システム紹介 ② ソルティライチ",
-        "start_time": "12:25",
-        "end_time": "12:40"
-      },
-      {
-        "id": "WS4-10",
+        "id": "WS4-6",
         "title": "WS4 クロージング",
         "start_time": "12:40",
         "end_time": "12:45"

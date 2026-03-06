@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-03-06T16:12:55Z",
+  "generated_at": "2026-03-06T16:14:39Z",
   "last_update": {
     "program_main": {
       "sha256": "c02f7308dda2ea510afda63be85a9e566cac31235d91206c97fc0a2837a5a981",
       "time": "2026-03-04T09:00:00+09:00"
     },
     "workshop": {
-      "sha256": "e84ea29d2cdf5bdcb82706edf54ab92034ef9eab1554e950518cab7e088abde1",
-      "time": "2026-03-07T01:12:40+09:00"
+      "sha256": "03b7c6a10ccfe982ff8fefa5f85494a0ecd6f464359441d33749e7b0722d31f0",
+      "time": "2026-03-07T01:14:30+09:00"
     },
     "invitedpapers": {
       "sha256": "1383c3c3c2fd57240adc5d25ae7b760966287c460ef40f20cbd5b68fa2e5b090",
@@ -8767,76 +8767,36 @@
       "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
     },
     "WS4-3": {
-      "title": "WS4 一般論文発表: ビジネスアイデアの新規性自動評価に向けた事例分析",
+      "title": "WS4 一般論文発表",
       "date": "2026-03-13",
       "start_time": "10:00",
-      "end_time": "10:20",
-      "room_ids": ["r0009"],
-      "chair": "",
-      "presentation_ids": ["WS4-3-1"],
-      "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
-    },
-    "WS4-4": {
-      "title": "WS4 一般論文発表: リスクイベントの影響説明に向けた評価データセットの提案",
-      "date": "2026-03-13",
-      "start_time": "10:20",
-      "end_time": "10:40",
-      "room_ids": ["r0009"],
-      "chair": "",
-      "presentation_ids": ["WS4-4-1"],
-      "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
-    },
-    "WS4-5": {
-      "title": "WS4 一般論文発表: 化学技術の応用領域拡張を目的とした用途探索フレームワーク",
-      "date": "2026-03-13",
-      "start_time": "10:40",
       "end_time": "11:00",
       "room_ids": ["r0009"],
       "chair": "",
-      "presentation_ids": ["WS4-5-1"],
+      "presentation_ids": ["WS4-3-1", "WS4-3-2", "WS4-3-3"],
       "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
     },
-    "WS4-6": {
+    "WS4-4": {
       "title": "WS4 招待講演: 欅 惇志 先生",
       "date": "2026-03-13",
       "start_time": "11:10",
       "end_time": "12:00",
       "room_ids": ["r0009"],
       "chair": "",
-      "presentation_ids": ["WS4-6-1"],
+      "presentation_ids": ["WS4-4-1"],
       "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
     },
-    "WS4-7": {
-      "title": "WS4 shared task PBIG: オープニング",
+    "WS4-5": {
+      "title": "WS4 Shared Task システム紹介",
       "date": "2026-03-13",
       "start_time": "12:00",
-      "end_time": "12:10",
-      "room_ids": ["r0009"],
-      "chair": "",
-      "presentation_ids": [],
-      "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
-    },
-    "WS4-8": {
-      "title": "WS4 システム紹介 ① e-gen",
-      "date": "2026-03-13",
-      "start_time": "12:10",
-      "end_time": "12:25",
-      "room_ids": ["r0009"],
-      "chair": "",
-      "presentation_ids": [],
-      "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
-    },
-    "WS4-9": {
-      "title": "WS4 システム紹介 ② ソルティライチ",
-      "date": "2026-03-13",
-      "start_time": "12:25",
       "end_time": "12:40",
       "room_ids": ["r0009"],
       "chair": "",
-      "presentation_ids": [],
+      "presentation_ids": ["WS4-5-1", "WS4-5-2", "WS4-5-3"],
       "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
     },
-    "WS4-10": {
+    "WS4-6": {
       "title": "WS4 クロージング",
       "date": "2026-03-13",
       "start_time": "12:40",
@@ -29133,9 +29093,9 @@
       ],
       "pdf_url": "https://drive.google.com/file/d/1_mt23FaOxkr43byflvauoz_r8_tOfflZ/view?usp=sharing"
     },
-    "WS4-4-1": {
+    "WS4-3-2": {
       "title": "リスクイベントの影響説明に向けた評価データセットの提案",
-      "session_id": "WS4-4",
+      "session_id": "WS4-3",
       "presenter_id": "p1668",
       "is_english": false,
       "is_online": false,
@@ -29155,9 +29115,9 @@
       ],
       "pdf_url": "https://drive.google.com/file/d/1dqRj32G-NcU-f-Wb3GS7L6iR_FF-q6Rc/view?usp=sharing"
     },
-    "WS4-5-1": {
+    "WS4-3-3": {
       "title": "化学技術の応用領域拡張を目的とした用途探索フレームワーク",
-      "session_id": "WS4-5",
+      "session_id": "WS4-3",
       "presenter_id": "p0695",
       "is_english": false,
       "is_online": false,
@@ -29189,9 +29149,9 @@
       ],
       "pdf_url": "https://drive.google.com/file/d/1FiP1U-qKTMypRQ1eA7-U04s4qK5FlDav/view?usp=sharing"
     },
-    "WS4-6-1": {
+    "WS4-4-1": {
       "title": "招待講演: 欅 惇志 先生",
-      "session_id": "WS4-6",
+      "session_id": "WS4-4",
       "presenter_id": "p0501",
       "is_english": false,
       "is_online": false,
@@ -29201,6 +29161,33 @@
           "affiliation_id": null
         }
       ],
+      "pdf_url": null
+    },
+    "WS4-5-1": {
+      "title": "shared task PBIG: オープニング",
+      "session_id": "WS4-5",
+      "presenter_id": null,
+      "is_english": false,
+      "is_online": false,
+      "authors": [],
+      "pdf_url": null
+    },
+    "WS4-5-2": {
+      "title": "システム紹介 ① e-gen",
+      "session_id": "WS4-5",
+      "presenter_id": null,
+      "is_english": false,
+      "is_online": false,
+      "authors": [],
+      "pdf_url": null
+    },
+    "WS4-5-3": {
+      "title": "システム紹介② ソルティライチ",
+      "session_id": "WS4-5",
+      "presenter_id": null,
+      "is_english": false,
+      "is_online": false,
+      "authors": [],
       "pdf_url": null
     },
     "invitedpapers-1": {
