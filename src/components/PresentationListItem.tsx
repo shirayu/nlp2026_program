@@ -244,7 +244,7 @@ function PresentationActionLinks({
           target="_blank"
           rel="noopener noreferrer"
           aria-label={ja.openPresentationZoom}
-          className="mt-0.5 shrink-0 rounded p-1 text-sky-600 transition-colors hover:bg-sky-50 hover:text-sky-700"
+          className="mt-0.5 shrink-0 rounded p-1 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-700"
           onClick={(event) => {
             event.stopPropagation();
             if (useSlackAppLinks && presentationZoomAppUrl) {

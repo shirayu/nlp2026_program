@@ -54,6 +54,8 @@ function SessionHeaderActions({
   onToggleExpanded: () => void;
 }) {
   const sharedClass = `rounded-full p-1 transition-colors hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-indigo-400 ${roomThemeTitleClass}`;
+  const zoomClass =
+    "rounded-full p-1 text-gray-600 transition-colors hover:bg-white/60 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-400";
 
   return (
     <div className="pointer-events-auto relative z-10 flex shrink-0 items-center gap-1">
@@ -73,7 +75,7 @@ function SessionHeaderActions({
           href={useSlackAppLinks && sessionZoomAppUrl ? sessionZoomAppUrl : sessionZoomUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className={sharedClass}
+          className={zoomClass}
           aria-label={ja.openSessionZoom}
           onClick={(event) => {
             if (useSlackAppLinks && sessionZoomAppUrl) {
