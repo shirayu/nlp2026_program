@@ -28,15 +28,26 @@ describe("create-import-zoom-settings-url", () => {
   it("A/Bのどちらか片方だけでも生成できる", () => {
     const url = buildImportZoomSettingsUrl({
       baseUrl: "https://example.github.io/nlp2026/",
-      aUrl: "https://zoom.us/j/111?pwd=aaa",
+      aUrl: "https://us02web.zoom.us/j/111?pwd=aaa",
       bUrl: "",
       help: false,
     });
     expect(decodeHashPayload(url)).toEqual({
       venueZoomUrls: {
-        A: "https://zoom.us/j/111?pwd=aaa",
+        A: "https://us02web.zoom.us/j/111?pwd=aaa",
       },
     });
+  });
+
+  it("zoom.us / *.zoom.us 以外のURLはエラー", () => {
+    expect(() =>
+      buildImportZoomSettingsUrl({
+        baseUrl: "https://example.github.io/nlp2026/",
+        aUrl: "https://example.com/room-a",
+        bUrl: "",
+        help: false,
+      }),
+    ).toThrow("--a-url must be a zoom.us or *.zoom.us URL");
   });
 
   it("A/Bが未指定ならエラー", () => {

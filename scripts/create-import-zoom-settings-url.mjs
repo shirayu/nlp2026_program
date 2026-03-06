@@ -10,8 +10,8 @@ function printHelp() {
 
 Options:
   --base-url  Base URL to attach hash fragment. Example: https://example.github.io/nlp2026/
-  --a-url     Zoom custom URL for venue A
-  --b-url     Zoom custom URL for venue B
+  --a-url     Zoom custom URL for venue A (zoom.us or *.zoom.us)
+  --b-url     Zoom custom URL for venue B (zoom.us or *.zoom.us)
   --help      Show this help
 `);
 }
@@ -64,6 +64,15 @@ function normalizeUrl(value) {
   return trimmed.length > 0 ? trimmed : "";
 }
 
+function isAllowedZoomImportUrl(value) {
+  try {
+    const host = new URL(value).hostname.toLowerCase();
+    return host === "zoom.us" || host.endsWith(".zoom.us");
+  } catch {
+    return false;
+  }
+}
+
 export function buildImportZoomSettingsUrl(args) {
   if (!args.baseUrl) {
     throw new Error("--base-url is required");
@@ -72,6 +81,12 @@ export function buildImportZoomSettingsUrl(args) {
   const venueZoomUrls = {};
   const aUrl = normalizeUrl(args.aUrl);
   const bUrl = normalizeUrl(args.bUrl);
+  if (aUrl && !isAllowedZoomImportUrl(aUrl)) {
+    throw new Error("--a-url must be a zoom.us or *.zoom.us URL");
+  }
+  if (bUrl && !isAllowedZoomImportUrl(bUrl)) {
+    throw new Error("--b-url must be a zoom.us or *.zoom.us URL");
+  }
   if (aUrl) venueZoomUrls.A = aUrl;
   if (bUrl) venueZoomUrls.B = bUrl;
   if (!("A" in venueZoomUrls) && !("B" in venueZoomUrls)) {

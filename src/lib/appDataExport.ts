@@ -73,6 +73,21 @@ function isPendingByKey(pendingKey: string): boolean {
   return window.sessionStorage.getItem(pendingKey) === "1";
 }
 
+function isAllowedZoomImportUrl(value: string): boolean {
+  try {
+    const host = new URL(value).hostname.toLowerCase();
+    return host === "zoom.us" || host.endsWith(".zoom.us");
+  } catch {
+    return false;
+  }
+}
+
+function hasOnlyAllowedZoomDomains(venueZoomUrls: VenueZoomUrls | undefined): boolean {
+  if (!venueZoomUrls) return true;
+  const values = [venueZoomUrls.A, venueZoomUrls.B].filter((value): value is string => Boolean(value));
+  return values.every((value) => isAllowedZoomImportUrl(value));
+}
+
 export function stripImportFragment(): void {
   stripByPrefix(IMPORT_FRAGMENT_PREFIX, IMPORT_PENDING_KEY);
 }
@@ -95,9 +110,12 @@ export function decodeZoomPayload(encoded: string): VenueZoomUrls | undefined | 
     const parsed = JSON.parse(json);
     if (!parsed || typeof parsed !== "object") return null;
 
-    return appSettingsStorage.parseAppSettings(
+    const venueZoomUrls = appSettingsStorage.parseAppSettings(
       JSON.stringify({ venueZoomUrls: (parsed as { venueZoomUrls?: unknown }).venueZoomUrls }),
     ).venueZoomUrls;
+
+    if (!hasOnlyAllowedZoomDomains(venueZoomUrls)) return null;
+    return venueZoomUrls;
   } catch {
     return null;
   }

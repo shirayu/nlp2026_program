@@ -181,14 +181,30 @@ describe("extractZoomImportFragment / decodeZoomPayload", () => {
   });
 
   it("zoom データをデコードできる", () => {
-    const encoded = btoa(JSON.stringify({ venueZoomUrls: { A: "https://example.com/a", B: "https://example.com/b" } }))
+    const encoded = btoa(
+      JSON.stringify({
+        venueZoomUrls: { A: "https://zoom.us/j/111?pwd=aaa", B: "https://us02web.zoom.us/j/222?pwd=bbb" },
+      }),
+    )
       .replace(/\+/g, "-")
       .replace(/\//g, "_")
       .replace(/=/g, "");
     expect(decodeZoomPayload(encoded)).toEqual({
-      A: "https://example.com/a",
-      B: "https://example.com/b",
+      A: "https://zoom.us/j/111?pwd=aaa",
+      B: "https://us02web.zoom.us/j/222?pwd=bbb",
     });
+  });
+
+  it("zoom.us / *.zoom.us 以外のドメインを含むと null を返す", () => {
+    const encoded = btoa(
+      JSON.stringify({
+        venueZoomUrls: { A: "https://zoom.us/j/111?pwd=aaa", B: "https://example.com/room-b" },
+      }),
+    )
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=/g, "");
+    expect(decodeZoomPayload(encoded)).toBeNull();
   });
 });
 
