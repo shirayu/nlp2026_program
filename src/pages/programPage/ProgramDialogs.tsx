@@ -813,9 +813,12 @@ export function RestoreBackupConfirmDialog({
                   <button
                     type="button"
                     onClick={() => onConfirm(entry.kind)}
-                    className="w-full rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-left text-sm font-medium text-amber-800 transition-colors hover:bg-amber-100"
+                    className="w-full rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-left transition-colors hover:bg-amber-100"
                   >
-                    {backupKindLabel[entry.kind]}
+                    <span className="block text-sm font-medium text-amber-800">{backupKindLabel[entry.kind]}</span>
+                    <span className="block font-mono text-xs text-amber-600">
+                      {formatBuildGitDate(entry.savedAt, "ja-JP", "Asia/Tokyo")}
+                    </span>
                   </button>
                 </li>
               ))}

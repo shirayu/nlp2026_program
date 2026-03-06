@@ -212,25 +212,22 @@ describe("SettingsImportConfirmDialog", () => {
   });
 });
 
+const backupPayload = {
+  settings: {
+    showAuthors: true,
+    useSlackAppLinks: false,
+    includeSessionTitleForNoPresentationSessions: true,
+    includeSessionTitleForPresentationSessions: false,
+  },
+  bookmarks: { presentationIds: [], sessionIds: [] },
+};
+
 describe("RestoreBackupConfirmDialog", () => {
   it("before_import のみの場合、インポート前の選択肢だけを表示する", () => {
     const html = renderToStaticMarkup(
       <RestoreBackupConfirmDialog
         open
-        entries={[
-          {
-            kind: "before_import",
-            payload: {
-              settings: {
-                showAuthors: true,
-                useSlackAppLinks: false,
-                includeSessionTitleForNoPresentationSessions: true,
-                includeSessionTitleForPresentationSessions: false,
-              },
-              bookmarks: { presentationIds: [], sessionIds: [] },
-            },
-          },
-        ]}
+        entries={[{ kind: "before_import", savedAt: "2026-03-06T10:00:00.000Z", payload: backupPayload }]}
         onConfirm={() => {}}
         onCancel={() => {}}
       />,
@@ -243,21 +240,12 @@ describe("RestoreBackupConfirmDialog", () => {
   });
 
   it("2世代ある場合、両方の選択肢を表示する", () => {
-    const payload = {
-      settings: {
-        showAuthors: true,
-        useSlackAppLinks: false,
-        includeSessionTitleForNoPresentationSessions: true,
-        includeSessionTitleForPresentationSessions: false,
-      },
-      bookmarks: { presentationIds: [], sessionIds: [] },
-    };
     const html = renderToStaticMarkup(
       <RestoreBackupConfirmDialog
         open
         entries={[
-          { kind: "before_import", payload },
-          { kind: "before_restore", payload },
+          { kind: "before_import", savedAt: "2026-03-06T10:00:00.000Z", payload: backupPayload },
+          { kind: "before_restore", savedAt: "2026-03-06T11:00:00.000Z", payload: backupPayload },
         ]}
         onConfirm={() => {}}
         onCancel={() => {}}
@@ -276,6 +264,38 @@ describe("RestoreBackupConfirmDialog", () => {
     expect(html).not.toContain("インポート前の状態");
     expect(html).not.toContain("復元前の状態");
     expect(html).toContain("キャンセル");
+  });
+
+  it("savedAt の時刻をフォーマットして表示する", () => {
+    const html = renderToStaticMarkup(
+      <RestoreBackupConfirmDialog
+        open
+        entries={[{ kind: "before_import", savedAt: "2026-03-06T10:00:00.000Z", payload: backupPayload }]}
+        onConfirm={() => {}}
+        onCancel={() => {}}
+      />,
+    );
+
+    expect(html).toContain("2026");
+    expect(html).toMatch(/(JST|GMT\+9|GMT\+09:00|UTC\+09:00)/);
+  });
+
+  it("2世代ある場合、それぞれ異なる時刻を表示する", () => {
+    const html = renderToStaticMarkup(
+      <RestoreBackupConfirmDialog
+        open
+        entries={[
+          { kind: "before_import", savedAt: "2026-03-06T01:00:00.000Z", payload: backupPayload },
+          { kind: "before_restore", savedAt: "2026-03-06T02:00:00.000Z", payload: backupPayload },
+        ]}
+        onConfirm={() => {}}
+        onCancel={() => {}}
+      />,
+    );
+
+    // JST では 10:00 と 11:00 になる
+    expect(html).toContain("10:00:00");
+    expect(html).toContain("11:00:00");
   });
 });
 

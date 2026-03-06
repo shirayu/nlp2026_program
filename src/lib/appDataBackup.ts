@@ -8,6 +8,7 @@ export type BackupKind = "before_import" | "before_restore";
 
 export type BackupEntry = {
   kind: BackupKind;
+  savedAt: string; // ISO 8601
   payload: ExportPayload;
 };
 
@@ -22,7 +23,8 @@ function parseEntries(raw: string): BackupEntry[] {
       if (!item.payload || typeof item.payload !== "object") return [];
       const settings = appSettingsStorage.parseAppSettings(JSON.stringify(item.payload.settings ?? null));
       const bookmarks = bookmarksStorage.parseBookmarks(JSON.stringify(item.payload.bookmarks ?? null));
-      return [{ kind: item.kind, payload: { settings, bookmarks } }];
+      const savedAt = typeof item.savedAt === "string" ? item.savedAt : new Date(0).toISOString();
+      return [{ kind: item.kind, savedAt, payload: { settings, bookmarks } }];
     });
   } catch {
     return [];
@@ -50,20 +52,21 @@ function readCurrentPayload(): ExportPayload {
 function saveIfAbsent(kind: BackupKind): void {
   const entries = loadEntries();
   if (entries.some((e) => e.kind === kind)) return;
-  saveEntries([...entries, { kind, payload: readCurrentPayload() }]);
+  saveEntries([...entries, { kind, savedAt: new Date().toISOString(), payload: readCurrentPayload() }]);
 }
 
 /** 現在の状態を指定の種別でバックアップに保存する。同じ kind があれば上書きする。 */
 function upsert(kind: BackupKind): void {
   const payload = readCurrentPayload();
+  const savedAt = new Date().toISOString();
   const entries = loadEntries();
   const index = entries.findIndex((e) => e.kind === kind);
   if (index === -1) {
-    saveEntries([...entries, { kind, payload }]);
+    saveEntries([...entries, { kind, savedAt, payload }]);
     return;
   }
   const nextEntries = [...entries];
-  nextEntries[index] = { kind, payload };
+  nextEntries[index] = { kind, savedAt, payload };
   saveEntries(nextEntries);
 }
 

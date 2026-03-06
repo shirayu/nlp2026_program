@@ -124,6 +124,19 @@ describe("hasAnyBackup / listBackups / loadBackup", () => {
     expect(entry?.bookmarks).toEqual({ presentationIds: [], sessionIds: [] });
   });
 
+  it("savedAt がないエントリは 1970-01-01T00:00:00.000Z にフォールバックする", () => {
+    fakeStorage.setItem(backupStorageKey, JSON.stringify([{ kind: "before_import", payload: payloadA }]));
+    const entries = listBackups();
+    expect(entries[0].savedAt).toBe(new Date(0).toISOString());
+  });
+
+  it("savedAt が保存されている場合はそのまま返す", () => {
+    const savedAt = "2026-03-06T10:00:00.000Z";
+    fakeStorage.setItem(backupStorageKey, JSON.stringify([{ kind: "before_import", savedAt, payload: payloadA }]));
+    const entries = listBackups();
+    expect(entries[0].savedAt).toBe(savedAt);
+  });
+
   it("破損したストレージは空配列として扱われる", () => {
     fakeStorage.setItem(backupStorageKey, "not-json");
     expect(hasAnyBackup()).toBe(false);
@@ -186,6 +199,19 @@ describe("saveBeforeImport", () => {
     expect(loadBackup("before_import")?.settings).toEqual(settingsA);
     expect(loadBackup("before_restore")?.settings).toEqual(settingsB); // 残っている
   });
+
+  it("保存されたエントリに savedAt が記録される", () => {
+    const before = new Date();
+    fakeStorage.setItem(appSettingsStorageKey, JSON.stringify(settingsA));
+    saveBeforeImport();
+    const after = new Date();
+
+    const entries = listBackups();
+    expect(entries).toHaveLength(1);
+    const savedAt = new Date(entries[0].savedAt);
+    expect(savedAt.getTime()).toBeGreaterThanOrEqual(before.getTime());
+    expect(savedAt.getTime()).toBeLessThanOrEqual(after.getTime());
+  });
 });
 
 describe("saveBeforeRestore", () => {
@@ -231,6 +257,19 @@ describe("saveBeforeRestore", () => {
 
     expect(loadBackup("before_import")?.settings).toEqual(settingsA); // 残っている
     expect(loadBackup("before_restore")?.settings).toEqual(settingsB);
+  });
+
+  it("保存されたエントリに savedAt が記録される", () => {
+    const before = new Date();
+    fakeStorage.setItem(appSettingsStorageKey, JSON.stringify(settingsB));
+    saveBeforeRestore();
+    const after = new Date();
+
+    const entries = listBackups();
+    expect(entries).toHaveLength(1);
+    const savedAt = new Date(entries[0].savedAt);
+    expect(savedAt.getTime()).toBeGreaterThanOrEqual(before.getTime());
+    expect(savedAt.getTime()).toBeLessThanOrEqual(after.getTime());
   });
 
   it("saveBeforeRestore を連続実行すると before_restore は最新状態に更新される", () => {
