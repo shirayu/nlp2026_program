@@ -43,8 +43,19 @@ export function extractImportFragment(): string | null {
   return hash.slice(IMPORT_FRAGMENT_PREFIX.length);
 }
 
+const IMPORT_PENDING_KEY = "import_settings_pending";
+
 export function stripImportFragment(): void {
   if (window.location.hash.slice(1).startsWith(IMPORT_FRAGMENT_PREFIX)) {
+    window.sessionStorage.setItem(IMPORT_PENDING_KEY, "1");
     window.history.replaceState(null, "", window.location.pathname + window.location.search);
   }
+}
+
+export function clearImportPendingFlag(): void {
+  window.sessionStorage.removeItem(IMPORT_PENDING_KEY);
+}
+
+export function isImportPending(): boolean {
+  return window.sessionStorage.getItem(IMPORT_PENDING_KEY) === "1";
 }

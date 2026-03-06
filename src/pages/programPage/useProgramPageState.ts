@@ -12,7 +12,13 @@ import {
   saveBeforeImport,
   saveBeforeRestore,
 } from "../../lib/appDataBackup";
-import { buildExportUrl, decodePayload, extractImportFragment, stripImportFragment } from "../../lib/appDataExport";
+import {
+  buildExportUrl,
+  clearImportPendingFlag,
+  decodePayload,
+  extractImportFragment,
+  stripImportFragment,
+} from "../../lib/appDataExport";
 import { filterBookmarkedSessions } from "../../lib/bookmarks";
 import { filterSessions, getAvailableDates, getAvailableRooms, getAvailableTimes } from "../../lib/filters";
 import {
@@ -438,6 +444,7 @@ export function useProgramPageState() {
         setBackupEntries(listBackups());
       }
     }
+    clearImportPendingFlag();
     setShowSettingsImportConfirm(false);
     setPendingImportEncoded(null);
   }
@@ -462,6 +469,7 @@ export function useProgramPageState() {
   }
 
   function handleCancelImport() {
+    clearImportPendingFlag();
     setShowSettingsImportConfirm(false);
     setPendingImportEncoded(null);
   }

@@ -2,9 +2,11 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ExportPayload } from "../types";
 import {
   buildExportUrl,
+  clearImportPendingFlag,
   decodePayload,
   encodePayload,
   extractImportFragment,
+  isImportPending,
   stripImportFragment,
 } from "./appDataExport";
 
@@ -136,6 +138,22 @@ describe("extractImportFragment", () => {
   });
 });
 
+function makeSessionStorage() {
+  const store: Record<string, string> = {};
+  return {
+    getItem: (key: string) => store[key] ?? null,
+    setItem: (key: string, value: string) => {
+      store[key] = value;
+    },
+    removeItem: (key: string) => {
+      delete store[key];
+    },
+    clear: () => {
+      for (const key of Object.keys(store)) delete store[key];
+    },
+  };
+}
+
 describe("stripImportFragment", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
@@ -144,42 +162,81 @@ describe("stripImportFragment", () => {
   it("import_settings フラグメントを除去する", () => {
     const replaceState = vi.fn();
     vi.stubGlobal("window", {
-      location: {
-        hash: "#import_settings=abc",
-        pathname: "/nlp2026/",
-        search: "",
-      },
+      location: { hash: "#import_settings=abc", pathname: "/nlp2026/", search: "" },
       history: { replaceState },
+      sessionStorage: makeSessionStorage(),
     });
     stripImportFragment();
     expect(replaceState).toHaveBeenCalledWith(null, "", "/nlp2026/");
   });
 
+  it("import_settings フラグメントを除去すると sessionStorage にフラグを立てる", () => {
+    const replaceState = vi.fn();
+    vi.stubGlobal("window", {
+      location: { hash: "#import_settings=abc", pathname: "/nlp2026/", search: "" },
+      history: { replaceState },
+      sessionStorage: makeSessionStorage(),
+    });
+    stripImportFragment();
+    expect(isImportPending()).toBe(true);
+  });
+
   it("import_settings フラグメントでなければ何もしない", () => {
     const replaceState = vi.fn();
     vi.stubGlobal("window", {
-      location: {
-        hash: "#session-123",
-        pathname: "/nlp2026/",
-        search: "",
-      },
+      location: { hash: "#session-123", pathname: "/nlp2026/", search: "" },
       history: { replaceState },
+      sessionStorage: makeSessionStorage(),
     });
     stripImportFragment();
     expect(replaceState).not.toHaveBeenCalled();
   });
 
+  it("import_settings フラグメントでなければ sessionStorage にフラグを立てない", () => {
+    const replaceState = vi.fn();
+    vi.stubGlobal("window", {
+      location: { hash: "#session-123", pathname: "/nlp2026/", search: "" },
+      history: { replaceState },
+      sessionStorage: makeSessionStorage(),
+    });
+    stripImportFragment();
+    expect(isImportPending()).toBe(false);
+  });
+
   it("フラグメントがなければ何もしない", () => {
     const replaceState = vi.fn();
     vi.stubGlobal("window", {
-      location: {
-        hash: "",
-        pathname: "/nlp2026/",
-        search: "",
-      },
+      location: { hash: "", pathname: "/nlp2026/", search: "" },
       history: { replaceState },
+      sessionStorage: makeSessionStorage(),
     });
     stripImportFragment();
     expect(replaceState).not.toHaveBeenCalled();
+  });
+});
+
+describe("isImportPending / clearImportPendingFlag", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("初期状態では false を返す", () => {
+    vi.stubGlobal("window", { sessionStorage: makeSessionStorage() });
+    expect(isImportPending()).toBe(false);
+  });
+
+  it("clearImportPendingFlag 後は false を返す", () => {
+    const storage = makeSessionStorage();
+    storage.setItem("import_settings_pending", "1");
+    vi.stubGlobal("window", { sessionStorage: storage });
+    clearImportPendingFlag();
+    expect(isImportPending()).toBe(false);
+  });
+
+  it("フラグが立っていれば true を返す", () => {
+    const storage = makeSessionStorage();
+    storage.setItem("import_settings_pending", "1");
+    vi.stubGlobal("window", { sessionStorage: storage });
+    expect(isImportPending()).toBe(true);
   });
 });

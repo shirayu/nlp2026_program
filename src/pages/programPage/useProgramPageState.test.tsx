@@ -39,12 +39,14 @@ vi.mock("../../hooks/useSessionJump", () => ({
 
 const mockExtractImportFragment = vi.fn(() => null as string | null);
 const mockStripImportFragment = vi.fn();
+const mockClearImportPendingFlag = vi.fn();
 const mockDecodePayload = vi.fn(() => null as import("../../types").ExportPayload | null);
 const mockBuildExportUrl = vi.fn(() => "https://example.com/#import_settings=abc");
 
 vi.mock("../../lib/appDataExport", () => ({
   extractImportFragment: () => mockExtractImportFragment(),
   stripImportFragment: () => mockStripImportFragment(),
+  clearImportPendingFlag: () => mockClearImportPendingFlag(),
   decodePayload: (...args: Parameters<typeof mockDecodePayload>) => mockDecodePayload(...args),
   buildExportUrl: (...args: Parameters<typeof mockBuildExportUrl>) => mockBuildExportUrl(...args),
 }));
@@ -414,6 +416,54 @@ describe("useProgramPageState", () => {
     });
 
     expect(hook.getLatest().overlayProps.showSettingsImportConfirm).toBe(false);
+
+    hook.unmount();
+  });
+
+  it("インポート確定で clearImportPendingFlag が呼ばれる", async () => {
+    mockExtractImportFragment.mockReturnValue("validencoded");
+    mockDecodePayload.mockReturnValue({
+      settings: {
+        showAuthors: true,
+        useSlackAppLinks: false,
+        includeSessionTitleForNoPresentationSessions: false,
+        includeSessionTitleForPresentationSessions: true,
+      },
+      bookmarks: { presentationIds: [], sessionIds: [] },
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().overlayProps.onConfirmImport();
+    });
+
+    expect(mockClearImportPendingFlag).toHaveBeenCalled();
+
+    hook.unmount();
+  });
+
+  it("インポートキャンセルで clearImportPendingFlag が呼ばれる", async () => {
+    mockExtractImportFragment.mockReturnValue("validencoded");
+    mockDecodePayload.mockReturnValue({
+      settings: {
+        showAuthors: true,
+        useSlackAppLinks: false,
+        includeSessionTitleForNoPresentationSessions: false,
+        includeSessionTitleForPresentationSessions: true,
+      },
+      bookmarks: { presentationIds: [], sessionIds: [] },
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().overlayProps.onCancelImport();
+    });
+
+    expect(mockClearImportPendingFlag).toHaveBeenCalled();
 
     hook.unmount();
   });
