@@ -13,6 +13,7 @@ describe("appSettingsStorage", () => {
       useSlackAppLinks: true,
       includeSessionTitleForNoPresentationSessions: true,
       includeSessionTitleForPresentationSessions: false,
+      showTimeAtPresentationLevel: false,
     });
   });
 
@@ -22,6 +23,7 @@ describe("appSettingsStorage", () => {
       useSlackAppLinks: true,
       includeSessionTitleForNoPresentationSessions: true,
       includeSessionTitleForPresentationSessions: false,
+      showTimeAtPresentationLevel: false,
     });
   });
 
@@ -31,6 +33,7 @@ describe("appSettingsStorage", () => {
       useSlackAppLinks: true,
       includeSessionTitleForNoPresentationSessions: true,
       includeSessionTitleForPresentationSessions: false,
+      showTimeAtPresentationLevel: false,
     });
   });
 
@@ -41,7 +44,7 @@ describe("appSettingsStorage", () => {
         localStorage: {
           getItem: (key: string) =>
             key === appSettingsStorageKey
-              ? '{"showAuthors":false,"useSlackAppLinks":false,"includeSessionTitleForNoPresentationSessions":false,"includeSessionTitleForPresentationSessions":true,"venueZoomUrls":{"A":"https://example.com/a"}}'
+              ? '{"showAuthors":false,"useSlackAppLinks":false,"includeSessionTitleForNoPresentationSessions":false,"includeSessionTitleForPresentationSessions":true,"showTimeAtPresentationLevel":true,"venueZoomUrls":{"A":"https://example.com/a"}}'
               : null,
         },
       },
@@ -52,6 +55,7 @@ describe("appSettingsStorage", () => {
       useSlackAppLinks: false,
       includeSessionTitleForNoPresentationSessions: false,
       includeSessionTitleForPresentationSessions: true,
+      showTimeAtPresentationLevel: true,
       venueZoomUrls: { A: "https://example.com/a" },
     });
   });
@@ -62,6 +66,7 @@ describe("appSettingsStorage", () => {
       useSlackAppLinks: true,
       includeSessionTitleForNoPresentationSessions: true,
       includeSessionTitleForPresentationSessions: false,
+      showTimeAtPresentationLevel: false,
       venueZoomUrls: { B: "https://example.com/b" },
     });
   });

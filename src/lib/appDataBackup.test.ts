@@ -18,6 +18,7 @@ const settingsA = {
   useSlackAppLinks: false,
   includeSessionTitleForNoPresentationSessions: true,
   includeSessionTitleForPresentationSessions: false,
+  showTimeAtPresentationLevel: false,
 };
 const bookmarksA = { presentationIds: ["a1", "a2"], sessionIds: ["s1"] };
 const payloadA: ExportPayload = { settings: settingsA, bookmarks: bookmarksA };
@@ -27,6 +28,7 @@ const settingsB = {
   useSlackAppLinks: true,
   includeSessionTitleForNoPresentationSessions: false,
   includeSessionTitleForPresentationSessions: true,
+  showTimeAtPresentationLevel: false,
 };
 const bookmarksB = { presentationIds: ["b1"], sessionIds: [] };
 const payloadB: ExportPayload = { settings: settingsB, bookmarks: bookmarksB };

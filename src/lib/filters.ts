@@ -20,6 +20,8 @@ export interface FilterOptions {
   searchAll: boolean;
   /** ブックマーク全体表示中か。true のときは searchAll と組み合わせて場所系フィルタを外す */
   bookmarkedOnly?: boolean;
+  /** 時点指定時に、発表ごとの start_time / end_time を優先して表示する */
+  showTimeAtPresentationLevel?: boolean;
 }
 
 export function normalizeTerms(query: string): string[] {
@@ -53,6 +55,22 @@ function isSessionActiveAt(session: Session, selectedTime: string | null): boole
   if (!selectedTime) return true;
   const target = toMinutes(selectedTime);
   return toMinutes(session.start_time) <= target && target < toMinutes(session.end_time);
+}
+
+function hasPresentationTime(presentation: ConferenceData["presentations"][PresentationId]): boolean {
+  return Boolean(presentation.start_time && presentation.end_time);
+}
+
+function isPresentationActiveAt(
+  data: ConferenceData,
+  presentationId: PresentationId,
+  selectedTime: string | null,
+): boolean {
+  if (!selectedTime) return true;
+  const presentation = data.presentations[presentationId];
+  if (!presentation || !hasPresentationTime(presentation)) return false;
+  const target = toMinutes(selectedTime);
+  return toMinutes(presentation.start_time!) <= target && target < toMinutes(presentation.end_time!);
 }
 
 function matchesRoomFilter(session: Session, rooms: ConferenceData["rooms"], selectedRoom: string | null): boolean {
@@ -127,24 +145,70 @@ function matchesSessionFilters(
   session: Session,
   opts: Pick<
     FilterOptions,
-    "selectedDate" | "selectedTime" | "selectedRoom" | "searchAll" | "query" | "bookmarkedOnly"
+    | "selectedDate"
+    | "selectedTime"
+    | "selectedRoom"
+    | "searchAll"
+    | "query"
+    | "bookmarkedOnly"
+    | "showTimeAtPresentationLevel"
   > & { hasQuery: boolean },
 ): boolean {
   if (shouldSkipLocationFilter(opts.searchAll, opts.hasQuery, opts.bookmarkedOnly ?? false)) return true;
   if (opts.selectedDate && session.date !== opts.selectedDate) return false;
-  if (!isSessionActiveAt(session, opts.selectedTime)) return false;
+  if (!opts.showTimeAtPresentationLevel || !opts.selectedTime) {
+    if (!isSessionActiveAt(session, opts.selectedTime)) return false;
+  }
   return matchesRoomFilter(session, data.rooms, opts.selectedRoom);
+}
+
+function applyTimepointToPresentationIds(
+  data: ConferenceData,
+  session: Session,
+  presIds: PresentationId[],
+  selectedTime: string | null,
+  showTimeAtPresentationLevel: boolean,
+): PresentationId[] {
+  if (!showTimeAtPresentationLevel || !selectedTime) return presIds;
+  if (presIds.length === 0) {
+    return isSessionActiveAt(session, selectedTime) ? presIds : [];
+  }
+
+  const containsUntimedPresentation = presIds.some((presentationId) => {
+    const presentation = data.presentations[presentationId];
+    return !presentation || !hasPresentationTime(presentation);
+  });
+
+  if (containsUntimedPresentation) {
+    return isSessionActiveAt(session, selectedTime) ? presIds : [];
+  }
+
+  return presIds.filter((presentationId) => isPresentationActiveAt(data, presentationId, selectedTime));
 }
 
 function toFilteredSession(
   data: ConferenceData,
   sessionId: SessionId,
   session: Session,
+  selectedTime: string | null,
+  showTimeAtPresentationLevel: boolean,
   terms: string[],
   includeSessionTitleForNoPresentationSessions: boolean,
   includeSessionTitleForPresentationSessions: boolean,
 ): FilteredSession | null {
-  const presIds = getSessionPresentationIds(data, sessionId, session);
+  const rawPresIds = getSessionPresentationIds(data, sessionId, session);
+  const presIds = applyTimepointToPresentationIds(data, session, rawPresIds, selectedTime, showTimeAtPresentationLevel);
+  if (
+    selectedTime &&
+    showTimeAtPresentationLevel &&
+    rawPresIds.length === 0 &&
+    !isSessionActiveAt(session, selectedTime)
+  ) {
+    return null;
+  }
+  if (selectedTime && showTimeAtPresentationLevel && rawPresIds.length > 0 && presIds.length === 0) {
+    return null;
+  }
   if (terms.length === 0) {
     return { sessionId, session, presIds };
   }
@@ -269,9 +333,11 @@ export function filterSessions(data: ConferenceData, opts: FilterOptions): Filte
     includeSessionTitleForPresentationSessions = false,
     searchAll,
     bookmarkedOnly = false,
+    showTimeAtPresentationLevel = false,
   } = opts;
   const terms = normalizeTerms(query);
   const hasQuery = terms.length > 0;
+  const skipLocationFilter = shouldSkipLocationFilter(searchAll, hasQuery, bookmarkedOnly);
   const sortedSessions = getSortedSessionEntries(data.sessions);
 
   return sortedSessions.flatMap(([sessionId, session]) => {
@@ -285,6 +351,7 @@ export function filterSessions(data: ConferenceData, opts: FilterOptions): Filte
         selectedRoom,
         searchAll,
         bookmarkedOnly,
+        showTimeAtPresentationLevel,
       })
     ) {
       return [];
@@ -294,6 +361,8 @@ export function filterSessions(data: ConferenceData, opts: FilterOptions): Filte
       data,
       sessionId as SessionId,
       session,
+      skipLocationFilter ? null : selectedTime,
+      showTimeAtPresentationLevel,
       terms,
       includeSessionTitleForNoPresentationSessions,
       includeSessionTitleForPresentationSessions,

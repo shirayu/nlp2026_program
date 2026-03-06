@@ -54,6 +54,7 @@ export function useProgramPageState() {
     toggleUseSlackAppLinks,
     toggleIncludeSessionTitleForNoPresentationSessions,
     toggleIncludeSessionTitleForPresentationSessions,
+    toggleShowTimeAtPresentationLevel,
   } = useAppSettings();
   const {
     bookmarkIds,
@@ -260,6 +261,7 @@ export function useProgramPageState() {
       selectedRoom: deferredSelectedRoom,
       includeSessionTitleForNoPresentationSessions: settings.includeSessionTitleForNoPresentationSessions,
       includeSessionTitleForPresentationSessions: settings.includeSessionTitleForPresentationSessions,
+      showTimeAtPresentationLevel: settings.showTimeAtPresentationLevel,
       searchAll: deferredSearchAll,
       bookmarkedOnly: showBookmarkedOnly,
     });
@@ -272,6 +274,7 @@ export function useProgramPageState() {
     deferredSelectedTime,
     settings.includeSessionTitleForNoPresentationSessions,
     settings.includeSessionTitleForPresentationSessions,
+    settings.showTimeAtPresentationLevel,
     showBookmarkedOnly,
   ]);
 
@@ -637,6 +640,7 @@ export function useProgramPageState() {
       venueZoomUrls: settings.venueZoomUrls,
       includeSessionTitleForNoPresentationSessions: settings.includeSessionTitleForNoPresentationSessions,
       includeSessionTitleForPresentationSessions: settings.includeSessionTitleForPresentationSessions,
+      showTimeAtPresentationLevel: settings.showTimeAtPresentationLevel,
       onCloseSettings: () => startTransition(() => setShowSettings(false)),
       onReloadData: () => {
         void reload().catch(() => {});
@@ -646,6 +650,7 @@ export function useProgramPageState() {
       onSetVenueZoomUrls: handleSetVenueZoomUrls,
       onToggleIncludeSessionTitleForNoPresentationSessions: toggleIncludeSessionTitleForNoPresentationSessions,
       onToggleIncludeSessionTitleForPresentationSessions: toggleIncludeSessionTitleForPresentationSessions,
+      onToggleShowTimeAtPresentationLevel: toggleShowTimeAtPresentationLevel,
       onExportSettings: handleExportSettings,
       showSettingsExport,
       exportUrl,

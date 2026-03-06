@@ -319,6 +319,110 @@ describe("filterSessions - 日付・時刻・会場フィルタ", () => {
   });
 });
 
+describe("filterSessions - 発表単位時点表示", () => {
+  const timedData: ConferenceData = {
+    ...data,
+    presentations: {
+      ...data.presentations,
+      pr1: {
+        ...data.presentations.pr1,
+        start_time: "9:00",
+        end_time: "9:30",
+      },
+      pr2: {
+        ...data.presentations.pr2,
+        start_time: "9:30",
+        end_time: "10:30",
+      },
+    },
+  };
+
+  it("設定オフでは従来どおりセッション単位で表示する", () => {
+    const result = filterSessions(timedData, {
+      ...noFilter,
+      selectedDate: "2026-03-09",
+      selectedTime: "9:20",
+      showTimeAtPresentationLevel: false,
+    });
+    expect(result.map((r) => r.sessionId)).toEqual(["s1"]);
+    expect(result[0]?.presIds).toEqual(["pr1", "pr2"]);
+  });
+
+  it("設定オンでは発表の時間帯に一致する発表だけ表示する", () => {
+    const result = filterSessions(timedData, {
+      ...noFilter,
+      selectedDate: "2026-03-09",
+      selectedTime: "9:20",
+      showTimeAtPresentationLevel: true,
+    });
+    expect(result.map((r) => r.sessionId)).toEqual(["s1"]);
+    expect(result[0]?.presIds).toEqual(["pr1"]);
+  });
+
+  it("設定オンでは開始時刻ちょうどは含み、終了時刻ちょうどは含まない", () => {
+    const atStart = filterSessions(timedData, {
+      ...noFilter,
+      selectedDate: "2026-03-09",
+      selectedTime: "9:30",
+      showTimeAtPresentationLevel: true,
+    });
+    expect(atStart.map((r) => r.sessionId)).toEqual(["s1"]);
+    expect(atStart[0]?.presIds).toEqual(["pr2"]);
+
+    const atEnd = filterSessions(timedData, {
+      ...noFilter,
+      selectedDate: "2026-03-09",
+      selectedTime: "10:30",
+      showTimeAtPresentationLevel: true,
+    });
+    expect(atEnd).toHaveLength(0);
+  });
+
+  it("設定オンで時間情報のない発表を含むセッションはセッション全体として扱う", () => {
+    const partiallyTimedData: ConferenceData = {
+      ...timedData,
+      presentations: {
+        ...timedData.presentations,
+        pr2: {
+          ...timedData.presentations.pr2,
+          start_time: null,
+          end_time: null,
+        },
+      },
+    };
+
+    const result = filterSessions(partiallyTimedData, {
+      ...noFilter,
+      selectedDate: "2026-03-09",
+      selectedTime: "9:20",
+      showTimeAtPresentationLevel: true,
+    });
+    expect(result.map((r) => r.sessionId)).toEqual(["s1"]);
+    expect(result[0]?.presIds).toEqual(["pr1", "pr2"]);
+  });
+
+  it("設定オンで該当発表がない時点ではセッションを表示しない", () => {
+    const result = filterSessions(timedData, {
+      ...noFilter,
+      selectedDate: "2026-03-09",
+      selectedTime: "10:40",
+      showTimeAtPresentationLevel: true,
+    });
+    expect(result).toHaveLength(0);
+  });
+
+  it("設定オンでは発表なしセッションも時点外なら表示しない", () => {
+    const result = filterSessions(data, {
+      ...noFilter,
+      selectedDate: "2026-03-10",
+      selectedTime: "9:00",
+      showTimeAtPresentationLevel: true,
+    });
+    expect(result.map((r) => r.sessionId)).toEqual(["s3"]);
+    expect(result.map((r) => r.sessionId)).not.toContain("WS1-1");
+  });
+});
+
 describe("filterSessions - テキスト検索", () => {
   it("発表 ID でヒットする", () => {
     const result = filterSessions(data, { ...noFilter, query: "pr2" });
@@ -485,6 +589,28 @@ describe("filterSessions - searchAll フラグの挙動", () => {
     expect(presIds).toEqual(["pr1", "pr3"]);
   });
 
+  it("searchAll=true + クエリあり: 発表単位表示ONでも時点フィルタを無視する", () => {
+    const timedData: ConferenceData = {
+      ...data,
+      presentations: {
+        ...data.presentations,
+        pr1: { ...data.presentations.pr1, start_time: "9:00", end_time: "9:30" },
+        pr3: { ...data.presentations.pr3, start_time: "13:00", end_time: "13:30" },
+      },
+    };
+
+    const result = filterSessions(timedData, {
+      ...noFilter,
+      searchAll: true,
+      selectedDate: "2026-03-10",
+      selectedTime: "10:00",
+      query: "田中",
+      showTimeAtPresentationLevel: true,
+    });
+    const presIds = result.flatMap((r) => r.presIds);
+    expect(presIds).toEqual(["pr1", "pr3"]);
+  });
+
   it("searchAll=false + クエリあり: 日付フィルタ内だけを検索する", () => {
     // selectedDate=2026-03-10 の場合、s3 のみが対象 → 田中はヒットしない
     const result = filterSessions(data, {
@@ -531,6 +657,26 @@ describe("filterSessions - searchAll フラグの挙動", () => {
       query: "",
     });
     expect(result.map((r) => r.sessionId)).toEqual(["s3", "WS1-1"]);
+  });
+
+  it("searchAll=true + bookmarkedOnly=true: 発表単位表示ONでも時点フィルタを無視する", () => {
+    const timedData: ConferenceData = {
+      ...data,
+      presentations: {
+        ...data.presentations,
+        pr1: { ...data.presentations.pr1, start_time: "9:00", end_time: "9:30" },
+      },
+    };
+
+    const result = filterSessions(timedData, {
+      ...noFilter,
+      searchAll: true,
+      bookmarkedOnly: true,
+      selectedDate: "2026-03-10",
+      selectedTime: "10:00",
+      showTimeAtPresentationLevel: true,
+    });
+    expect(result.map((r) => r.sessionId)).toEqual(["s1", "s2", "s3", "WS1-1"]);
   });
 });
 

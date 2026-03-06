@@ -151,12 +151,14 @@ describe("useProgramPageState", () => {
         useSlackAppLinks: false,
         includeSessionTitleForNoPresentationSessions: true,
         includeSessionTitleForPresentationSessions: false,
+        showTimeAtPresentationLevel: false,
       },
       setSettings: vi.fn(),
       toggleShowAuthors: vi.fn(),
       toggleUseSlackAppLinks: vi.fn(),
       toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
       toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
+      toggleShowTimeAtPresentationLevel: vi.fn(),
     });
     mockUseBookmarks.mockReturnValue({
       bookmarkIds: [],
@@ -336,6 +338,7 @@ describe("useProgramPageState", () => {
         useSlackAppLinks: false,
         includeSessionTitleForNoPresentationSessions: false,
         includeSessionTitleForPresentationSessions: true,
+        showTimeAtPresentationLevel: false,
       },
       bookmarks: { presentationIds: ["p1"], sessionIds: ["s1"] },
     });
@@ -404,6 +407,7 @@ describe("useProgramPageState", () => {
       useSlackAppLinks: false,
       includeSessionTitleForNoPresentationSessions: false,
       includeSessionTitleForPresentationSessions: true,
+      showTimeAtPresentationLevel: false,
     };
     const decodedBookmarks = { presentationIds: ["p1", "p2"], sessionIds: ["s1"] };
     const setSettings = vi.fn();
@@ -416,12 +420,14 @@ describe("useProgramPageState", () => {
         useSlackAppLinks: false,
         includeSessionTitleForNoPresentationSessions: true,
         includeSessionTitleForPresentationSessions: false,
+        showTimeAtPresentationLevel: false,
       },
       setSettings,
       toggleShowAuthors: vi.fn(),
       toggleUseSlackAppLinks: vi.fn(),
       toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
       toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
+      toggleShowTimeAtPresentationLevel: vi.fn(),
     });
     mockUseBookmarks.mockReturnValue({
       bookmarkIds: [],
@@ -453,6 +459,7 @@ describe("useProgramPageState", () => {
       useSlackAppLinks: false,
       includeSessionTitleForNoPresentationSessions: false,
       includeSessionTitleForPresentationSessions: true,
+      showTimeAtPresentationLevel: false,
       venueZoomUrls: {
         A: "https://zoom.us/j/imported-a",
       },
@@ -472,6 +479,7 @@ describe("useProgramPageState", () => {
         useSlackAppLinks: false,
         includeSessionTitleForNoPresentationSessions: true,
         includeSessionTitleForPresentationSessions: false,
+        showTimeAtPresentationLevel: false,
         venueZoomUrls: currentVenueZoomUrls,
       },
       setSettings,
@@ -479,6 +487,7 @@ describe("useProgramPageState", () => {
       toggleUseSlackAppLinks: vi.fn(),
       toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
       toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
+      toggleShowTimeAtPresentationLevel: vi.fn(),
     });
     mockUseBookmarks.mockReturnValue({
       bookmarkIds: [],
@@ -517,12 +526,14 @@ describe("useProgramPageState", () => {
         useSlackAppLinks: false,
         includeSessionTitleForNoPresentationSessions: true,
         includeSessionTitleForPresentationSessions: false,
+        showTimeAtPresentationLevel: false,
       },
       setSettings,
       toggleShowAuthors: vi.fn(),
       toggleUseSlackAppLinks: vi.fn(),
       toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
       toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
+      toggleShowTimeAtPresentationLevel: vi.fn(),
     });
     mockUseBookmarks.mockReturnValue({
       bookmarkIds: [],
@@ -557,6 +568,7 @@ describe("useProgramPageState", () => {
         useSlackAppLinks: false,
         includeSessionTitleForNoPresentationSessions: false,
         includeSessionTitleForPresentationSessions: true,
+        showTimeAtPresentationLevel: false,
       },
       bookmarks: { presentationIds: [], sessionIds: [] },
     });
@@ -581,6 +593,7 @@ describe("useProgramPageState", () => {
         useSlackAppLinks: false,
         includeSessionTitleForNoPresentationSessions: false,
         includeSessionTitleForPresentationSessions: true,
+        showTimeAtPresentationLevel: false,
       },
       bookmarks: { presentationIds: [], sessionIds: [] },
     });
@@ -605,6 +618,7 @@ describe("useProgramPageState", () => {
         useSlackAppLinks: false,
         includeSessionTitleForNoPresentationSessions: false,
         includeSessionTitleForPresentationSessions: true,
+        showTimeAtPresentationLevel: false,
       },
       bookmarks: { presentationIds: [], sessionIds: [] },
     });
@@ -627,12 +641,14 @@ describe("useProgramPageState", () => {
       useSlackAppLinks: false,
       includeSessionTitleForNoPresentationSessions: false,
       includeSessionTitleForPresentationSessions: true,
+      showTimeAtPresentationLevel: false,
     };
     const settingsB = {
       showAuthors: false,
       useSlackAppLinks: true,
       includeSessionTitleForNoPresentationSessions: true,
       includeSessionTitleForPresentationSessions: false,
+      showTimeAtPresentationLevel: false,
     };
     const bookmarksA = { presentationIds: ["a1"], sessionIds: [] };
     const bookmarksB = { presentationIds: ["b1"], sessionIds: [] };
@@ -653,6 +669,7 @@ describe("useProgramPageState", () => {
       toggleUseSlackAppLinks: vi.fn(),
       toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
       toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
+      toggleShowTimeAtPresentationLevel: vi.fn(),
     });
 
     const hook = setupHook();
@@ -679,12 +696,14 @@ describe("useProgramPageState", () => {
       useSlackAppLinks: false,
       includeSessionTitleForNoPresentationSessions: false,
       includeSessionTitleForPresentationSessions: true,
+      showTimeAtPresentationLevel: false,
     };
     const settingsB = {
       showAuthors: false,
       useSlackAppLinks: true,
       includeSessionTitleForNoPresentationSessions: true,
       includeSessionTitleForPresentationSessions: false,
+      showTimeAtPresentationLevel: false,
     };
     const bookmarksA = { presentationIds: ["a1"], sessionIds: [] };
     const bookmarksB = { presentationIds: ["b1"], sessionIds: [] };
@@ -705,6 +724,7 @@ describe("useProgramPageState", () => {
       toggleUseSlackAppLinks: vi.fn(),
       toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
       toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
+      toggleShowTimeAtPresentationLevel: vi.fn(),
     });
 
     const hook = setupHook();
@@ -740,19 +760,21 @@ describe("useProgramPageState", () => {
     hook.unmount();
   });
 
-  it("検索設定2項目を filterSessions に渡す", async () => {
+  it("検索設定3項目を filterSessions に渡す", async () => {
     mockUseAppSettings.mockReturnValue({
       settings: {
         showAuthors: false,
         useSlackAppLinks: false,
         includeSessionTitleForNoPresentationSessions: false,
         includeSessionTitleForPresentationSessions: true,
+        showTimeAtPresentationLevel: false,
       },
       setSettings: vi.fn(),
       toggleShowAuthors: vi.fn(),
       toggleUseSlackAppLinks: vi.fn(),
       toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
       toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
+      toggleShowTimeAtPresentationLevel: vi.fn(),
     });
 
     const hook = setupHook();
@@ -765,6 +787,7 @@ describe("useProgramPageState", () => {
     expect(lastCall?.[1]).toMatchObject({
       includeSessionTitleForNoPresentationSessions: false,
       includeSessionTitleForPresentationSessions: true,
+      showTimeAtPresentationLevel: false,
     });
 
     hook.unmount();
@@ -776,12 +799,14 @@ describe("useProgramPageState", () => {
       useSlackAppLinks: false,
       includeSessionTitleForNoPresentationSessions: false,
       includeSessionTitleForPresentationSessions: true,
+      showTimeAtPresentationLevel: false,
     };
     const settingsB = {
       showAuthors: false,
       useSlackAppLinks: true,
       includeSessionTitleForNoPresentationSessions: true,
       includeSessionTitleForPresentationSessions: false,
+      showTimeAtPresentationLevel: false,
     };
     const bookmarksA = { presentationIds: ["a1"], sessionIds: [] };
     const bookmarksB = { presentationIds: ["b1"], sessionIds: [] };
@@ -799,6 +824,7 @@ describe("useProgramPageState", () => {
         toggleUseSlackAppLinks: vi.fn(),
         toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
         toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
+        toggleShowTimeAtPresentationLevel: vi.fn(),
       });
     }
 

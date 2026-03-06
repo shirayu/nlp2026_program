@@ -645,12 +645,14 @@ export function SettingsDialog({
   venueZoomUrls,
   includeSessionTitleForNoPresentationSessions,
   includeSessionTitleForPresentationSessions,
+  showTimeAtPresentationLevel,
   onClose,
   onToggleShowAuthors,
   onToggleUseSlackAppLinks,
   onSetVenueZoomUrls,
   onToggleIncludeSessionTitleForNoPresentationSessions,
   onToggleIncludeSessionTitleForPresentationSessions,
+  onToggleShowTimeAtPresentationLevel,
   onExport,
   hasBackup: _hasBackup,
   onRestore: _onRestore,
@@ -663,12 +665,14 @@ export function SettingsDialog({
   venueZoomUrls?: VenueZoomUrls;
   includeSessionTitleForNoPresentationSessions: boolean;
   includeSessionTitleForPresentationSessions: boolean;
+  showTimeAtPresentationLevel: boolean;
   onClose: () => void;
   onToggleShowAuthors: () => void;
   onToggleUseSlackAppLinks: () => void;
   onSetVenueZoomUrls: (value: VenueZoomUrls | undefined) => void;
   onToggleIncludeSessionTitleForNoPresentationSessions: () => void;
   onToggleIncludeSessionTitleForPresentationSessions: () => void;
+  onToggleShowTimeAtPresentationLevel: () => void;
   onExport: () => void;
   hasBackup: boolean;
   onRestore: () => void;
@@ -730,6 +734,19 @@ export function SettingsDialog({
                 >
                   <span
                     className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${useSlackAppLinks ? "translate-x-4" : "translate-x-0"}`}
+                  />
+                </button>
+              </label>
+              <label className="flex items-center justify-between">
+                <span className="text-sm text-gray-700">{ja.showTimeAtPresentationLevel}</span>
+                <button
+                  type="button"
+                  onClick={onToggleShowTimeAtPresentationLevel}
+                  className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${showTimeAtPresentationLevel ? "bg-indigo-600" : "bg-gray-300"}`}
+                  aria-pressed={showTimeAtPresentationLevel}
+                >
+                  <span
+                    className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showTimeAtPresentationLevel ? "translate-x-4" : "translate-x-0"}`}
                   />
                 </button>
               </label>

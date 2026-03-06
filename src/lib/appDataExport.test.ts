@@ -28,6 +28,7 @@ const fullPayload: ExportPayload = {
     useSlackAppLinks: false,
     includeSessionTitleForNoPresentationSessions: false,
     includeSessionTitleForPresentationSessions: true,
+    showTimeAtPresentationLevel: false,
     venueZoomUrls: {
       A: "https://example.com/custom-a",
     },
@@ -45,6 +46,7 @@ const fullPayloadWithoutVenueZoom = {
     useSlackAppLinks: false,
     includeSessionTitleForNoPresentationSessions: false,
     includeSessionTitleForPresentationSessions: true,
+    showTimeAtPresentationLevel: false,
   },
 };
 
@@ -78,6 +80,7 @@ describe("encodePayload / decodePayload", () => {
       useSlackAppLinks: true,
       includeSessionTitleForNoPresentationSessions: true,
       includeSessionTitleForPresentationSessions: false,
+      showTimeAtPresentationLevel: false,
     });
     expect(result?.bookmarks.presentationIds).toEqual(["p1"]);
   });

@@ -9,6 +9,7 @@ const DEFAULT_APP_SETTINGS: AppSettings = {
   useSlackAppLinks: true,
   includeSessionTitleForNoPresentationSessions: true,
   includeSessionTitleForPresentationSessions: false,
+  showTimeAtPresentationLevel: false,
 };
 
 function parseBoolean(value: unknown, fallback: boolean): boolean {
@@ -58,6 +59,10 @@ function parseAppSettings(value: string | null): AppSettings {
         parsed.includeSessionTitleForPresentationSessions,
         DEFAULT_APP_SETTINGS.includeSessionTitleForPresentationSessions,
       ),
+      showTimeAtPresentationLevel: parseBoolean(
+        parsed.showTimeAtPresentationLevel,
+        DEFAULT_APP_SETTINGS.showTimeAtPresentationLevel,
+      ),
       ...(venueZoomUrls ? { venueZoomUrls } : {}),
     };
   } catch {
@@ -102,6 +107,11 @@ export function useAppSettings() {
       setSettings((current) => ({
         ...current,
         includeSessionTitleForPresentationSessions: !current.includeSessionTitleForPresentationSessions,
+      })),
+    toggleShowTimeAtPresentationLevel: () =>
+      setSettings((current) => ({
+        ...current,
+        showTimeAtPresentationLevel: !current.showTimeAtPresentationLevel,
       })),
   };
 }

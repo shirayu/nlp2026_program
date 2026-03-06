@@ -121,12 +121,14 @@ const defaultSettingsDialogProps = {
   venueZoomUrls: undefined,
   includeSessionTitleForNoPresentationSessions: true,
   includeSessionTitleForPresentationSessions: false,
+  showTimeAtPresentationLevel: false,
   onClose: () => {},
   onToggleShowAuthors: () => {},
   onToggleUseSlackAppLinks: () => {},
   onSetVenueZoomUrls: () => {},
   onToggleIncludeSessionTitleForNoPresentationSessions: () => {},
   onToggleIncludeSessionTitleForPresentationSessions: () => {},
+  onToggleShowTimeAtPresentationLevel: () => {},
   onExport: () => {},
   hasBackup: false,
   onRestore: () => {},
@@ -157,9 +159,14 @@ describe("SettingsDialog", () => {
   it("セッションタイトル検索設定セクションを表示する", () => {
     const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
+    expect(html).toContain("時間情報があれば発表単位で表示");
     expect(html).toContain("セッションタイトルを検索対象にする");
     expect(html).toContain("発表情報が無いセッション");
     expect(html).toContain("発表情報が有るセッション");
+    expect(html.indexOf("Slack をアプリリンクで開く")).toBeLessThan(html.indexOf("時間情報があれば発表単位で表示"));
+    expect(html.indexOf("時間情報があれば発表単位で表示")).toBeLessThan(
+      html.indexOf("セッションタイトルを検索対象にする"),
+    );
   });
 
   it("Zoom カスタムURL設定セクションを表示する", () => {
@@ -245,6 +252,7 @@ const backupPayload = {
     useSlackAppLinks: false,
     includeSessionTitleForNoPresentationSessions: true,
     includeSessionTitleForPresentationSessions: false,
+    showTimeAtPresentationLevel: false,
   },
   bookmarks: { presentationIds: [], sessionIds: [] },
 };

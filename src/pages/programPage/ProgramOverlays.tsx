@@ -40,12 +40,14 @@ export function ProgramOverlays({
   venueZoomUrls,
   includeSessionTitleForNoPresentationSessions,
   includeSessionTitleForPresentationSessions,
+  showTimeAtPresentationLevel,
   onCloseSettings,
   onToggleShowAuthors,
   onToggleUseSlackAppLinks,
   onSetVenueZoomUrls,
   onToggleIncludeSessionTitleForNoPresentationSessions,
   onToggleIncludeSessionTitleForPresentationSessions,
+  onToggleShowTimeAtPresentationLevel,
   onExportSettings,
   showSettingsExport,
   exportUrl,
@@ -93,12 +95,14 @@ export function ProgramOverlays({
   venueZoomUrls?: VenueZoomUrls;
   includeSessionTitleForNoPresentationSessions: boolean;
   includeSessionTitleForPresentationSessions: boolean;
+  showTimeAtPresentationLevel: boolean;
   onCloseSettings: () => void;
   onToggleShowAuthors: () => void;
   onToggleUseSlackAppLinks: () => void;
   onSetVenueZoomUrls: (value: VenueZoomUrls | undefined) => void;
   onToggleIncludeSessionTitleForNoPresentationSessions: () => void;
   onToggleIncludeSessionTitleForPresentationSessions: () => void;
+  onToggleShowTimeAtPresentationLevel: () => void;
   onExportSettings: () => void;
   showSettingsExport: boolean;
   exportUrl: string;
@@ -162,12 +166,14 @@ export function ProgramOverlays({
         venueZoomUrls={venueZoomUrls}
         includeSessionTitleForNoPresentationSessions={includeSessionTitleForNoPresentationSessions}
         includeSessionTitleForPresentationSessions={includeSessionTitleForPresentationSessions}
+        showTimeAtPresentationLevel={showTimeAtPresentationLevel}
         onClose={onCloseSettings}
         onToggleShowAuthors={onToggleShowAuthors}
         onToggleUseSlackAppLinks={onToggleUseSlackAppLinks}
         onSetVenueZoomUrls={onSetVenueZoomUrls}
         onToggleIncludeSessionTitleForNoPresentationSessions={onToggleIncludeSessionTitleForNoPresentationSessions}
         onToggleIncludeSessionTitleForPresentationSessions={onToggleIncludeSessionTitleForPresentationSessions}
+        onToggleShowTimeAtPresentationLevel={onToggleShowTimeAtPresentationLevel}
         onExport={onExportSettings}
         hasBackup={hasBackup}
         onRestore={onRestoreBackup}
