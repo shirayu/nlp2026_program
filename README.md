@@ -70,7 +70,20 @@ pnpm run create:import-zoom-settings-url -- \
 出力の1行目 `ZOOM_IMPORT_HASH=...` を `src/constants/index.ts` の `ZOOM_IMPORT_HASHES` に追加してください。  
 アプリ側は `SubtleCrypto (SHA-256)` で同じハッシュを再計算し、一致しない `#import_zoom_settings=` は拒否します。
 
-## GitHub Pages
+## セキュリティ注意事項
+
+- GitHub Pagesのようなサブディレクトリ運用を行う場合は、どのような運用上のリスクがあることを理解した上で行ってください
+- **よくわからない場合は、このアプリ専用の独自ドメインで運用してください**
+
+### 補足
+
+- `localStorage` の保存領域は「パス単位」ではなく「オリジン（scheme + host + port）単位」です
+- そのため、`https://<user>.github.io/<repo>/` のような運用では、同一オリジン上の別ページ/別アプリから読み書き可能です
+- 別ページの内容によっては、localStorageの破損・漏洩・衝突・改ざんなどがありえます
+
+## デプロイ例
+
+### GitHub Pages
 
 - GitHub Actions の `CI` workflow で `main` への push 時に `dist/` をデプロイします
 - リポジトリ設定の `Settings > Pages > Source` は `GitHub Actions` を選択してください
