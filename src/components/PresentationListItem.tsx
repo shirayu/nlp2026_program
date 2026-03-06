@@ -224,15 +224,19 @@ function PresentationActionLinks({
   presentationZoomAppUrl: string | null;
   useSlackAppLinks: boolean;
 }) {
+  if (!pdfUrl && !presentationZoomUrl) {
+    return null;
+  }
+
   return (
-    <>
+    <div className="col-start-3 flex flex-col items-center gap-1">
       {pdfUrl && (
         <a
           href={pdfUrl}
           target="_blank"
           rel="noreferrer"
           aria-label={ja.abstractPdf}
-          className="mt-0.5 shrink-0 rounded p-1 text-indigo-500 transition-colors hover:bg-indigo-50 hover:text-indigo-700"
+          className="shrink-0 rounded p-1 text-indigo-500 transition-colors hover:bg-indigo-50 hover:text-indigo-700"
           onClick={(event) => event.stopPropagation()}
         >
           <FileText className="h-4 w-4" />
@@ -244,7 +248,7 @@ function PresentationActionLinks({
           target="_blank"
           rel="noopener noreferrer"
           aria-label={ja.openPresentationZoom}
-          className="mt-0.5 shrink-0 rounded p-1 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-700"
+          className="shrink-0 rounded p-1 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-700"
           onClick={(event) => {
             event.stopPropagation();
             if (useSlackAppLinks && presentationZoomAppUrl) {
@@ -255,7 +259,7 @@ function PresentationActionLinks({
           <ZoomIcon className="h-4 w-4" />
         </a>
       )}
-    </>
+    </div>
   );
 }
 
@@ -271,7 +275,7 @@ function PresentationExpandButton({
   return (
     <button
       type="button"
-      className="mt-0.5 shrink-0 rounded p-1 text-gray-400 transition-colors hover:bg-slate-100 hover:text-gray-600"
+      className="col-start-4 row-start-1 mt-0.5 shrink-0 rounded p-1 text-gray-400 transition-colors hover:bg-slate-100 hover:text-gray-600"
       onClick={onClick}
       aria-expanded={open}
       aria-label={open ? ja.collapsePresentationDetails : ja.expandPresentationDetails}
