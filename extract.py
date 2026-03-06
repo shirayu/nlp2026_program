@@ -1480,6 +1480,69 @@ def apply_youtube_config(result: JsonDict, youtube_config: dict[str, str]) -> No
         session["youtube_url"] = youtube_url
 
 
+def validate_session_presentation_time_consistency(result: JsonDict) -> None:
+    """
+    セッション内の発表時刻整合性を検証する。
+
+    ルール:
+    - start_time / end_time が空白のみ文字列ならエラー
+    - start_time だけ、または end_time だけを持つ発表はエラー
+    - 同一セッションで1件でも時刻を持つ発表がある場合、全発表が時刻を持つ必要がある
+    """
+
+    def normalize_time(value: Any) -> str | None:
+        if value is None:
+            return None
+        if not isinstance(value, str):
+            raise ValueError(f"時刻は文字列または null である必要があります: {value!r}")
+        trimmed = value.strip()
+        if trimmed == "":
+            raise ValueError("時刻に空白のみの値は指定できません")
+        return trimmed
+
+    sessions = result["sessions"]
+    presentations = result["presentations"]
+    errors: list[str] = []
+
+    for session_id, session in sessions.items():
+        presentation_ids = session.get("presentation_ids", [])
+        if not presentation_ids:
+            continue
+
+        presentation_time_states: list[tuple[str, bool]] = []
+        for pid in presentation_ids:
+            presentation = presentations.get(pid)
+            if presentation is None:
+                errors.append(f"session {session_id}: presentation_ids に存在しない発表IDがあります: {pid}")
+                continue
+            try:
+                start_time = normalize_time(presentation.get("start_time"))
+                end_time = normalize_time(presentation.get("end_time"))
+            except ValueError as error:
+                errors.append(f"session {session_id} / presentation {pid}: {error}")
+                continue
+
+            has_start = start_time is not None
+            has_end = end_time is not None
+            if has_start != has_end:
+                errors.append(
+                    f"session {session_id} / presentation {pid}: "
+                    "start_time と end_time は両方指定するか、両方 null にしてください"
+                )
+            presentation_time_states.append((pid, has_start and has_end))
+
+        if any(has_time for _, has_time in presentation_time_states):
+            missing_time_ids = [pid for pid, has_time in presentation_time_states if not has_time]
+            if missing_time_ids:
+                errors.append(
+                    f"session {session_id}: 一部の発表のみ時刻を持っています。"
+                    f"時刻なし発表: {', '.join(missing_time_ids)}"
+                )
+
+    if errors:
+        raise ValueError("発表時刻の整合性チェックに失敗しました:\n" + "\n".join(f"- {message}" for message in errors))
+
+
 class ScheduleTableParser(HTMLParser):
     """
     <table id="session_table"> からスペシャルイベント行を抽出する。
@@ -1729,6 +1792,7 @@ def main() -> None:
     apply_invitedpapers_config(result, invitedpapers_config)
     apply_youtube_config(result, youtube_config)
     apply_zoom_url_defaults(result, _ZOOM_FALLBACK_SLACK_URL)
+    validate_session_presentation_time_consistency(result)
 
     pres = result["presentations"]
     oral_count = sum(1 for p in pres.values() if p.get("oral_session_id"))

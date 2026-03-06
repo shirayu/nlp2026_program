@@ -74,6 +74,7 @@ tasks:
   test:
     desc: "テストを実行"
     cmds:
+      - uv run --group dev pytest
       - pnpm exec vitest run
 
   lint:
