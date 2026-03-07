@@ -422,7 +422,6 @@ function ZoomCustomUrlDialog({
 
             <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
               <h3 className="text-sm font-semibold text-gray-800">{ja.zoomCustomUrlSessionSection}</h3>
-              <p className="mt-1 text-xs text-gray-600">{ja.zoomCustomUrlSessionSectionHint}</p>
               <div className="mt-2 grid gap-2 md:grid-cols-[minmax(12rem,18rem)_minmax(0,1fr)_auto]">
                 <select
                   value={selectedSessionId}
@@ -499,7 +498,6 @@ function ZoomCustomUrlDialog({
 
             <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
               <h3 className="text-sm font-semibold text-gray-800">{ja.zoomCustomUrlWorkshopSection}</h3>
-              <p className="mt-1 text-xs text-gray-600">{ja.zoomCustomUrlWorkshopSectionHint}</p>
               <div className="mt-2 grid gap-2 md:grid-cols-[minmax(12rem,18rem)_minmax(0,1fr)_auto]">
                 <select
                   value={selectedWorkshopSessionId}
