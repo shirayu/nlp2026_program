@@ -936,7 +936,7 @@ def should_assign_session_zoom_url(session_id: str) -> bool:
 
 def should_assign_presentation_zoom_url(presentation_id: str) -> bool:
     """Zoom(代替Slack) URL を付与する発表を判定する。"""
-    return presentation_id in {"C2-25", "C8-2", "C8-2J"}
+    return presentation_id in {"C2-25", "C8-21"}
 
 
 def apply_zoom_url_defaults(result: JsonDict, fallback_url: str) -> None:
