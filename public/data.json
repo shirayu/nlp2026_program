@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-06T16:51:42Z",
+  "generated_at": "2026-03-07T07:59:22Z",
   "last_update": {
     "program_main": {
       "sha256": "c02f7308dda2ea510afda63be85a9e566cac31235d91206c97fc0a2837a5a981",
@@ -26329,7 +26329,8 @@
       ],
       "start_time": null,
       "end_time": null,
-      "pdf_url": "https://www.anlp.jp/proceedings/annual_meeting/2026/pdf_dir/C8-2J.pdf"
+      "pdf_url": "https://www.anlp.jp/proceedings/annual_meeting/2026/pdf_dir/C8-2J.pdf",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"
     },
     "C8-3": {
       "title": "単語単位のトークン分割を用いたLLMの性能調査",
