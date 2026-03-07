@@ -176,6 +176,7 @@ function ZoomCustomUrlDialog({
   const [sessionInputUrl, setSessionInputUrl] = useState("");
   const [presentationInputUrl, setPresentationInputUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const zoomCustomUrlCount = summarizeZoomCustomUrlCount(zoomCustomUrls);
 
   useEffect(() => {
     if (!open) return;
@@ -301,6 +302,13 @@ function ZoomCustomUrlDialog({
             </button>
           </div>
           <div className="min-h-0 space-y-4 overflow-y-auto px-4 py-4" style={{ scrollbarGutter: "stable" }}>
+            <p className="text-xs text-gray-600">
+              {ja.zoomCustomUrlSummary(
+                zoomCustomUrlCount.venues,
+                zoomCustomUrlCount.sessions,
+                zoomCustomUrlCount.presentations,
+              )}
+            </p>
             {error && <p className="rounded-lg bg-rose-50 px-3 py-2 text-xs text-rose-700">{error}</p>}
 
             <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
@@ -452,6 +460,89 @@ function ZoomCustomUrlDialog({
             >
               {ja.zoomCustomUrlSave}
             </button>
+          </div>
+        </div>
+      </div>
+    </dialog>
+  );
+}
+
+function ZoomImportCodeDialog({
+  open,
+  onClose,
+  onImport,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onImport: (value: string) => Promise<boolean>;
+}) {
+  const [code, setCode] = useState("");
+  const [invalid, setInvalid] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    setCode("");
+    setInvalid(false);
+  }, [open]);
+
+  async function handleImport() {
+    const accepted = await onImport(code);
+    if (!accepted) {
+      setInvalid(true);
+      return;
+    }
+    onClose();
+  }
+
+  return (
+    <dialog open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
+      <div className="flex min-h-dvh items-center justify-center p-4" style={dialogFramePaddingStyle}>
+        <button
+          type="button"
+          aria-label={ja.zoomImportCodeDialogTitle}
+          className="fixed inset-0 bg-black/55"
+          onClick={onClose}
+        />
+        <div className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
+          <div className="flex items-center justify-between border-b border-gray-200 bg-indigo-50 px-4 py-3">
+            <h2 className="text-sm font-bold text-gray-800">{ja.zoomImportCodeDialogTitle}</h2>
+            <button
+              type="button"
+              onClick={onClose}
+              className="text-gray-400 transition-colors hover:text-gray-600"
+              aria-label={ja.zoomImportCodeDialogTitle}
+            >
+              <CloseIcon className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="space-y-3 px-4 py-4">
+            <p className="text-sm text-gray-700">{ja.zoomImportCodeDescription}</p>
+            {invalid && (
+              <p className="rounded-lg bg-rose-50 px-3 py-2 text-xs text-rose-700">{ja.zoomImportCodeInvalid}</p>
+            )}
+            <textarea
+              value={code}
+              onChange={(event) => setCode(event.target.value)}
+              rows={4}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:border-indigo-400 focus:outline-none"
+              placeholder={ja.zoomImportCodePlaceholder}
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-full border border-gray-300 px-4 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50"
+              >
+                {ja.zoomCustomUrlCancel}
+              </button>
+              <button
+                type="button"
+                onClick={() => void handleImport()}
+                className="rounded-full bg-indigo-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+              >
+                {ja.zoomImportCodeRun}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -923,6 +1014,7 @@ export function SettingsDialog({
   onToggleShowAuthors,
   onToggleUseSlackAppLinks,
   onSetZoomCustomUrls,
+  onImportZoomFromCode,
   onToggleIncludeSessionTitleForNoPresentationSessions,
   onToggleIncludeSessionTitleForPresentationSessions,
   onToggleShowTimeAtPresentationLevel,
@@ -944,6 +1036,7 @@ export function SettingsDialog({
   onToggleShowAuthors: () => void;
   onToggleUseSlackAppLinks: () => void;
   onSetZoomCustomUrls: (value: ZoomCustomUrls | undefined) => void;
+  onImportZoomFromCode: (value: string) => Promise<boolean>;
   onToggleIncludeSessionTitleForNoPresentationSessions: () => void;
   onToggleIncludeSessionTitleForPresentationSessions: () => void;
   onToggleShowTimeAtPresentationLevel: () => void;
@@ -954,7 +1047,7 @@ export function SettingsDialog({
 }) {
   const formattedBuildGitDate = formatBuildGitDate(BUILD_GIT_DATE);
   const [showZoomCustomUrlDialog, setShowZoomCustomUrlDialog] = useState(false);
-  const zoomCustomUrlCount = summarizeZoomCustomUrlCount(zoomCustomUrls);
+  const [showZoomImportCodeDialog, setShowZoomImportCodeDialog] = useState(false);
 
   const shouldShowOperatorSection =
     OPERATOR_NAME !== DEVELOPER_NAME ||
@@ -1055,14 +1148,15 @@ export function SettingsDialog({
               </section>
               <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
                 <h3 className="text-sm font-semibold text-gray-800">{ja.zoomSettings}</h3>
-                <p className="mt-1 text-xs text-gray-600">
-                  {ja.zoomCustomUrlSummary(
-                    zoomCustomUrlCount.venues,
-                    zoomCustomUrlCount.sessions,
-                    zoomCustomUrlCount.presentations,
-                  )}
-                </p>
-                <div className="mt-2 flex justify-end">
+                <p className="mt-1 text-xs text-gray-600">{ja.zoomCustomUrlDescription}</p>
+                <div className="mt-2 flex items-center justify-between gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowZoomImportCodeDialog(true)}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-indigo-300 hover:text-indigo-600"
+                  >
+                    {ja.zoomCodeImport}
+                  </button>
                   <button
                     type="button"
                     onClick={() => setShowZoomCustomUrlDialog(true)}
@@ -1194,6 +1288,11 @@ export function SettingsDialog({
         zoomCustomUrls={zoomCustomUrls}
         onClose={() => setShowZoomCustomUrlDialog(false)}
         onSave={onSetZoomCustomUrls}
+      />
+      <ZoomImportCodeDialog
+        open={showZoomImportCodeDialog}
+        onClose={() => setShowZoomImportCodeDialog(false)}
+        onImport={onImportZoomFromCode}
       />
     </dialog>
   );

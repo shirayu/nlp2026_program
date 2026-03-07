@@ -564,6 +564,42 @@ describe("useProgramPageState", () => {
     hook.unmount();
   });
 
+  it("コード入力から Zoom インポート確認ダイアログを開ける", async () => {
+    mockDecodeZoomPayload.mockResolvedValue({
+      venues: { A: "https://zoom.us/j/111?pwd=aaa" },
+    });
+    const hook = setupHook();
+    await act(async () => {});
+
+    await act(async () => {
+      const accepted = await hook
+        .getLatest()
+        .overlayProps.onImportZoomFromCode("https://example.com/#import_zoom_settings=encoded-zoom");
+      expect(accepted).toBe(true);
+    });
+
+    expect(mockDecodeZoomPayload).toHaveBeenCalledWith("encoded-zoom");
+    expect(hook.getLatest().overlayProps.showSettingsImportConfirm).toBe(true);
+    expect(hook.getLatest().overlayProps.importTarget).toBe("zoom");
+
+    hook.unmount();
+  });
+
+  it("コード入力が不正なら Zoom インポート確認を開かない", async () => {
+    const hook = setupHook();
+    await act(async () => {});
+
+    await act(async () => {
+      const accepted = await hook.getLatest().overlayProps.onImportZoomFromCode("not-a-zoom-import-code");
+      expect(accepted).toBe(false);
+    });
+
+    expect(mockDecodeZoomPayload).not.toHaveBeenCalled();
+    expect(hook.getLatest().overlayProps.showSettingsImportConfirm).toBe(false);
+
+    hook.unmount();
+  });
+
   it("インポートキャンセルでダイアログが閉じる", async () => {
     mockExtractImportFragment.mockReturnValue("validencoded");
     mockDecodePayload.mockReturnValue({

@@ -45,6 +45,30 @@ import {
   toMinutes,
 } from "./utils";
 
+function extractZoomEncodedFromInput(raw: string): string | null {
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+
+  const extractByPrefix = (value: string): string | null => {
+    const prefix = "import_zoom_settings=";
+    const index = value.indexOf(prefix);
+    if (index < 0) return null;
+    return value.slice(index + prefix.length).trim();
+  };
+
+  try {
+    const url = new URL(trimmed);
+    const hash = url.hash.startsWith("#") ? url.hash.slice(1) : url.hash;
+    const fromHash = extractByPrefix(hash);
+    if (fromHash) return fromHash;
+  } catch {
+    // no-op: not a URL string
+  }
+
+  const fromRaw = extractByPrefix(trimmed);
+  return fromRaw && fromRaw.length > 0 ? fromRaw : null;
+}
+
 export function useProgramPageState() {
   const { data, sessionSlackChannels, isReloading, reloadStatus, reload } = useConferenceData();
   const {
@@ -548,6 +572,25 @@ export function useProgramPageState() {
     setSettings((current) => ({ ...current, zoomCustomUrls }));
   }
 
+  async function handleImportZoomFromCode(input: string): Promise<boolean> {
+    const encoded = extractZoomEncodedFromInput(input);
+    if (!encoded) {
+      return false;
+    }
+    const decoded = await decodeZoomPayload(encoded);
+    setImportTarget("zoom");
+    setPendingSettingsImport(null);
+    if (decoded !== null) {
+      setPendingZoomImport(decoded);
+      setImportInvalid(false);
+    } else {
+      setPendingZoomImport(null);
+      setImportInvalid(true);
+    }
+    setShowSettingsImportConfirm(true);
+    return decoded !== null;
+  }
+
   return {
     data,
     headerProps: {
@@ -648,6 +691,7 @@ export function useProgramPageState() {
       onToggleShowAuthors: toggleShowAuthors,
       onToggleUseSlackAppLinks: toggleUseSlackAppLinks,
       onSetZoomCustomUrls: handleSetZoomCustomUrls,
+      onImportZoomFromCode: handleImportZoomFromCode,
       onToggleIncludeSessionTitleForNoPresentationSessions: toggleIncludeSessionTitleForNoPresentationSessions,
       onToggleIncludeSessionTitleForPresentationSessions: toggleIncludeSessionTitleForPresentationSessions,
       onToggleShowTimeAtPresentationLevel: toggleShowTimeAtPresentationLevel,

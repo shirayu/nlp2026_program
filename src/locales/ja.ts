@@ -26,6 +26,7 @@ export const ja = {
   useSlackAppLinks: "Slack をアプリリンクで開く",
   zoomSettings: "Zoom",
   zoomCustomUrlSettings: "カスタムURLを設定",
+  zoomCodeImport: "コードでインポート",
   zoomCustomUrlDescription: "設定時はこのURLを利用します。",
   zoomCustomUrlSummary: (venues: number, sessions: number, presentations: number) =>
     `会場 ${venues} 件 / セッション ${sessions} 件 / 発表 ${presentations} 件`,
@@ -40,6 +41,12 @@ export const ja = {
   zoomCustomUrlInvalidUrl: "Zoom URL は zoom.us / *.zoom.us かつ /j/ で始まる必要があります。",
   zoomCustomUrlInvalidSessionId: "有効な SessionId を選択してください。",
   zoomCustomUrlInvalidPresentationId: "有効な PresentationId を選択してください。",
+  zoomImportCodeDialogTitle: "Zoom URL をコードでインポート",
+  zoomImportCodeDescription:
+    "import_zoom_settings のURLまたはフラグメント（import_zoom_settings=...）を入力してください。",
+  zoomImportCodePlaceholder: "https://...#import_zoom_settings=...",
+  zoomImportCodeRun: "インポート確認へ",
+  zoomImportCodeInvalid: "入力文字列から import_zoom_settings を読み取れません。",
   venueA: "A会場",
   venueB: "B会場",
   venueC: "C会場",

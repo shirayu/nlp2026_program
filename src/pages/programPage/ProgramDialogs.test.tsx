@@ -133,6 +133,7 @@ const defaultSettingsDialogProps = {
   onToggleShowAuthors: () => {},
   onToggleUseSlackAppLinks: () => {},
   onSetZoomCustomUrls: () => {},
+  onImportZoomFromCode: async () => true,
   onToggleIncludeSessionTitleForNoPresentationSessions: () => {},
   onToggleIncludeSessionTitleForPresentationSessions: () => {},
   onToggleShowTimeAtPresentationLevel: () => {},
@@ -182,6 +183,7 @@ describe("SettingsDialog", () => {
     const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
     expect(html).toContain("Zoom");
+    expect(html).toContain("コードでインポート");
     expect(html).toContain("カスタムURLを設定");
   });
 

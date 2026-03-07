@@ -45,6 +45,7 @@ export function ProgramOverlays({
   onToggleShowAuthors,
   onToggleUseSlackAppLinks,
   onSetZoomCustomUrls,
+  onImportZoomFromCode,
   onToggleIncludeSessionTitleForNoPresentationSessions,
   onToggleIncludeSessionTitleForPresentationSessions,
   onToggleShowTimeAtPresentationLevel,
@@ -100,6 +101,7 @@ export function ProgramOverlays({
   onToggleShowAuthors: () => void;
   onToggleUseSlackAppLinks: () => void;
   onSetZoomCustomUrls: (value: ZoomCustomUrls | undefined) => void;
+  onImportZoomFromCode: (value: string) => Promise<boolean>;
   onToggleIncludeSessionTitleForNoPresentationSessions: () => void;
   onToggleIncludeSessionTitleForPresentationSessions: () => void;
   onToggleShowTimeAtPresentationLevel: () => void;
@@ -172,6 +174,7 @@ export function ProgramOverlays({
         onToggleShowAuthors={onToggleShowAuthors}
         onToggleUseSlackAppLinks={onToggleUseSlackAppLinks}
         onSetZoomCustomUrls={onSetZoomCustomUrls}
+        onImportZoomFromCode={onImportZoomFromCode}
         onToggleIncludeSessionTitleForNoPresentationSessions={onToggleIncludeSessionTitleForNoPresentationSessions}
         onToggleIncludeSessionTitleForPresentationSessions={onToggleIncludeSessionTitleForPresentationSessions}
         onToggleShowTimeAtPresentationLevel={onToggleShowTimeAtPresentationLevel}
