@@ -34,13 +34,8 @@ backend = "core:python"
 "platforms.windows-x64" = { checksum = "sha256:eb1e212b97b001efc1281bb01fd26ca1ecdfe9ef2875b52c58d39e9719ab75df", url = "https://github.com/astral-sh/python-build-standalone/releases/download/20260303/cpython-3.13.12+20260303-x86_64-pc-windows-msvc-install_only_stripped.tar.gz"}
 
 [[tools.task]]
-version = "3.48.0"
+version = "3.49.0"
 backend = "ubi:go-task/task"
-"platforms.linux-arm64" = { checksum = "sha256:15a54fd45f706ce0f4c679c93cf04e02d72ca7223f157209201a1576008056d6", url = "https://github.com/go-task/task/releases/download/v3.48.0/task_linux_arm64.tar.gz"}
-"platforms.linux-x64" = { checksum = "sha256:f4bfc4eef1b2557b262f3cc0a79976a421885cb7b9e71cfe75568a2ebe4d7ae5", url = "https://github.com/go-task/task/releases/download/v3.48.0/task_linux_amd64.tar.gz"}
-"platforms.macos-arm64" = { checksum = "sha256:9a2727b7b74821e1a0a1fb17c477a7e84b7f1bbc8c3ca3bf47ed9a9557c2b986", url = "https://github.com/go-task/task/releases/download/v3.48.0/task_darwin_arm64.tar.gz"}
-"platforms.macos-x64" = { checksum = "sha256:99955cd04179769fc4bfa83ae1c7f6993b20c8af3088cd5ddfe0bd9c1a11099a", url = "https://github.com/go-task/task/releases/download/v3.48.0/task_darwin_amd64.tar.gz"}
-"platforms.windows-x64" = { checksum = "sha256:d6dd072d8b1c8131626cacd96af5edbc54470c437f747ec87f3fab32a15b3c74", url = "https://github.com/go-task/task/releases/download/v3.48.0/task_windows_amd64.zip"}
 
 [[tools.typos]]
 version = "1.44.0"
