@@ -46,7 +46,7 @@ export const ja = {
   zoomCustomUrlInvalidPresentationId: "有効な PresentationId を選択してください。",
   zoomImportCodeDialogTitle: "Zoom URL をコードでインポート",
   zoomImportCodeDescription:
-    "import_zoom_settings のURLまたはフラグメント（import_zoom_settings=...）を入力してください。",
+    "import_zoom_settings のURLまたはフラグメント（import_zoom_settings=...）を入力してください。コードはSlackの #random で別途お知らせいたします。",
   zoomImportCodePlaceholder: "https://...#import_zoom_settings=...",
   zoomImportCodeRun: "インポート確認へ",
   zoomImportCodeInvalid: "入力文字列から import_zoom_settings を読み取れません。",
