@@ -28,12 +28,15 @@ export const ja = {
   zoomCustomUrlSettings: "カスタムURLを設定",
   zoomCodeImport: "コードでインポート",
   zoomCustomUrlDescription: "設定時はこのURLを利用します。",
-  zoomCustomUrlSummary: (venues: number, sessions: number, presentations: number) =>
-    `会場 ${venues} 件 / セッション ${sessions} 件 / 発表 ${presentations} 件`,
+  zoomCustomUrlSummary: (presentations: number, sessions: number, venues: number, workshops: number) =>
+    `発表 ${presentations} 件 / セッション ${sessions} 件 / 会場 ${venues} 件 / Workshop ${workshops} 件`,
   zoomCustomUrlDialogTitle: "Zoom カスタムURL設定",
   zoomCustomUrlClose: "Zoom カスタムURL設定を閉じる",
   zoomCustomUrlVenueSection: "会場単位",
   zoomCustomUrlSessionSection: "セッション単位",
+  zoomCustomUrlSessionSectionHint: "通常セッション向けの上書きURLです。",
+  zoomCustomUrlWorkshopSection: "Workshop単位",
+  zoomCustomUrlWorkshopSectionHint: "親Workshopセッション向けの上書きURLです。",
   zoomCustomUrlPresentationSection: "発表単位",
   zoomCustomUrlAdd: "追加",
   zoomCustomUrlDelete: "削除",

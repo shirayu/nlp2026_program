@@ -91,11 +91,15 @@ function isAllowedZoomImportUrl(value: string): boolean {
 function summarizeZoomCustomUrlCount(zoomCustomUrls?: ZoomCustomUrls): {
   venues: number;
   sessions: number;
+  workshops: number;
   presentations: number;
 } {
+  const sessionIds = Object.keys(zoomCustomUrls?.sessions ?? {});
+  const workshops = sessionIds.filter((id) => /^WS\d+$/.test(id)).length;
   return {
     venues: ZOOM_VENUE_FIELDS.filter(({ key }) => Boolean(zoomCustomUrls?.venues?.[key]?.trim())).length,
-    sessions: Object.keys(zoomCustomUrls?.sessions ?? {}).length,
+    sessions: sessionIds.length - workshops,
+    workshops,
     presentations: Object.keys(zoomCustomUrls?.presentations ?? {}).length,
   };
 }
@@ -172,8 +176,10 @@ function ZoomCustomUrlDialog({
   const [sessionDrafts, setSessionDrafts] = useState<Record<SessionId, string>>({});
   const [presentationDrafts, setPresentationDrafts] = useState<Record<PresentationId, string>>({});
   const [selectedSessionId, setSelectedSessionId] = useState<SessionId | "">("");
+  const [selectedWorkshopSessionId, setSelectedWorkshopSessionId] = useState<SessionId | "">("");
   const [selectedPresentationId, setSelectedPresentationId] = useState<PresentationId | "">("");
   const [sessionInputUrl, setSessionInputUrl] = useState("");
+  const [workshopInputUrl, setWorkshopInputUrl] = useState("");
   const [presentationInputUrl, setPresentationInputUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
   const zoomCustomUrlCount = summarizeZoomCustomUrlCount(zoomCustomUrls);
@@ -189,17 +195,33 @@ function ZoomCustomUrlDialog({
     setSessionDrafts((zoomCustomUrls?.sessions ?? {}) as Record<SessionId, string>);
     setPresentationDrafts((zoomCustomUrls?.presentations ?? {}) as Record<PresentationId, string>);
     const sessionIds = Object.keys(data.sessions) as SessionId[];
+    const workshopSessionIds = sessionIds.filter((id) => /^WS\d+$/.test(id));
+    const normalSessionIds = sessionIds.filter((id) => !/^WS\d+$/.test(id));
     const presentationIds = Object.keys(data.presentations) as PresentationId[];
-    setSelectedSessionId(sessionIds[0] ?? "");
+    setSelectedSessionId(normalSessionIds[0] ?? "");
+    setSelectedWorkshopSessionId(workshopSessionIds[0] ?? "");
     setSelectedPresentationId(presentationIds[0] ?? "");
     setSessionInputUrl("");
+    setWorkshopInputUrl("");
     setPresentationInputUrl("");
     setError(null);
   }, [open, zoomCustomUrls, data.sessions, data.presentations]);
 
   const validSessionIds = new Set(Object.keys(data.sessions));
   const validPresentationIds = new Set(Object.keys(data.presentations));
-  const visibleSessionEntries = Object.entries(sessionDrafts).filter(([id]) => validSessionIds.has(id));
+  const sessionOptionEntries = (
+    Object.entries(data.sessions) as Array<[SessionId, ConferenceData["sessions"][string]]>
+  ).filter(([id]) => !/^WS\d+$/.test(id));
+  const workshopOptionEntries = (
+    Object.entries(data.sessions) as Array<[SessionId, ConferenceData["sessions"][string]]>
+  ).filter(([id]) => /^WS\d+$/.test(id));
+  const workshopSessionIds = new Set(workshopOptionEntries.map(([id]) => id));
+  const visibleSessionEntries = Object.entries(sessionDrafts).filter(
+    ([id]) => validSessionIds.has(id) && !workshopSessionIds.has(id as SessionId),
+  );
+  const visibleWorkshopEntries = Object.entries(sessionDrafts).filter(([id]) =>
+    workshopSessionIds.has(id as SessionId),
+  );
   const visiblePresentationEntries = Object.entries(presentationDrafts).filter(([id]) => validPresentationIds.has(id));
 
   function handleAddSession() {
@@ -224,6 +246,34 @@ function ZoomCustomUrlDialog({
     }
     setSessionDrafts((current) => ({ ...current, [selectedSessionId]: url }));
     setSessionInputUrl("");
+  }
+
+  function handleAddWorkshopSession() {
+    setError(null);
+    const url = normalizeUrl(workshopInputUrl);
+    if (
+      !selectedWorkshopSessionId ||
+      !validSessionIds.has(selectedWorkshopSessionId) ||
+      !workshopSessionIds.has(selectedWorkshopSessionId)
+    ) {
+      setError(ja.zoomCustomUrlInvalidSessionId);
+      return;
+    }
+    if (!url) {
+      setSessionDrafts((current) => {
+        const next = { ...current };
+        Reflect.deleteProperty(next, selectedWorkshopSessionId);
+        return next;
+      });
+      setWorkshopInputUrl("");
+      return;
+    }
+    if (!isAllowedZoomImportUrl(url)) {
+      setError(ja.zoomCustomUrlInvalidUrl);
+      return;
+    }
+    setSessionDrafts((current) => ({ ...current, [selectedWorkshopSessionId]: url }));
+    setWorkshopInputUrl("");
   }
 
   function handleAddPresentation() {
@@ -304,40 +354,23 @@ function ZoomCustomUrlDialog({
           <div className="min-h-0 space-y-4 overflow-y-auto px-4 py-4" style={{ scrollbarGutter: "stable" }}>
             <p className="text-xs text-gray-600">
               {ja.zoomCustomUrlSummary(
-                zoomCustomUrlCount.venues,
-                zoomCustomUrlCount.sessions,
                 zoomCustomUrlCount.presentations,
+                zoomCustomUrlCount.sessions,
+                zoomCustomUrlCount.venues,
+                zoomCustomUrlCount.workshops,
               )}
             </p>
             {error && <p className="rounded-lg bg-rose-50 px-3 py-2 text-xs text-rose-700">{error}</p>}
 
             <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
-              <h3 className="text-sm font-semibold text-gray-800">{ja.zoomCustomUrlVenueSection}</h3>
-              <div className="mt-2 space-y-2">
-                {ZOOM_VENUE_FIELDS.map(({ key, label }) => (
-                  <label key={key} className="flex items-center gap-3 text-sm text-gray-700">
-                    <span className="w-10 shrink-0">{label()}</span>
-                    <input
-                      type="url"
-                      value={venueDrafts[key] ?? ""}
-                      onChange={(event) => setVenueDrafts((current) => ({ ...current, [key]: event.target.value }))}
-                      className="min-w-0 flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
-                      placeholder="https://zoom.us/j/..."
-                    />
-                  </label>
-                ))}
-              </div>
-            </section>
-
-            <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
-              <h3 className="text-sm font-semibold text-gray-800">{ja.zoomCustomUrlSessionSection}</h3>
-              <div className="mt-2 flex flex-col gap-2 md:flex-row">
+              <h3 className="text-sm font-semibold text-gray-800">{ja.zoomCustomUrlPresentationSection}</h3>
+              <div className="mt-2 grid gap-2 md:grid-cols-[minmax(12rem,18rem)_minmax(0,1fr)_auto]">
                 <select
-                  value={selectedSessionId}
-                  onChange={(event) => setSelectedSessionId(event.target.value as SessionId)}
-                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+                  value={selectedPresentationId}
+                  onChange={(event) => setSelectedPresentationId(event.target.value as PresentationId)}
+                  className="min-w-0 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
                 >
-                  {(Object.keys(data.sessions) as SessionId[]).map((id) => (
+                  {(Object.keys(data.presentations) as PresentationId[]).map((id) => (
                     <option key={id} value={id}>
                       {id}
                     </option>
@@ -345,9 +378,68 @@ function ZoomCustomUrlDialog({
                 </select>
                 <input
                   type="url"
+                  value={presentationInputUrl}
+                  onChange={(event) => setPresentationInputUrl(event.target.value)}
+                  className="min-w-0 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+                  placeholder="https://zoom.us/j/..."
+                />
+                <button
+                  type="button"
+                  onClick={handleAddPresentation}
+                  className="rounded-full border border-gray-300 px-4 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-50"
+                >
+                  {ja.zoomCustomUrlAdd}
+                </button>
+              </div>
+              <ul className="mt-2 space-y-2">
+                {visiblePresentationEntries.map(([id, url]) => (
+                  <li
+                    key={id}
+                    className="flex items-center gap-2 rounded-lg border border-gray-200 px-2 py-1.5 text-xs"
+                  >
+                    <span className="w-28 shrink-0 font-mono text-gray-700">{id}</span>
+                    <span className="min-w-0 flex-1 truncate text-gray-600">{url}</span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setPresentationDrafts((current) => {
+                          const next = { ...current };
+                          Reflect.deleteProperty(next, id);
+                          return next;
+                        })
+                      }
+                      className="rounded border border-rose-200 px-2 py-0.5 text-rose-600 transition-colors hover:bg-rose-50"
+                    >
+                      {ja.zoomCustomUrlDelete}
+                    </button>
+                  </li>
+                ))}
+                {visiblePresentationEntries.length === 0 && (
+                  <li className="text-xs text-gray-500">{ja.zoomCustomUrlNoEntries}</li>
+                )}
+              </ul>
+            </section>
+
+            <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
+              <h3 className="text-sm font-semibold text-gray-800">{ja.zoomCustomUrlSessionSection}</h3>
+              <p className="mt-1 text-xs text-gray-600">{ja.zoomCustomUrlSessionSectionHint}</p>
+              <div className="mt-2 grid gap-2 md:grid-cols-[minmax(12rem,18rem)_minmax(0,1fr)_auto]">
+                <select
+                  value={selectedSessionId}
+                  onChange={(event) => setSelectedSessionId(event.target.value as SessionId)}
+                  className="min-w-0 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+                >
+                  {sessionOptionEntries.map(([id, session]) => (
+                    <option key={id} value={id}>
+                      {`${id}${session.title ? ` - ${session.title}` : ""}`}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="url"
                   value={sessionInputUrl}
                   onChange={(event) => setSessionInputUrl(event.target.value)}
-                  className="min-w-0 flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+                  className="min-w-0 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
                   placeholder="https://zoom.us/j/..."
                 />
                 <button
@@ -388,46 +480,65 @@ function ZoomCustomUrlDialog({
             </section>
 
             <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
-              <h3 className="text-sm font-semibold text-gray-800">{ja.zoomCustomUrlPresentationSection}</h3>
-              <div className="mt-2 flex flex-col gap-2 md:flex-row">
+              <h3 className="text-sm font-semibold text-gray-800">{ja.zoomCustomUrlVenueSection}</h3>
+              <div className="mt-2 space-y-2">
+                {ZOOM_VENUE_FIELDS.map(({ key, label }) => (
+                  <label key={key} className="flex items-center gap-3 text-sm text-gray-700">
+                    <span className="w-10 shrink-0">{label()}</span>
+                    <input
+                      type="url"
+                      value={venueDrafts[key] ?? ""}
+                      onChange={(event) => setVenueDrafts((current) => ({ ...current, [key]: event.target.value }))}
+                      className="min-w-0 flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+                      placeholder="https://zoom.us/j/..."
+                    />
+                  </label>
+                ))}
+              </div>
+            </section>
+
+            <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
+              <h3 className="text-sm font-semibold text-gray-800">{ja.zoomCustomUrlWorkshopSection}</h3>
+              <p className="mt-1 text-xs text-gray-600">{ja.zoomCustomUrlWorkshopSectionHint}</p>
+              <div className="mt-2 grid gap-2 md:grid-cols-[minmax(12rem,18rem)_minmax(0,1fr)_auto]">
                 <select
-                  value={selectedPresentationId}
-                  onChange={(event) => setSelectedPresentationId(event.target.value as PresentationId)}
-                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+                  value={selectedWorkshopSessionId}
+                  onChange={(event) => setSelectedWorkshopSessionId(event.target.value as SessionId)}
+                  className="min-w-0 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
                 >
-                  {(Object.keys(data.presentations) as PresentationId[]).map((id) => (
+                  {workshopOptionEntries.map(([id, session]) => (
                     <option key={id} value={id}>
-                      {id}
+                      {`${id}${session.title ? ` - ${session.title}` : ""}`}
                     </option>
                   ))}
                 </select>
                 <input
                   type="url"
-                  value={presentationInputUrl}
-                  onChange={(event) => setPresentationInputUrl(event.target.value)}
-                  className="min-w-0 flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+                  value={workshopInputUrl}
+                  onChange={(event) => setWorkshopInputUrl(event.target.value)}
+                  className="min-w-0 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
                   placeholder="https://zoom.us/j/..."
                 />
                 <button
                   type="button"
-                  onClick={handleAddPresentation}
+                  onClick={handleAddWorkshopSession}
                   className="rounded-full border border-gray-300 px-4 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-50"
                 >
                   {ja.zoomCustomUrlAdd}
                 </button>
               </div>
               <ul className="mt-2 space-y-2">
-                {visiblePresentationEntries.map(([id, url]) => (
+                {visibleWorkshopEntries.map(([id, url]) => (
                   <li
                     key={id}
                     className="flex items-center gap-2 rounded-lg border border-gray-200 px-2 py-1.5 text-xs"
                   >
-                    <span className="w-28 shrink-0 font-mono text-gray-700">{id}</span>
+                    <span className="w-20 shrink-0 font-mono text-gray-700">{id}</span>
                     <span className="min-w-0 flex-1 truncate text-gray-600">{url}</span>
                     <button
                       type="button"
                       onClick={() =>
-                        setPresentationDrafts((current) => {
+                        setSessionDrafts((current) => {
                           const next = { ...current };
                           Reflect.deleteProperty(next, id);
                           return next;
@@ -439,7 +550,7 @@ function ZoomCustomUrlDialog({
                     </button>
                   </li>
                 ))}
-                {visiblePresentationEntries.length === 0 && (
+                {visibleWorkshopEntries.length === 0 && (
                   <li className="text-xs text-gray-500">{ja.zoomCustomUrlNoEntries}</li>
                 )}
               </ul>

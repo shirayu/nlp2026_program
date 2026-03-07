@@ -8,12 +8,13 @@ const VENUE_KEYS = new Set(["A", "B", "C", "P"]);
 
 function printHelp() {
   console.log(`Usage:
-  node scripts/create-import-zoom-settings-url.mjs --base-url <url> [--venue <A=url>] [--session <id=url>] [--presentation <id=url>]
+  node scripts/create-import-zoom-settings-url.mjs --base-url <url> [--venue <A=url>] [--session <id=url>] [--workshop <WSn=url>] [--presentation <id=url>]
 
 Options:
   --base-url      Base URL to attach hash fragment. Example: https://example.github.io/nlp2026/
   --venue         Venue custom URL. Repeatable. Example: --venue A=https://zoom.us/j/111
   --session       Session custom URL. Repeatable. Example: --session B1=https://zoom.us/j/222
+  --workshop      Workshop parent session custom URL. Repeatable. Example: --workshop WS1=https://zoom.us/j/999
   --presentation  Presentation custom URL. Repeatable. Example: --presentation B1-1=https://zoom.us/j/333
   --help          Show this help
 `);
@@ -24,12 +25,14 @@ export function parseArgs(argv) {
     baseUrl: "",
     venues: [],
     sessions: [],
+    workshops: [],
     presentations: [],
     help: false,
   };
   const repeatableOptionMap = {
     "--venue": "venues",
     "--session": "sessions",
+    "--workshop": "workshops",
     "--presentation": "presentations",
   };
 
@@ -91,6 +94,14 @@ function parseMapping(raw, label) {
   return { key, value };
 }
 
+function parseWorkshopMapping(raw) {
+  const { key, value } = parseMapping(raw, "--workshop");
+  if (!/^WS\d+$/.test(key)) {
+    throw new Error("--workshop id must be in WS<number> format (e.g. WS1)");
+  }
+  return { key, value };
+}
+
 function canonicalizeZoomCustomUrls(zoomCustomUrls) {
   const venues = {
     A: zoomCustomUrls?.venues?.A?.trim() ?? "",
@@ -140,6 +151,10 @@ export async function buildImportZoomSettingsUrl(args) {
     const { key, value } = parseMapping(raw, "--session");
     sessions[key] = value;
   }
+  for (const raw of args.workshops) {
+    const { key, value } = parseWorkshopMapping(raw);
+    sessions[key] = value;
+  }
   for (const raw of args.presentations) {
     const { key, value } = parseMapping(raw, "--presentation");
     presentations[key] = value;
@@ -150,7 +165,7 @@ export async function buildImportZoomSettingsUrl(args) {
     Object.keys(sessions).length === 0 &&
     Object.keys(presentations).length === 0
   ) {
-    throw new Error("At least one of --venue, --session or --presentation is required");
+    throw new Error("At least one of --venue, --session, --workshop or --presentation is required");
   }
 
   const zoomCustomUrls = {

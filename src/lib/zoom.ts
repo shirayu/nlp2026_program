@@ -38,6 +38,11 @@ function getCustomVenueZoomUrl(
   return null;
 }
 
+function getWorkshopParentSessionId(sessionId: SessionId): SessionId | null {
+  const match = /^(WS\d+)-/.exec(sessionId);
+  return (match?.[1] as SessionId | undefined) ?? null;
+}
+
 export function resolveSessionZoomUrl(
   sessionId: SessionId,
   session: Session,
@@ -45,9 +50,13 @@ export function resolveSessionZoomUrl(
   zoomCustomUrls?: ZoomCustomUrls,
 ): string | null {
   const sessionCustomUrl = normalizeZoomUrl(zoomCustomUrls?.sessions?.[sessionId]);
+  const parentSessionId = getWorkshopParentSessionId(sessionId);
+  const workshopParentCustomUrl = parentSessionId
+    ? normalizeZoomUrl(zoomCustomUrls?.sessions?.[parentSessionId])
+    : null;
   const venueCustomUrl = getCustomVenueZoomUrl(session, rooms, zoomCustomUrls);
   const originalSessionUrl = normalizeZoomUrl(session.zoom_url ?? null);
-  return sessionCustomUrl ?? venueCustomUrl ?? originalSessionUrl ?? null;
+  return sessionCustomUrl ?? venueCustomUrl ?? workshopParentCustomUrl ?? originalSessionUrl ?? null;
 }
 
 export function resolvePresentationZoomUrl(
@@ -66,8 +75,19 @@ export function resolvePresentationZoomUrl(
   }
 
   const sessionCustomUrl = normalizeZoomUrl(zoomCustomUrls?.sessions?.[presentation.session_id]);
+  const parentSessionId = getWorkshopParentSessionId(presentation.session_id);
+  const workshopParentCustomUrl = parentSessionId
+    ? normalizeZoomUrl(zoomCustomUrls?.sessions?.[parentSessionId])
+    : null;
   const venueCustomUrl = getCustomVenueZoomUrl(session, data.rooms, zoomCustomUrls);
   const originalPresentationUrl = normalizeZoomUrl(presentation.zoom_url ?? null);
   const originalSessionUrl = normalizeZoomUrl(session.zoom_url ?? null);
-  return sessionCustomUrl ?? venueCustomUrl ?? originalPresentationUrl ?? originalSessionUrl ?? null;
+  return (
+    sessionCustomUrl ??
+    venueCustomUrl ??
+    workshopParentCustomUrl ??
+    originalPresentationUrl ??
+    originalSessionUrl ??
+    null
+  );
 }

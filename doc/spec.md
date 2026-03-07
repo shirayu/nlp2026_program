@@ -412,10 +412,11 @@ interface ZoomCustomUrls {
 
 ### Zoom URL 解決優先順位
 
-- セッション表示: `session custom > venue custom > session.zoom_url`
-- 発表表示: `presentation custom > session custom > venue custom > presentation.zoom_url > session.zoom_url`
+- セッション表示: `session custom > venue custom > WS親 session custom > session.zoom_url`
+- 発表表示: `presentation custom > session custom > venue custom > WS親 session custom > presentation.zoom_url > session.zoom_url`
 - `custom` が設定されていれば、元データの `zoom_url` が `null` でもリンク表示する
 - 発表 custom はセッションカードのリンクには適用しない
+- `WS親 session custom` は `WS1-1` のような個別WSセッションで `WS1` が存在する場合のみ参照する
 
 ### Zoom 設定インポート（`import_zoom_settings`）
 
@@ -431,4 +432,5 @@ interface ZoomCustomUrls {
 
 - `--venue <A=url>` （`A/B/C/P` を指定、複数回指定可）
 - `--session <SessionId=url>`（複数回指定可）
+- `--workshop <WSn=url>`（親Workshopセッション向け、複数回指定可）
 - `--presentation <PresentationId=url>`（複数回指定可）

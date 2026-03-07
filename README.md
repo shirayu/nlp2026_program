@@ -66,8 +66,12 @@ pnpm run create:import-zoom-settings-url -- \
   --venue "A=https://zoom.us/j/11111111111?pwd=aaaa" \
   --venue "B=https://zoom.us/j/22222222222?pwd=bbbb" \
   --session "B1=https://zoom.us/j/33333333333?pwd=cccc" \
+  --workshop "WS1=https://zoom.us/j/55555555555?pwd=wwww" \
   --presentation "B1-1=https://zoom.us/j/44444444444?pwd=dddd"
 ```
+
+`--workshop` は `WS1` のような親Workshopセッション向けです。  
+WebUI上のリンク置換優先順位は `発表 > セッション > 部屋 > WS` です。
 
 出力の1行目 `ZOOM_IMPORT_HASH=...` を `src/constants/index.ts` の `ZOOM_IMPORT_HASHES` に追加してください。  
 アプリ側は `SubtleCrypto (SHA-256)` で同じハッシュを再計算し、一致しない `#import_zoom_settings=` は拒否します。
