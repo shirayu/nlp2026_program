@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-03-07T07:59:22Z",
+  "generated_at": "2026-03-07T08:05:51Z",
   "last_update": {
     "program_main": {
       "sha256": "c02f7308dda2ea510afda63be85a9e566cac31235d91206c97fc0a2837a5a981",
       "time": "2026-03-04T09:00:00+09:00"
     },
     "workshop": {
-      "sha256": "748b4df6888926cf71d2a7da656cc8fb4fae725d2dae621c252da46ff3550ffb",
-      "time": "2026-03-07T01:33:56+09:00"
+      "sha256": "55c4a7d51914ff59be558ef6e028bd05d8904c40b6eee35fb0d6199d2f192ed9",
+      "time": "2026-03-07T17:05:48+09:00"
     },
     "invitedpapers": {
       "sha256": "1383c3c3c2fd57240adc5d25ae7b760966287c460ef40f20cbd5b68fa2e5b090",
@@ -8584,7 +8584,8 @@
       "room_ids": ["r0010"],
       "chair": "",
       "presentation_ids": [],
-      "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
+      "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359"
     },
     "WS1-1": {
       "title": "WS1 イントロ",
@@ -8594,7 +8595,8 @@
       "room_ids": ["r0010"],
       "chair": "",
       "presentation_ids": [],
-      "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
+      "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359"
     },
     "WS1-2": {
       "title": "WS1 自由型タスク",
@@ -8604,7 +8606,8 @@
       "room_ids": ["r0010"],
       "chair": "",
       "presentation_ids": ["WS1-2-1", "WS1-2-2", "WS1-2-3", "WS1-2-4", "WS1-2-5", "WS1-2-6"],
-      "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
+      "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359"
     },
     "WS1-3": {
       "title": "WS1 数学タスク",
@@ -8614,7 +8617,8 @@
       "room_ids": ["r0010"],
       "chair": "",
       "presentation_ids": ["WS1-3-1", "WS1-3-2", "WS1-3-3", "WS1-3-4"],
-      "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
+      "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359"
     },
     "WS1-4": {
       "title": "WS1 総評",
@@ -8624,7 +8628,8 @@
       "room_ids": ["r0010"],
       "chair": "",
       "presentation_ids": [],
-      "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html"
+      "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359"
     },
     "WS2": {
       "title": "日本語言語資源の構築と利用性の向上",
@@ -8634,7 +8639,8 @@
       "room_ids": ["r0011"],
       "chair": "",
       "presentation_ids": [],
-      "url": "https://jedworkshop.github.io/JLR2026/program/"
+      "url": "https://jedworkshop.github.io/JLR2026/program/",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359"
     },
     "WS2-0": {
       "title": "WS2 オープニング",
@@ -8644,7 +8650,8 @@
       "room_ids": ["r0011"],
       "chair": "",
       "presentation_ids": [],
-      "url": "https://jedworkshop.github.io/JLR2026/program/"
+      "url": "https://jedworkshop.github.io/JLR2026/program/",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359"
     },
     "WS2-1": {
       "title": "WS2 午前＜1＞",
@@ -8654,7 +8661,8 @@
       "room_ids": ["r0011"],
       "chair": "河原 大輔 (早稲田大)",
       "presentation_ids": ["WS2-1-1", "WS2-1-2", "WS2-1-3", "WS2-1-4", "WS2-1-5"],
-      "url": "https://jedworkshop.github.io/JLR2026/program/"
+      "url": "https://jedworkshop.github.io/JLR2026/program/",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359"
     },
     "WS2-2": {
       "title": "WS2 午後＜1＞",
@@ -8664,7 +8672,8 @@
       "room_ids": ["r0011"],
       "chair": "柴田 知秀 (SB Intuitions)",
       "presentation_ids": ["WS2-2-1", "WS2-2-2", "WS2-2-3", "WS2-2-4", "WS2-2-5"],
-      "url": "https://jedworkshop.github.io/JLR2026/program/"
+      "url": "https://jedworkshop.github.io/JLR2026/program/",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359"
     },
     "WS2-3": {
       "title": "WS2 午後＜2＞",
@@ -8674,7 +8683,8 @@
       "room_ids": ["r0011"],
       "chair": "松田 寛 (Megagon Labs)",
       "presentation_ids": ["WS2-3-1", "WS2-3-2", "WS2-3-3"],
-      "url": "https://jedworkshop.github.io/JLR2026/program/"
+      "url": "https://jedworkshop.github.io/JLR2026/program/",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359"
     },
     "WS2-4": {
       "title": "WS2 総合討論・クロージング",
@@ -8684,7 +8694,8 @@
       "room_ids": ["r0011"],
       "chair": "",
       "presentation_ids": [],
-      "url": "https://jedworkshop.github.io/JLR2026/program/"
+      "url": "https://jedworkshop.github.io/JLR2026/program/",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359"
     },
     "WS3": {
       "title": "気軽に国際会議を目指しましょう",
@@ -8744,7 +8755,8 @@
       "room_ids": ["r0009"],
       "chair": "",
       "presentation_ids": [],
-      "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
+      "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359"
     },
     "WS4-1": {
       "title": "WS4 オープニング",
@@ -8754,7 +8766,8 @@
       "room_ids": ["r0009"],
       "chair": "",
       "presentation_ids": [],
-      "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
+      "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359"
     },
     "WS4-2": {
       "title": "WS4 招待講演: 鷲田祐一 先生",
@@ -8764,7 +8777,8 @@
       "room_ids": ["r0009"],
       "chair": "",
       "presentation_ids": ["WS4-2-1"],
-      "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
+      "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359"
     },
     "WS4-3": {
       "title": "WS4 一般論文発表",
@@ -8774,7 +8788,8 @@
       "room_ids": ["r0009"],
       "chair": "",
       "presentation_ids": ["WS4-3-1", "WS4-3-2", "WS4-3-3"],
-      "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
+      "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359"
     },
     "WS4-4": {
       "title": "WS4 招待講演: 欅 惇志 先生",
@@ -8784,7 +8799,8 @@
       "room_ids": ["r0009"],
       "chair": "",
       "presentation_ids": ["WS4-4-1"],
-      "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
+      "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359"
     },
     "WS4-5": {
       "title": "WS4 Shared Task システム紹介",
@@ -8794,7 +8810,8 @@
       "room_ids": ["r0009"],
       "chair": "",
       "presentation_ids": ["WS4-5-1", "WS4-5-2", "WS4-5-3"],
-      "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
+      "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359"
     },
     "WS4-6": {
       "title": "WS4 クロージング",
@@ -8804,7 +8821,8 @@
       "room_ids": ["r0009"],
       "chair": "",
       "presentation_ids": [],
-      "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0"
+      "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0",
+      "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359"
     }
   },
   "presentations": {

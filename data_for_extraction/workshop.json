@@ -6,6 +6,7 @@
     "end_time": "16:40",
     "rooms": ["1F 大ホール(東)"],
     "url": "https://llm-jp.github.io/tuning-competition/2026/workshop.html",
+    "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359",
     "sessions": [
       {
         "id": "WS1-1",
@@ -110,6 +111,7 @@
     "end_time": "16:00",
     "rooms": ["1F 大ホール(西)"],
     "url": "https://jedworkshop.github.io/JLR2026/program/",
+    "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359",
     "sessions": [
       {
         "id": "WS2-0",
@@ -412,6 +414,7 @@
     "end_time": "12:45",
     "rooms": ["3F 中ホール"],
     "url": "https://sites.google.com/view/mirai-nlp-2026/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0?authuser=0",
+    "zoom_url": "https://nlp2026utsunomiya.slack.com/archives/C0AGJAJMYGY/p1772865384854359",
     "sessions": [
       {
         "id": "WS4-1",
