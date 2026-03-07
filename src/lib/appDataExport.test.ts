@@ -29,8 +29,10 @@ const fullPayload: ExportPayload = {
     includeSessionTitleForNoPresentationSessions: false,
     includeSessionTitleForPresentationSessions: true,
     showTimeAtPresentationLevel: false,
-    venueZoomUrls: {
-      A: "https://example.com/custom-a",
+    zoomCustomUrls: {
+      venues: {
+        A: "https://example.com/custom-a",
+      },
     },
   },
   bookmarks: {
@@ -39,7 +41,7 @@ const fullPayload: ExportPayload = {
   },
 };
 
-const fullPayloadWithoutVenueZoom = {
+const fullPayloadWithoutZoomCustomUrls = {
   ...fullPayload,
   settings: {
     showAuthors: true,
@@ -52,7 +54,7 @@ const fullPayloadWithoutVenueZoom = {
 
 describe("encodePayload / decodePayload", () => {
   it("エンコード → デコードで元のペイロードに戻る", () => {
-    expect(decodePayload(encodePayload(fullPayload))).toEqual(fullPayloadWithoutVenueZoom);
+    expect(decodePayload(encodePayload(fullPayload))).toEqual(fullPayloadWithoutZoomCustomUrls);
   });
 
   it("エンコード結果に Base64url 安全でない文字が含まれない", () => {
@@ -66,7 +68,7 @@ describe("encodePayload / decodePayload", () => {
       bookmarks: { presentationIds: [], sessionIds: [] },
     };
     expect(decodePayload(encodePayload(payload))).toEqual({
-      ...fullPayloadWithoutVenueZoom,
+      ...fullPayloadWithoutZoomCustomUrls,
       bookmarks: { presentationIds: [], sessionIds: [] },
     });
   });
@@ -128,7 +130,7 @@ describe("buildExportUrl", () => {
     const url = buildExportUrl(fullPayload);
     const hash = new URL(url).hash.slice(1);
     const encoded = hash.replace("import_settings=", "");
-    expect(decodePayload(encoded)).toEqual(fullPayloadWithoutVenueZoom);
+    expect(decodePayload(encoded)).toEqual(fullPayloadWithoutZoomCustomUrls);
   });
 
   it("既存のフラグメントは import_settings に上書きされる", () => {
@@ -175,7 +177,7 @@ describe("extractZoomImportFragment / decodeZoomPayload", () => {
   });
 
   it("import_zoom_settings= フラグメントがあればエンコード文字列を返す", () => {
-    const encoded = btoa(JSON.stringify({ venueZoomUrls: { A: "https://example.com/a" } }))
+    const encoded = btoa(JSON.stringify({ zoomCustomUrls: { venues: { A: "https://zoom.us/j/100?pwd=aaa" } } }))
       .replace(/\+/g, "-")
       .replace(/\//g, "_")
       .replace(/=/g, "");
@@ -192,11 +194,19 @@ describe("extractZoomImportFragment / decodeZoomPayload", () => {
   it("zoom データをデコードできる", async () => {
     const encoded = btoa(
       JSON.stringify({
-        venueZoomUrls: {
-          A: "https://zoom.us/j/111?pwd=aaa",
-          B: "https://us02web.zoom.us/j/222?pwd=bbb",
-          C: "https://us02web.zoom.us/j/333?pwd=ccc",
-          P: "https://zoom.us/j/444?pwd=ddd",
+        zoomCustomUrls: {
+          venues: {
+            A: "https://zoom.us/j/111?pwd=aaa",
+            B: "https://us02web.zoom.us/j/222?pwd=bbb",
+            C: "https://us02web.zoom.us/j/333?pwd=ccc",
+            P: "https://zoom.us/j/444?pwd=ddd",
+          },
+          sessions: {
+            S1: "https://zoom.us/j/555?pwd=eee",
+          },
+          presentations: {
+            P1: "https://zoom.us/j/666?pwd=fff",
+          },
         },
       }),
     )
@@ -204,17 +214,25 @@ describe("extractZoomImportFragment / decodeZoomPayload", () => {
       .replace(/\//g, "_")
       .replace(/=/g, "");
     await expect(decodeZoomPayload(encoded)).resolves.toEqual({
-      A: "https://zoom.us/j/111?pwd=aaa",
-      B: "https://us02web.zoom.us/j/222?pwd=bbb",
-      C: "https://us02web.zoom.us/j/333?pwd=ccc",
-      P: "https://zoom.us/j/444?pwd=ddd",
+      venues: {
+        A: "https://zoom.us/j/111?pwd=aaa",
+        B: "https://us02web.zoom.us/j/222?pwd=bbb",
+        C: "https://us02web.zoom.us/j/333?pwd=ccc",
+        P: "https://zoom.us/j/444?pwd=ddd",
+      },
+      sessions: {
+        S1: "https://zoom.us/j/555?pwd=eee",
+      },
+      presentations: {
+        P1: "https://zoom.us/j/666?pwd=fff",
+      },
     });
   });
 
   it("zoom.us / *.zoom.us 以外のドメインを含むと null を返す", async () => {
     const encoded = btoa(
       JSON.stringify({
-        venueZoomUrls: { A: "https://zoom.us/j/111?pwd=aaa", B: "https://example.com/room-b" },
+        zoomCustomUrls: { venues: { A: "https://zoom.us/j/111?pwd=aaa", B: "https://example.com/room-b" } },
       }),
     )
       .replace(/\+/g, "-")
@@ -226,7 +244,9 @@ describe("extractZoomImportFragment / decodeZoomPayload", () => {
   it("/j/ で始まらないパスを含むと null を返す", async () => {
     const encoded = btoa(
       JSON.stringify({
-        venueZoomUrls: { A: "https://zoom.us/wc/join/111?pwd=aaa", B: "https://us02web.zoom.us/j/222?pwd=bbb" },
+        zoomCustomUrls: {
+          venues: { A: "https://zoom.us/wc/join/111?pwd=aaa", B: "https://us02web.zoom.us/j/222?pwd=bbb" },
+        },
       }),
     )
       .replace(/\+/g, "-")

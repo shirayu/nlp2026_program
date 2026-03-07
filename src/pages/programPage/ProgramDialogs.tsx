@@ -1,6 +1,6 @@
 import { AlertTriangle, X as CloseIcon, Github, Globe, Monitor, RefreshCw } from "lucide-react";
 import type { RefObject } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BUILD_GIT_DATE,
   BUILD_GIT_HASH,
@@ -16,7 +16,14 @@ import {
 import type { DataReloadStatus } from "../../hooks/useConferenceData";
 import type { BackupEntry } from "../../lib/appDataBackup";
 import { ja } from "../../locales/ja";
-import type { LastUpdateEntry, VenueZoomUrls } from "../../types";
+import type {
+  ConferenceData,
+  LastUpdateEntry,
+  PresentationId,
+  SessionId,
+  VenueZoomUrls,
+  ZoomCustomUrls,
+} from "../../types";
 import { fullscreenDialogClassName } from "./utils";
 
 type LastUpdateRow = { label: string; time: string };
@@ -66,122 +73,389 @@ function normalizeComparableUrl(value: string): string {
   return value.trim().replace(/\/+$/, "").toLowerCase();
 }
 
-function normalizeVenueZoomUrlsFromDrafts(
-  drafts: Partial<Record<keyof VenueZoomUrls, string>>,
-): VenueZoomUrls | undefined {
-  const next: VenueZoomUrls = {};
-  ZOOM_VENUE_FIELDS.forEach(({ key }) => {
-    const trimmed = drafts[key]?.trim() ?? "";
-    if (trimmed) {
-      next[key] = trimmed;
-    }
-  });
-  return Object.keys(next).length > 0 ? next : undefined;
+function normalizeUrl(value: string): string | undefined {
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
 }
 
-function areVenueZoomUrlsEqual(a: VenueZoomUrls | undefined, b: VenueZoomUrls | undefined): boolean {
-  return ZOOM_VENUE_FIELDS.every(({ key }) => (a?.[key] ?? "") === (b?.[key] ?? ""));
+function isAllowedZoomImportUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase();
+    return (host === "zoom.us" || host.endsWith(".zoom.us")) && url.pathname.startsWith("/j/");
+  } catch {
+    return false;
+  }
 }
 
-function useVenueZoomDrafts({
-  venueZoomUrls,
-  onSetVenueZoomUrls,
-}: {
-  venueZoomUrls?: VenueZoomUrls;
-  onSetVenueZoomUrls: (value: VenueZoomUrls | undefined) => void;
-}) {
-  const [venueZoomDrafts, setVenueZoomDrafts] = useState<Partial<Record<keyof VenueZoomUrls, string>>>({
-    A: venueZoomUrls?.A ?? "",
-    B: venueZoomUrls?.B ?? "",
-    C: venueZoomUrls?.C ?? "",
-    P: venueZoomUrls?.P ?? "",
-  });
-  const onSetVenueZoomUrlsRef = useRef(onSetVenueZoomUrls);
-
-  useEffect(() => {
-    onSetVenueZoomUrlsRef.current = onSetVenueZoomUrls;
-  }, [onSetVenueZoomUrls]);
-
-  useEffect(() => {
-    const nextDrafts = {
-      A: venueZoomUrls?.A ?? "",
-      B: venueZoomUrls?.B ?? "",
-      C: venueZoomUrls?.C ?? "",
-      P: venueZoomUrls?.P ?? "",
-    };
-    setVenueZoomDrafts((currentDrafts) => {
-      const isSame = ZOOM_VENUE_FIELDS.every(({ key }) => currentDrafts[key] === nextDrafts[key]);
-      if (isSame) {
-        return currentDrafts;
-      }
-      return nextDrafts;
-    });
-  }, [venueZoomUrls?.A, venueZoomUrls?.B, venueZoomUrls?.C, venueZoomUrls?.P]);
-
-  useEffect(() => {
-    const normalized = normalizeVenueZoomUrlsFromDrafts(venueZoomDrafts);
-    if (areVenueZoomUrlsEqual(normalized, venueZoomUrls)) return;
-    const timerId = window.setTimeout(() => {
-      onSetVenueZoomUrlsRef.current(normalized);
-    }, 250);
-    return () => {
-      window.clearTimeout(timerId);
-    };
-  }, [venueZoomDrafts, venueZoomUrls]);
-
-  function updateVenueZoomUrl(key: keyof VenueZoomUrls, value: string) {
-    setVenueZoomDrafts((currentDrafts) => ({
-      ...currentDrafts,
-      [key]: value,
-    }));
-  }
-
-  function flushVenueZoomDrafts() {
-    const normalized = normalizeVenueZoomUrlsFromDrafts(venueZoomDrafts);
-    if (areVenueZoomUrlsEqual(normalized, venueZoomUrls)) return;
-    onSetVenueZoomUrls(normalized);
-  }
-
+function summarizeZoomCustomUrlCount(zoomCustomUrls?: ZoomCustomUrls): {
+  venues: number;
+  sessions: number;
+  presentations: number;
+} {
   return {
-    venueZoomDrafts,
-    updateVenueZoomUrl,
-    flushVenueZoomDrafts,
+    venues: ZOOM_VENUE_FIELDS.filter(({ key }) => Boolean(zoomCustomUrls?.venues?.[key]?.trim())).length,
+    sessions: Object.keys(zoomCustomUrls?.sessions ?? {}).length,
+    presentations: Object.keys(zoomCustomUrls?.presentations ?? {}).length,
   };
 }
 
-function ZoomCustomUrlSection({
-  venueZoomDrafts,
-  updateVenueZoomUrl,
-  flushVenueZoomDrafts,
+function normalizeIdUrlRecord(entries: Array<[string, string]>): Record<string, string> {
+  return Object.fromEntries(
+    entries
+      .map(([id, url]) => [id.trim(), normalizeUrl(url)] as const)
+      .filter(([id, url]) => id.length > 0 && Boolean(url))
+      .map(([id, url]) => [id, url as string] as const),
+  );
+}
+
+function mergeUnknownIds(
+  current: Record<string, string> | undefined,
+  validIds: Set<string>,
+  configured: Record<string, string>,
+): Record<string, string> | undefined {
+  const next = { ...configured };
+  for (const [id, url] of Object.entries(current ?? {})) {
+    if (!validIds.has(id) && !(id in configured)) {
+      next[id] = url;
+    }
+  }
+  return Object.keys(next).length > 0 ? next : undefined;
+}
+
+function normalizeZoomCustomUrls(
+  current: ZoomCustomUrls | undefined,
+  draftVenues: Partial<Record<keyof VenueZoomUrls, string>>,
+  draftSessions: Record<SessionId, string>,
+  draftPresentations: Record<PresentationId, string>,
+  validSessionIds: Set<string>,
+  validPresentationIds: Set<string>,
+): ZoomCustomUrls | undefined {
+  const venues = ZOOM_VENUE_FIELDS.reduce((acc, { key }) => {
+    const value = normalizeUrl(draftVenues[key] ?? "");
+    if (value) acc[key] = value;
+    return acc;
+  }, {} as VenueZoomUrls);
+  const sessions = mergeUnknownIds(
+    current?.sessions,
+    validSessionIds,
+    normalizeIdUrlRecord(Object.entries(draftSessions)),
+  ) as Record<SessionId, string> | undefined;
+  const presentations = mergeUnknownIds(
+    current?.presentations,
+    validPresentationIds,
+    normalizeIdUrlRecord(Object.entries(draftPresentations)),
+  ) as Record<PresentationId, string> | undefined;
+
+  const next: ZoomCustomUrls = {
+    ...(Object.keys(venues).length > 0 ? { venues } : {}),
+    ...(sessions ? { sessions } : {}),
+    ...(presentations ? { presentations } : {}),
+  };
+  return Object.keys(next).length > 0 ? next : undefined;
+}
+
+function ZoomCustomUrlDialog({
+  open,
+  data,
+  zoomCustomUrls,
+  onClose,
+  onSave,
 }: {
-  venueZoomDrafts: Partial<Record<keyof VenueZoomUrls, string>>;
-  updateVenueZoomUrl: (key: keyof VenueZoomUrls, value: string) => void;
-  flushVenueZoomDrafts: () => void;
+  open: boolean;
+  data: ConferenceData;
+  zoomCustomUrls?: ZoomCustomUrls;
+  onClose: () => void;
+  onSave: (value: ZoomCustomUrls | undefined) => void;
 }) {
+  const [venueDrafts, setVenueDrafts] = useState<Partial<Record<keyof VenueZoomUrls, string>>>({});
+  const [sessionDrafts, setSessionDrafts] = useState<Record<SessionId, string>>({});
+  const [presentationDrafts, setPresentationDrafts] = useState<Record<PresentationId, string>>({});
+  const [selectedSessionId, setSelectedSessionId] = useState<SessionId | "">("");
+  const [selectedPresentationId, setSelectedPresentationId] = useState<PresentationId | "">("");
+  const [sessionInputUrl, setSessionInputUrl] = useState("");
+  const [presentationInputUrl, setPresentationInputUrl] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    setVenueDrafts({
+      A: zoomCustomUrls?.venues?.A ?? "",
+      B: zoomCustomUrls?.venues?.B ?? "",
+      C: zoomCustomUrls?.venues?.C ?? "",
+      P: zoomCustomUrls?.venues?.P ?? "",
+    });
+    setSessionDrafts((zoomCustomUrls?.sessions ?? {}) as Record<SessionId, string>);
+    setPresentationDrafts((zoomCustomUrls?.presentations ?? {}) as Record<PresentationId, string>);
+    const sessionIds = Object.keys(data.sessions) as SessionId[];
+    const presentationIds = Object.keys(data.presentations) as PresentationId[];
+    setSelectedSessionId(sessionIds[0] ?? "");
+    setSelectedPresentationId(presentationIds[0] ?? "");
+    setSessionInputUrl("");
+    setPresentationInputUrl("");
+    setError(null);
+  }, [open, zoomCustomUrls, data.sessions, data.presentations]);
+
+  const validSessionIds = new Set(Object.keys(data.sessions));
+  const validPresentationIds = new Set(Object.keys(data.presentations));
+  const visibleSessionEntries = Object.entries(sessionDrafts).filter(([id]) => validSessionIds.has(id));
+  const visiblePresentationEntries = Object.entries(presentationDrafts).filter(([id]) => validPresentationIds.has(id));
+
+  function handleAddSession() {
+    setError(null);
+    const url = normalizeUrl(sessionInputUrl);
+    if (!selectedSessionId || !validSessionIds.has(selectedSessionId)) {
+      setError(ja.zoomCustomUrlInvalidSessionId);
+      return;
+    }
+    if (!url) {
+      setSessionDrafts((current) => {
+        const next = { ...current };
+        Reflect.deleteProperty(next, selectedSessionId);
+        return next;
+      });
+      setSessionInputUrl("");
+      return;
+    }
+    if (!isAllowedZoomImportUrl(url)) {
+      setError(ja.zoomCustomUrlInvalidUrl);
+      return;
+    }
+    setSessionDrafts((current) => ({ ...current, [selectedSessionId]: url }));
+    setSessionInputUrl("");
+  }
+
+  function handleAddPresentation() {
+    setError(null);
+    const url = normalizeUrl(presentationInputUrl);
+    if (!selectedPresentationId || !validPresentationIds.has(selectedPresentationId)) {
+      setError(ja.zoomCustomUrlInvalidPresentationId);
+      return;
+    }
+    if (!url) {
+      setPresentationDrafts((current) => {
+        const next = { ...current };
+        Reflect.deleteProperty(next, selectedPresentationId);
+        return next;
+      });
+      setPresentationInputUrl("");
+      return;
+    }
+    if (!isAllowedZoomImportUrl(url)) {
+      setError(ja.zoomCustomUrlInvalidUrl);
+      return;
+    }
+    setPresentationDrafts((current) => ({ ...current, [selectedPresentationId]: url }));
+    setPresentationInputUrl("");
+  }
+
+  function handleSave() {
+    setError(null);
+    const allVenueUrls = Object.values(venueDrafts).map((value) => normalizeUrl(value ?? ""));
+    if (allVenueUrls.some((value) => value && !isAllowedZoomImportUrl(value))) {
+      setError(ja.zoomCustomUrlInvalidUrl);
+      return;
+    }
+    const visibleSessionUrls = visibleSessionEntries.map(([, value]) => normalizeUrl(value) ?? "");
+    if (visibleSessionUrls.some((value) => value && !isAllowedZoomImportUrl(value))) {
+      setError(ja.zoomCustomUrlInvalidUrl);
+      return;
+    }
+    const visiblePresentationUrls = visiblePresentationEntries.map(([, value]) => normalizeUrl(value) ?? "");
+    if (visiblePresentationUrls.some((value) => value && !isAllowedZoomImportUrl(value))) {
+      setError(ja.zoomCustomUrlInvalidUrl);
+      return;
+    }
+    onSave(
+      normalizeZoomCustomUrls(
+        zoomCustomUrls,
+        venueDrafts,
+        sessionDrafts,
+        presentationDrafts,
+        validSessionIds,
+        validPresentationIds,
+      ),
+    );
+    onClose();
+  }
+
   return (
-    <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
-      <h3 className="text-sm font-semibold text-gray-800">{ja.zoomSettings}</h3>
-      <p className="mt-1 text-xs text-gray-600">{ja.zoomCustomUrlDescription}</p>
-      <div className="mt-2 space-y-2">
-        {ZOOM_VENUE_FIELDS.map(({ key, label }) => (
-          <label key={key} className="flex items-center gap-3 text-sm text-gray-700">
-            <span className="shrink-0">{label()}</span>
-            <input
-              type="url"
-              value={venueZoomDrafts[key] ?? ""}
-              onChange={(event) => updateVenueZoomUrl(key, event.target.value)}
-              onBlur={flushVenueZoomDrafts}
-              className={`min-w-0 flex-1 rounded-lg px-3 py-2 text-sm focus:outline-none ${
-                (venueZoomDrafts[key] ?? "").trim()
-                  ? "border-emerald-300 bg-emerald-50 text-emerald-900 focus:border-emerald-500"
-                  : "border border-gray-200 focus:border-indigo-400"
-              }`}
-              placeholder="https://..."
-            />
-          </label>
-        ))}
+    <dialog open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
+      <div className="flex min-h-dvh items-center justify-center p-4" style={dialogFramePaddingStyle}>
+        <button
+          type="button"
+          aria-label={ja.zoomCustomUrlClose}
+          className="fixed inset-0 bg-black/55"
+          onClick={onClose}
+        />
+        <div className="relative flex max-h-[calc(100dvh-2rem)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
+          <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-indigo-50 px-4 py-3">
+            <h2 className="text-sm font-bold text-gray-800">{ja.zoomCustomUrlDialogTitle}</h2>
+            <button
+              type="button"
+              onClick={onClose}
+              className="text-gray-400 transition-colors hover:text-gray-600"
+              aria-label={ja.zoomCustomUrlClose}
+            >
+              <CloseIcon className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="min-h-0 space-y-4 overflow-y-auto px-4 py-4" style={{ scrollbarGutter: "stable" }}>
+            {error && <p className="rounded-lg bg-rose-50 px-3 py-2 text-xs text-rose-700">{error}</p>}
+
+            <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
+              <h3 className="text-sm font-semibold text-gray-800">{ja.zoomCustomUrlVenueSection}</h3>
+              <div className="mt-2 space-y-2">
+                {ZOOM_VENUE_FIELDS.map(({ key, label }) => (
+                  <label key={key} className="flex items-center gap-3 text-sm text-gray-700">
+                    <span className="w-10 shrink-0">{label()}</span>
+                    <input
+                      type="url"
+                      value={venueDrafts[key] ?? ""}
+                      onChange={(event) => setVenueDrafts((current) => ({ ...current, [key]: event.target.value }))}
+                      className="min-w-0 flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+                      placeholder="https://zoom.us/j/..."
+                    />
+                  </label>
+                ))}
+              </div>
+            </section>
+
+            <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
+              <h3 className="text-sm font-semibold text-gray-800">{ja.zoomCustomUrlSessionSection}</h3>
+              <div className="mt-2 flex flex-col gap-2 md:flex-row">
+                <select
+                  value={selectedSessionId}
+                  onChange={(event) => setSelectedSessionId(event.target.value as SessionId)}
+                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+                >
+                  {(Object.keys(data.sessions) as SessionId[]).map((id) => (
+                    <option key={id} value={id}>
+                      {id}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="url"
+                  value={sessionInputUrl}
+                  onChange={(event) => setSessionInputUrl(event.target.value)}
+                  className="min-w-0 flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+                  placeholder="https://zoom.us/j/..."
+                />
+                <button
+                  type="button"
+                  onClick={handleAddSession}
+                  className="rounded-full border border-gray-300 px-4 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-50"
+                >
+                  {ja.zoomCustomUrlAdd}
+                </button>
+              </div>
+              <ul className="mt-2 space-y-2">
+                {visibleSessionEntries.map(([id, url]) => (
+                  <li
+                    key={id}
+                    className="flex items-center gap-2 rounded-lg border border-gray-200 px-2 py-1.5 text-xs"
+                  >
+                    <span className="w-20 shrink-0 font-mono text-gray-700">{id}</span>
+                    <span className="min-w-0 flex-1 truncate text-gray-600">{url}</span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSessionDrafts((current) => {
+                          const next = { ...current };
+                          Reflect.deleteProperty(next, id);
+                          return next;
+                        })
+                      }
+                      className="rounded border border-rose-200 px-2 py-0.5 text-rose-600 transition-colors hover:bg-rose-50"
+                    >
+                      {ja.zoomCustomUrlDelete}
+                    </button>
+                  </li>
+                ))}
+                {visibleSessionEntries.length === 0 && (
+                  <li className="text-xs text-gray-500">{ja.zoomCustomUrlNoEntries}</li>
+                )}
+              </ul>
+            </section>
+
+            <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
+              <h3 className="text-sm font-semibold text-gray-800">{ja.zoomCustomUrlPresentationSection}</h3>
+              <div className="mt-2 flex flex-col gap-2 md:flex-row">
+                <select
+                  value={selectedPresentationId}
+                  onChange={(event) => setSelectedPresentationId(event.target.value as PresentationId)}
+                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+                >
+                  {(Object.keys(data.presentations) as PresentationId[]).map((id) => (
+                    <option key={id} value={id}>
+                      {id}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="url"
+                  value={presentationInputUrl}
+                  onChange={(event) => setPresentationInputUrl(event.target.value)}
+                  className="min-w-0 flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+                  placeholder="https://zoom.us/j/..."
+                />
+                <button
+                  type="button"
+                  onClick={handleAddPresentation}
+                  className="rounded-full border border-gray-300 px-4 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-50"
+                >
+                  {ja.zoomCustomUrlAdd}
+                </button>
+              </div>
+              <ul className="mt-2 space-y-2">
+                {visiblePresentationEntries.map(([id, url]) => (
+                  <li
+                    key={id}
+                    className="flex items-center gap-2 rounded-lg border border-gray-200 px-2 py-1.5 text-xs"
+                  >
+                    <span className="w-28 shrink-0 font-mono text-gray-700">{id}</span>
+                    <span className="min-w-0 flex-1 truncate text-gray-600">{url}</span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setPresentationDrafts((current) => {
+                          const next = { ...current };
+                          Reflect.deleteProperty(next, id);
+                          return next;
+                        })
+                      }
+                      className="rounded border border-rose-200 px-2 py-0.5 text-rose-600 transition-colors hover:bg-rose-50"
+                    >
+                      {ja.zoomCustomUrlDelete}
+                    </button>
+                  </li>
+                ))}
+                {visiblePresentationEntries.length === 0 && (
+                  <li className="text-xs text-gray-500">{ja.zoomCustomUrlNoEntries}</li>
+                )}
+              </ul>
+            </section>
+          </div>
+          <div className="flex justify-end gap-2 border-t border-gray-200 bg-white px-4 py-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-full border border-gray-300 px-4 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50"
+            >
+              {ja.zoomCustomUrlCancel}
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              className="rounded-full bg-indigo-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+            >
+              {ja.zoomCustomUrlSave}
+            </button>
+          </div>
+        </div>
       </div>
-    </section>
+    </dialog>
   );
 }
 
@@ -638,16 +912,17 @@ export function SettingsImportConfirmDialog({
 export function SettingsDialog({
   dialogRef,
   open,
+  data,
   showAuthors,
   useSlackAppLinks,
-  venueZoomUrls,
+  zoomCustomUrls,
   includeSessionTitleForNoPresentationSessions,
   includeSessionTitleForPresentationSessions,
   showTimeAtPresentationLevel,
   onClose,
   onToggleShowAuthors,
   onToggleUseSlackAppLinks,
-  onSetVenueZoomUrls,
+  onSetZoomCustomUrls,
   onToggleIncludeSessionTitleForNoPresentationSessions,
   onToggleIncludeSessionTitleForPresentationSessions,
   onToggleShowTimeAtPresentationLevel,
@@ -658,16 +933,17 @@ export function SettingsDialog({
 }: {
   dialogRef: RefObject<HTMLDialogElement | null>;
   open: boolean;
+  data: ConferenceData;
   showAuthors: boolean;
   useSlackAppLinks: boolean;
-  venueZoomUrls?: VenueZoomUrls;
+  zoomCustomUrls?: ZoomCustomUrls;
   includeSessionTitleForNoPresentationSessions: boolean;
   includeSessionTitleForPresentationSessions: boolean;
   showTimeAtPresentationLevel: boolean;
   onClose: () => void;
   onToggleShowAuthors: () => void;
   onToggleUseSlackAppLinks: () => void;
-  onSetVenueZoomUrls: (value: VenueZoomUrls | undefined) => void;
+  onSetZoomCustomUrls: (value: ZoomCustomUrls | undefined) => void;
   onToggleIncludeSessionTitleForNoPresentationSessions: () => void;
   onToggleIncludeSessionTitleForPresentationSessions: () => void;
   onToggleShowTimeAtPresentationLevel: () => void;
@@ -677,10 +953,8 @@ export function SettingsDialog({
   onClearAllData: () => void;
 }) {
   const formattedBuildGitDate = formatBuildGitDate(BUILD_GIT_DATE);
-  const { venueZoomDrafts, updateVenueZoomUrl, flushVenueZoomDrafts } = useVenueZoomDrafts({
-    venueZoomUrls,
-    onSetVenueZoomUrls,
-  });
+  const [showZoomCustomUrlDialog, setShowZoomCustomUrlDialog] = useState(false);
+  const zoomCustomUrlCount = summarizeZoomCustomUrlCount(zoomCustomUrls);
 
   const shouldShowOperatorSection =
     OPERATOR_NAME !== DEVELOPER_NAME ||
@@ -779,11 +1053,25 @@ export function SettingsDialog({
                   </label>
                 </div>
               </section>
-              <ZoomCustomUrlSection
-                venueZoomDrafts={venueZoomDrafts}
-                updateVenueZoomUrl={updateVenueZoomUrl}
-                flushVenueZoomDrafts={flushVenueZoomDrafts}
-              />
+              <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
+                <h3 className="text-sm font-semibold text-gray-800">{ja.zoomSettings}</h3>
+                <p className="mt-1 text-xs text-gray-600">
+                  {ja.zoomCustomUrlSummary(
+                    zoomCustomUrlCount.venues,
+                    zoomCustomUrlCount.sessions,
+                    zoomCustomUrlCount.presentations,
+                  )}
+                </p>
+                <div className="mt-2 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setShowZoomCustomUrlDialog(true)}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-indigo-300 hover:text-indigo-600"
+                  >
+                    {ja.zoomCustomUrlSettings}
+                  </button>
+                </div>
+              </section>
             </section>
             <section className="mt-4 rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
               <h3 className="text-sm font-semibold text-gray-800">{ja.iconLegend}</h3>
@@ -900,6 +1188,13 @@ export function SettingsDialog({
           </div>
         </div>
       </div>
+      <ZoomCustomUrlDialog
+        open={showZoomCustomUrlDialog}
+        data={data}
+        zoomCustomUrls={zoomCustomUrls}
+        onClose={() => setShowZoomCustomUrlDialog(false)}
+        onSave={onSetZoomCustomUrls}
+      />
     </dialog>
   );
 }

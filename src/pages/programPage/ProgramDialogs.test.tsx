@@ -116,16 +116,23 @@ describe("InstallDialog", () => {
 const defaultSettingsDialogProps = {
   dialogRef: { current: null } as { current: null },
   open: true,
+  data: {
+    persons: {},
+    affiliations: {},
+    rooms: {},
+    sessions: {},
+    presentations: {},
+  },
   showAuthors: true,
   useSlackAppLinks: false,
-  venueZoomUrls: undefined,
+  zoomCustomUrls: undefined,
   includeSessionTitleForNoPresentationSessions: true,
   includeSessionTitleForPresentationSessions: false,
   showTimeAtPresentationLevel: false,
   onClose: () => {},
   onToggleShowAuthors: () => {},
   onToggleUseSlackAppLinks: () => {},
-  onSetVenueZoomUrls: () => {},
+  onSetZoomCustomUrls: () => {},
   onToggleIncludeSessionTitleForNoPresentationSessions: () => {},
   onToggleIncludeSessionTitleForPresentationSessions: () => {},
   onToggleShowTimeAtPresentationLevel: () => {},
@@ -171,14 +178,11 @@ describe("SettingsDialog", () => {
     );
   });
 
-  it("Zoom カスタムURL設定セクションを表示する", () => {
+  it("Zoom カスタムURL設定の起動ボタンを表示する", () => {
     const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
     expect(html).toContain("Zoom");
-    expect(html).toContain("A会場");
-    expect(html).toContain("B会場");
-    expect(html).toContain("C会場");
-    expect(html).toContain("P会場");
+    expect(html).toContain("カスタムURLを設定");
   });
 
   it("大枠の下部にエクスポートボタンを表示する", () => {

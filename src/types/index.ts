@@ -68,7 +68,7 @@ export interface AppSettings {
   includeSessionTitleForNoPresentationSessions: boolean;
   includeSessionTitleForPresentationSessions: boolean;
   showTimeAtPresentationLevel: boolean;
-  venueZoomUrls?: VenueZoomUrls;
+  zoomCustomUrls?: ZoomCustomUrls;
 }
 
 export interface VenueZoomUrls {
@@ -76,6 +76,12 @@ export interface VenueZoomUrls {
   B?: string;
   C?: string;
   P?: string;
+}
+
+export interface ZoomCustomUrls {
+  venues?: VenueZoomUrls;
+  sessions?: Record<SessionId, string>;
+  presentations?: Record<PresentationId, string>;
 }
 
 export interface ExportPayload {

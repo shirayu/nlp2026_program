@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { APP_LOCALSTORAGE_PREFIX } from "../constants";
-import type { AppSettings, VenueZoomUrls } from "../types";
+import type { AppSettings, PresentationId, SessionId, VenueZoomUrls, ZoomCustomUrls } from "../types";
 
 const APP_SETTINGS_STORAGE_KEY = `${APP_LOCALSTORAGE_PREFIX}settings`;
 
@@ -34,6 +34,32 @@ function parseVenueZoomUrls(value: unknown): VenueZoomUrls | undefined {
   return Object.keys(parsed).length > 0 ? parsed : undefined;
 }
 
+function parseIdMap<T extends string>(value: unknown): Record<T, string> | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const entries = Object.entries(value as Record<string, unknown>)
+    .map(([key, raw]) => [key.trim(), parseNonEmptyString(raw)] as const)
+    .filter(([key, parsed]) => key.length > 0 && Boolean(parsed))
+    .map(([key, parsed]) => [key as T, parsed as string] as const);
+  if (entries.length === 0) return undefined;
+  return Object.fromEntries(entries) as Record<T, string>;
+}
+
+function parseZoomCustomUrls(value: unknown): ZoomCustomUrls | undefined {
+  if (!value || typeof value !== "object") return undefined;
+
+  const venues = parseVenueZoomUrls((value as { venues?: unknown }).venues);
+  const sessions = parseIdMap<SessionId>((value as { sessions?: unknown }).sessions);
+  const presentations = parseIdMap<PresentationId>((value as { presentations?: unknown }).presentations);
+
+  if (!venues && !sessions && !presentations) return undefined;
+
+  return {
+    ...(venues ? { venues } : {}),
+    ...(sessions ? { sessions } : {}),
+    ...(presentations ? { presentations } : {}),
+  };
+}
+
 function parseAppSettings(value: string | null): AppSettings {
   if (!value) {
     return DEFAULT_APP_SETTINGS;
@@ -45,7 +71,7 @@ function parseAppSettings(value: string | null): AppSettings {
       return DEFAULT_APP_SETTINGS;
     }
 
-    const venueZoomUrls = parseVenueZoomUrls((parsed as { venueZoomUrls?: unknown }).venueZoomUrls);
+    const zoomCustomUrls = parseZoomCustomUrls((parsed as { zoomCustomUrls?: unknown }).zoomCustomUrls);
 
     return {
       showAuthors: parseBoolean(parsed.showAuthors, DEFAULT_APP_SETTINGS.showAuthors),
@@ -62,7 +88,7 @@ function parseAppSettings(value: string | null): AppSettings {
         parsed.showTimeAtPresentationLevel,
         DEFAULT_APP_SETTINGS.showTimeAtPresentationLevel,
       ),
-      ...(venueZoomUrls ? { venueZoomUrls } : {}),
+      ...(zoomCustomUrls ? { zoomCustomUrls } : {}),
     };
   } catch {
     return DEFAULT_APP_SETTINGS;

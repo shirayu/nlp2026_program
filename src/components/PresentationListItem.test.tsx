@@ -97,7 +97,7 @@ describe("PresentationListItem", () => {
         bookmarked={false}
         showAuthors
         query=""
-        venueZoomUrls={{ A: "https://example.com/custom-a" }}
+        zoomCustomUrls={{ venues: { A: "https://example.com/custom-a" } }}
         onToggleBookmark={vi.fn()}
       />,
     );

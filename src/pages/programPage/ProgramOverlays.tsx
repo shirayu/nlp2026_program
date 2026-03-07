@@ -2,7 +2,7 @@ import type { RefObject } from "react";
 import { PersonModal } from "../../components/PersonModal";
 import type { DataReloadStatus } from "../../hooks/useConferenceData";
 import type { BackupEntry } from "../../lib/appDataBackup";
-import type { ConferenceData, PersonId, PresentationId, SessionId, VenueZoomUrls } from "../../types";
+import type { ConferenceData, PersonId, PresentationId, SessionId, ZoomCustomUrls } from "../../types";
 import {
   ClearAllDataConfirmDialog,
   InstallDialog,
@@ -37,14 +37,14 @@ export function ProgramOverlays({
   isReloadingData,
   reloadDataStatus,
   useSlackAppLinks,
-  venueZoomUrls,
+  zoomCustomUrls,
   includeSessionTitleForNoPresentationSessions,
   includeSessionTitleForPresentationSessions,
   showTimeAtPresentationLevel,
   onCloseSettings,
   onToggleShowAuthors,
   onToggleUseSlackAppLinks,
-  onSetVenueZoomUrls,
+  onSetZoomCustomUrls,
   onToggleIncludeSessionTitleForNoPresentationSessions,
   onToggleIncludeSessionTitleForPresentationSessions,
   onToggleShowTimeAtPresentationLevel,
@@ -92,14 +92,14 @@ export function ProgramOverlays({
   isReloadingData: boolean;
   reloadDataStatus: DataReloadStatus;
   useSlackAppLinks: boolean;
-  venueZoomUrls?: VenueZoomUrls;
+  zoomCustomUrls?: ZoomCustomUrls;
   includeSessionTitleForNoPresentationSessions: boolean;
   includeSessionTitleForPresentationSessions: boolean;
   showTimeAtPresentationLevel: boolean;
   onCloseSettings: () => void;
   onToggleShowAuthors: () => void;
   onToggleUseSlackAppLinks: () => void;
-  onSetVenueZoomUrls: (value: VenueZoomUrls | undefined) => void;
+  onSetZoomCustomUrls: (value: ZoomCustomUrls | undefined) => void;
   onToggleIncludeSessionTitleForNoPresentationSessions: () => void;
   onToggleIncludeSessionTitleForPresentationSessions: () => void;
   onToggleShowTimeAtPresentationLevel: () => void;
@@ -133,7 +133,7 @@ export function ProgramOverlays({
           showAuthors={showAuthors}
           useSlackAppLinks={useSlackAppLinks}
           slackTeamId={slackTeamId}
-          venueZoomUrls={venueZoomUrls}
+          zoomCustomUrls={zoomCustomUrls}
           onClose={onClosePersonModal}
           onPersonClick={onPersonClick}
           onJumpToSession={onJumpToSessionFromPerson}
@@ -161,16 +161,17 @@ export function ProgramOverlays({
       <SettingsDialog
         dialogRef={settingsDialogRef}
         open={showSettings}
+        data={data}
         showAuthors={showAuthors}
         useSlackAppLinks={useSlackAppLinks}
-        venueZoomUrls={venueZoomUrls}
+        zoomCustomUrls={zoomCustomUrls}
         includeSessionTitleForNoPresentationSessions={includeSessionTitleForNoPresentationSessions}
         includeSessionTitleForPresentationSessions={includeSessionTitleForPresentationSessions}
         showTimeAtPresentationLevel={showTimeAtPresentationLevel}
         onClose={onCloseSettings}
         onToggleShowAuthors={onToggleShowAuthors}
         onToggleUseSlackAppLinks={onToggleUseSlackAppLinks}
-        onSetVenueZoomUrls={onSetVenueZoomUrls}
+        onSetZoomCustomUrls={onSetZoomCustomUrls}
         onToggleIncludeSessionTitleForNoPresentationSessions={onToggleIncludeSessionTitleForNoPresentationSessions}
         onToggleIncludeSessionTitleForPresentationSessions={onToggleIncludeSessionTitleForPresentationSessions}
         onToggleShowTimeAtPresentationLevel={onToggleShowTimeAtPresentationLevel}

@@ -44,7 +44,7 @@ describe("appSettingsStorage", () => {
         localStorage: {
           getItem: (key: string) =>
             key === appSettingsStorageKey
-              ? '{"showAuthors":false,"useSlackAppLinks":false,"includeSessionTitleForNoPresentationSessions":false,"includeSessionTitleForPresentationSessions":true,"showTimeAtPresentationLevel":true,"venueZoomUrls":{"A":"https://example.com/a"}}'
+              ? '{"showAuthors":false,"useSlackAppLinks":false,"includeSessionTitleForNoPresentationSessions":false,"includeSessionTitleForPresentationSessions":true,"showTimeAtPresentationLevel":true,"zoomCustomUrls":{"venues":{"A":"https://example.com/a"}}}'
               : null,
         },
       },
@@ -56,14 +56,14 @@ describe("appSettingsStorage", () => {
       includeSessionTitleForNoPresentationSessions: false,
       includeSessionTitleForPresentationSessions: true,
       showTimeAtPresentationLevel: true,
-      venueZoomUrls: { A: "https://example.com/a" },
+      zoomCustomUrls: { venues: { A: "https://example.com/a" } },
     });
   });
 
-  it("venueZoomUrls が空文字なら設定から除外する", () => {
+  it("zoomCustomUrls の空文字を除外する", () => {
     expect(
       appSettingsStorage.parseAppSettings(
-        '{"venueZoomUrls":{"A":"  ","B":"https://example.com/b","C":"https://example.com/c","P":"   "}}',
+        '{"zoomCustomUrls":{"venues":{"A":"  ","B":"https://example.com/b","C":"https://example.com/c","P":"   "},"sessions":{"S1":"https://example.com/s1"," ":"https://example.com/ignore","S2":"   "},"presentations":{"P1":"https://example.com/p1","P2":"   "}}}',
       ),
     ).toEqual({
       showAuthors: true,
@@ -71,7 +71,21 @@ describe("appSettingsStorage", () => {
       includeSessionTitleForNoPresentationSessions: true,
       includeSessionTitleForPresentationSessions: false,
       showTimeAtPresentationLevel: false,
-      venueZoomUrls: { B: "https://example.com/b", C: "https://example.com/c" },
+      zoomCustomUrls: {
+        venues: { B: "https://example.com/b", C: "https://example.com/c" },
+        sessions: { S1: "https://example.com/s1" },
+        presentations: { P1: "https://example.com/p1" },
+      },
+    });
+  });
+
+  it("旧 venueZoomUrls は受理しない", () => {
+    expect(appSettingsStorage.parseAppSettings('{"venueZoomUrls":{"A":"https://example.com/a"}}')).toEqual({
+      showAuthors: true,
+      useSlackAppLinks: true,
+      includeSessionTitleForNoPresentationSessions: true,
+      includeSessionTitleForPresentationSessions: false,
+      showTimeAtPresentationLevel: false,
     });
   });
 
