@@ -73,8 +73,10 @@ pnpm run create:import-zoom-settings-url -- \
 `--workshop` は `WS1` のような親Workshopセッション向けです。  
 WebUI上のリンク置換優先順位は `発表 > セッション > 部屋 > WS` です。
 
-出力の1行目 `ZOOM_IMPORT_HASH=...` を `src/constants/index.ts` の `ZOOM_IMPORT_HASHES` に追加してください。  
-アプリ側は `SubtleCrypto (SHA-256)` で同じハッシュを再計算し、一致しない `#import_zoom_settings=` は拒否します。
+- 出力の1行目 `ZOOM_IMPORT_HASH=...` を `src/constants/index.ts` の `ZOOM_IMPORT_HASHES` に追加してください。  
+- アプリ側は `SubtleCrypto (SHA-256)` で同じハッシュを再計算し、一致しない `#import_zoom_settings=` は拒否します。
+    - 悪意のあるURLの誤入力を拒否するため
+- 通常のインポート(`#import_settings=` )には現状危険性の有る要素はないので、任意データ受けつけ
 
 ## セキュリティ注意事項
 
