@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-03-07T08:11:33Z",
+  "generated_at": "2026-03-07T14:54:47Z",
   "last_update": {
     "program_main": {
-      "sha256": "c02f7308dda2ea510afda63be85a9e566cac31235d91206c97fc0a2837a5a981",
-      "time": "2026-03-04T09:00:00+09:00"
+      "sha256": "8169365fa4091a1bac8c0ac302fa2a347db8c3e5df15c8c0e3aeb040dc10e93b",
+      "time": "2026-03-06T09:00:00+09:00"
     },
     "workshop": {
       "sha256": "55c4a7d51914ff59be558ef6e028bd05d8904c40b6eee35fb0d6199d2f192ed9",
-      "time": "2026-03-07T17:05:48+09:00"
+      "time": "2026-03-07T17:36:00+09:00"
     },
     "invitedpapers": {
       "sha256": "1383c3c3c2fd57240adc5d25ae7b760966287c460ef40f20cbd5b68fa2e5b090",
@@ -6598,540 +6598,537 @@
       "name": "アラヤ"
     },
     "a0273": {
-      "name": "ソーシャル・コンピューティング研究室/NAIST"
-    },
-    "a0274": {
       "name": "阪大/神戸大"
     },
-    "a0275": {
+    "a0274": {
       "name": "OSX"
     },
-    "a0276": {
+    "a0275": {
       "name": "パナソニック"
     },
-    "a0277": {
+    "a0276": {
       "name": "静大"
     },
-    "a0278": {
+    "a0277": {
       "name": "拓大"
     },
-    "a0279": {
+    "a0278": {
       "name": "Fujitsu Lab"
     },
-    "a0280": {
+    "a0279": {
       "name": "楽天"
     },
-    "a0281": {
+    "a0280": {
       "name": "理研/筑波大"
     },
-    "a0282": {
+    "a0281": {
       "name": "サレジオ工業高専"
     },
-    "a0283": {
+    "a0282": {
       "name": "マモル"
     },
-    "a0284": {
+    "a0283": {
       "name": "Logical Fabrics"
     },
-    "a0285": {
+    "a0284": {
       "name": "七色"
     },
-    "a0286": {
+    "a0285": {
       "name": "茨大"
     },
-    "a0287": {
+    "a0286": {
       "name": "COTEN"
     },
-    "a0288": {
+    "a0287": {
       "name": "バンダイナムコ研"
     },
-    "a0289": {
+    "a0288": {
       "name": "C4A/阪大"
     },
-    "a0290": {
+    "a0289": {
       "name": "全国心理業連合会/アイディアヒューマンサポートサービス/ラポールテクノロジーズ"
     },
-    "a0291": {
+    "a0290": {
       "name": "電通大/ラポールテクノロジーズ"
     },
-    "a0292": {
+    "a0291": {
       "name": "富士通"
     },
-    "a0293": {
+    "a0292": {
       "name": "トランスコスモス"
     },
-    "a0294": {
+    "a0293": {
       "name": "epiST"
     },
-    "a0295": {
+    "a0294": {
       "name": "NICT/NAIST"
     },
-    "a0296": {
+    "a0295": {
       "name": "MatBrain"
     },
-    "a0297": {
+    "a0296": {
       "name": "JFP"
     },
-    "a0298": {
+    "a0297": {
       "name": "台湾大"
     },
-    "a0299": {
+    "a0298": {
       "name": "TMU"
     },
-    "a0300": {
+    "a0299": {
       "name": "ROIS-DS-CJI"
     },
-    "a0301": {
+    "a0300": {
       "name": "ROIS-DS-CJI/NII"
     },
-    "a0302": {
+    "a0301": {
       "name": "デジタル庁/東京理科大"
     },
-    "a0303": {
+    "a0302": {
       "name": "デジタル庁"
     },
-    "a0304": {
+    "a0303": {
       "name": "立教大"
     },
-    "a0305": {
+    "a0304": {
       "name": "LMU/MCML"
     },
-    "a0306": {
+    "a0305": {
       "name": "東大/ITU"
     },
-    "a0307": {
+    "a0306": {
       "name": "ケンブリッジ大"
     },
-    "a0308": {
+    "a0307": {
       "name": "独立研究者"
     },
-    "a0309": {
+    "a0308": {
       "name": "京大/理研"
     },
-    "a0310": {
+    "a0309": {
       "name": "UoL"
     },
-    "a0311": {
+    "a0310": {
       "name": "東北大/Langsmith"
     },
-    "a0312": {
+    "a0311": {
       "name": "理研/国語研"
     },
-    "a0313": {
+    "a0312": {
       "name": "レゾナック 計算情報科学研究センター"
     },
-    "a0314": {
+    "a0313": {
       "name": "PFN"
     },
-    "a0315": {
+    "a0314": {
       "name": "カケハシ"
     },
-    "a0316": {
+    "a0315": {
       "name": "InsightEdge"
     },
-    "a0317": {
+    "a0316": {
       "name": "東洋大/estie"
     },
-    "a0318": {
+    "a0317": {
       "name": "estie"
     },
-    "a0319": {
+    "a0318": {
       "name": "estie/NLPeanuts Inc."
     },
-    "a0320": {
+    "a0319": {
       "name": "estie/東大"
     },
-    "a0321": {
+    "a0320": {
       "name": "理研/JAIST"
     },
-    "a0322": {
+    "a0321": {
       "name": "群馬銀行/群馬大"
     },
-    "a0323": {
+    "a0322": {
       "name": "群馬大"
     },
-    "a0324": {
+    "a0323": {
       "name": "阪電通大"
     },
-    "a0325": {
+    "a0324": {
       "name": "千葉工大"
     },
-    "a0326": {
+    "a0325": {
       "name": "DBCLS"
     },
-    "a0327": {
+    "a0326": {
       "name": "Chungnam National University"
     },
-    "a0328": {
+    "a0327": {
       "name": "東大/NAIST"
     },
-    "a0329": {
+    "a0328": {
       "name": "東大/京大/理研"
     },
-    "a0330": {
+    "a0329": {
       "name": "SCSK"
     },
-    "a0331": {
+    "a0330": {
       "name": "BESNA"
     },
-    "a0332": {
+    "a0331": {
       "name": "大阪公立大"
     },
-    "a0333": {
+    "a0332": {
       "name": "Resolve Research"
     },
-    "a0334": {
+    "a0333": {
       "name": "Serpenti Sei"
     },
-    "a0335": {
+    "a0334": {
       "name": "UPF"
     },
-    "a0336": {
+    "a0335": {
       "name": "EduLab, Inc"
     },
-    "a0337": {
+    "a0336": {
       "name": "科学大/RWTH Aachen"
     },
-    "a0338": {
+    "a0337": {
       "name": "JPX/東大"
     },
-    "a0339": {
+    "a0338": {
       "name": "東北⼤/理研"
     },
-    "a0340": {
+    "a0339": {
       "name": "国語研/統数研"
     },
-    "a0341": {
+    "a0340": {
       "name": "Graduate School of IPS, Waseda University, Japan"
     },
-    "a0342": {
+    "a0341": {
       "name": "University of Vienna, Austria"
     },
-    "a0343": {
+    "a0342": {
       "name": "埼玉県大"
     },
-    "a0344": {
+    "a0343": {
       "name": "東大/順大"
     },
-    "a0345": {
+    "a0344": {
       "name": "東大/慶應大"
     },
-    "a0346": {
+    "a0345": {
       "name": "NRI"
     },
-    "a0347": {
+    "a0346": {
       "name": "都立大/SB Intuitions"
     },
-    "a0348": {
+    "a0347": {
       "name": "東北大/サイバーエージェント"
     },
-    "a0349": {
+    "a0348": {
       "name": "キヤノンメディカル"
     },
-    "a0350": {
+    "a0349": {
       "name": "PSL"
     },
-    "a0351": {
+    "a0350": {
       "name": "長野高専"
     },
-    "a0352": {
+    "a0351": {
       "name": "早大/SB Intuitions"
     },
-    "a0353": {
+    "a0352": {
       "name": "インテック"
     },
-    "a0354": {
+    "a0353": {
       "name": "岩手医科大"
     },
-    "a0355": {
+    "a0354": {
       "name": "NRIインドネシア"
     },
-    "a0356": {
+    "a0355": {
       "name": "こまちぷらす"
     },
-    "a0357": {
+    "a0356": {
       "name": "ビズリーチ"
     },
-    "a0358": {
+    "a0357": {
       "name": "大和総研"
     },
-    "a0359": {
+    "a0358": {
       "name": "NII/東北大/理研"
     },
-    "a0360": {
+    "a0359": {
       "name": "中外製薬/お茶大"
     },
-    "a0361": {
+    "a0360": {
       "name": "NTT/東北大"
     },
-    "a0362": {
+    "a0361": {
       "name": "Osaka Metropolitan University"
     },
-    "a0363": {
+    "a0362": {
       "name": "仙台文学館"
     },
-    "a0364": {
+    "a0363": {
       "name": "昔話探訪家"
     },
-    "a0365": {
+    "a0364": {
       "name": "読み語り手"
     },
-    "a0366": {
+    "a0365": {
       "name": "大学入試センター"
     },
-    "a0367": {
+    "a0366": {
       "name": "農工大/大学入試センター"
     },
-    "a0368": {
+    "a0367": {
       "name": "千葉大"
     },
-    "a0369": {
+    "a0368": {
       "name": "大教大"
     },
-    "a0370": {
+    "a0369": {
       "name": "polisee"
     },
-    "a0371": {
+    "a0370": {
       "name": "トーマツ"
     },
-    "a0372": {
+    "a0371": {
       "name": "大阪公立大/松尾研究所"
     },
-    "a0373": {
+    "a0372": {
       "name": "湘南工科大"
     },
-    "a0374": {
+    "a0373": {
       "name": "帝京大"
     },
-    "a0375": {
+    "a0374": {
       "name": "大阪樟蔭女子大"
     },
-    "a0376": {
+    "a0375": {
       "name": "阪大/理研"
     },
-    "a0377": {
+    "a0376": {
       "name": "BMW Group"
     },
-    "a0378": {
+    "a0377": {
       "name": "KSU"
     },
-    "a0379": {
+    "a0378": {
       "name": "LIS"
     },
-    "a0380": {
+    "a0379": {
       "name": "SFU"
     },
-    "a0381": {
+    "a0380": {
       "name": "日大"
     },
-    "a0382": {
+    "a0381": {
       "name": "東北大/美保野病院"
     },
-    "a0383": {
+    "a0382": {
       "name": "フューチャー"
     },
-    "a0384": {
+    "a0383": {
       "name": "東北大/フューチャー"
     },
-    "a0385": {
+    "a0384": {
       "name": "フューチャー/東北大"
     },
-    "a0386": {
+    "a0385": {
       "name": "北大/NII"
     },
-    "a0387": {
+    "a0386": {
       "name": "金大/産総研"
     },
-    "a0388": {
+    "a0387": {
       "name": "Ubie"
     },
-    "a0389": {
+    "a0388": {
       "name": "UC3M/東京外大/学振DC"
     },
-    "a0390": {
+    "a0389": {
       "name": "Vasculoid/A-wave/東大"
     },
-    "a0391": {
+    "a0390": {
       "name": "早大/NII/LLMC)), 小田 悠介 (NII/LLMC)), 河原 大輔 (早大/NII/LLMC)"
     },
-    "a0392": {
+    "a0391": {
       "name": "シェフィールド大"
     },
-    "a0393": {
+    "a0392": {
       "name": "科学大/サイバーエージェント"
     },
-    "a0394": {
+    "a0393": {
       "name": "科学大/産総研/ホットリンク"
     },
-    "a0395": {
+    "a0394": {
       "name": "カールスルーエ工科大"
     },
-    "a0396": {
+    "a0395": {
       "name": "愛産大"
     },
-    "a0397": {
+    "a0396": {
       "name": "千葉工大/理研"
     },
-    "a0398": {
+    "a0397": {
       "name": "慶應大/IBM"
     },
-    "a0399": {
+    "a0398": {
       "name": "金沢大"
     },
-    "a0400": {
+    "a0399": {
       "name": "TUS"
     },
-    "a0401": {
+    "a0400": {
       "name": "有限会社ネットクレードル"
     },
-    "a0402": {
+    "a0401": {
       "name": "未来大"
     },
-    "a0403": {
+    "a0402": {
       "name": "神戸松蔭"
     },
-    "a0404": {
+    "a0403": {
       "name": "GRIPS"
     },
-    "a0405": {
+    "a0404": {
       "name": "大分大"
     },
-    "a0406": {
+    "a0405": {
       "name": "情報理工学研究科/電通大"
     },
-    "a0407": {
+    "a0406": {
       "name": "立命館大"
     },
-    "a0408": {
+    "a0407": {
       "name": "GIK Institute"
     },
-    "a0409": {
+    "a0408": {
       "name": "University of Galway"
     },
-    "a0410": {
+    "a0409": {
       "name": "neoAI"
     },
-    "a0411": {
+    "a0410": {
       "name": "neoAI/都立大"
     },
-    "a0412": {
+    "a0411": {
       "name": "neoAI/東大"
     },
-    "a0413": {
+    "a0412": {
       "name": "国がん"
     },
-    "a0414": {
+    "a0413": {
       "name": "JAIST/BIPROGY"
     },
-    "a0415": {
+    "a0414": {
       "name": "Chura DATA Inc"
     },
-    "a0416": {
+    "a0415": {
       "name": "芝浦工大"
     },
-    "a0417": {
+    "a0416": {
       "name": "Mantra"
     },
-    "a0418": {
+    "a0417": {
       "name": "歴博"
     },
-    "a0419": {
+    "a0418": {
       "name": "Japan Digital Design"
     },
-    "a0420": {
+    "a0419": {
       "name": "SAP"
     },
-    "a0421": {
+    "a0420": {
       "name": "Japio"
     },
-    "a0422": {
+    "a0421": {
       "name": "NIPTA"
     },
-    "a0423": {
+    "a0422": {
       "name": "JIII"
     },
-    "a0424": {
+    "a0423": {
       "name": "愛知産業大"
     },
-    "a0425": {
+    "a0424": {
       "name": "長岡技科大"
     },
-    "a0426": {
+    "a0425": {
       "name": "国文研"
     },
-    "a0427": {
+    "a0426": {
       "name": "科学大/産総研"
     },
-    "a0428": {
+    "a0427": {
       "name": "広大"
     },
-    "a0429": {
+    "a0428": {
       "name": "琉大"
     },
-    "a0430": {
+    "a0429": {
       "name": "原田武夫国際戦略情報研究所"
     },
-    "a0431": {
+    "a0430": {
       "name": "兵医"
     },
-    "a0432": {
+    "a0431": {
       "name": "行岡医療大"
     },
-    "a0433": {
+    "a0432": {
       "name": "慶應大/東北大"
     },
-    "a0434": {
+    "a0433": {
       "name": "株式会社リクルート"
     },
-    "a0435": {
+    "a0434": {
       "name": "フューチャー株式会社"
     },
-    "a0436": {
+    "a0435": {
       "name": "株式会社Studio Ousia"
     },
-    "a0437": {
+    "a0436": {
       "name": "東京大学"
     },
-    "a0438": {
+    "a0437": {
       "name": "アマゾンウェブサービスジャパン"
     },
-    "a0439": {
+    "a0438": {
       "name": "人間文化研究機構"
     },
-    "a0440": {
+    "a0439": {
       "name": "東京科学大"
     },
-    "a0441": {
+    "a0440": {
       "name": "東京科学大・産総研"
     },
-    "a0442": {
+    "a0441": {
       "name": "東京科学大・産総研・NII LLMC"
     },
-    "a0443": {
+    "a0442": {
       "name": "電気通信大"
     },
-    "a0444": {
+    "a0443": {
       "name": "NII LLMC"
     },
-    "a0445": {
+    "a0444": {
       "name": "京都大学"
     },
-    "a0446": {
+    "a0445": {
       "name": "愛知県立大"
     },
-    "a0447": {
+    "a0446": {
       "name": "ZOZO Research"
     },
-    "a0448": {
+    "a0447": {
       "name": "NTT/Tohoku University"
     },
-    "a0449": {
+    "a0448": {
       "name": "NCC/NII LLMC"
     },
-    "a0450": {
+    "a0449": {
       "name": "ストックマーク、電通大"
     },
-    "a0451": {
+    "a0450": {
       "name": "日本ガイシ"
     }
   },
@@ -19000,7 +18997,7 @@
         },
         {
           "person_id": "p0057",
-          "affiliation_id": "a0273"
+          "affiliation_id": "a0023"
         }
       ],
       "start_time": null,
@@ -19036,7 +19033,7 @@
       "authors": [
         {
           "person_id": "p0548",
-          "affiliation_id": "a0274"
+          "affiliation_id": "a0273"
         },
         {
           "person_id": "p1787",
@@ -19184,7 +19181,7 @@
         },
         {
           "person_id": "p0530",
-          "affiliation_id": "a0275"
+          "affiliation_id": "a0274"
         },
         {
           "person_id": "p1419",
@@ -19192,7 +19189,7 @@
         },
         {
           "person_id": "p0200",
-          "affiliation_id": "a0275"
+          "affiliation_id": "a0274"
         }
       ],
       "start_time": null,
@@ -19240,7 +19237,7 @@
         },
         {
           "person_id": "p0291",
-          "affiliation_id": "a0276"
+          "affiliation_id": "a0275"
         },
         {
           "person_id": "p0594",
@@ -19272,7 +19269,7 @@
         },
         {
           "person_id": "p0991",
-          "affiliation_id": "a0277"
+          "affiliation_id": "a0276"
         }
       ],
       "start_time": null,
@@ -19312,7 +19309,7 @@
         },
         {
           "person_id": "p0899",
-          "affiliation_id": "a0278"
+          "affiliation_id": "a0277"
         }
       ],
       "start_time": null,
@@ -19348,7 +19345,7 @@
         },
         {
           "person_id": "p0925",
-          "affiliation_id": "a0279"
+          "affiliation_id": "a0278"
         },
         {
           "person_id": "p0998",
@@ -19508,7 +19505,7 @@
         },
         {
           "person_id": "p1791",
-          "affiliation_id": "a0280"
+          "affiliation_id": "a0279"
         },
         {
           "person_id": "p1792",
@@ -19528,7 +19525,7 @@
       "authors": [
         {
           "person_id": "p1793",
-          "affiliation_id": "a0281"
+          "affiliation_id": "a0280"
         },
         {
           "person_id": "p1794",
@@ -19812,7 +19809,7 @@
         },
         {
           "person_id": "p1277",
-          "affiliation_id": "a0282"
+          "affiliation_id": "a0281"
         }
       ],
       "start_time": null,
@@ -19836,15 +19833,15 @@
         },
         {
           "person_id": "p0481",
-          "affiliation_id": "a0283"
+          "affiliation_id": "a0282"
         },
         {
           "person_id": "p0590",
-          "affiliation_id": "a0284"
+          "affiliation_id": "a0283"
         },
         {
           "person_id": "p0609",
-          "affiliation_id": "a0285"
+          "affiliation_id": "a0284"
         },
         {
           "person_id": "p1074",
@@ -19928,7 +19925,7 @@
         },
         {
           "person_id": "p0697",
-          "affiliation_id": "a0286"
+          "affiliation_id": "a0285"
         }
       ],
       "start_time": null,
@@ -20032,7 +20029,7 @@
       "authors": [
         {
           "person_id": "p0639",
-          "affiliation_id": "a0287"
+          "affiliation_id": "a0286"
         },
         {
           "person_id": "p0748",
@@ -20084,7 +20081,7 @@
         },
         {
           "person_id": "p1427",
-          "affiliation_id": "a0288"
+          "affiliation_id": "a0287"
         }
       ],
       "start_time": null,
@@ -20292,7 +20289,7 @@
         },
         {
           "person_id": "p0948",
-          "affiliation_id": "a0289"
+          "affiliation_id": "a0288"
         },
         {
           "person_id": "p0553",
@@ -20392,11 +20389,11 @@
         },
         {
           "person_id": "p0199",
-          "affiliation_id": "a0290"
+          "affiliation_id": "a0289"
         },
         {
           "person_id": "p0144",
-          "affiliation_id": "a0291"
+          "affiliation_id": "a0290"
         }
       ],
       "start_time": null,
@@ -20436,7 +20433,7 @@
         },
         {
           "person_id": "p1399",
-          "affiliation_id": "a0292"
+          "affiliation_id": "a0291"
         }
       ],
       "start_time": null,
@@ -20516,11 +20513,11 @@
         },
         {
           "person_id": "p1038",
-          "affiliation_id": "a0293"
+          "affiliation_id": "a0292"
         },
         {
           "person_id": "p0195",
-          "affiliation_id": "a0294"
+          "affiliation_id": "a0293"
         },
         {
           "person_id": "p0145",
@@ -20564,11 +20561,11 @@
         },
         {
           "person_id": "p1075",
-          "affiliation_id": "a0295"
+          "affiliation_id": "a0294"
         },
         {
           "person_id": "p0696",
-          "affiliation_id": "a0296"
+          "affiliation_id": "a0295"
         },
         {
           "person_id": "p0234",
@@ -20620,7 +20617,7 @@
         },
         {
           "person_id": "p0899",
-          "affiliation_id": "a0278"
+          "affiliation_id": "a0277"
         }
       ],
       "start_time": null,
@@ -20636,7 +20633,7 @@
       "authors": [
         {
           "person_id": "p0216",
-          "affiliation_id": "a0297"
+          "affiliation_id": "a0296"
         }
       ],
       "start_time": null,
@@ -20652,11 +20649,11 @@
       "authors": [
         {
           "person_id": "p1802",
-          "affiliation_id": "a0298"
+          "affiliation_id": "a0297"
         },
         {
           "person_id": "p1803",
-          "affiliation_id": "a0299"
+          "affiliation_id": "a0298"
         }
       ],
       "start_time": null,
@@ -20736,7 +20733,7 @@
         },
         {
           "person_id": "p0995",
-          "affiliation_id": "a0300"
+          "affiliation_id": "a0299"
         },
         {
           "person_id": "p1367",
@@ -20744,7 +20741,7 @@
         },
         {
           "person_id": "p1806",
-          "affiliation_id": "a0301"
+          "affiliation_id": "a0300"
         },
         {
           "person_id": "p1257",
@@ -20752,7 +20749,7 @@
         },
         {
           "person_id": "p0620",
-          "affiliation_id": "a0300"
+          "affiliation_id": "a0299"
         }
       ],
       "start_time": null,
@@ -20872,11 +20869,11 @@
       "authors": [
         {
           "person_id": "p0194",
-          "affiliation_id": "a0302"
+          "affiliation_id": "a0301"
         },
         {
           "person_id": "p0241",
-          "affiliation_id": "a0303"
+          "affiliation_id": "a0302"
         }
       ],
       "start_time": null,
@@ -20948,7 +20945,7 @@
       "authors": [
         {
           "person_id": "p0209",
-          "affiliation_id": "a0304"
+          "affiliation_id": "a0303"
         }
       ],
       "start_time": null,
@@ -20968,7 +20965,7 @@
         },
         {
           "person_id": "p0697",
-          "affiliation_id": "a0286"
+          "affiliation_id": "a0285"
         }
       ],
       "start_time": null,
@@ -21040,19 +21037,19 @@
       "authors": [
         {
           "person_id": "p1812",
-          "affiliation_id": "a0305"
+          "affiliation_id": "a0304"
         },
         {
           "person_id": "p0073",
-          "affiliation_id": "a0306"
+          "affiliation_id": "a0305"
         },
         {
           "person_id": "p1813",
-          "affiliation_id": "a0307"
+          "affiliation_id": "a0306"
         },
         {
           "person_id": "p1814",
-          "affiliation_id": "a0305"
+          "affiliation_id": "a0304"
         }
       ],
       "start_time": null,
@@ -21104,7 +21101,7 @@
         },
         {
           "person_id": "p0786",
-          "affiliation_id": "a0308"
+          "affiliation_id": "a0307"
         }
       ],
       "start_time": null,
@@ -21225,7 +21222,7 @@
         },
         {
           "person_id": "p1083",
-          "affiliation_id": "a0309"
+          "affiliation_id": "a0308"
         }
       ],
       "start_time": null,
@@ -21298,7 +21295,7 @@
         },
         {
           "person_id": "p1824",
-          "affiliation_id": "a0310"
+          "affiliation_id": "a0309"
         },
         {
           "person_id": "p1332",
@@ -21375,7 +21372,7 @@
         },
         {
           "person_id": "p1751",
-          "affiliation_id": "a0311"
+          "affiliation_id": "a0310"
         },
         {
           "person_id": "p1390",
@@ -21423,7 +21420,7 @@
         },
         {
           "person_id": "p0920",
-          "affiliation_id": "a0312"
+          "affiliation_id": "a0311"
         },
         {
           "person_id": "p0724",
@@ -21528,7 +21525,7 @@
       "authors": [
         {
           "person_id": "p0868",
-          "affiliation_id": "a0313"
+          "affiliation_id": "a0312"
         }
       ],
       "start_time": null,
@@ -21572,7 +21569,7 @@
         },
         {
           "person_id": "p0164",
-          "affiliation_id": "a0314"
+          "affiliation_id": "a0313"
         },
         {
           "person_id": "p0594",
@@ -21632,7 +21629,7 @@
         },
         {
           "person_id": "p0876",
-          "affiliation_id": "a0315"
+          "affiliation_id": "a0314"
         }
       ],
       "start_time": null,
@@ -21652,7 +21649,7 @@
         },
         {
           "person_id": "p0118",
-          "affiliation_id": "a0316"
+          "affiliation_id": "a0315"
         }
       ],
       "start_time": null,
@@ -21692,19 +21689,19 @@
       "authors": [
         {
           "person_id": "p1206",
-          "affiliation_id": "a0317"
+          "affiliation_id": "a0316"
         },
         {
           "person_id": "p1167",
-          "affiliation_id": "a0318"
+          "affiliation_id": "a0317"
         },
         {
           "person_id": "p0385",
-          "affiliation_id": "a0319"
+          "affiliation_id": "a0318"
         },
         {
           "person_id": "p0178",
-          "affiliation_id": "a0320"
+          "affiliation_id": "a0319"
         }
       ],
       "start_time": null,
@@ -21752,7 +21749,7 @@
         },
         {
           "person_id": "p1827",
-          "affiliation_id": "a0321"
+          "affiliation_id": "a0320"
         },
         {
           "person_id": "p1792",
@@ -21900,11 +21897,11 @@
       "authors": [
         {
           "person_id": "p0727",
-          "affiliation_id": "a0322"
+          "affiliation_id": "a0321"
         },
         {
           "person_id": "p0971",
-          "affiliation_id": "a0323"
+          "affiliation_id": "a0322"
         }
       ],
       "start_time": null,
@@ -21944,7 +21941,7 @@
         },
         {
           "person_id": "p0520",
-          "affiliation_id": "a0324"
+          "affiliation_id": "a0323"
         },
         {
           "person_id": "p1223",
@@ -22001,11 +21998,11 @@
         },
         {
           "person_id": "p1403",
-          "affiliation_id": "a0325"
+          "affiliation_id": "a0324"
         },
         {
           "person_id": "p1376",
-          "affiliation_id": "a0326"
+          "affiliation_id": "a0325"
         },
         {
           "person_id": "p0243",
@@ -22061,7 +22058,7 @@
         },
         {
           "person_id": "p0612",
-          "affiliation_id": "a0286"
+          "affiliation_id": "a0285"
         }
       ],
       "start_time": null,
@@ -22085,7 +22082,7 @@
         },
         {
           "person_id": "p1693",
-          "affiliation_id": "a0327"
+          "affiliation_id": "a0326"
         },
         {
           "person_id": "p0386",
@@ -22093,7 +22090,7 @@
         },
         {
           "person_id": "p1050",
-          "affiliation_id": "a0328"
+          "affiliation_id": "a0327"
         },
         {
           "person_id": "p1456",
@@ -22121,7 +22118,7 @@
         },
         {
           "person_id": "p0161",
-          "affiliation_id": "a0329"
+          "affiliation_id": "a0328"
         },
         {
           "person_id": "p0145",
@@ -22226,7 +22223,7 @@
         },
         {
           "person_id": "p1407",
-          "affiliation_id": "a0330"
+          "affiliation_id": "a0329"
         }
       ],
       "start_time": null,
@@ -22270,7 +22267,7 @@
         },
         {
           "person_id": "p0600",
-          "affiliation_id": "a0331"
+          "affiliation_id": "a0330"
         },
         {
           "person_id": "p0356",
@@ -22354,7 +22351,7 @@
         },
         {
           "person_id": "p0927",
-          "affiliation_id": "a0332"
+          "affiliation_id": "a0331"
         }
       ],
       "start_time": null,
@@ -22378,7 +22375,7 @@
         },
         {
           "person_id": "p1833",
-          "affiliation_id": "a0333"
+          "affiliation_id": "a0332"
         },
         {
           "person_id": "p1332",
@@ -22386,7 +22383,7 @@
         },
         {
           "person_id": "p1834",
-          "affiliation_id": "a0334"
+          "affiliation_id": "a0333"
         },
         {
           "person_id": "p1456",
@@ -22410,7 +22407,7 @@
         },
         {
           "person_id": "p1835",
-          "affiliation_id": "a0335"
+          "affiliation_id": "a0334"
         },
         {
           "person_id": "p1836",
@@ -22434,7 +22431,7 @@
       "authors": [
         {
           "person_id": "p1837",
-          "affiliation_id": "a0336"
+          "affiliation_id": "a0335"
         },
         {
           "person_id": "p1838",
@@ -22446,7 +22443,7 @@
         },
         {
           "person_id": "p1840",
-          "affiliation_id": "a0336"
+          "affiliation_id": "a0335"
         }
       ],
       "start_time": null,
@@ -22674,7 +22671,7 @@
       "authors": [
         {
           "person_id": "p1218",
-          "affiliation_id": "a0337"
+          "affiliation_id": "a0336"
         },
         {
           "person_id": "p0056",
@@ -22694,7 +22691,7 @@
       "authors": [
         {
           "person_id": "p0916",
-          "affiliation_id": "a0338"
+          "affiliation_id": "a0337"
         }
       ],
       "start_time": null,
@@ -22746,7 +22743,7 @@
         },
         {
           "person_id": "p1214",
-          "affiliation_id": "a0339"
+          "affiliation_id": "a0338"
         }
       ],
       "start_time": null,
@@ -22806,7 +22803,7 @@
         },
         {
           "person_id": "p1298",
-          "affiliation_id": "a0340"
+          "affiliation_id": "a0339"
         }
       ],
       "start_time": null,
@@ -22882,15 +22879,15 @@
         },
         {
           "person_id": "p1843",
-          "affiliation_id": "a0341"
+          "affiliation_id": "a0340"
         },
         {
           "person_id": "p1844",
-          "affiliation_id": "a0342"
+          "affiliation_id": "a0341"
         },
         {
           "person_id": "p1845",
-          "affiliation_id": "a0341"
+          "affiliation_id": "a0340"
         }
       ],
       "start_time": null,
@@ -22966,15 +22963,15 @@
         },
         {
           "person_id": "p1363",
-          "affiliation_id": "a0343"
+          "affiliation_id": "a0342"
         },
         {
           "person_id": "p0121",
-          "affiliation_id": "a0344"
+          "affiliation_id": "a0343"
         },
         {
           "person_id": "p1046",
-          "affiliation_id": "a0345"
+          "affiliation_id": "a0344"
         },
         {
           "person_id": "p0998",
@@ -23058,7 +23055,7 @@
         },
         {
           "person_id": "p0848",
-          "affiliation_id": "a0346"
+          "affiliation_id": "a0345"
         },
         {
           "person_id": "p0860",
@@ -23315,7 +23312,7 @@
       "authors": [
         {
           "person_id": "p0113",
-          "affiliation_id": "a0347"
+          "affiliation_id": "a0346"
         },
         {
           "person_id": "p1209",
@@ -23455,7 +23452,7 @@
         },
         {
           "person_id": "p0624",
-          "affiliation_id": "a0348"
+          "affiliation_id": "a0347"
         },
         {
           "person_id": "p0724",
@@ -23479,7 +23476,7 @@
         },
         {
           "person_id": "p1144",
-          "affiliation_id": "a0349"
+          "affiliation_id": "a0348"
         },
         {
           "person_id": "p1018",
@@ -23515,7 +23512,7 @@
         },
         {
           "person_id": "p0697",
-          "affiliation_id": "a0286"
+          "affiliation_id": "a0285"
         }
       ],
       "start_time": null,
@@ -23707,7 +23704,7 @@
         },
         {
           "person_id": "p1848",
-          "affiliation_id": "a0350"
+          "affiliation_id": "a0349"
         },
         {
           "person_id": "p0556",
@@ -23875,7 +23872,7 @@
         },
         {
           "person_id": "p0436",
-          "affiliation_id": "a0351"
+          "affiliation_id": "a0350"
         },
         {
           "person_id": "p0556",
@@ -23967,7 +23964,7 @@
       "authors": [
         {
           "person_id": "p0289",
-          "affiliation_id": "a0352"
+          "affiliation_id": "a0351"
         },
         {
           "person_id": "p1116",
@@ -23975,7 +23972,7 @@
         },
         {
           "person_id": "p1430",
-          "affiliation_id": "a0352"
+          "affiliation_id": "a0351"
         },
         {
           "person_id": "p0417",
@@ -24019,7 +24016,7 @@
         },
         {
           "person_id": "p0389",
-          "affiliation_id": "a0353"
+          "affiliation_id": "a0352"
         },
         {
           "person_id": "p0836",
@@ -24031,7 +24028,7 @@
         },
         {
           "person_id": "p0845",
-          "affiliation_id": "a0354"
+          "affiliation_id": "a0353"
         }
       ],
       "start_time": null,
@@ -24047,15 +24044,15 @@
       "authors": [
         {
           "person_id": "p0237",
-          "affiliation_id": "a0346"
+          "affiliation_id": "a0345"
         },
         {
           "person_id": "p1850",
-          "affiliation_id": "a0355"
+          "affiliation_id": "a0354"
         },
         {
           "person_id": "p0280",
-          "affiliation_id": "a0346"
+          "affiliation_id": "a0345"
         }
       ],
       "start_time": null,
@@ -24083,7 +24080,7 @@
         },
         {
           "person_id": "p1306",
-          "affiliation_id": "a0356"
+          "affiliation_id": "a0355"
         },
         {
           "person_id": "p1160",
@@ -24159,7 +24156,7 @@
         },
         {
           "person_id": "p1851",
-          "affiliation_id": "a0357"
+          "affiliation_id": "a0356"
         }
       ],
       "start_time": null,
@@ -24363,7 +24360,7 @@
         },
         {
           "person_id": "p1247",
-          "affiliation_id": "a0358"
+          "affiliation_id": "a0357"
         }
       ],
       "start_time": null,
@@ -24395,7 +24392,7 @@
         },
         {
           "person_id": "p0111",
-          "affiliation_id": "a0359"
+          "affiliation_id": "a0358"
         }
       ],
       "start_time": null,
@@ -24491,7 +24488,7 @@
         },
         {
           "person_id": "p0855",
-          "affiliation_id": "a0360"
+          "affiliation_id": "a0359"
         },
         {
           "person_id": "p0539",
@@ -24511,7 +24508,7 @@
       "authors": [
         {
           "person_id": "p0274",
-          "affiliation_id": "a0361"
+          "affiliation_id": "a0360"
         },
         {
           "person_id": "p0571",
@@ -24636,7 +24633,7 @@
         },
         {
           "person_id": "p0927",
-          "affiliation_id": "a0362"
+          "affiliation_id": "a0361"
         }
       ],
       "start_time": null,
@@ -24752,7 +24749,7 @@
       "authors": [
         {
           "person_id": "p0796",
-          "affiliation_id": "a0345"
+          "affiliation_id": "a0344"
         },
         {
           "person_id": "p0858",
@@ -24760,15 +24757,15 @@
         },
         {
           "person_id": "p0684",
-          "affiliation_id": "a0363"
+          "affiliation_id": "a0362"
         },
         {
           "person_id": "p0625",
-          "affiliation_id": "a0364"
+          "affiliation_id": "a0363"
         },
         {
           "person_id": "p0852",
-          "affiliation_id": "a0365"
+          "affiliation_id": "a0364"
         }
       ],
       "start_time": null,
@@ -24808,7 +24805,7 @@
         },
         {
           "person_id": "p0093",
-          "affiliation_id": "a0366"
+          "affiliation_id": "a0365"
         },
         {
           "person_id": "p0932",
@@ -24860,7 +24857,7 @@
         },
         {
           "person_id": "p0093",
-          "affiliation_id": "a0367"
+          "affiliation_id": "a0366"
         },
         {
           "person_id": "p0932",
@@ -24892,7 +24889,7 @@
         },
         {
           "person_id": "p0090",
-          "affiliation_id": "a0368"
+          "affiliation_id": "a0367"
         },
         {
           "person_id": "p1135",
@@ -24932,7 +24929,7 @@
         },
         {
           "person_id": "p0793",
-          "affiliation_id": "a0369"
+          "affiliation_id": "a0368"
         }
       ],
       "start_time": null,
@@ -25040,7 +25037,7 @@
         },
         {
           "person_id": "p1235",
-          "affiliation_id": "a0370"
+          "affiliation_id": "a0369"
         },
         {
           "person_id": "p0314",
@@ -25092,7 +25089,7 @@
         },
         {
           "person_id": "p1270",
-          "affiliation_id": "a0371"
+          "affiliation_id": "a0370"
         }
       ],
       "start_time": null,
@@ -25173,11 +25170,11 @@
       "authors": [
         {
           "person_id": "p0047",
-          "affiliation_id": "a0332"
+          "affiliation_id": "a0331"
         },
         {
           "person_id": "p0306",
-          "affiliation_id": "a0372"
+          "affiliation_id": "a0371"
         },
         {
           "person_id": "p0917",
@@ -25197,7 +25194,7 @@
         },
         {
           "person_id": "p0694",
-          "affiliation_id": "a0332"
+          "affiliation_id": "a0331"
         }
       ],
       "start_time": null,
@@ -25213,11 +25210,11 @@
       "authors": [
         {
           "person_id": "p0682",
-          "affiliation_id": "a0373"
+          "affiliation_id": "a0372"
         },
         {
           "person_id": "p0041",
-          "affiliation_id": "a0374"
+          "affiliation_id": "a0373"
         },
         {
           "person_id": "p0160",
@@ -25273,7 +25270,7 @@
       "authors": [
         {
           "person_id": "p0272",
-          "affiliation_id": "a0375"
+          "affiliation_id": "a0374"
         },
         {
           "person_id": "p1442",
@@ -25350,7 +25347,7 @@
         },
         {
           "person_id": "p0418",
-          "affiliation_id": "a0376"
+          "affiliation_id": "a0375"
         },
         {
           "person_id": "p1390",
@@ -25422,7 +25419,7 @@
         },
         {
           "person_id": "p1859",
-          "affiliation_id": "a0377"
+          "affiliation_id": "a0376"
         }
       ],
       "start_time": null,
@@ -25442,15 +25439,15 @@
         },
         {
           "person_id": "p1368",
-          "affiliation_id": "a0304"
+          "affiliation_id": "a0303"
         },
         {
           "person_id": "p1860",
-          "affiliation_id": "a0378"
+          "affiliation_id": "a0377"
         },
         {
           "person_id": "p1861",
-          "affiliation_id": "a0379"
+          "affiliation_id": "a0378"
         },
         {
           "person_id": "p1862",
@@ -25458,11 +25455,11 @@
         },
         {
           "person_id": "p1863",
-          "affiliation_id": "a0378"
+          "affiliation_id": "a0377"
         },
         {
           "person_id": "p1864",
-          "affiliation_id": "a0380"
+          "affiliation_id": "a0379"
         }
       ],
       "start_time": null,
@@ -25482,7 +25479,7 @@
         },
         {
           "person_id": "p0239",
-          "affiliation_id": "a0381"
+          "affiliation_id": "a0380"
         }
       ],
       "start_time": null,
@@ -25498,7 +25495,7 @@
       "authors": [
         {
           "person_id": "p0337",
-          "affiliation_id": "a0382"
+          "affiliation_id": "a0381"
         },
         {
           "person_id": "p0463",
@@ -25706,7 +25703,7 @@
         },
         {
           "person_id": "p0383",
-          "affiliation_id": "a0277"
+          "affiliation_id": "a0276"
         }
       ],
       "start_time": null,
@@ -25778,7 +25775,7 @@
         },
         {
           "person_id": "p1226",
-          "affiliation_id": "a0325"
+          "affiliation_id": "a0324"
         }
       ],
       "start_time": null,
@@ -25806,7 +25803,7 @@
         },
         {
           "person_id": "p1314",
-          "affiliation_id": "a0383"
+          "affiliation_id": "a0382"
         }
       ],
       "start_time": null,
@@ -25842,11 +25839,11 @@
       "authors": [
         {
           "person_id": "p1122",
-          "affiliation_id": "a0384"
+          "affiliation_id": "a0383"
         },
         {
           "person_id": "p1314",
-          "affiliation_id": "a0385"
+          "affiliation_id": "a0384"
         },
         {
           "person_id": "p1333",
@@ -25894,7 +25891,7 @@
         },
         {
           "person_id": "p1089",
-          "affiliation_id": "a0386"
+          "affiliation_id": "a0385"
         },
         {
           "person_id": "p0730",
@@ -25990,7 +25987,7 @@
       "authors": [
         {
           "person_id": "p1400",
-          "affiliation_id": "a0387"
+          "affiliation_id": "a0386"
         },
         {
           "person_id": "p1087",
@@ -26114,7 +26111,7 @@
         },
         {
           "person_id": "p0340",
-          "affiliation_id": "a0388"
+          "affiliation_id": "a0387"
         }
       ],
       "start_time": null,
@@ -26134,7 +26131,7 @@
         },
         {
           "person_id": "p1162",
-          "affiliation_id": "a0389"
+          "affiliation_id": "a0388"
         }
       ],
       "start_time": null,
@@ -26206,7 +26203,7 @@
       "authors": [
         {
           "person_id": "p0218",
-          "affiliation_id": "a0390"
+          "affiliation_id": "a0389"
         },
         {
           "person_id": "p0756",
@@ -26274,7 +26271,7 @@
       "authors": [
         {
           "person_id": "p1251",
-          "affiliation_id": "a0391"
+          "affiliation_id": "a0390"
         }
       ],
       "start_time": null,
@@ -26314,7 +26311,7 @@
         },
         {
           "person_id": "p1095",
-          "affiliation_id": "a0314"
+          "affiliation_id": "a0313"
         }
       ],
       "start_time": null,
@@ -26338,7 +26335,7 @@
         },
         {
           "person_id": "p1342",
-          "affiliation_id": "a0392"
+          "affiliation_id": "a0391"
         },
         {
           "person_id": "p0758",
@@ -26434,7 +26431,7 @@
       "authors": [
         {
           "person_id": "p1441",
-          "affiliation_id": "a0393"
+          "affiliation_id": "a0392"
         },
         {
           "person_id": "p1287",
@@ -26539,7 +26536,7 @@
         },
         {
           "person_id": "p0612",
-          "affiliation_id": "a0286"
+          "affiliation_id": "a0285"
         }
       ],
       "start_time": null,
@@ -26555,7 +26552,7 @@
       "authors": [
         {
           "person_id": "p1234",
-          "affiliation_id": "a0394"
+          "affiliation_id": "a0393"
         },
         {
           "person_id": "p1120",
@@ -26724,7 +26721,7 @@
         },
         {
           "person_id": "p0508",
-          "affiliation_id": "a0395"
+          "affiliation_id": "a0394"
         },
         {
           "person_id": "p0234",
@@ -26756,7 +26753,7 @@
         },
         {
           "person_id": "p0875",
-          "affiliation_id": "a0396"
+          "affiliation_id": "a0395"
         }
       ],
       "start_time": null,
@@ -26852,7 +26849,7 @@
         },
         {
           "person_id": "p0698",
-          "affiliation_id": "a0397"
+          "affiliation_id": "a0396"
         }
       ],
       "start_time": null,
@@ -26889,7 +26886,7 @@
         },
         {
           "person_id": "p0612",
-          "affiliation_id": "a0286"
+          "affiliation_id": "a0285"
         }
       ],
       "start_time": null,
@@ -26925,7 +26922,7 @@
       "authors": [
         {
           "person_id": "p0183",
-          "affiliation_id": "a0398"
+          "affiliation_id": "a0397"
         },
         {
           "person_id": "p0321",
@@ -27001,7 +26998,7 @@
         },
         {
           "person_id": "p0612",
-          "affiliation_id": "a0286"
+          "affiliation_id": "a0285"
         }
       ],
       "start_time": null,
@@ -27021,7 +27018,7 @@
         },
         {
           "person_id": "p1087",
-          "affiliation_id": "a0399"
+          "affiliation_id": "a0398"
         }
       ],
       "start_time": null,
@@ -27065,7 +27062,7 @@
         },
         {
           "person_id": "p1203",
-          "affiliation_id": "a0400"
+          "affiliation_id": "a0399"
         }
       ],
       "start_time": null,
@@ -27101,7 +27098,7 @@
       "authors": [
         {
           "person_id": "p1220",
-          "affiliation_id": "a0401"
+          "affiliation_id": "a0400"
         }
       ],
       "start_time": null,
@@ -27121,7 +27118,7 @@
         },
         {
           "person_id": "p0612",
-          "affiliation_id": "a0286"
+          "affiliation_id": "a0285"
         }
       ],
       "start_time": null,
@@ -27181,7 +27178,7 @@
         },
         {
           "person_id": "p0612",
-          "affiliation_id": "a0286"
+          "affiliation_id": "a0285"
         }
       ],
       "start_time": null,
@@ -27201,7 +27198,7 @@
         },
         {
           "person_id": "p0612",
-          "affiliation_id": "a0286"
+          "affiliation_id": "a0285"
         }
       ],
       "start_time": null,
@@ -27393,7 +27390,7 @@
         },
         {
           "person_id": "p0978",
-          "affiliation_id": "a0402"
+          "affiliation_id": "a0401"
         }
       ],
       "start_time": null,
@@ -27425,7 +27422,7 @@
       "authors": [
         {
           "person_id": "p1208",
-          "affiliation_id": "a0403"
+          "affiliation_id": "a0402"
         },
         {
           "person_id": "p0416",
@@ -27433,7 +27430,7 @@
         },
         {
           "person_id": "p1195",
-          "affiliation_id": "a0404"
+          "affiliation_id": "a0403"
         },
         {
           "person_id": "p0020",
@@ -27461,7 +27458,7 @@
         },
         {
           "person_id": "p0250",
-          "affiliation_id": "a0405"
+          "affiliation_id": "a0404"
         },
         {
           "person_id": "p0596",
@@ -27541,7 +27538,7 @@
         },
         {
           "person_id": "p1079",
-          "affiliation_id": "a0406"
+          "affiliation_id": "a0405"
         }
       ],
       "start_time": null,
@@ -27577,7 +27574,7 @@
         },
         {
           "person_id": "p0772",
-          "affiliation_id": "a0407"
+          "affiliation_id": "a0406"
         }
       ],
       "start_time": null,
@@ -27617,11 +27614,11 @@
         },
         {
           "person_id": "p1877",
-          "affiliation_id": "a0408"
+          "affiliation_id": "a0407"
         },
         {
           "person_id": "p1878",
-          "affiliation_id": "a0409"
+          "affiliation_id": "a0408"
         }
       ],
       "start_time": null,
@@ -27881,15 +27878,15 @@
       "authors": [
         {
           "person_id": "p0425",
-          "affiliation_id": "a0410"
+          "affiliation_id": "a0409"
         },
         {
           "person_id": "p0113",
-          "affiliation_id": "a0411"
+          "affiliation_id": "a0410"
         },
         {
           "person_id": "p0251",
-          "affiliation_id": "a0412"
+          "affiliation_id": "a0411"
         }
       ],
       "start_time": null,
@@ -27929,7 +27926,7 @@
         },
         {
           "person_id": "p0540",
-          "affiliation_id": "a0413"
+          "affiliation_id": "a0412"
         },
         {
           "person_id": "p0128",
@@ -27961,7 +27958,7 @@
         },
         {
           "person_id": "p0383",
-          "affiliation_id": "a0277"
+          "affiliation_id": "a0276"
         }
       ],
       "start_time": null,
@@ -28009,7 +28006,7 @@
       "authors": [
         {
           "person_id": "p0087",
-          "affiliation_id": "a0414"
+          "affiliation_id": "a0413"
         },
         {
           "person_id": "p0154",
@@ -28257,7 +28254,7 @@
       "authors": [
         {
           "person_id": "p1037",
-          "affiliation_id": "a0385"
+          "affiliation_id": "a0384"
         },
         {
           "person_id": "p0439",
@@ -28265,7 +28262,7 @@
         },
         {
           "person_id": "p1122",
-          "affiliation_id": "a0383"
+          "affiliation_id": "a0382"
         },
         {
           "person_id": "p0593",
@@ -28273,7 +28270,7 @@
         },
         {
           "person_id": "p1314",
-          "affiliation_id": "a0383"
+          "affiliation_id": "a0382"
         }
       ],
       "start_time": null,
@@ -28329,7 +28326,7 @@
         },
         {
           "person_id": "p1183",
-          "affiliation_id": "a0415"
+          "affiliation_id": "a0414"
         }
       ],
       "start_time": null,
@@ -28349,7 +28346,7 @@
         },
         {
           "person_id": "p0711",
-          "affiliation_id": "a0416"
+          "affiliation_id": "a0415"
         }
       ],
       "start_time": null,
@@ -28385,7 +28382,7 @@
         },
         {
           "person_id": "p1008",
-          "affiliation_id": "a0417"
+          "affiliation_id": "a0416"
         }
       ],
       "start_time": null,
@@ -28473,7 +28470,7 @@
         },
         {
           "person_id": "p1024",
-          "affiliation_id": "a0418"
+          "affiliation_id": "a0417"
         },
         {
           "person_id": "p1126",
@@ -28501,7 +28498,7 @@
         },
         {
           "person_id": "p0414",
-          "affiliation_id": "a0419"
+          "affiliation_id": "a0418"
         }
       ],
       "start_time": null,
@@ -28521,7 +28518,7 @@
         },
         {
           "person_id": "p1883",
-          "affiliation_id": "a0420"
+          "affiliation_id": "a0419"
         },
         {
           "person_id": "p1727",
@@ -28529,7 +28526,7 @@
         },
         {
           "person_id": "p1884",
-          "affiliation_id": "a0420"
+          "affiliation_id": "a0419"
         },
         {
           "person_id": "p0831",
@@ -28537,7 +28534,7 @@
         },
         {
           "person_id": "p1885",
-          "affiliation_id": "a0420"
+          "affiliation_id": "a0419"
         },
         {
           "person_id": "p0211",
@@ -28565,7 +28562,7 @@
         },
         {
           "person_id": "p0875",
-          "affiliation_id": "a0396"
+          "affiliation_id": "a0395"
         }
       ],
       "start_time": null,
@@ -28605,7 +28602,7 @@
         },
         {
           "person_id": "p0891",
-          "affiliation_id": "a0277"
+          "affiliation_id": "a0276"
         },
         {
           "person_id": "p0564",
@@ -28613,7 +28610,7 @@
         },
         {
           "person_id": "p0338",
-          "affiliation_id": "a0421"
+          "affiliation_id": "a0420"
         },
         {
           "person_id": "p0737",
@@ -28621,11 +28618,11 @@
         },
         {
           "person_id": "p0302",
-          "affiliation_id": "a0422"
+          "affiliation_id": "a0421"
         },
         {
           "person_id": "p0078",
-          "affiliation_id": "a0423"
+          "affiliation_id": "a0422"
         },
         {
           "person_id": "p0969",
@@ -28785,7 +28782,7 @@
         },
         {
           "person_id": "p1008",
-          "affiliation_id": "a0417"
+          "affiliation_id": "a0416"
         }
       ],
       "start_time": null,
@@ -28809,7 +28806,7 @@
         },
         {
           "person_id": "p0875",
-          "affiliation_id": "a0424"
+          "affiliation_id": "a0423"
         }
       ],
       "start_time": null,
@@ -28885,15 +28882,15 @@
         },
         {
           "person_id": "p1122",
-          "affiliation_id": "a0385"
+          "affiliation_id": "a0384"
         },
         {
           "person_id": "p0439",
-          "affiliation_id": "a0383"
+          "affiliation_id": "a0382"
         },
         {
           "person_id": "p1314",
-          "affiliation_id": "a0385"
+          "affiliation_id": "a0384"
         },
         {
           "person_id": "p0593",
@@ -28921,7 +28918,7 @@
         },
         {
           "person_id": "p0516",
-          "affiliation_id": "a0425"
+          "affiliation_id": "a0424"
         },
         {
           "person_id": "p0737",
@@ -29029,7 +29026,7 @@
         },
         {
           "person_id": "p1407",
-          "affiliation_id": "a0330"
+          "affiliation_id": "a0329"
         }
       ],
       "start_time": null,
@@ -29247,7 +29244,7 @@
         },
         {
           "person_id": "p0806",
-          "affiliation_id": "a0426"
+          "affiliation_id": "a0425"
         },
         {
           "person_id": "p0294",
@@ -29291,7 +29288,7 @@
       "authors": [
         {
           "person_id": "p0828",
-          "affiliation_id": "a0427"
+          "affiliation_id": "a0426"
         },
         {
           "person_id": "p0970",
@@ -29323,7 +29320,7 @@
         },
         {
           "person_id": "p0219",
-          "affiliation_id": "a0428"
+          "affiliation_id": "a0427"
         }
       ],
       "start_time": null,
@@ -29459,7 +29456,7 @@
         },
         {
           "person_id": "p0573",
-          "affiliation_id": "a0275"
+          "affiliation_id": "a0274"
         },
         {
           "person_id": "p1071",
@@ -29560,7 +29557,7 @@
         },
         {
           "person_id": "p1364",
-          "affiliation_id": "a0429"
+          "affiliation_id": "a0428"
         }
       ],
       "start_time": null,
@@ -29576,7 +29573,7 @@
       "authors": [
         {
           "person_id": "p1066",
-          "affiliation_id": "a0430"
+          "affiliation_id": "a0429"
         }
       ],
       "start_time": null,
@@ -29644,7 +29641,7 @@
       "authors": [
         {
           "person_id": "p0548",
-          "affiliation_id": "a0274"
+          "affiliation_id": "a0273"
         }
       ],
       "start_time": null,
@@ -29668,7 +29665,7 @@
         },
         {
           "person_id": "p1449",
-          "affiliation_id": "a0431"
+          "affiliation_id": "a0430"
         },
         {
           "person_id": "p1101",
@@ -29676,7 +29673,7 @@
         },
         {
           "person_id": "p0923",
-          "affiliation_id": "a0432"
+          "affiliation_id": "a0431"
         }
       ],
       "start_time": null,
@@ -29748,7 +29745,7 @@
       "authors": [
         {
           "person_id": "p0424",
-          "affiliation_id": "a0433"
+          "affiliation_id": "a0432"
         },
         {
           "person_id": "p1273",
@@ -29776,7 +29773,7 @@
         },
         {
           "person_id": "p1094",
-          "affiliation_id": "a0287"
+          "affiliation_id": "a0286"
         }
       ],
       "start_time": null,
@@ -29800,7 +29797,7 @@
         },
         {
           "person_id": "p0370",
-          "affiliation_id": "a0357"
+          "affiliation_id": "a0356"
         }
       ],
       "start_time": null,
@@ -30001,7 +29998,7 @@
       "authors": [
         {
           "person_id": "p0848",
-          "affiliation_id": "a0346"
+          "affiliation_id": "a0345"
         }
       ],
       "start_time": null,
@@ -30101,7 +30098,7 @@
       "authors": [
         {
           "person_id": "p0774",
-          "affiliation_id": "a0332"
+          "affiliation_id": "a0331"
         }
       ],
       "start_time": null,
@@ -30172,19 +30169,19 @@
       "authors": [
         {
           "person_id": "p1244",
-          "affiliation_id": "a0434"
+          "affiliation_id": "a0433"
         },
         {
           "person_id": "p1314",
-          "affiliation_id": "a0435"
+          "affiliation_id": "a0434"
         },
         {
           "person_id": "p1893",
-          "affiliation_id": "a0436"
+          "affiliation_id": "a0435"
         },
         {
           "person_id": "p1257",
-          "affiliation_id": "a0437"
+          "affiliation_id": "a0436"
         }
       ],
       "start_time": "13:30",
@@ -30304,7 +30301,7 @@
       "authors": [
         {
           "person_id": "p1896",
-          "affiliation_id": "a0438"
+          "affiliation_id": "a0437"
         }
       ],
       "start_time": "10:45",
@@ -30320,7 +30317,7 @@
       "authors": [
         {
           "person_id": "p1897",
-          "affiliation_id": "a0439"
+          "affiliation_id": "a0438"
         }
       ],
       "start_time": "11:15",
@@ -30369,19 +30366,19 @@
       "authors": [
         {
           "person_id": "p0244",
-          "affiliation_id": "a0440"
+          "affiliation_id": "a0439"
         },
         {
           "person_id": "p0352",
-          "affiliation_id": "a0440"
+          "affiliation_id": "a0439"
         },
         {
           "person_id": "p1234",
-          "affiliation_id": "a0441"
+          "affiliation_id": "a0440"
         },
         {
           "person_id": "p0276",
-          "affiliation_id": "a0442"
+          "affiliation_id": "a0441"
         }
       ],
       "start_time": "13:20",
@@ -30413,15 +30410,15 @@
       "authors": [
         {
           "person_id": "p0237",
-          "affiliation_id": "a0346"
+          "affiliation_id": "a0345"
         },
         {
           "person_id": "p1850",
-          "affiliation_id": "a0355"
+          "affiliation_id": "a0354"
         },
         {
           "person_id": "p0280",
-          "affiliation_id": "a0346"
+          "affiliation_id": "a0345"
         }
       ],
       "start_time": "14:05",
@@ -30465,11 +30462,11 @@
       "authors": [
         {
           "person_id": "p1264",
-          "affiliation_id": "a0443"
+          "affiliation_id": "a0442"
         },
         {
           "person_id": "p0959",
-          "affiliation_id": "a0444"
+          "affiliation_id": "a0443"
         },
         {
           "person_id": "p0748",
@@ -30497,11 +30494,11 @@
         },
         {
           "person_id": "p1902",
-          "affiliation_id": "a0445"
+          "affiliation_id": "a0444"
         },
         {
           "person_id": "p1903",
-          "affiliation_id": "a0445"
+          "affiliation_id": "a0444"
         },
         {
           "person_id": "p1444",
@@ -30525,11 +30522,11 @@
       "authors": [
         {
           "person_id": "p0894",
-          "affiliation_id": "a0446"
+          "affiliation_id": "a0445"
         },
         {
           "person_id": "p1904",
-          "affiliation_id": "a0446"
+          "affiliation_id": "a0445"
         },
         {
           "person_id": "p0442",
@@ -30661,7 +30658,7 @@
       "authors": [
         {
           "person_id": "p1909",
-          "affiliation_id": "a0447"
+          "affiliation_id": "a0446"
         }
       ],
       "start_time": null,
@@ -30677,7 +30674,7 @@
       "authors": [
         {
           "person_id": "p1910",
-          "affiliation_id": "a0448"
+          "affiliation_id": "a0447"
         }
       ],
       "start_time": null,
@@ -30693,7 +30690,7 @@
       "authors": [
         {
           "person_id": "p1911",
-          "affiliation_id": "a0449"
+          "affiliation_id": "a0448"
         }
       ],
       "start_time": null,
@@ -30802,15 +30799,15 @@
       "authors": [
         {
           "person_id": "p1668",
-          "affiliation_id": "a0437"
+          "affiliation_id": "a0436"
         },
         {
           "person_id": "p0026",
-          "affiliation_id": "a0437"
+          "affiliation_id": "a0436"
         },
         {
           "person_id": "p1257",
-          "affiliation_id": "a0437"
+          "affiliation_id": "a0436"
         }
       ],
       "start_time": "10:20",
@@ -30826,7 +30823,7 @@
       "authors": [
         {
           "person_id": "p0695",
-          "affiliation_id": "a0450"
+          "affiliation_id": "a0449"
         },
         {
           "person_id": "p1103",
@@ -30842,11 +30839,11 @@
         },
         {
           "person_id": "p1919",
-          "affiliation_id": "a0451"
+          "affiliation_id": "a0450"
         },
         {
           "person_id": "p1920",
-          "affiliation_id": "a0451"
+          "affiliation_id": "a0450"
         }
       ],
       "start_time": "10:40",
