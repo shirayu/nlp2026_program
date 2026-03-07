@@ -30,6 +30,8 @@ export const ja = {
   zoomCustomUrlDialogTitle: "Zoom カスタムURL設定",
   venueA: "A会場",
   venueB: "B会場",
+  venueC: "C会場",
+  venueP: "P会場",
   zoomCustomUrlSave: "保存",
   zoomCustomUrlCancel: "キャンセル",
   sessionTitleSearchSettings: "セッションタイトルを検索対象にする",

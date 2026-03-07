@@ -11,6 +11,7 @@ const DEFAULT_APP_SETTINGS: AppSettings = {
   includeSessionTitleForPresentationSessions: false,
   showTimeAtPresentationLevel: false,
 };
+const ZOOM_VENUE_KEYS = ["A", "B", "C", "P"] as const;
 
 function parseBoolean(value: unknown, fallback: boolean): boolean {
   return typeof value === "boolean" ? value : fallback;
@@ -25,14 +26,12 @@ function parseNonEmptyString(value: unknown): string | undefined {
 function parseVenueZoomUrls(value: unknown): VenueZoomUrls | undefined {
   if (!value || typeof value !== "object") return undefined;
 
-  const a = parseNonEmptyString((value as { A?: unknown }).A);
-  const b = parseNonEmptyString((value as { B?: unknown }).B);
-  if (!a && !b) return undefined;
-
-  return {
-    ...(a ? { A: a } : {}),
-    ...(b ? { B: b } : {}),
-  };
+  const parsed = ZOOM_VENUE_KEYS.reduce((acc, key) => {
+    const v = parseNonEmptyString((value as Partial<Record<(typeof ZOOM_VENUE_KEYS)[number], unknown>>)[key]);
+    if (v) acc[key] = v;
+    return acc;
+  }, {} as VenueZoomUrls);
+  return Object.keys(parsed).length > 0 ? parsed : undefined;
 }
 
 function parseAppSettings(value: string | null): AppSettings {

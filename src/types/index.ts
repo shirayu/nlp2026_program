@@ -74,6 +74,8 @@ export interface AppSettings {
 export interface VenueZoomUrls {
   A?: string;
   B?: string;
+  C?: string;
+  P?: string;
 }
 
 export interface ExportPayload {

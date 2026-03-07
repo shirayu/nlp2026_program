@@ -21,6 +21,12 @@ import { fullscreenDialogClassName } from "./utils";
 
 type LastUpdateRow = { label: string; time: string };
 type AppUpdateStatus = "idle" | "updating" | "no_change" | "error";
+const ZOOM_VENUE_FIELDS = [
+  { key: "A", label: () => ja.venueA },
+  { key: "B", label: () => ja.venueB },
+  { key: "C", label: () => ja.venueC },
+  { key: "P", label: () => ja.venueP },
+] as const;
 const dialogFramePaddingStyle = {
   paddingTop: "max(1rem, env(safe-area-inset-top))",
   paddingRight: "max(1rem, env(safe-area-inset-right))",
@@ -64,7 +70,7 @@ function normalizeVenueZoomUrlsFromDrafts(
   drafts: Partial<Record<keyof VenueZoomUrls, string>>,
 ): VenueZoomUrls | undefined {
   const next: VenueZoomUrls = {};
-  (["A", "B"] as const).forEach((key) => {
+  ZOOM_VENUE_FIELDS.forEach(({ key }) => {
     const trimmed = drafts[key]?.trim() ?? "";
     if (trimmed) {
       next[key] = trimmed;
@@ -74,7 +80,7 @@ function normalizeVenueZoomUrlsFromDrafts(
 }
 
 function areVenueZoomUrlsEqual(a: VenueZoomUrls | undefined, b: VenueZoomUrls | undefined): boolean {
-  return (a?.A ?? "") === (b?.A ?? "") && (a?.B ?? "") === (b?.B ?? "");
+  return ZOOM_VENUE_FIELDS.every(({ key }) => (a?.[key] ?? "") === (b?.[key] ?? ""));
 }
 
 function useVenueZoomDrafts({
@@ -87,6 +93,8 @@ function useVenueZoomDrafts({
   const [venueZoomDrafts, setVenueZoomDrafts] = useState<Partial<Record<keyof VenueZoomUrls, string>>>({
     A: venueZoomUrls?.A ?? "",
     B: venueZoomUrls?.B ?? "",
+    C: venueZoomUrls?.C ?? "",
+    P: venueZoomUrls?.P ?? "",
   });
   const onSetVenueZoomUrlsRef = useRef(onSetVenueZoomUrls);
 
@@ -98,14 +106,17 @@ function useVenueZoomDrafts({
     const nextDrafts = {
       A: venueZoomUrls?.A ?? "",
       B: venueZoomUrls?.B ?? "",
+      C: venueZoomUrls?.C ?? "",
+      P: venueZoomUrls?.P ?? "",
     };
     setVenueZoomDrafts((currentDrafts) => {
-      if (currentDrafts.A === nextDrafts.A && currentDrafts.B === nextDrafts.B) {
+      const isSame = ZOOM_VENUE_FIELDS.every(({ key }) => currentDrafts[key] === nextDrafts[key]);
+      if (isSame) {
         return currentDrafts;
       }
       return nextDrafts;
     });
-  }, [venueZoomUrls?.A, venueZoomUrls?.B]);
+  }, [venueZoomUrls?.A, venueZoomUrls?.B, venueZoomUrls?.C, venueZoomUrls?.P]);
 
   useEffect(() => {
     const normalized = normalizeVenueZoomUrlsFromDrafts(venueZoomDrafts);
@@ -152,36 +163,23 @@ function ZoomCustomUrlSection({
       <h3 className="text-sm font-semibold text-gray-800">{ja.zoomSettings}</h3>
       <p className="mt-1 text-xs text-gray-600">{ja.zoomCustomUrlDescription}</p>
       <div className="mt-2 space-y-2">
-        <label className="flex items-center gap-3 text-sm text-gray-700">
-          <span className="shrink-0">{ja.venueA}</span>
-          <input
-            type="url"
-            value={venueZoomDrafts.A ?? ""}
-            onChange={(event) => updateVenueZoomUrl("A", event.target.value)}
-            onBlur={flushVenueZoomDrafts}
-            className={`min-w-0 flex-1 rounded-lg px-3 py-2 text-sm focus:outline-none ${
-              (venueZoomDrafts.A ?? "").trim()
-                ? "border-emerald-300 bg-emerald-50 text-emerald-900 focus:border-emerald-500"
-                : "border border-gray-200 focus:border-indigo-400"
-            }`}
-            placeholder="https://..."
-          />
-        </label>
-        <label className="flex items-center gap-3 text-sm text-gray-700">
-          <span className="shrink-0">{ja.venueB}</span>
-          <input
-            type="url"
-            value={venueZoomDrafts.B ?? ""}
-            onChange={(event) => updateVenueZoomUrl("B", event.target.value)}
-            onBlur={flushVenueZoomDrafts}
-            className={`min-w-0 flex-1 rounded-lg px-3 py-2 text-sm focus:outline-none ${
-              (venueZoomDrafts.B ?? "").trim()
-                ? "border-emerald-300 bg-emerald-50 text-emerald-900 focus:border-emerald-500"
-                : "border border-gray-200 focus:border-indigo-400"
-            }`}
-            placeholder="https://..."
-          />
-        </label>
+        {ZOOM_VENUE_FIELDS.map(({ key, label }) => (
+          <label key={key} className="flex items-center gap-3 text-sm text-gray-700">
+            <span className="shrink-0">{label()}</span>
+            <input
+              type="url"
+              value={venueZoomDrafts[key] ?? ""}
+              onChange={(event) => updateVenueZoomUrl(key, event.target.value)}
+              onBlur={flushVenueZoomDrafts}
+              className={`min-w-0 flex-1 rounded-lg px-3 py-2 text-sm focus:outline-none ${
+                (venueZoomDrafts[key] ?? "").trim()
+                  ? "border-emerald-300 bg-emerald-50 text-emerald-900 focus:border-emerald-500"
+                  : "border border-gray-200 focus:border-indigo-400"
+              }`}
+              placeholder="https://..."
+            />
+          </label>
+        ))}
       </div>
     </section>
   );

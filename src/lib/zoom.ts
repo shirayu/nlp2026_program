@@ -1,6 +1,8 @@
 import { getRoomCode } from "../constants";
 import type { ConferenceData, Presentation, Session, VenueZoomUrls } from "../types";
 
+const CUSTOM_ZOOM_ROOM_CODES = new Set<keyof VenueZoomUrls>(["A", "B", "C", "P"]);
+
 function getCustomVenueZoomUrl(
   session: Session,
   rooms: ConferenceData["rooms"],
@@ -11,9 +13,9 @@ function getCustomVenueZoomUrl(
   for (const roomId of session.room_ids) {
     const roomName = rooms[roomId]?.name ?? roomId;
     const roomCode = getRoomCode(roomName);
-    if (roomCode !== "A" && roomCode !== "B") continue;
+    if (!roomCode || !CUSTOM_ZOOM_ROOM_CODES.has(roomCode as keyof VenueZoomUrls)) continue;
 
-    const customUrl = venueZoomUrls[roomCode];
+    const customUrl = venueZoomUrls[roomCode as keyof VenueZoomUrls];
     if (customUrl) {
       return customUrl;
     }

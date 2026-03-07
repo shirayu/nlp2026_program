@@ -7,12 +7,14 @@ const IMPORT_ZOOM_FRAGMENT_PREFIX = "import_zoom_settings=";
 
 function printHelp() {
   console.log(`Usage:
-  node scripts/create-import-zoom-settings-url.mjs --base-url <url> [--a-url <url>] [--b-url <url>]
+  node scripts/create-import-zoom-settings-url.mjs --base-url <url> [--a-url <url>] [--b-url <url>] [--c-url <url>] [--p-url <url>]
 
 Options:
   --base-url  Base URL to attach hash fragment. Example: https://example.github.io/nlp2026/
   --a-url     Zoom custom URL for venue A (zoom.us or *.zoom.us, and path starts with /j/)
   --b-url     Zoom custom URL for venue B (zoom.us or *.zoom.us, and path starts with /j/)
+  --c-url     Zoom custom URL for venue C (zoom.us or *.zoom.us, and path starts with /j/)
+  --p-url     Zoom custom URL for venue P (zoom.us or *.zoom.us, and path starts with /j/)
   --help      Show this help
 `);
 }
@@ -22,7 +24,16 @@ export function parseArgs(argv) {
     baseUrl: "",
     aUrl: "",
     bUrl: "",
+    cUrl: "",
+    pUrl: "",
     help: false,
+  };
+  const optionToKey = {
+    "--base-url": "baseUrl",
+    "--a-url": "aUrl",
+    "--b-url": "bUrl",
+    "--c-url": "cUrl",
+    "--p-url": "pUrl",
   };
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -34,18 +45,10 @@ export function parseArgs(argv) {
       args.help = true;
       continue;
     }
-    if (token === "--base-url") {
-      args.baseUrl = argv[i + 1] ?? "";
-      i += 1;
-      continue;
-    }
-    if (token === "--a-url") {
-      args.aUrl = argv[i + 1] ?? "";
-      i += 1;
-      continue;
-    }
-    if (token === "--b-url") {
-      args.bUrl = argv[i + 1] ?? "";
+
+    const optionKey = optionToKey[token];
+    if (optionKey) {
+      args[optionKey] = argv[i + 1] ?? "";
       i += 1;
       continue;
     }
@@ -79,6 +82,8 @@ function canonicalizeVenueZoomUrls(venueZoomUrls) {
   return JSON.stringify({
     A: typeof venueZoomUrls.A === "string" ? venueZoomUrls.A.trim() : "",
     B: typeof venueZoomUrls.B === "string" ? venueZoomUrls.B.trim() : "",
+    C: typeof venueZoomUrls.C === "string" ? venueZoomUrls.C.trim() : "",
+    P: typeof venueZoomUrls.P === "string" ? venueZoomUrls.P.trim() : "",
   });
 }
 
@@ -97,16 +102,26 @@ export async function buildImportZoomSettingsUrl(args) {
   const venueZoomUrls = {};
   const aUrl = normalizeUrl(args.aUrl);
   const bUrl = normalizeUrl(args.bUrl);
+  const cUrl = normalizeUrl(args.cUrl);
+  const pUrl = normalizeUrl(args.pUrl);
   if (aUrl && !isAllowedZoomImportUrl(aUrl)) {
     throw new Error("--a-url must be a zoom.us or *.zoom.us URL with /j/ path");
   }
   if (bUrl && !isAllowedZoomImportUrl(bUrl)) {
     throw new Error("--b-url must be a zoom.us or *.zoom.us URL with /j/ path");
   }
+  if (cUrl && !isAllowedZoomImportUrl(cUrl)) {
+    throw new Error("--c-url must be a zoom.us or *.zoom.us URL with /j/ path");
+  }
+  if (pUrl && !isAllowedZoomImportUrl(pUrl)) {
+    throw new Error("--p-url must be a zoom.us or *.zoom.us URL with /j/ path");
+  }
   if (aUrl) venueZoomUrls.A = aUrl;
   if (bUrl) venueZoomUrls.B = bUrl;
-  if (!("A" in venueZoomUrls) && !("B" in venueZoomUrls)) {
-    throw new Error("At least one of --a-url or --b-url is required");
+  if (cUrl) venueZoomUrls.C = cUrl;
+  if (pUrl) venueZoomUrls.P = pUrl;
+  if (!("A" in venueZoomUrls) && !("B" in venueZoomUrls) && !("C" in venueZoomUrls) && !("P" in venueZoomUrls)) {
+    throw new Error("At least one of --a-url, --b-url, --c-url or --p-url is required");
   }
 
   const payload = { venueZoomUrls };

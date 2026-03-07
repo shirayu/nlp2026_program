@@ -61,13 +61,17 @@ describe("appSettingsStorage", () => {
   });
 
   it("venueZoomUrls が空文字なら設定から除外する", () => {
-    expect(appSettingsStorage.parseAppSettings('{"venueZoomUrls":{"A":"  ","B":"https://example.com/b"}}')).toEqual({
+    expect(
+      appSettingsStorage.parseAppSettings(
+        '{"venueZoomUrls":{"A":"  ","B":"https://example.com/b","C":"https://example.com/c","P":"   "}}',
+      ),
+    ).toEqual({
       showAuthors: true,
       useSlackAppLinks: true,
       includeSessionTitleForNoPresentationSessions: true,
       includeSessionTitleForPresentationSessions: false,
       showTimeAtPresentationLevel: false,
-      venueZoomUrls: { B: "https://example.com/b" },
+      venueZoomUrls: { B: "https://example.com/b", C: "https://example.com/c" },
     });
   });
 

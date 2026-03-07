@@ -177,6 +177,8 @@ describe("SettingsDialog", () => {
     expect(html).toContain("Zoom");
     expect(html).toContain("A会場");
     expect(html).toContain("B会場");
+    expect(html).toContain("C会場");
+    expect(html).toContain("P会場");
   });
 
   it("大枠の下部にエクスポートボタンを表示する", () => {

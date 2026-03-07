@@ -64,7 +64,9 @@ public/slack.json
 pnpm run create:import-zoom-settings-url -- \
   --base-url "https://example.github.io/nlp2026/" \
   --a-url "https://zoom.us/j/11111111111?pwd=aaaa" \
-  --b-url "https://zoom.us/j/22222222222?pwd=bbbb"
+  --b-url "https://zoom.us/j/22222222222?pwd=bbbb" \
+  --c-url "https://zoom.us/j/33333333333?pwd=cccc" \
+  --p-url "https://zoom.us/j/44444444444?pwd=dddd"
 ```
 
 出力の1行目 `ZOOM_IMPORT_HASH=...` を `src/constants/index.ts` の `ZOOM_IMPORT_HASHES` に追加してください。  

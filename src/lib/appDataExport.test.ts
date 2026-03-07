@@ -192,7 +192,12 @@ describe("extractZoomImportFragment / decodeZoomPayload", () => {
   it("zoom データをデコードできる", async () => {
     const encoded = btoa(
       JSON.stringify({
-        venueZoomUrls: { A: "https://zoom.us/j/111?pwd=aaa", B: "https://us02web.zoom.us/j/222?pwd=bbb" },
+        venueZoomUrls: {
+          A: "https://zoom.us/j/111?pwd=aaa",
+          B: "https://us02web.zoom.us/j/222?pwd=bbb",
+          C: "https://us02web.zoom.us/j/333?pwd=ccc",
+          P: "https://zoom.us/j/444?pwd=ddd",
+        },
       }),
     )
       .replace(/\+/g, "-")
@@ -201,6 +206,8 @@ describe("extractZoomImportFragment / decodeZoomPayload", () => {
     await expect(decodeZoomPayload(encoded)).resolves.toEqual({
       A: "https://zoom.us/j/111?pwd=aaa",
       B: "https://us02web.zoom.us/j/222?pwd=bbb",
+      C: "https://us02web.zoom.us/j/333?pwd=ccc",
+      P: "https://zoom.us/j/444?pwd=ddd",
     });
   });
 
