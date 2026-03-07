@@ -1,10 +1,11 @@
 import { ZOOM_IMPORT_HASHES } from "../constants";
 import { appSettingsStorage } from "../hooks/useAppSettings";
 import { bookmarksStorage } from "../hooks/useBookmarks";
-import type { ExportPayload, VenueZoomUrls } from "../types";
+import type { ExportPayload, ZoomCustomUrls } from "../types";
 
 const IMPORT_FRAGMENT_PREFIX = "import_settings=";
 const IMPORT_ZOOM_FRAGMENT_PREFIX = "import_zoom_settings=";
+const ZOOM_VENUE_KEYS = ["A", "B", "C", "P"] as const;
 
 function toBase64url(json: string): string {
   return btoa(json).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
@@ -16,7 +17,7 @@ function fromBase64url(encoded: string): string {
 
 export function encodePayload(payload: ExportPayload): string {
   const sanitizedSettings = { ...payload.settings };
-  Reflect.deleteProperty(sanitizedSettings, "venueZoomUrls");
+  Reflect.deleteProperty(sanitizedSettings, "zoomCustomUrls");
   return toBase64url(
     JSON.stringify({
       ...payload,
@@ -84,21 +85,42 @@ function isAllowedZoomImportUrl(value: string): boolean {
   }
 }
 
-function hasOnlyAllowedZoomDomains(venueZoomUrls: VenueZoomUrls | undefined): boolean {
-  if (!venueZoomUrls) return true;
-  const values = [venueZoomUrls.A, venueZoomUrls.B].filter((value): value is string => Boolean(value));
+function hasOnlyAllowedZoomDomains(zoomCustomUrls: ZoomCustomUrls | undefined): boolean {
+  if (!zoomCustomUrls) return true;
+  const venueValues = ZOOM_VENUE_KEYS.map((key) => zoomCustomUrls.venues?.[key]).filter((value): value is string =>
+    Boolean(value),
+  );
+  const sessionValues = Object.values(zoomCustomUrls.sessions ?? {});
+  const presentationValues = Object.values(zoomCustomUrls.presentations ?? {});
+  const values = [...venueValues, ...sessionValues, ...presentationValues];
   return values.every((value) => isAllowedZoomImportUrl(value));
 }
 
-function canonicalizeVenueZoomUrls(venueZoomUrls: VenueZoomUrls | undefined): string {
-  return JSON.stringify({
-    A: venueZoomUrls?.A?.trim() ?? "",
-    B: venueZoomUrls?.B?.trim() ?? "",
-  });
+function canonicalizeZoomCustomUrls(zoomCustomUrls: ZoomCustomUrls | undefined): string {
+  const venues = ZOOM_VENUE_KEYS.reduce(
+    (acc, key) => {
+      acc[key] = zoomCustomUrls?.venues?.[key]?.trim() ?? "";
+      return acc;
+    },
+    {} as Record<(typeof ZOOM_VENUE_KEYS)[number], string>,
+  );
+  const sessions = Object.fromEntries(
+    Object.entries(zoomCustomUrls?.sessions ?? {})
+      .map(([key, value]) => [key.trim(), value.trim()] as const)
+      .filter(([key, value]) => key.length > 0 && value.length > 0)
+      .sort(([a], [b]) => a.localeCompare(b)),
+  );
+  const presentations = Object.fromEntries(
+    Object.entries(zoomCustomUrls?.presentations ?? {})
+      .map(([key, value]) => [key.trim(), value.trim()] as const)
+      .filter(([key, value]) => key.length > 0 && value.length > 0)
+      .sort(([a], [b]) => a.localeCompare(b)),
+  );
+  return JSON.stringify({ venues, sessions, presentations });
 }
 
-export async function buildZoomImportHash(venueZoomUrls: VenueZoomUrls | undefined): Promise<string> {
-  const input = canonicalizeVenueZoomUrls(venueZoomUrls);
+export async function buildZoomImportHash(zoomCustomUrls: ZoomCustomUrls | undefined): Promise<string> {
+  const input = canonicalizeZoomCustomUrls(zoomCustomUrls);
   const bytes = new TextEncoder().encode(input);
   const digest = await globalThis.crypto.subtle.digest("SHA-256", bytes);
   const hex = Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
@@ -121,23 +143,24 @@ export function extractZoomImportFragment(): string | null {
   return extractByPrefix(IMPORT_ZOOM_FRAGMENT_PREFIX);
 }
 
-export async function decodeZoomPayload(encoded: string): Promise<VenueZoomUrls | undefined | null> {
+export async function decodeZoomPayload(encoded: string): Promise<ZoomCustomUrls | undefined | null> {
   try {
     const json = fromBase64url(encoded);
     const parsed = JSON.parse(json);
     if (!parsed || typeof parsed !== "object") return null;
 
-    const venueZoomUrls = appSettingsStorage.parseAppSettings(
-      JSON.stringify({ venueZoomUrls: (parsed as { venueZoomUrls?: unknown }).venueZoomUrls }),
-    ).venueZoomUrls;
+    const zoomCustomUrls = appSettingsStorage.parseAppSettings(
+      JSON.stringify({ zoomCustomUrls: (parsed as { zoomCustomUrls?: unknown }).zoomCustomUrls }),
+    ).zoomCustomUrls;
 
-    if (!hasOnlyAllowedZoomDomains(venueZoomUrls)) return null;
+    if (!zoomCustomUrls) return undefined;
+    if (!hasOnlyAllowedZoomDomains(zoomCustomUrls)) return null;
     const allowedHashes = new Set(ZOOM_IMPORT_HASHES.map((value) => value.trim().toLowerCase()).filter(Boolean));
     if (allowedHashes.size > 0) {
-      const actualHash = await buildZoomImportHash(venueZoomUrls);
+      const actualHash = await buildZoomImportHash(zoomCustomUrls);
       if (!allowedHashes.has(actualHash)) return null;
     }
-    return venueZoomUrls;
+    return zoomCustomUrls;
   } catch {
     return null;
   }

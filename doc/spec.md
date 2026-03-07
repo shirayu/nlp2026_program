@@ -393,3 +393,44 @@ presentations[id].presenter_id →  persons のキー
 presentations[id].authors[].person_id      → persons のキー
 presentations[id].authors[].affiliation_id → affiliations のキー
 ```
+
+## アプリ設定（Zoom カスタムURL）
+
+アプリ設定 `AppSettings` では、Zoom カスタムURLを以下で保持する。
+
+```ts
+interface ZoomCustomUrls {
+  venues?: { A?: string; B?: string; C?: string; P?: string };
+  sessions?: Record<SessionId, string>;
+  presentations?: Record<PresentationId, string>;
+}
+```
+
+- 設定キーは `appSettings.zoomCustomUrls` のみを扱う
+- 旧形式 `venueZoomUrls` は保存・読込ともに非対応
+- 値が空文字または空白のみの場合は未設定として扱う
+
+### Zoom URL 解決優先順位
+
+- セッション表示: `session custom > venue custom > WS親 session custom > session.zoom_url`
+- 発表表示: `presentation custom > session custom > venue custom > WS親 session custom > presentation.zoom_url > session.zoom_url`
+- `custom` が設定されていれば、元データの `zoom_url` が `null` でもリンク表示する
+- 発表 custom はセッションカードのリンクには適用しない
+- `WS親 session custom` は `WS1-1` のような個別WSセッションで `WS1` が存在する場合のみ参照する
+
+### Zoom 設定インポート（`import_zoom_settings`）
+
+- 受理するペイロード形式は新構造のみ（`zoomCustomUrls.venues/sessions/presentations`）
+- 旧形式（venues のみ等）との読み取り互換は持たない
+- URL は `zoom.us` / `*.zoom.us` かつパスが `/j/` で始まるもののみ許可
+- `import_zoom_settings` の適用は全置換
+- `ZOOM_IMPORT_HASHES` の照合対象は新構造を canonicalize した JSON
+
+### 生成スクリプト
+
+`scripts/create-import-zoom-settings-url.mjs` は以下オプションで生成する。
+
+- `--venue <A=url>` （`A/B/C/P` を指定、複数回指定可）
+- `--session <SessionId=url>`（複数回指定可）
+- `--workshop <WSn=url>`（親Workshopセッション向け、複数回指定可）
+- `--presentation <PresentationId=url>`（複数回指定可）

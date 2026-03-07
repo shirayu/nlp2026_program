@@ -1,4 +1,4 @@
-import type { ConferenceData, PersonId, PresentationId, SessionId, VenueZoomUrls } from "../types";
+import type { ConferenceData, PersonId, PresentationId, SessionId, ZoomCustomUrls } from "../types";
 import { PresentationListItem } from "./PresentationListItem";
 
 export function PresentationCard({
@@ -9,7 +9,7 @@ export function PresentationCard({
   query,
   useSlackAppLinks,
   slackTeamId,
-  venueZoomUrls,
+  zoomCustomUrls,
   onPersonClick,
   onJumpToSession,
   onToggleBookmark,
@@ -21,7 +21,7 @@ export function PresentationCard({
   query: string;
   useSlackAppLinks?: boolean;
   slackTeamId?: string | null;
-  venueZoomUrls?: VenueZoomUrls;
+  zoomCustomUrls?: ZoomCustomUrls;
   onPersonClick: (id: PersonId) => void;
   onJumpToSession: (sid: SessionId) => void;
   onToggleBookmark: (id: PresentationId) => void;
@@ -35,7 +35,7 @@ export function PresentationCard({
       query={query}
       useSlackAppLinks={useSlackAppLinks}
       slackTeamId={slackTeamId}
-      venueZoomUrls={venueZoomUrls}
+      zoomCustomUrls={zoomCustomUrls}
       onPersonClick={onPersonClick}
       onJumpToSession={onJumpToSession}
       onToggleBookmark={onToggleBookmark}

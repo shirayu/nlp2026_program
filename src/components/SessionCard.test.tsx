@@ -138,7 +138,7 @@ describe("SessionCard", () => {
         bookmarkedSessionIds={new Set()}
         sessionId="s1"
         session={data.sessions.s1}
-        venueZoomUrls={{ A: "https://example.com/custom-a" }}
+        zoomCustomUrls={{ venues: { A: "https://example.com/custom-a" } }}
         presIds={["pr1"]}
         data={data}
         showAuthors

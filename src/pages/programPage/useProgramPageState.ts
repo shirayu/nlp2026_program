@@ -32,7 +32,7 @@ import {
   mapSlackChannelsToUrls,
 } from "../../lib/slack";
 import { ja } from "../../locales/ja";
-import type { PersonId, SessionId, VenueZoomUrls } from "../../types";
+import type { PersonId, SessionId, ZoomCustomUrls } from "../../types";
 import {
   type BeforeInstallPromptEvent,
   getNextScheduleTimePoint,
@@ -44,6 +44,30 @@ import {
   syncSearchAllWithBookmarkFilter,
   toMinutes,
 } from "./utils";
+
+function extractZoomEncodedFromInput(raw: string): string | null {
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+
+  const extractByPrefix = (value: string): string | null => {
+    const prefix = "import_zoom_settings=";
+    const index = value.indexOf(prefix);
+    if (index < 0) return null;
+    return value.slice(index + prefix.length).trim();
+  };
+
+  try {
+    const url = new URL(trimmed);
+    const hash = url.hash.startsWith("#") ? url.hash.slice(1) : url.hash;
+    const fromHash = extractByPrefix(hash);
+    if (fromHash) return fromHash;
+  } catch {
+    // no-op: not a URL string
+  }
+
+  const fromRaw = extractByPrefix(trimmed);
+  return fromRaw && fromRaw.length > 0 ? fromRaw : null;
+}
 
 export function useProgramPageState() {
   const { data, sessionSlackChannels, isReloading, reloadStatus, reload } = useConferenceData();
@@ -87,7 +111,7 @@ export function useProgramPageState() {
   const [importInvalid, setImportInvalid] = useState(false);
   const [importTarget, setImportTarget] = useState<"settings" | "zoom">("settings");
   const [pendingSettingsImport, setPendingSettingsImport] = useState<ReturnType<typeof decodePayload> | null>(null);
-  const [pendingZoomImport, setPendingZoomImport] = useState<VenueZoomUrls | undefined | null>(null);
+  const [pendingZoomImport, setPendingZoomImport] = useState<ZoomCustomUrls | undefined | null>(null);
   const [backupEntries, setBackupEntries] = useState<BackupEntry[]>(() =>
     typeof window !== "undefined" ? listBackups() : [],
   );
@@ -495,10 +519,10 @@ export function useProgramPageState() {
       if (importTarget === "settings") {
         saveBeforeImport();
         const nextSettings = { ...pendingSettingsImport.settings };
-        if (settings.venueZoomUrls) {
-          nextSettings.venueZoomUrls = settings.venueZoomUrls;
+        if (settings.zoomCustomUrls) {
+          nextSettings.zoomCustomUrls = settings.zoomCustomUrls;
         } else {
-          Reflect.deleteProperty(nextSettings, "venueZoomUrls");
+          Reflect.deleteProperty(nextSettings, "zoomCustomUrls");
         }
         setSettings(nextSettings);
         setBookmarks(pendingSettingsImport.bookmarks);
@@ -506,7 +530,7 @@ export function useProgramPageState() {
       }
     }
     if (importTarget === "zoom" && pendingZoomImport !== null) {
-      setSettings((current) => ({ ...current, venueZoomUrls: pendingZoomImport || undefined }));
+      setSettings((current) => ({ ...current, zoomCustomUrls: pendingZoomImport || undefined }));
     }
     clearImportPendingFlag();
     clearZoomImportPendingFlag();
@@ -544,8 +568,27 @@ export function useProgramPageState() {
     setPendingZoomImport(null);
   }
 
-  function handleSetVenueZoomUrls(venueZoomUrls: VenueZoomUrls | undefined) {
-    setSettings((current) => ({ ...current, venueZoomUrls }));
+  function handleSetZoomCustomUrls(zoomCustomUrls: ZoomCustomUrls | undefined) {
+    setSettings((current) => ({ ...current, zoomCustomUrls }));
+  }
+
+  async function handleImportZoomFromCode(input: string): Promise<boolean> {
+    const encoded = extractZoomEncodedFromInput(input);
+    if (!encoded) {
+      return false;
+    }
+    const decoded = await decodeZoomPayload(encoded);
+    setImportTarget("zoom");
+    setPendingSettingsImport(null);
+    if (decoded !== null) {
+      setPendingZoomImport(decoded);
+      setImportInvalid(false);
+    } else {
+      setPendingZoomImport(null);
+      setImportInvalid(true);
+    }
+    setShowSettingsImportConfirm(true);
+    return decoded !== null;
   }
 
   return {
@@ -596,7 +639,7 @@ export function useProgramPageState() {
       sessionSlackLinks,
       useSlackAppLinks: settings.useSlackAppLinks,
       slackTeamId,
-      venueZoomUrls: settings.venueZoomUrls,
+      zoomCustomUrls: settings.zoomCustomUrls,
       showAuthors: settings.showAuthors,
       includeSessionTitleForNoPresentationSessions: settings.includeSessionTitleForNoPresentationSessions,
       includeSessionTitleForPresentationSessions: settings.includeSessionTitleForPresentationSessions,
@@ -637,7 +680,7 @@ export function useProgramPageState() {
       isReloadingData: isReloading,
       reloadDataStatus: reloadStatus,
       useSlackAppLinks: settings.useSlackAppLinks,
-      venueZoomUrls: settings.venueZoomUrls,
+      zoomCustomUrls: settings.zoomCustomUrls,
       includeSessionTitleForNoPresentationSessions: settings.includeSessionTitleForNoPresentationSessions,
       includeSessionTitleForPresentationSessions: settings.includeSessionTitleForPresentationSessions,
       showTimeAtPresentationLevel: settings.showTimeAtPresentationLevel,
@@ -647,7 +690,8 @@ export function useProgramPageState() {
       },
       onToggleShowAuthors: toggleShowAuthors,
       onToggleUseSlackAppLinks: toggleUseSlackAppLinks,
-      onSetVenueZoomUrls: handleSetVenueZoomUrls,
+      onSetZoomCustomUrls: handleSetZoomCustomUrls,
+      onImportZoomFromCode: handleImportZoomFromCode,
       onToggleIncludeSessionTitleForNoPresentationSessions: toggleIncludeSessionTitleForNoPresentationSessions,
       onToggleIncludeSessionTitleForPresentationSessions: toggleIncludeSessionTitleForPresentationSessions,
       onToggleShowTimeAtPresentationLevel: toggleShowTimeAtPresentationLevel,

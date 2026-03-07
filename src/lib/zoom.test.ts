@@ -7,10 +7,29 @@ const data: ConferenceData = {
   affiliations: {},
   rooms: {
     rA: { name: "A会場" },
-    rB: { name: "B会場" },
-    rC: { name: "C会場" },
+    rP: { name: "P会場" },
   },
   sessions: {
+    WS1: {
+      title: "Workshop Parent",
+      date: "2026-03-09",
+      start_time: "08:00",
+      end_time: "12:00",
+      room_ids: ["rA"],
+      chair: "",
+      presentation_ids: [],
+      zoom_url: null,
+    },
+    "WS1-1": {
+      title: "Workshop Child",
+      date: "2026-03-09",
+      start_time: "09:00",
+      end_time: "10:00",
+      room_ids: ["rA"],
+      chair: "",
+      presentation_ids: ["pWS"],
+      zoom_url: null,
+    },
     sA: {
       title: "A",
       date: "2026-03-09",
@@ -19,17 +38,17 @@ const data: ConferenceData = {
       room_ids: ["rA"],
       chair: "",
       presentation_ids: ["pA"],
-      zoom_url: "https://example.com/default-a",
+      zoom_url: "https://example.com/default-session-a",
     },
-    sC: {
-      title: "C",
+    sP: {
+      title: "P",
       date: "2026-03-09",
       start_time: "10:00",
       end_time: "11:00",
-      room_ids: ["rC"],
+      room_ids: ["rP"],
       chair: "",
-      presentation_ids: ["pC"],
-      zoom_url: "https://example.com/default-c",
+      presentation_ids: ["pP"],
+      zoom_url: null,
     },
   },
   presentations: {
@@ -41,70 +60,102 @@ const data: ConferenceData = {
       is_online: true,
       authors: [],
       pdf_url: null,
-      zoom_url: "https://example.com/presentation-a",
+      zoom_url: "https://example.com/default-presentation-a",
     },
-    pC: {
-      title: "pC",
-      session_id: "sC",
+    pWS: {
+      title: "pWS",
+      session_id: "WS1-1",
       presenter_id: null,
       is_english: false,
       is_online: true,
       authors: [],
       pdf_url: null,
-      zoom_url: "https://example.com/presentation-c",
+      zoom_url: null,
+    },
+    pP: {
+      title: "pP",
+      session_id: "sP",
+      presenter_id: null,
+      is_english: false,
+      is_online: true,
+      authors: [],
+      pdf_url: null,
+      zoom_url: null,
     },
   },
 };
 
 describe("resolveSessionZoomUrl", () => {
-  it("A/B会場にカスタムURLがあれば session zoom_url より優先する", () => {
-    const resolved = resolveSessionZoomUrl(data.sessions.sA, data.rooms, data.sessions.sA.zoom_url ?? null, {
-      A: "https://example.com/custom-a",
+  it("session custom > venue custom > WS親custom > session.zoom_url の順で解決する", () => {
+    const resolved = resolveSessionZoomUrl("sA", data.sessions.sA, data.rooms, {
+      venues: { A: "https://zoom.us/j/100?pwd=venue" },
+      sessions: { sA: "https://zoom.us/j/101?pwd=session" },
     });
 
-    expect(resolved).toBe("https://example.com/custom-a");
+    expect(resolved).toBe("https://zoom.us/j/101?pwd=session");
   });
 
-  it("A/B以外の会場は session zoom_url を使う", () => {
-    const resolved = resolveSessionZoomUrl(data.sessions.sC, data.rooms, data.sessions.sC.zoom_url ?? null, {
-      A: "https://example.com/custom-a",
-      B: "https://example.com/custom-b",
+  it("session.zoom_url が null でも custom があれば表示する", () => {
+    const resolved = resolveSessionZoomUrl("sP", data.sessions.sP, data.rooms, {
+      venues: { P: "https://zoom.us/j/102?pwd=venue" },
     });
-
-    expect(resolved).toBe("https://example.com/default-c");
+    expect(resolved).toBe("https://zoom.us/j/102?pwd=venue");
   });
 
-  it("session zoom_url がない場合はカスタムURLがあっても null を返す", () => {
-    const resolved = resolveSessionZoomUrl(data.sessions.sA, data.rooms, null, {
-      A: "https://example.com/custom-a",
+  it("WS子セッションは WS親の session custom URL を継承する", () => {
+    const resolved = resolveSessionZoomUrl("WS1-1", data.sessions["WS1-1"], data.rooms, {
+      sessions: { WS1: "https://zoom.us/j/150?pwd=workshop-parent" },
     });
+    expect(resolved).toBe("https://zoom.us/j/150?pwd=workshop-parent");
+  });
 
-    expect(resolved).toBeNull();
+  it("WS子セッションで venue custom と WS親custom が両方ある場合は venue custom を優先する", () => {
+    const resolved = resolveSessionZoomUrl("WS1-1", data.sessions["WS1-1"], data.rooms, {
+      venues: { A: "https://zoom.us/j/152?pwd=venue" },
+      sessions: { WS1: "https://zoom.us/j/150?pwd=workshop-parent" },
+    });
+    expect(resolved).toBe("https://zoom.us/j/152?pwd=venue");
   });
 });
 
 describe("resolvePresentationZoomUrl", () => {
-  it("A/B会場にカスタムURLがあれば presentation zoom_url より優先する", () => {
-    const resolved = resolvePresentationZoomUrl(data.presentations.pA, data, data.presentations.pA.zoom_url ?? null, {
-      A: "https://example.com/custom-a",
+  it("presentation > session > venue > WS親custom > presentation.zoom_url > session.zoom_url の順で解決する", () => {
+    const resolved = resolvePresentationZoomUrl("pA", data.presentations.pA, data, {
+      venues: { A: "https://zoom.us/j/100?pwd=venue" },
+      sessions: { sA: "https://zoom.us/j/101?pwd=session" },
+      presentations: { pA: "https://zoom.us/j/102?pwd=presentation" },
     });
 
-    expect(resolved).toBe("https://example.com/custom-a");
+    expect(resolved).toBe("https://zoom.us/j/102?pwd=presentation");
   });
 
-  it("カスタムURLがない場合は presentation zoom_url を使う", () => {
-    const resolved = resolvePresentationZoomUrl(data.presentations.pC, data, data.presentations.pC.zoom_url ?? null, {
-      A: "https://example.com/custom-a",
+  it("presentation custom は session card の解決に影響しない", () => {
+    const sessionResolved = resolveSessionZoomUrl("sA", data.sessions.sA, data.rooms, {
+      sessions: { sA: "https://zoom.us/j/101?pwd=session" },
+      presentations: { pA: "https://zoom.us/j/102?pwd=presentation" },
     });
-
-    expect(resolved).toBe("https://example.com/presentation-c");
+    expect(sessionResolved).toBe("https://zoom.us/j/101?pwd=session");
   });
 
-  it("presentation zoom_url がない場合はカスタムURLがあっても null を返す", () => {
-    const resolved = resolvePresentationZoomUrl(data.presentations.pA, data, null, {
-      A: "https://example.com/custom-a",
+  it("presentation/session が null でも custom があれば表示する", () => {
+    const resolved = resolvePresentationZoomUrl("pP", data.presentations.pP, data, {
+      sessions: { sP: "https://zoom.us/j/103?pwd=session" },
     });
+    expect(resolved).toBe("https://zoom.us/j/103?pwd=session");
+  });
 
-    expect(resolved).toBeNull();
+  it("WS子セッション配下の発表は WS親の session custom URL を継承する", () => {
+    const resolved = resolvePresentationZoomUrl("pWS", data.presentations.pWS, data, {
+      sessions: { WS1: "https://zoom.us/j/151?pwd=workshop-parent" },
+    });
+    expect(resolved).toBe("https://zoom.us/j/151?pwd=workshop-parent");
+  });
+
+  it("WS子セッション配下の発表で venue custom と WS親custom が両方ある場合は venue custom を優先する", () => {
+    const resolved = resolvePresentationZoomUrl("pWS", data.presentations.pWS, data, {
+      venues: { A: "https://zoom.us/j/153?pwd=venue" },
+      sessions: { WS1: "https://zoom.us/j/151?pwd=workshop-parent" },
+    });
+    expect(resolved).toBe("https://zoom.us/j/153?pwd=venue");
   });
 });

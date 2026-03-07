@@ -4,32 +4,41 @@ import { webcrypto } from "node:crypto";
 import { pathToFileURL } from "node:url";
 
 const IMPORT_ZOOM_FRAGMENT_PREFIX = "import_zoom_settings=";
+const VENUE_KEYS = new Set(["A", "B", "C", "P"]);
 
 function printHelp() {
   console.log(`Usage:
-  node scripts/create-import-zoom-settings-url.mjs --base-url <url> [--a-url <url>] [--b-url <url>]
+  node scripts/create-import-zoom-settings-url.mjs --base-url <url> [--venue <A=url>] [--session <id=url>] [--workshop <WSn=url>] [--presentation <id=url>]
 
 Options:
-  --base-url  Base URL to attach hash fragment. Example: https://example.github.io/nlp2026/
-  --a-url     Zoom custom URL for venue A (zoom.us or *.zoom.us, and path starts with /j/)
-  --b-url     Zoom custom URL for venue B (zoom.us or *.zoom.us, and path starts with /j/)
-  --help      Show this help
+  --base-url      Base URL to attach hash fragment. Example: https://example.github.io/nlp2026/
+  --venue         Venue custom URL. Repeatable. Example: --venue A=https://zoom.us/j/111
+  --session       Session custom URL. Repeatable. Example: --session B1=https://zoom.us/j/222
+  --workshop      Workshop parent session custom URL. Repeatable. Example: --workshop WS1=https://zoom.us/j/999
+  --presentation  Presentation custom URL. Repeatable. Example: --presentation B1-1=https://zoom.us/j/333
+  --help          Show this help
 `);
 }
 
 export function parseArgs(argv) {
   const args = {
     baseUrl: "",
-    aUrl: "",
-    bUrl: "",
+    venues: [],
+    sessions: [],
+    workshops: [],
+    presentations: [],
     help: false,
+  };
+  const repeatableOptionMap = {
+    "--venue": "venues",
+    "--session": "sessions",
+    "--workshop": "workshops",
+    "--presentation": "presentations",
   };
 
   for (let i = 0; i < argv.length; i += 1) {
     const token = argv[i];
-    if (token === "--") {
-      continue;
-    }
+    if (token === "--") continue;
     if (token === "--help" || token === "-h") {
       args.help = true;
       continue;
@@ -39,17 +48,12 @@ export function parseArgs(argv) {
       i += 1;
       continue;
     }
-    if (token === "--a-url") {
-      args.aUrl = argv[i + 1] ?? "";
+    const repeatableOptionKey = repeatableOptionMap[token];
+    if (repeatableOptionKey) {
+      args[repeatableOptionKey].push(argv[i + 1] ?? "");
       i += 1;
       continue;
     }
-    if (token === "--b-url") {
-      args.bUrl = argv[i + 1] ?? "";
-      i += 1;
-      continue;
-    }
-
     throw new Error(`Unknown option: ${token}`);
   }
 
@@ -75,15 +79,53 @@ function isAllowedZoomImportUrl(value) {
   }
 }
 
-function canonicalizeVenueZoomUrls(venueZoomUrls) {
-  return JSON.stringify({
-    A: typeof venueZoomUrls.A === "string" ? venueZoomUrls.A.trim() : "",
-    B: typeof venueZoomUrls.B === "string" ? venueZoomUrls.B.trim() : "",
-  });
+function parseMapping(raw, label) {
+  const eq = raw.indexOf("=");
+  if (eq <= 0) {
+    throw new Error(`${label} must be in <id=url> format`);
+  }
+  const key = raw.slice(0, eq).trim();
+  const value = normalizeUrl(raw.slice(eq + 1));
+  if (!key) throw new Error(`${label} id must not be empty`);
+  if (!value) throw new Error(`${label} url must not be empty`);
+  if (!isAllowedZoomImportUrl(value)) {
+    throw new Error(`${label} must be a zoom.us or *.zoom.us URL with /j/ path`);
+  }
+  return { key, value };
 }
 
-export async function buildZoomImportHash(venueZoomUrls) {
-  const input = canonicalizeVenueZoomUrls(venueZoomUrls);
+function parseWorkshopMapping(raw) {
+  const { key, value } = parseMapping(raw, "--workshop");
+  if (!/^WS\d+$/.test(key)) {
+    throw new Error("--workshop id must be in WS<number> format (e.g. WS1)");
+  }
+  return { key, value };
+}
+
+function canonicalizeZoomCustomUrls(zoomCustomUrls) {
+  const venues = {
+    A: zoomCustomUrls?.venues?.A?.trim() ?? "",
+    B: zoomCustomUrls?.venues?.B?.trim() ?? "",
+    C: zoomCustomUrls?.venues?.C?.trim() ?? "",
+    P: zoomCustomUrls?.venues?.P?.trim() ?? "",
+  };
+  const sessions = Object.fromEntries(
+    Object.entries(zoomCustomUrls?.sessions ?? {})
+      .map(([key, value]) => [key.trim(), value.trim()])
+      .filter(([key, value]) => key.length > 0 && value.length > 0)
+      .sort(([a], [b]) => a.localeCompare(b)),
+  );
+  const presentations = Object.fromEntries(
+    Object.entries(zoomCustomUrls?.presentations ?? {})
+      .map(([key, value]) => [key.trim(), value.trim()])
+      .filter(([key, value]) => key.length > 0 && value.length > 0)
+      .sort(([a], [b]) => a.localeCompare(b)),
+  );
+  return JSON.stringify({ venues, sessions, presentations });
+}
+
+export async function buildZoomImportHash(zoomCustomUrls) {
+  const input = canonicalizeZoomCustomUrls(zoomCustomUrls);
   const bytes = new TextEncoder().encode(input);
   const digest = await webcrypto.subtle.digest("SHA-256", bytes);
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
@@ -94,23 +136,46 @@ export async function buildImportZoomSettingsUrl(args) {
     throw new Error("--base-url is required");
   }
 
-  const venueZoomUrls = {};
-  const aUrl = normalizeUrl(args.aUrl);
-  const bUrl = normalizeUrl(args.bUrl);
-  if (aUrl && !isAllowedZoomImportUrl(aUrl)) {
-    throw new Error("--a-url must be a zoom.us or *.zoom.us URL with /j/ path");
+  const venues = {};
+  const sessions = {};
+  const presentations = {};
+
+  for (const raw of args.venues) {
+    const { key, value } = parseMapping(raw, "--venue");
+    if (!VENUE_KEYS.has(key)) {
+      throw new Error("--venue key must be one of A/B/C/P");
+    }
+    venues[key] = value;
   }
-  if (bUrl && !isAllowedZoomImportUrl(bUrl)) {
-    throw new Error("--b-url must be a zoom.us or *.zoom.us URL with /j/ path");
+  for (const raw of args.sessions) {
+    const { key, value } = parseMapping(raw, "--session");
+    sessions[key] = value;
   }
-  if (aUrl) venueZoomUrls.A = aUrl;
-  if (bUrl) venueZoomUrls.B = bUrl;
-  if (!("A" in venueZoomUrls) && !("B" in venueZoomUrls)) {
-    throw new Error("At least one of --a-url or --b-url is required");
+  for (const raw of args.workshops) {
+    const { key, value } = parseWorkshopMapping(raw);
+    sessions[key] = value;
+  }
+  for (const raw of args.presentations) {
+    const { key, value } = parseMapping(raw, "--presentation");
+    presentations[key] = value;
   }
 
-  const payload = { venueZoomUrls };
-  const hash = await buildZoomImportHash(venueZoomUrls);
+  if (
+    Object.keys(venues).length === 0 &&
+    Object.keys(sessions).length === 0 &&
+    Object.keys(presentations).length === 0
+  ) {
+    throw new Error("At least one of --venue, --session, --workshop or --presentation is required");
+  }
+
+  const zoomCustomUrls = {
+    ...(Object.keys(venues).length > 0 ? { venues } : {}),
+    ...(Object.keys(sessions).length > 0 ? { sessions } : {}),
+    ...(Object.keys(presentations).length > 0 ? { presentations } : {}),
+  };
+
+  const payload = { zoomCustomUrls };
+  const hash = await buildZoomImportHash(zoomCustomUrls);
   const encoded = toBase64url(JSON.stringify(payload));
   const url = new URL(args.baseUrl);
   url.hash = `${IMPORT_ZOOM_FRAGMENT_PREFIX}${encoded}`;

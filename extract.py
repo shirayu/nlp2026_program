@@ -934,14 +934,21 @@ def should_assign_session_zoom_url(session_id: str) -> bool:
     return False
 
 
+def should_assign_presentation_zoom_url(presentation_id: str) -> bool:
+    """Zoom(代替Slack) URL を付与する発表を判定する。"""
+    return presentation_id in {"C2-25", "C8-21"}
+
+
 def apply_zoom_url_defaults(result: JsonDict, fallback_url: str) -> None:
     """指定ルールに合う session/presentation へ zoom_url を既定付与する。"""
     for session_id, session in result["sessions"].items():
         if should_assign_session_zoom_url(session_id) and not session.get("zoom_url"):
             session["zoom_url"] = fallback_url
 
-    for presentation in result["presentations"].values():
-        if presentation.get("is_online") and not presentation.get("zoom_url"):
+    for presentation_id, presentation in result["presentations"].items():
+        if (
+            presentation.get("is_online") or should_assign_presentation_zoom_url(presentation_id)
+        ) and not presentation.get("zoom_url"):
             presentation["zoom_url"] = fallback_url
 
 

@@ -4,11 +4,13 @@ function toBase64url(json: string): string {
   return btoa(json).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
 }
 
-function encodeZoomPayload(aUrl: string, bUrl?: string): string {
+function encodeZoomPayload(aUrl: string, sessionUrl?: string): string {
   const payload = {
-    venueZoomUrls: {
-      A: aUrl,
-      ...(bUrl ? { B: bUrl } : {}),
+    zoomCustomUrls: {
+      venues: {
+        A: aUrl,
+      },
+      ...(sessionUrl ? { sessions: { S1: sessionUrl } } : {}),
     },
   };
   return toBase64url(JSON.stringify(payload));
@@ -22,8 +24,11 @@ describe("decodeZoomPayload with ZOOM_IMPORT_HASHES", () => {
       ZOOM_IMPORT_HASHES: ["deadbeef", "cafebabe"],
     }));
     const mod = await import("./appDataExport");
-    const encoded = encodeZoomPayload("https://zoom.us/j/111?pwd=aaa");
-    const actualHash = await mod.buildZoomImportHash({ A: "https://zoom.us/j/111?pwd=aaa" });
+    const encoded = encodeZoomPayload("https://zoom.us/j/111?pwd=aaa", "https://zoom.us/j/555?pwd=eee");
+    const actualHash = await mod.buildZoomImportHash({
+      venues: { A: "https://zoom.us/j/111?pwd=aaa" },
+      sessions: { S1: "https://zoom.us/j/555?pwd=eee" },
+    });
 
     vi.resetModules();
     vi.doMock("../constants", () => ({
@@ -32,7 +37,8 @@ describe("decodeZoomPayload with ZOOM_IMPORT_HASHES", () => {
     }));
     const modWithMatchedHash = await import("./appDataExport");
     await expect(modWithMatchedHash.decodeZoomPayload(encoded)).resolves.toEqual({
-      A: "https://zoom.us/j/111?pwd=aaa",
+      venues: { A: "https://zoom.us/j/111?pwd=aaa" },
+      sessions: { S1: "https://zoom.us/j/555?pwd=eee" },
     });
   });
 

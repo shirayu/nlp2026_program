@@ -47,7 +47,7 @@ const mockStripZoomImportFragment = vi.fn();
 const mockClearImportPendingFlag = vi.fn();
 const mockClearZoomImportPendingFlag = vi.fn();
 const mockDecodePayload = vi.fn(() => null as import("../../types").ExportPayload | null);
-const mockDecodeZoomPayload = vi.fn(async () => null as import("../../types").VenueZoomUrls | undefined | null);
+const mockDecodeZoomPayload = vi.fn(async () => null as import("../../types").ZoomCustomUrls | undefined | null);
 const mockBuildExportUrl = vi.fn(() => "https://example.com/#import_settings=abc");
 
 vi.mock("../../lib/appDataExport", () => ({
@@ -356,7 +356,7 @@ describe("useProgramPageState", () => {
   it("起動時に import_zoom_settings フラグメントがあれば Zoom インポート確認ダイアログを開く", async () => {
     mockExtractZoomImportFragment.mockReturnValue("validzoom");
     mockDecodeZoomPayload.mockResolvedValue({
-      A: "https://example.com/a",
+      venues: { A: "https://example.com/a" },
     });
 
     const hook = setupHook();
@@ -374,7 +374,7 @@ describe("useProgramPageState", () => {
     mockExtractZoomImportFragment.mockReturnValue("validzoom");
     mockDecodeZoomPayload.mockImplementation(async () => {
       expect(mockStripZoomImportFragment).not.toHaveBeenCalled();
-      return { A: "https://example.com/a" };
+      return { venues: { A: "https://example.com/a" } };
     });
 
     const hook = setupHook();
@@ -453,20 +453,22 @@ describe("useProgramPageState", () => {
     hook.unmount();
   });
 
-  it("設定インポート時は既存 venueZoomUrls を維持し、インポート値を上書きしない", async () => {
+  it("設定インポート時は既存 zoomCustomUrls を維持し、インポート値を上書きしない", async () => {
     const decodedSettings = {
       showAuthors: true,
       useSlackAppLinks: false,
       includeSessionTitleForNoPresentationSessions: false,
       includeSessionTitleForPresentationSessions: true,
       showTimeAtPresentationLevel: false,
-      venueZoomUrls: {
-        A: "https://zoom.us/j/imported-a",
+      zoomCustomUrls: {
+        venues: { A: "https://zoom.us/j/imported-a" },
       },
     };
-    const currentVenueZoomUrls = {
-      A: "https://zoom.us/j/current-a",
-      B: "https://zoom.us/j/current-b",
+    const currentZoomCustomUrls = {
+      venues: {
+        A: "https://zoom.us/j/current-a",
+        B: "https://zoom.us/j/current-b",
+      },
     };
     const decodedBookmarks = { presentationIds: ["p1", "p2"], sessionIds: ["s1"] };
     const setSettings = vi.fn();
@@ -480,7 +482,7 @@ describe("useProgramPageState", () => {
         includeSessionTitleForNoPresentationSessions: true,
         includeSessionTitleForPresentationSessions: false,
         showTimeAtPresentationLevel: false,
-        venueZoomUrls: currentVenueZoomUrls,
+        zoomCustomUrls: currentZoomCustomUrls,
       },
       setSettings,
       toggleShowAuthors: vi.fn(),
@@ -508,18 +510,20 @@ describe("useProgramPageState", () => {
 
     expect(setSettings).toHaveBeenCalledWith({
       ...decodedSettings,
-      venueZoomUrls: currentVenueZoomUrls,
+      zoomCustomUrls: currentZoomCustomUrls,
     });
     expect(setBookmarks).toHaveBeenCalledWith(decodedBookmarks);
 
     hook.unmount();
   });
 
-  it("Zoom インポート確定で venueZoomUrls のみ更新され、ブックマークは変更しない", async () => {
+  it("Zoom インポート確定で zoomCustomUrls のみ更新され、ブックマークは変更しない", async () => {
     const setSettings = vi.fn();
     const setBookmarks = vi.fn();
     mockExtractZoomImportFragment.mockReturnValue("validzoom");
-    mockDecodeZoomPayload.mockResolvedValue({ A: "https://example.com/room-a", B: "https://example.com/room-b" });
+    mockDecodeZoomPayload.mockResolvedValue({
+      venues: { A: "https://example.com/room-a", B: "https://example.com/room-b" },
+    });
     mockUseAppSettings.mockReturnValue({
       settings: {
         showAuthors: false,
@@ -555,6 +559,42 @@ describe("useProgramPageState", () => {
     expect(setSettings).toHaveBeenCalledTimes(1);
     expect(typeof setSettings.mock.calls[0]?.[0]).toBe("function");
     expect(setBookmarks).not.toHaveBeenCalled();
+    expect(hook.getLatest().overlayProps.showSettingsImportConfirm).toBe(false);
+
+    hook.unmount();
+  });
+
+  it("コード入力から Zoom インポート確認ダイアログを開ける", async () => {
+    mockDecodeZoomPayload.mockResolvedValue({
+      venues: { A: "https://zoom.us/j/111?pwd=aaa" },
+    });
+    const hook = setupHook();
+    await act(async () => {});
+
+    await act(async () => {
+      const accepted = await hook
+        .getLatest()
+        .overlayProps.onImportZoomFromCode("https://example.com/#import_zoom_settings=encoded-zoom");
+      expect(accepted).toBe(true);
+    });
+
+    expect(mockDecodeZoomPayload).toHaveBeenCalledWith("encoded-zoom");
+    expect(hook.getLatest().overlayProps.showSettingsImportConfirm).toBe(true);
+    expect(hook.getLatest().overlayProps.importTarget).toBe("zoom");
+
+    hook.unmount();
+  });
+
+  it("コード入力が不正なら Zoom インポート確認を開かない", async () => {
+    const hook = setupHook();
+    await act(async () => {});
+
+    await act(async () => {
+      const accepted = await hook.getLatest().overlayProps.onImportZoomFromCode("not-a-zoom-import-code");
+      expect(accepted).toBe(false);
+    });
+
+    expect(mockDecodeZoomPayload).not.toHaveBeenCalled();
     expect(hook.getLatest().overlayProps.showSettingsImportConfirm).toBe(false);
 
     hook.unmount();
