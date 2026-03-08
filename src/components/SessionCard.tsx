@@ -1,6 +1,6 @@
 import { ChevronDown, ChevronUp, Globe, Star } from "lucide-react";
-import { forwardRef, memo } from "react";
-import { getRoomTheme, getSessionRoomNames, sessionRoomsLabel } from "../constants";
+import { type CSSProperties, forwardRef, memo } from "react";
+import { getRoomCode, getRoomTheme, getSessionRoomNames, sessionRoomsLabel } from "../constants";
 import { formatSessionDateTime } from "../lib/date";
 import { toSlackMessageAppUrl } from "../lib/slack";
 import { resolveSessionZoomUrl } from "../lib/zoom";
@@ -10,6 +10,39 @@ import { openSlackFromSpa } from "../pages/programPage/utils";
 import type { ConferenceData, PersonId, PresentationId, SessionId, ZoomCustomUrls } from "../types";
 import { HighlightedText } from "./HighlightedText";
 import { PresentationCard } from "./PresentationCard";
+
+const ROOM_HEADER_COLOR_BY_CODE: Record<string, string> = {
+  A: "#ffe4e6",
+  B: "#fef3c7",
+  C: "#d1fae5",
+  P: "#e0f2fe",
+  Q: "#fae8ff",
+  M: "#ede9fe",
+};
+
+function resolveRoomHeaderColor(roomName: string): string {
+  const roomCode = getRoomCode(roomName);
+  if (roomCode && ROOM_HEADER_COLOR_BY_CODE[roomCode]) {
+    return ROOM_HEADER_COLOR_BY_CODE[roomCode];
+  }
+  return "#f1f5f9";
+}
+
+function buildEqualSplitBackgroundImage(colors: string[]): string | null {
+  if (colors.length <= 1) return null;
+  const span = 100 / colors.length;
+  const stops = colors.flatMap((color, index) => {
+    const start = index * span;
+    const end = (index + 1) * span;
+    return [`${color} ${start}%`, `${color} ${end}%`];
+  });
+  return `linear-gradient(90deg, ${stops.join(", ")})`;
+}
+
+function getSessionHeaderBackgroundStyle(roomNames: string[]): CSSProperties | undefined {
+  const backgroundImage = buildEqualSplitBackgroundImage(roomNames.map(resolveRoomHeaderColor));
+  return backgroundImage ? { backgroundImage } : undefined;
+}
 
 function getSessionTitleQuery(
   sessionId: SessionId,
@@ -277,7 +310,9 @@ export const SessionCard = memo(
     },
     ref,
   ) {
-    const roomTheme = getRoomTheme(getSessionRoomNames(session, data.rooms)[0] ?? "");
+    const roomNames = getSessionRoomNames(session, data.rooms);
+    const roomTheme = getRoomTheme(roomNames[0] ?? "");
+    const headerBackgroundStyle = getSessionHeaderBackgroundStyle(roomNames);
     const roomLabel = sessionRoomsLabel(session, data.rooms);
     const sessionBookmarked = bookmarkedSessionIds.has(sessionId);
     const workshopParentTitle = (() => {
@@ -298,7 +333,10 @@ export const SessionCard = memo(
 
     return (
       <section ref={ref} className={`rounded-xl shadow-sm ${roomTheme.surface}`}>
-        <div className={`sticky top-0 z-10 rounded-t-xl px-4 py-3 shadow-sm ${roomTheme.header} relative`}>
+        <div
+          className={`sticky top-0 z-10 rounded-t-xl px-4 py-3 shadow-sm ${roomTheme.header} relative`}
+          style={headerBackgroundStyle}
+        >
           <button
             type="button"
             className="absolute inset-0 rounded-t-xl focus:outline-none"

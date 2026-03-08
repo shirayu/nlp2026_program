@@ -186,7 +186,7 @@ describe("ProgramHeader room chip interaction", () => {
     });
 
     const roomB = findButtonByText(container, "B");
-    expect(roomB.className).toContain("bg-slate-100 text-slate-600");
+    expect(roomB.className).toContain("border-amber-400 bg-amber-50 text-amber-800");
 
     act(() => {
       roomB.click();
@@ -194,7 +194,35 @@ describe("ProgramHeader room chip interaction", () => {
 
     const roomBAfterClick = findButtonByText(container, "B");
     expect(onSelectRoomSpy).toHaveBeenCalledWith("B");
-    expect(roomBAfterClick.className).toContain("bg-slate-500 text-white");
+    expect(roomBAfterClick.className).toContain("border-amber-400 bg-amber-600 text-white");
+
+    act(() => {
+      root.unmount();
+    });
+    container.remove();
+  });
+
+  it("複数会場が同時にアクティブな発表なし状態でも選択中会場は会場色を維持する", () => {
+    const container = document.createElement("div");
+    document.body.append(container);
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(
+        <ProgramHeader
+          {...baseHeaderProps()}
+          selectedTime="9:00"
+          rooms={["A", "B"]}
+          activeRooms={["A", "B"]}
+          selectedRoom="A"
+          roomHasPresentationsOnSelectedDate={{ A: false, B: false }}
+        />,
+      );
+    });
+
+    const roomA = findButtonByText(container, "A");
+    expect(roomA.className).toContain("border-rose-400 bg-rose-600 text-white");
+    expect(roomA.className).not.toContain("bg-slate-500 text-white");
 
     act(() => {
       root.unmount();
@@ -253,8 +281,8 @@ describe("ProgramHeader room chip interaction", () => {
           selectedRoom: null,
         },
         targetRoom: "B",
-        expected: "border-slate-300 bg-slate-100 text-slate-600",
-        unexpected: ["bg-amber-50 text-amber-800", "bg-amber-600 text-white"],
+        expected: "border-amber-400 bg-amber-50 text-amber-800",
+        unexpected: ["bg-slate-100 text-slate-600", "bg-slate-500 text-white"],
       },
       {
         name: "no_presentation_selected",
@@ -264,8 +292,8 @@ describe("ProgramHeader room chip interaction", () => {
           selectedRoom: "B",
         },
         targetRoom: "B",
-        expected: "border-slate-300 bg-slate-500 text-white",
-        unexpected: ["bg-amber-600 text-white", "bg-slate-100 text-slate-600"],
+        expected: "border-amber-400 bg-amber-600 text-white",
+        unexpected: ["bg-slate-500 text-white", "bg-slate-100 text-slate-600"],
       },
       {
         name: "selected",
@@ -337,7 +365,7 @@ describe("ProgramHeader room chip interaction", () => {
           "selectedTime": null,
         },
         {
-          "className": "bg-slate-100 border border-slate-300 font-medium px-3 py-1 rounded-full shrink-0 text-slate-600 text-xs",
+          "className": "bg-rose-50/70 border border-rose-400 font-medium px-3 py-1 rounded-full shrink-0 text-rose-700 text-xs",
           "filtersDisabled": false,
           "hasNoPresentation": true,
           "isActive": false,
@@ -369,7 +397,7 @@ describe("ProgramHeader room chip interaction", () => {
           "selectedTime": null,
         },
         {
-          "className": "bg-slate-500 border border-slate-300 font-medium px-3 py-1 rounded-full shrink-0 text-white text-xs",
+          "className": "bg-rose-600 border border-rose-400 font-medium px-3 py-1 rounded-full shrink-0 text-white text-xs",
           "filtersDisabled": false,
           "hasNoPresentation": true,
           "isActive": false,
@@ -401,7 +429,7 @@ describe("ProgramHeader room chip interaction", () => {
           "selectedTime": null,
         },
         {
-          "className": "bg-slate-100 border border-slate-300 font-medium px-3 py-1 rounded-full shrink-0 text-slate-600 text-xs",
+          "className": "bg-rose-50 border border-rose-400 font-medium px-3 py-1 rounded-full shrink-0 text-rose-800 text-xs",
           "filtersDisabled": false,
           "hasNoPresentation": true,
           "isActive": true,
@@ -433,7 +461,7 @@ describe("ProgramHeader room chip interaction", () => {
           "selectedTime": null,
         },
         {
-          "className": "bg-slate-500 border border-slate-300 font-medium px-3 py-1 rounded-full shrink-0 text-white text-xs",
+          "className": "bg-rose-600 border border-rose-400 font-medium px-3 py-1 rounded-full shrink-0 text-white text-xs",
           "filtersDisabled": false,
           "hasNoPresentation": true,
           "isActive": true,
@@ -529,7 +557,7 @@ describe("ProgramHeader room chip interaction", () => {
           "selectedTime": "9:00",
         },
         {
-          "className": "bg-slate-100 border border-slate-300 font-medium px-3 py-1 rounded-full shrink-0 text-slate-600 text-xs",
+          "className": "bg-rose-50 border border-rose-400 font-medium px-3 py-1 rounded-full shrink-0 text-rose-800 text-xs",
           "filtersDisabled": false,
           "hasNoPresentation": true,
           "isActive": true,
@@ -561,7 +589,7 @@ describe("ProgramHeader room chip interaction", () => {
           "selectedTime": "9:00",
         },
         {
-          "className": "bg-slate-500 border border-slate-300 font-medium px-3 py-1 rounded-full shrink-0 text-white text-xs",
+          "className": "bg-rose-600 border border-rose-400 font-medium px-3 py-1 rounded-full shrink-0 text-white text-xs",
           "filtersDisabled": false,
           "hasNoPresentation": true,
           "isActive": true,

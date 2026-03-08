@@ -11,6 +11,9 @@ const data: ConferenceData = {
   affiliations: {},
   rooms: {
     r1: { name: "A会場" },
+    r2: { name: "B会場" },
+    r3: { name: "C会場" },
+    r4: { name: "P会場" },
   },
   sessions: {
     s1: {
@@ -423,5 +426,61 @@ describe("SessionCard", () => {
     );
 
     expect(html).toContain("<mark");
+  });
+
+  it("複数部屋のセッションはヘッダ背景を均等分割で描画する", () => {
+    const html = renderToStaticMarkup(
+      <SessionCard
+        bookmarkedPresentationIds={new Set()}
+        bookmarkedSessionIds={new Set()}
+        sessionId="s1"
+        session={{ ...data.sessions.s1, room_ids: ["r1", "r2"] }}
+        presIds={["pr1"]}
+        data={data}
+        showAuthors
+        query=""
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
+        expanded={false}
+        onToggleExpanded={vi.fn()}
+        onScrollToSessionTop={vi.fn()}
+        onPersonClick={vi.fn()}
+        onJumpToSession={vi.fn()}
+        onToggleBookmark={vi.fn()}
+        onToggleSessionBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).toContain(
+      'style="background-image:linear-gradient(90deg, #ffe4e6 0%, #ffe4e6 50%, #fef3c7 50%, #fef3c7 100%)"',
+    );
+  });
+
+  it("4部屋のセッションは25%刻みで均等分割する", () => {
+    const html = renderToStaticMarkup(
+      <SessionCard
+        bookmarkedPresentationIds={new Set()}
+        bookmarkedSessionIds={new Set()}
+        sessionId="s1"
+        session={{ ...data.sessions.s1, room_ids: ["r1", "r2", "r3", "r4"] }}
+        presIds={["pr1"]}
+        data={data}
+        showAuthors
+        query=""
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
+        expanded={false}
+        onToggleExpanded={vi.fn()}
+        onScrollToSessionTop={vi.fn()}
+        onPersonClick={vi.fn()}
+        onJumpToSession={vi.fn()}
+        onToggleBookmark={vi.fn()}
+        onToggleSessionBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).toContain(
+      'style="background-image:linear-gradient(90deg, #ffe4e6 0%, #ffe4e6 25%, #fef3c7 25%, #fef3c7 50%, #d1fae5 50%, #d1fae5 75%, #e0f2fe 75%, #e0f2fe 100%)"',
+    );
   });
 });

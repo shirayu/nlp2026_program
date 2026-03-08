@@ -255,9 +255,10 @@ function RoomChips({
   }
 
   function roomBorderClass(room: string): string {
-    if (hasNoPresentationsOnSelectedDate(room)) {
-      return "border-slate-300";
-    }
+    return roomThemeBorderClass(room);
+  }
+
+  function roomThemeBorderClass(room: string): string {
     const roomCode = getRoomCode(room);
     if (roomCode === "A") return "border-rose-400";
     if (roomCode === "B") return "border-amber-400";
@@ -304,9 +305,9 @@ function RoomChips({
   function resolveRoomChipState(isSelected: boolean, isActive: boolean, room: string) {
     if (filtersDisabled) return "disabled" as const;
     if (selectedTime && !isActive) return "out_of_scope" as const;
-    if (hasNoPresentationsOnSelectedDate(room)) return "no_presentation" as const;
     if (isSelected) return "selected" as const;
     if (isActive) return "active" as const;
+    if (hasNoPresentationsOnSelectedDate(room)) return "no_presentation" as const;
     return "inactive" as const;
   }
 
@@ -321,8 +322,8 @@ function RoomChips({
         isSelected ? "border-slate-300 bg-slate-500 text-white" : "border-slate-300 bg-slate-100 text-slate-600",
       no_presentation: () =>
         isSelected
-          ? `${roomBorderClass(room)} bg-slate-500 text-white`
-          : `${roomBorderClass(room)} bg-slate-100 text-slate-600`,
+          ? `${roomBorderClass(room)} ${roomSelectedClass(room)}`
+          : `${roomBorderClass(room)} ${roomInactiveClass(room)}`,
       selected: () => `${roomBorderClass(room)} ${roomSelectedClass(room)}`,
       active: () => `${roomBorderClass(room)} ${roomActiveClass(room)}`,
       inactive: () => `${roomBorderClass(room)} ${roomInactiveClass(room)}`,

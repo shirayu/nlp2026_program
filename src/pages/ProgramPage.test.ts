@@ -367,7 +367,7 @@ describe("ProgramHeader", () => {
     expect(html).toContain("border-slate-300 bg-slate-500 text-white");
   });
 
-  it("その日に発表が1件もない会場は無彩色ボーダーにする", () => {
+  it("その日に発表が1件もない会場でもセッションがあれば会場色で表示する", () => {
     const html = renderToStaticMarkup(
       createElement(ProgramHeader, {
         query: "",
@@ -407,11 +407,11 @@ describe("ProgramHeader", () => {
     );
 
     expect(html).toContain("border-rose-400");
-    expect(html).toContain("border-slate-300");
-    expect(html).toContain("bg-slate-100 text-slate-600");
+    expect(html).toContain("border-amber-400");
+    expect(html).toContain("bg-amber-50 text-amber-800");
   });
 
-  it("その日に発表がない会場でも選択中は濃い灰色で判別できる", () => {
+  it("その日に発表がない会場でも選択中は会場色で判別できる", () => {
     const html = renderToStaticMarkup(
       createElement(ProgramHeader, {
         query: "",
@@ -450,7 +450,7 @@ describe("ProgramHeader", () => {
       }),
     );
 
-    expect(html).toContain("border-slate-300 bg-slate-500 text-white");
+    expect(html).toContain("border-amber-400 bg-amber-600 text-white");
   });
 
   it("filtersDisabled が有効なら会場の状態に関係なく disabled スタイルを優先する", () => {
