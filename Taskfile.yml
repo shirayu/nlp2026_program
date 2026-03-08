@@ -7,8 +7,6 @@ vars:
   FILE_PACKAGE_JSON: '{{.ROOT_DIR}}/package.json'
   FILE_PNPM_LOCK: '{{.ROOT_DIR}}/pnpm-lock.yaml'
   DIR_NODE_MODULES: '{{.ROOT_DIR}}/node_modules'
-  # アプリ本体と生成タスクで同じ env を参照し、公開 JSON 名の定義を一箇所に寄せる。
-  FILE_CONFERENCE_DATA: '{{.ROOT_DIR}}/public/{{.VITE_CONFERENCE_DATA_FILE}}'
 
 
 tasks:
@@ -119,14 +117,13 @@ tasks:
     desc: "ビルド成果物を削除"
     cmds:
       - rm -rf dist
-      - rm -rf {{.FILE_CONFERENCE_DATA}}
 
   extract:
     desc: "HTMLからJSONを抽出する"
     vars:
       HTML: '{{.HTML | default "data_for_extraction/original_program.html"}}'
-      OUT: '{{.OUT | default .FILE_CONFERENCE_DATA}}'
-      BASE_URL: '{{.BASE_URL | default .VITE_OFFICIAL_SITE_URL}}'
+      OUT: '{{.OUT | default (printf "%s/public/%s" .ROOT_DIR (.VITE_CONFERENCE_DATA_FILE | default "data.json"))}}'
+      BASE_URL: '{{.BASE_URL | default (.VITE_OFFICIAL_SITE_URL | default "https://www.anlp.jp/proceedings/annual_meeting/2026/")}}'
       WORKSHOP_CONFIG: '{{.WORKSHOP_CONFIG | default "data_for_extraction/workshop.json"}}'
       INVITEDPAPERS_CONFIG: '{{.INVITEDPAPERS_CONFIG | default "data_for_extraction/invitedpapers.json"}}'
       YOUTUBE_CONFIG: '{{.YOUTUBE_CONFIG | default "data_for_extraction/youtube.json"}}'
