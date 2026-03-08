@@ -1,10 +1,12 @@
 import { RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { getRoomCode } from "../constants";
 import { ja } from "../locales/ja";
 
 type TimelineFilterProps = {
   points: string[];
   activeSegments: boolean[];
+  selectedRoom?: string | null;
   selectedDate: string | null;
   selectedTime: string | null;
   onChange: (time: string | null) => void;
@@ -77,6 +79,33 @@ function buildTimelineSegments(points: string[], activeSegments: boolean[], past
     isActive,
     past: pastTimes.has(points[index] ?? ""),
   }));
+}
+
+function getActiveSegmentClass(selectedRoom: string | null | undefined): string {
+  const roomCode = selectedRoom ? getRoomCode(selectedRoom) : null;
+  if (roomCode === "A") return "bg-rose-200";
+  if (roomCode === "B") return "bg-amber-200";
+  if (roomCode === "C") return "bg-emerald-200";
+  if (roomCode === "P") return "bg-sky-200";
+  if (roomCode === "Q") return "bg-fuchsia-200";
+  if (roomCode === "M") return "bg-violet-200";
+  return "bg-teal-200";
+}
+
+function getTimelineSegmentClass(
+  segment: { isActive: boolean; past: boolean },
+  opts: {
+    isUnspecified: boolean;
+    selectedRoom: string | null;
+    activeSegmentClass: string;
+  },
+): string {
+  if (!segment.isActive) return "bg-slate-100";
+  if (opts.isUnspecified) {
+    return opts.selectedRoom ? "bg-gray-200" : "bg-slate-100";
+  }
+  if (segment.past) return "bg-gray-600";
+  return opts.activeSegmentClass;
 }
 
 function formatDataGeneratedAt(value?: string): { dateLabel: string; timeLabel: string } | null {
@@ -172,6 +201,7 @@ function TimelineActions({
 export function TimelineFilter({
   points,
   activeSegments,
+  selectedRoom = null,
   selectedDate,
   selectedTime,
   onChange,
@@ -191,6 +221,7 @@ export function TimelineFilter({
   const pastTimes = getPastTimeSet(points, selectedDate, new Date());
   const marks = buildTimelineMarks(points, selectedTime);
   const segments = buildTimelineSegments(points, activeSegments, pastTimes);
+  const activeSegmentClass = getActiveSegmentClass(selectedRoom);
 
   useEffect(() => {
     setDraftSliderValue(sliderValue);
@@ -225,9 +256,11 @@ export function TimelineFilter({
               {segments.map((segment) => (
                 <div
                   key={segment.key}
-                  className={`h-full flex-1 ${
-                    !isUnspecified && segment.isActive ? (segment.past ? "bg-gray-600" : "bg-teal-200") : "bg-slate-100"
-                  }`}
+                  className={`h-full flex-1 ${getTimelineSegmentClass(segment, {
+                    isUnspecified,
+                    selectedRoom,
+                    activeSegmentClass,
+                  })}`}
                 />
               ))}
             </div>

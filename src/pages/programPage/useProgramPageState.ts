@@ -1,4 +1,5 @@
 import { startTransition, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { roomShort } from "../../constants";
 import { appSettingsStorage, useAppSettings } from "../../hooks/useAppSettings";
 import { useBookmarks } from "../../hooks/useBookmarks";
 import { RELOAD_STATUS_AUTO_HIDE_MS, useConferenceData } from "../../hooks/useConferenceData";
@@ -44,6 +45,62 @@ import {
   syncSearchAllWithBookmarkFilter,
   toMinutes,
 } from "./utils";
+
+function hasPresentationsInSession(
+  sessionId: SessionId,
+  session: { presentation_ids: string[] },
+  presentations: Record<string, { session_id: string }>,
+): boolean {
+  if (session.presentation_ids.length > 0) return true;
+  return Object.values(presentations).some((presentation) => presentation.session_id === sessionId);
+}
+
+function isSessionActiveAtTime(session: { start_time: string; end_time: string }, time: string): boolean {
+  return toMinutes(session.start_time) <= toMinutes(time) && toMinutes(time) < toMinutes(session.end_time);
+}
+
+function isSessionOnSelectedDate(session: { date: string }, selectedDate: string | null): boolean {
+  if (!selectedDate) return true;
+  return session.date === selectedDate;
+}
+
+function includesSelectedRoom(
+  session: { room_ids: string[] },
+  rooms: Record<string, { name: string }>,
+  selectedRoom: string | null,
+): boolean {
+  if (!selectedRoom) return true;
+  return session.room_ids.some((roomId) => {
+    const roomName = rooms[roomId]?.name ?? roomId;
+    return roomShort(roomName) === selectedRoom;
+  });
+}
+
+function isTimelineSegmentActiveBySession(
+  sessionId: SessionId,
+  session: {
+    date: string;
+    start_time: string;
+    end_time: string;
+    room_ids: string[];
+    presentation_ids: string[];
+  },
+  opts: {
+    sessionIds: SessionId[];
+    selectedDate: string | null;
+    selectedRoom: string | null;
+    time: string;
+    rooms: Record<string, { name: string }>;
+    presentations: Record<string, { session_id: string }>;
+  },
+): boolean {
+  if (isWorkshopParentSession(sessionId, opts.sessionIds)) return false;
+  if (!isSessionOnSelectedDate(session, opts.selectedDate)) return false;
+  if (!isSessionActiveAtTime(session, opts.time)) return false;
+  if (!includesSelectedRoom(session, opts.rooms, opts.selectedRoom)) return false;
+  if (!opts.selectedRoom) return true;
+  return hasPresentationsInSession(sessionId, session, opts.presentations);
+}
 
 function extractEncodedFromInput(raw: string, prefix: string): string | null {
   const trimmed = raw.trim();
@@ -169,13 +226,18 @@ export function useProgramPageState() {
     if (!data || allTimes.length < 2) return [];
     const sessionIds = Object.keys(data.sessions) as SessionId[];
     return allTimes.slice(0, -1).map((time) =>
-      Object.entries(data.sessions).some(([sessionId, session]) => {
-        if (isWorkshopParentSession(sessionId as SessionId, sessionIds)) return false;
-        if (selectedDate && session.date !== selectedDate) return false;
-        return toMinutes(session.start_time) <= toMinutes(time) && toMinutes(time) < toMinutes(session.end_time);
-      }),
+      Object.entries(data.sessions).some(([sessionId, session]) =>
+        isTimelineSegmentActiveBySession(sessionId as SessionId, session, {
+          sessionIds,
+          selectedDate,
+          selectedRoom,
+          time,
+          rooms: data.rooms,
+          presentations: data.presentations,
+        }),
+      ),
     );
-  }, [data, allTimes, selectedDate]);
+  }, [data, allTimes, selectedDate, selectedRoom]);
 
   const nextScheduleTimePoint = useMemo(() => {
     if (!data) return null;
@@ -672,6 +734,7 @@ export function useProgramPageState() {
       showFilters,
       allTimes,
       timelineSegments,
+      timelineRoom: selectedRoom,
       selectedTime,
       nowEnabled,
       rooms: allRooms,

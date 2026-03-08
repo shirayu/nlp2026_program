@@ -351,6 +351,7 @@ export function ProgramHeader({
   showFilters,
   allTimes,
   timelineSegments,
+  timelineRoom,
   selectedTime,
   nowEnabled,
   rooms,
@@ -385,6 +386,7 @@ export function ProgramHeader({
   showFilters: boolean;
   allTimes: string[];
   timelineSegments: boolean[];
+  timelineRoom?: string | null;
   selectedTime: string | null;
   nowEnabled: boolean;
   rooms: string[];
@@ -437,6 +439,7 @@ export function ProgramHeader({
             <TimelineFilter
               points={allTimes}
               activeSegments={timelineSegments}
+              selectedRoom={timelineRoom ?? null}
               selectedDate={selectedDate}
               selectedTime={selectedTime}
               onChange={onSelectTime}

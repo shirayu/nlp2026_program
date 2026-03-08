@@ -294,6 +294,194 @@ describe("useProgramPageState", () => {
     hook.unmount();
   });
 
+  it("会場選択時のタイムラインは発表あり区間のみアクティブにする（時刻範囲は維持）", async () => {
+    const dataWithPresentationWindow: ConferenceData = {
+      generated_at: "2026-03-04T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        R1: { name: "A会場" },
+      },
+      sessions: {
+        S1: {
+          title: "発表なしセッション",
+          date: "2026-03-04",
+          start_time: "9:00",
+          end_time: "10:00",
+          room_ids: ["R1"],
+          chair: "",
+          presentation_ids: [],
+        },
+        S2: {
+          title: "発表ありセッション",
+          date: "2026-03-04",
+          start_time: "10:00",
+          end_time: "11:00",
+          room_ids: ["R1"],
+          chair: "",
+          presentation_ids: ["P1"],
+        },
+      },
+      presentations: {
+        P1: {
+          title: "発表1",
+          session_id: "S2",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+      },
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataWithPresentationWindow,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-04");
+      hook.getLatest().headerProps.onSelectRoom("A");
+    });
+    await act(async () => {});
+
+    const { allTimes, timelineSegments } = hook.getLatest().headerProps;
+    expect(allTimes[0]).toBe("9:00");
+    expect(allTimes[allTimes.length - 1]).toBe("11:00");
+
+    const start0900 = allTimes.indexOf("9:00");
+    const start1000 = allTimes.indexOf("10:00");
+    expect(start0900).toBeGreaterThanOrEqual(0);
+    expect(start1000).toBeGreaterThanOrEqual(0);
+    expect(timelineSegments[start0900]).toBe(false);
+    expect(timelineSegments[start1000]).toBe(true);
+
+    hook.unmount();
+  });
+
+  it("会場未選択時のタイムラインは発表有無を問わずアクティブにする", async () => {
+    const dataWithMixedSessions: ConferenceData = {
+      generated_at: "2026-03-04T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        R1: { name: "A会場" },
+      },
+      sessions: {
+        S1: {
+          title: "発表なしセッション",
+          date: "2026-03-04",
+          start_time: "9:00",
+          end_time: "10:00",
+          room_ids: ["R1"],
+          chair: "",
+          presentation_ids: [],
+        },
+      },
+      presentations: {},
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataWithMixedSessions,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-04");
+    });
+    await act(async () => {});
+
+    const { allTimes, timelineSegments } = hook.getLatest().headerProps;
+    const start0900 = allTimes.indexOf("9:00");
+    expect(start0900).toBeGreaterThanOrEqual(0);
+    expect(timelineSegments[start0900]).toBe(true);
+
+    hook.unmount();
+  });
+
+  it("会場選択時に該当会場の発表が無ければタイムラインは未塗り（時刻範囲は維持）", async () => {
+    const dataWithOtherRoomPresentation: ConferenceData = {
+      generated_at: "2026-03-04T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        R1: { name: "A会場" },
+        R2: { name: "B会場" },
+      },
+      sessions: {
+        SA: {
+          title: "A会場 発表なし",
+          date: "2026-03-04",
+          start_time: "9:00",
+          end_time: "10:00",
+          room_ids: ["R1"],
+          chair: "",
+          presentation_ids: [],
+        },
+        SB: {
+          title: "B会場 発表あり",
+          date: "2026-03-04",
+          start_time: "10:00",
+          end_time: "11:00",
+          room_ids: ["R2"],
+          chair: "",
+          presentation_ids: ["P1"],
+        },
+      },
+      presentations: {
+        P1: {
+          title: "発表1",
+          session_id: "SB",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+      },
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataWithOtherRoomPresentation,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-04");
+      hook.getLatest().headerProps.onSelectRoom("A");
+    });
+    await act(async () => {});
+
+    const { allTimes, timelineSegments } = hook.getLatest().headerProps;
+    expect(allTimes[0]).toBe("9:00");
+    expect(allTimes[allTimes.length - 1]).toBe("11:00");
+    expect(timelineSegments.some(Boolean)).toBe(false);
+
+    hook.unmount();
+  });
+
   it("アプリ更新確認で更新がなければ no_change をセットする", async () => {
     vi.useFakeTimers();
 

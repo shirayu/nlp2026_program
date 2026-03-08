@@ -117,6 +117,80 @@ describe("TimelineFilter", () => {
     expect(countMatches(html, /bg-teal-200/g)).toBe(3);
   });
 
+  it("会場選択時は該当会場の色でアクティブセグメントを塗る", () => {
+    const html = renderToStaticMarkup(
+      <TimelineFilter
+        points={["10:20", "10:25", "10:30", "10:35"]}
+        activeSegments={[true, true, true]}
+        selectedRoom="A"
+        selectedDate={null}
+        selectedTime="10:35"
+        onChange={vi.fn()}
+        onSelectNow={vi.fn()}
+        nowEnabled
+      />,
+    );
+
+    expect(countMatches(html, /bg-rose-200/g)).toBe(3);
+    expect(html).not.toContain("bg-teal-200");
+  });
+
+  it("会場選択時でも過去セグメントは会場色より濃い灰色を優先する", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 2, 4, 10, 30, 0));
+
+    const html = renderToStaticMarkup(
+      <TimelineFilter
+        points={["10:20", "10:25", "10:30", "10:35"]}
+        activeSegments={[true, true, true]}
+        selectedRoom="A"
+        selectedDate="2026-03-04"
+        selectedTime="10:35"
+        onChange={vi.fn()}
+        onSelectNow={vi.fn()}
+        nowEnabled
+      />,
+    );
+
+    expect(countMatches(html, /bg-gray-600/g)).toBe(2);
+    expect(countMatches(html, /bg-rose-200/g)).toBe(1);
+  });
+
+  it("未知の会場コードでは既定色（teal）を使う", () => {
+    const html = renderToStaticMarkup(
+      <TimelineFilter
+        points={["10:20", "10:25", "10:30", "10:35"]}
+        activeSegments={[true, true, true]}
+        selectedRoom="第7会場"
+        selectedDate={null}
+        selectedTime="10:35"
+        onChange={vi.fn()}
+        onSelectNow={vi.fn()}
+        nowEnabled
+      />,
+    );
+
+    expect(countMatches(html, /bg-teal-200/g)).toBe(3);
+  });
+
+  it("時点未指定かつ会場選択時はアクティブセグメントを薄い灰色で表示する", () => {
+    const html = renderToStaticMarkup(
+      <TimelineFilter
+        points={["10:20", "10:25", "10:30", "10:35"]}
+        activeSegments={[true, false, true]}
+        selectedRoom="A"
+        selectedDate={null}
+        selectedTime={null}
+        onChange={vi.fn()}
+        onSelectNow={vi.fn()}
+        nowEnabled
+      />,
+    );
+
+    expect(countMatches(html, /bg-gray-200/g)).toBe(2);
+    expect(html).not.toContain("bg-rose-200");
+  });
+
   it("ドラッグ中も input ごとに onChange を確定する", () => {
     const onChange = vi.fn();
     const container = document.createElement("div");
