@@ -259,7 +259,7 @@ function RoomChips({
     if (roomCode === "P") return "border-sky-400";
     if (roomCode === "Q") return "border-fuchsia-400";
     if (roomCode === "M") return "border-violet-400";
-    return "border-slate-300";
+    return "border-indigo-300";
   }
 
   function roomActiveClass(room: string): string {
@@ -270,7 +270,29 @@ function RoomChips({
     if (roomCode === "P") return "bg-sky-50 text-sky-800";
     if (roomCode === "Q") return "bg-fuchsia-50 text-fuchsia-800";
     if (roomCode === "M") return "bg-violet-50 text-violet-800";
-    return "bg-slate-50 text-slate-700";
+    return "bg-indigo-50 text-indigo-800";
+  }
+
+  function roomSelectedClass(room: string): string {
+    const roomCode = getRoomCode(room);
+    if (roomCode === "A") return "bg-rose-600 text-white";
+    if (roomCode === "B") return "bg-amber-600 text-white";
+    if (roomCode === "C") return "bg-emerald-600 text-white";
+    if (roomCode === "P") return "bg-sky-600 text-white";
+    if (roomCode === "Q") return "bg-fuchsia-600 text-white";
+    if (roomCode === "M") return "bg-violet-600 text-white";
+    return "bg-indigo-600 text-white";
+  }
+
+  function roomInactiveClass(room: string): string {
+    const roomCode = getRoomCode(room);
+    if (roomCode === "A") return "bg-rose-50/70 text-rose-700";
+    if (roomCode === "B") return "bg-amber-50/70 text-amber-700";
+    if (roomCode === "C") return "bg-emerald-50/70 text-emerald-700";
+    if (roomCode === "P") return "bg-sky-50/70 text-sky-700";
+    if (roomCode === "Q") return "bg-fuchsia-50/70 text-fuchsia-700";
+    if (roomCode === "M") return "bg-violet-50/70 text-violet-700";
+    return "bg-indigo-50/70 text-indigo-700";
   }
 
   return (
@@ -280,12 +302,12 @@ function RoomChips({
           type="button"
           disabled={filtersDisabled}
           onClick={() => onSelectRoom(null)}
-          className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${
+          className={`shrink-0 rounded-full border px-3 py-1 text-xs font-medium ${
             filtersDisabled
-              ? "cursor-not-allowed bg-gray-200 text-gray-400"
+              ? "cursor-not-allowed bg-gray-200 text-gray-400 border-gray-300"
               : selectedRoom === null
-                ? "bg-indigo-600 text-white"
-                : "bg-gray-100 text-gray-600"
+                ? "border-indigo-600 bg-indigo-600 text-white"
+                : "border-indigo-300 bg-indigo-50 text-indigo-800"
           }`}
         >
           {ja.allRooms}
@@ -303,10 +325,10 @@ function RoomChips({
                 filtersDisabled
                   ? "cursor-not-allowed bg-gray-200 text-gray-400 border-gray-300"
                   : isSelected
-                    ? `${roomBorderClass(room)} bg-gray-700 text-white`
+                    ? `${roomBorderClass(room)} ${roomSelectedClass(room)}`
                     : isActive
                       ? `${roomBorderClass(room)} ${roomActiveClass(room)}`
-                      : `${roomBorderClass(room)} bg-gray-200 text-gray-500`
+                      : `${roomBorderClass(room)} ${roomInactiveClass(room)}`
               }`}
             >
               {room}

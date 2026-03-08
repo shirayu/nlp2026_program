@@ -89,7 +89,7 @@ function getActiveSegmentClass(selectedRoom: string | null | undefined): string 
   if (roomCode === "P") return "bg-sky-200";
   if (roomCode === "Q") return "bg-fuchsia-200";
   if (roomCode === "M") return "bg-violet-200";
-  return "bg-teal-200";
+  return "bg-indigo-200";
 }
 
 function getTimelineSegmentClass(

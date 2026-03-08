@@ -74,7 +74,7 @@ describe("TimelineFilter", () => {
     );
 
     expect(countMatches(html, /bg-gray-600/g)).toBe(2);
-    expect(countMatches(html, /bg-teal-200/g)).toBe(1);
+    expect(countMatches(html, /bg-indigo-200/g)).toBe(1);
   });
 
   it("過去日ではアクティブな全セグメントを濃い灰色にする", () => {
@@ -94,7 +94,7 @@ describe("TimelineFilter", () => {
     );
 
     expect(countMatches(html, /bg-gray-600/g)).toBe(3);
-    expect(html).not.toContain("bg-teal-200");
+    expect(html).not.toContain("bg-indigo-200");
   });
 
   it("未来日ではアクティブなセグメントを濃い灰色にしない", () => {
@@ -114,7 +114,7 @@ describe("TimelineFilter", () => {
     );
 
     expect(html).not.toContain("bg-gray-600");
-    expect(countMatches(html, /bg-teal-200/g)).toBe(3);
+    expect(countMatches(html, /bg-indigo-200/g)).toBe(3);
   });
 
   it("会場選択時は該当会場の色でアクティブセグメントを塗る", () => {
@@ -132,7 +132,7 @@ describe("TimelineFilter", () => {
     );
 
     expect(countMatches(html, /bg-rose-200/g)).toBe(3);
-    expect(html).not.toContain("bg-teal-200");
+    expect(html).not.toContain("bg-indigo-200");
   });
 
   it("会場選択時でも過去セグメントは会場色より濃い灰色を優先する", () => {
@@ -156,7 +156,7 @@ describe("TimelineFilter", () => {
     expect(countMatches(html, /bg-rose-200/g)).toBe(1);
   });
 
-  it("未知の会場コードでは既定色（teal）を使う", () => {
+  it("未知の会場コードでは既定色（indigo）を使う", () => {
     const html = renderToStaticMarkup(
       <TimelineFilter
         points={["10:20", "10:25", "10:30", "10:35"]}
@@ -170,7 +170,7 @@ describe("TimelineFilter", () => {
       />,
     );
 
-    expect(countMatches(html, /bg-teal-200/g)).toBe(3);
+    expect(countMatches(html, /bg-indigo-200/g)).toBe(3);
   });
 
   it("時点未指定かつ会場選択時はアクティブセグメントを薄い灰色で表示する", () => {

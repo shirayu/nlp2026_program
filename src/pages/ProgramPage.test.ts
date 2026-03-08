@@ -324,7 +324,7 @@ describe("ProgramHeader", () => {
     expect(html).toContain("3/6(金) 00:01");
   });
 
-  it("非該当会場はグレー、選択中は濃いグレーで会場色ボーダーを維持する", () => {
+  it("非選択会場も会場色を維持し、選択中は会場色の濃色で表示する", () => {
     const html = renderToStaticMarkup(
       createElement(ProgramHeader, {
         query: "",
@@ -362,8 +362,9 @@ describe("ProgramHeader", () => {
       }),
     );
 
+    expect(html).toContain("border-indigo-300 bg-indigo-50 text-indigo-800");
     expect(html).toContain("border-rose-400 bg-rose-50 text-rose-800");
-    expect(html).toContain("border-amber-400 bg-gray-700 text-white");
+    expect(html).toContain("border-amber-400 bg-amber-600 text-white");
   });
 
   it("その日に発表が1件もない会場は無彩色ボーダーにする", () => {
