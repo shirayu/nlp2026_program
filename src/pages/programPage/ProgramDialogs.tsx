@@ -1276,6 +1276,18 @@ export function SettingsDialog({
                 </div>
               </section>
             </section>
+            <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
+              <h3 className="text-sm font-semibold text-gray-800">{ja.exportDataSectionTitle}</h3>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={onExport}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-indigo-300 hover:text-indigo-600"
+                >
+                  {ja.exportAppData}
+                </button>
+              </div>
+            </section>
             <section className="mt-4 rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
               <h3 className="text-sm font-semibold text-gray-800">{ja.iconLegend}</h3>
               <ul className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600">
@@ -1374,18 +1386,6 @@ export function SettingsDialog({
                   <dd className="min-w-0 break-all font-mono text-left text-gray-800">{formattedBuildGitDate}</dd>
                 </div>
               </dl>
-            </section>
-            <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
-              <h3 className="text-sm font-semibold text-gray-800">{ja.exportDataSectionTitle}</h3>
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  onClick={onExport}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-indigo-300 hover:text-indigo-600"
-                >
-                  {ja.exportAppData}
-                </button>
-              </div>
             </section>
             <ClearAllDataSection onClearAllData={onClearAllData} />
           </div>
