@@ -191,6 +191,23 @@ describe("TimelineFilter", () => {
     expect(html).not.toContain("bg-rose-200");
   });
 
+  it("時点未指定かつ全会場時はアクティブセグメントを薄い灰色で表示する", () => {
+    const html = renderToStaticMarkup(
+      <TimelineFilter
+        points={["10:20", "10:25", "10:30", "10:35"]}
+        activeSegments={[true, false, true]}
+        selectedDate={null}
+        selectedTime={null}
+        onChange={vi.fn()}
+        onSelectNow={vi.fn()}
+        nowEnabled
+      />,
+    );
+
+    expect(countMatches(html, /bg-gray-200/g)).toBe(2);
+    expect(countMatches(html, /h-full flex-1 bg-slate-100/g)).toBe(1);
+  });
+
   it("ドラッグ中も input ごとに onChange を確定する", () => {
     const onChange = vi.fn();
     const container = document.createElement("div");

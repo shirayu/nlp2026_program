@@ -96,13 +96,12 @@ function getTimelineSegmentClass(
   segment: { isActive: boolean; past: boolean },
   opts: {
     isUnspecified: boolean;
-    selectedRoom: string | null;
     activeSegmentClass: string;
   },
 ): string {
   if (!segment.isActive) return "bg-slate-100";
   if (opts.isUnspecified) {
-    return opts.selectedRoom ? "bg-gray-200" : "bg-slate-100";
+    return "bg-gray-200";
   }
   if (segment.past) return "bg-gray-600";
   return opts.activeSegmentClass;
@@ -258,7 +257,6 @@ export function TimelineFilter({
                   key={segment.key}
                   className={`h-full flex-1 ${getTimelineSegmentClass(segment, {
                     isUnspecified,
-                    selectedRoom,
                     activeSegmentClass,
                   })}`}
                 />
