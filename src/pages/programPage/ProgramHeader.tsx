@@ -306,8 +306,8 @@ function RoomChips({
             filtersDisabled
               ? "cursor-not-allowed bg-gray-200 text-gray-400 border-gray-300"
               : selectedRoom === null
-                ? "border-indigo-600 bg-indigo-600 text-white"
-                : "border-indigo-300 bg-indigo-50 text-indigo-800"
+                ? "border-lime-400 bg-lime-300 text-lime-950"
+                : "border-lime-200 bg-lime-50 text-lime-900"
           }`}
         >
           {ja.allRooms}
