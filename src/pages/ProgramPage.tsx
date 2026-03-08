@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS } from "../constants/network";
 import { ja } from "../locales/ja";
 import { ProgramHeader } from "./programPage/ProgramHeader";
 import { ProgramOverlays } from "./programPage/ProgramOverlays";
@@ -11,11 +13,32 @@ export { SearchField, fullscreenDialogClassName, getNextScheduleTimePoint };
 export default function ProgramPage() {
   const { data, initialLoadStatus, onRetryInitialLoad, headerProps, resultsProps, overlayProps } =
     useProgramPageState();
+  const [remainingSeconds, setRemainingSeconds] = useState(CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS);
+  const shouldShowCountdown = remainingSeconds <= CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS - 1;
+
+  useEffect(() => {
+    if (initialLoadStatus !== "loading") {
+      return;
+    }
+
+    setRemainingSeconds(CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS);
+    const startedAt = Date.now();
+    const intervalId = window.setInterval(() => {
+      const elapsedSeconds = (Date.now() - startedAt) / 1000;
+      const nextSeconds = Math.max(0, CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS - elapsedSeconds);
+      setRemainingSeconds(nextSeconds);
+    }, 100);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [initialLoadStatus]);
 
   if (initialLoadStatus === "loading") {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-1">
         <p className="text-gray-500">{ja.loading}</p>
+        {shouldShowCountdown ? <p className="text-xs text-gray-400">{ja.loadingCountdown(remainingSeconds)}</p> : null}
       </div>
     );
   }

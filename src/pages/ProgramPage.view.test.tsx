@@ -64,7 +64,31 @@ describe("ProgramPage view states", () => {
     const page = renderPage();
 
     expect(page.container.textContent).toContain("読み込み中...");
+    expect(page.container.textContent).not.toContain("キャッシュ利用まで:");
     page.unmount();
+  });
+
+  it("initialLoadStatus=loading のときカウントダウン表示が減少する", () => {
+    vi.useFakeTimers();
+    mockUseProgramPageState.mockReturnValue({
+      data: null,
+      initialLoadStatus: "loading",
+      onRetryInitialLoad: vi.fn(),
+      headerProps: {},
+      resultsProps: {},
+      overlayProps: {},
+    });
+
+    const page = renderPage();
+    expect(page.container.textContent).not.toContain("キャッシュ利用まで:");
+
+    act(() => {
+      vi.advanceTimersByTime(1200);
+    });
+
+    expect(page.container.textContent).toContain("キャッシュ利用まで: 1.8 sec");
+    page.unmount();
+    vi.useRealTimers();
   });
 
   it("initialLoadStatus=error のとき再試行UIを表示する", () => {

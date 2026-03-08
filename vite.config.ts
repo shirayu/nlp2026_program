@@ -4,6 +4,7 @@ import react from "@vitejs/plugin-react";
 import { loadEnv } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import { defineConfig } from "vitest/config";
+import { CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS } from "./src/constants/network";
 
 function resolveBlobVersion(repoPath: string, fallbackVersion: string): string {
   try {
@@ -98,8 +99,8 @@ export default defineConfig(({ mode }) => {
               handler: "NetworkFirst",
               options: {
                 cacheName: "conference-json",
-                // 電波が弱い会場では長く待たず、3 秒でキャッシュ利用へ切り替える。
-                networkTimeoutSeconds: 3,
+                // 電波が弱い会場では長く待たず、一定秒でキャッシュ利用へ切り替える。
+                networkTimeoutSeconds: CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS,
                 expiration: {
                   // data.json のみを保持対象にする。
                   maxEntries: 1,

@@ -3,6 +3,7 @@ export const ja = {
   programPageTitle: "NLP2026",
   programPageSubTitle: "予定表 (非公式版)",
   loading: "読み込み中...",
+  loadingCountdown: (seconds: number) => `キャッシュ利用まで: ${seconds.toFixed(1)} sec`,
   loadingFailed: "データの読み込みに失敗しました。オンライン接続後に再試行してください。",
   retryLoading: "再試行",
   noResults: "該当する発表がありません",
