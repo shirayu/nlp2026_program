@@ -362,7 +362,7 @@ describe("ProgramHeader", () => {
       }),
     );
 
-    expect(html).toContain("border-lime-200 bg-lime-50 text-lime-900");
+    expect(html).toContain("border-lime-100 bg-lime-50 text-lime-900");
     expect(html).toContain("border-rose-400 bg-rose-50 text-rose-800");
     expect(html).toContain("border-amber-400 bg-amber-600 text-white");
   });
