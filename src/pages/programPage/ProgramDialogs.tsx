@@ -587,20 +587,28 @@ function ZoomImportCodeDialog({
 }) {
   const [code, setCode] = useState("");
   const [invalid, setInvalid] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
 
   useEffect(() => {
     if (!open) return;
     setCode("");
     setInvalid(false);
+    setIsImporting(false);
   }, [open]);
 
   async function handleImport() {
-    const accepted = await onImport(code);
-    if (!accepted) {
-      setInvalid(true);
-      return;
+    if (isImporting) return;
+    setIsImporting(true);
+    try {
+      const accepted = await onImport(code);
+      if (!accepted) {
+        setInvalid(true);
+        return;
+      }
+      onClose();
+    } finally {
+      setIsImporting(false);
     }
-    onClose();
   }
 
   return (
@@ -647,9 +655,10 @@ function ZoomImportCodeDialog({
               <button
                 type="button"
                 onClick={() => void handleImport()}
+                disabled={isImporting}
                 className="rounded-full bg-indigo-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
               >
-                {ja.zoomImportCodeRun}
+                {isImporting ? ja.zoomImportCodeRunning : ja.zoomImportCodeRun}
               </button>
             </div>
           </div>
@@ -670,20 +679,28 @@ function SettingsImportCodeDialog({
 }) {
   const [code, setCode] = useState("");
   const [invalid, setInvalid] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
 
   useEffect(() => {
     if (!open) return;
     setCode("");
     setInvalid(false);
+    setIsImporting(false);
   }, [open]);
 
   async function handleImport() {
-    const accepted = await onImport(code);
-    if (!accepted) {
-      setInvalid(true);
-      return;
+    if (isImporting) return;
+    setIsImporting(true);
+    try {
+      const accepted = await onImport(code);
+      if (!accepted) {
+        setInvalid(true);
+        return;
+      }
+      onClose();
+    } finally {
+      setIsImporting(false);
     }
-    onClose();
   }
 
   return (
@@ -730,9 +747,10 @@ function SettingsImportCodeDialog({
               <button
                 type="button"
                 onClick={() => void handleImport()}
+                disabled={isImporting}
                 className="rounded-full bg-indigo-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
               >
-                {ja.settingsImportCodeRun}
+                {isImporting ? ja.settingsImportCodeRunning : ja.settingsImportCodeRun}
               </button>
             </div>
           </div>
