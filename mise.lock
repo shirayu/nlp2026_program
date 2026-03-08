@@ -97,7 +97,7 @@ checksum = "sha256:eb1e212b97b001efc1281bb01fd26ca1ecdfe9ef2875b52c58d39e9719ab7
 url = "https://github.com/astral-sh/python-build-standalone/releases/download/20260303/cpython-3.13.12+20260303-x86_64-pc-windows-msvc-install_only_stripped.tar.gz"
 
 [[tools.task]]
-version = "3.49.0"
+version = "3.49.1"
 backend = "ubi:go-task/task"
 
 [[tools.typos]]
