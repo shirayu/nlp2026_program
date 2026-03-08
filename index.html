@@ -3,13 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="%VITE_APP_DESCRIPTION%" />
     <meta name="theme-color" content="#4338ca" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:url" content="%VITE_APP_PUBLIC_URL%" />
+    <meta property="og:title" content="%VITE_APP_TITLE%" />
+    <meta property="og:description" content="%VITE_APP_DESCRIPTION%" />
+    <meta property="og:image" content="./%VITE_PWA_ICON_512_FILE%" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="%VITE_APP_TITLE%" />
+    <meta name="twitter:description" content="%VITE_APP_DESCRIPTION%" />
+    <meta name="twitter:image" content="./%VITE_PWA_ICON_512_FILE%" />
     <link rel="icon" type="image/png" href="./%VITE_PWA_ICON_192_FILE%" />
     <link rel="apple-touch-icon" href="./%VITE_APPLE_TOUCH_ICON_FILE%" />
-    <title></title>
+    <title>%VITE_APP_TITLE%</title>
   </head>
   <body>
     <div id="root"></div>
