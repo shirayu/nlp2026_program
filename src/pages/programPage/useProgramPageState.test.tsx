@@ -558,6 +558,131 @@ describe("useProgramPageState", () => {
     hook.unmount();
   });
 
+  it("実データ相当の連続操作で日付・会場・時点に応じた判定が一貫する", async () => {
+    const dataForSequentialScenario: ConferenceData = {
+      generated_at: "2026-03-11T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        R3F: { name: "3F" },
+        RA: { name: "A会場" },
+        RP: { name: "P会場(第2部 1F 大ホール(西)・ホワイエ)" },
+        RQ: { name: "Q会場(1F ホワイエ)" },
+      },
+      sessions: {
+        invited: {
+          title: "招待講演",
+          date: "2026-03-11",
+          start_time: "11:00",
+          end_time: "12:00",
+          room_ids: ["RA"],
+          chair: "",
+          presentation_ids: ["P1"],
+        },
+        sponsorD1: {
+          title: "スポンサーミートアップ",
+          date: "2026-03-11",
+          start_time: "15:00",
+          end_time: "16:50",
+          room_ids: ["RP"],
+          chair: "",
+          presentation_ids: [],
+        },
+        qPrevDay: {
+          title: "Q会場 別日セッション",
+          date: "2026-03-12",
+          start_time: "10:00",
+          end_time: "11:00",
+          room_ids: ["RQ"],
+          chair: "",
+          presentation_ids: ["PQ1"],
+        },
+        sponsorD3: {
+          title: "スポンサーミートアップ",
+          date: "2026-03-13",
+          start_time: "15:00",
+          end_time: "16:50",
+          room_ids: ["RP"],
+          chair: "",
+          presentation_ids: [],
+        },
+      },
+      presentations: {
+        P1: {
+          title: "招待講演",
+          session_id: "invited",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+        PQ1: {
+          title: "Q別日発表",
+          session_id: "qPrevDay",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+      },
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataForSequentialScenario,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-11");
+      hook.getLatest().headerProps.onSelectRoom("3F");
+      hook.getLatest().headerProps.onSelectTime("11:00");
+    });
+    await act(async () => {});
+
+    const idx1100D1 = hook.getLatest().headerProps.allTimes.indexOf("11:00");
+    expect(idx1100D1).toBeGreaterThanOrEqual(0);
+    expect(hook.getLatest().headerProps.timelineSegments[idx1100D1]).toBe(false);
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.["3F"]).toBeUndefined();
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("該当する発表・セッションがありません");
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectRoom("P");
+      hook.getLatest().headerProps.onSelectTime("15:00");
+    });
+    await act(async () => {});
+
+    const idx1500D1 = hook.getLatest().headerProps.allTimes.indexOf("15:00");
+    expect(idx1500D1).toBeGreaterThanOrEqual(0);
+    expect(hook.getLatest().headerProps.timelineSegments[idx1500D1]).toBe(true);
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.P).toBe(false);
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-13");
+      hook.getLatest().headerProps.onSelectRoom("Q");
+      hook.getLatest().headerProps.onSelectTime("15:00");
+    });
+    await act(async () => {});
+
+    const idx1500D3 = hook.getLatest().headerProps.allTimes.indexOf("15:00");
+    expect(idx1500D3).toBeGreaterThanOrEqual(0);
+    expect(hook.getLatest().headerProps.timelineSegments[idx1500D3]).toBe(false);
+    expect(hook.getLatest().headerProps.activeRooms).toEqual(["P"]);
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.Q).toBeUndefined();
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+
+    hook.unmount();
+  });
+
   it("選択会場に当日のセッション自体が無い場合でも、時点未指定なら専用空メッセージを出す", async () => {
     const dataWithRoomUnusedOnDate: ConferenceData = {
       generated_at: "2026-03-04T09:00:00+09:00",

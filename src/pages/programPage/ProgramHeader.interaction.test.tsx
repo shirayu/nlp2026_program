@@ -15,6 +15,72 @@ function findButtonByText(container: HTMLElement, label: string): HTMLButtonElem
   return button as HTMLButtonElement;
 }
 
+function normalizeClassName(className: string): string {
+  return className
+    .split(/\s+/)
+    .filter((token) => token.length > 0)
+    .sort()
+    .join(" ");
+}
+
+type RoomChipSnapshotCase = {
+  selectedTime: string | null;
+  isActive: boolean;
+  isSelected: boolean;
+  hasNoPresentation: boolean;
+  filtersDisabled: boolean;
+};
+
+function buildRoomChipSnapshotCases(): RoomChipSnapshotCase[] {
+  const bools = [false, true] as const;
+  return bools.flatMap((hasSelectedTime) =>
+    bools.flatMap((isActive) =>
+      bools.flatMap((isSelected) =>
+        bools.flatMap((hasNoPresentation) =>
+          bools.map((filtersDisabled) => ({
+            selectedTime: hasSelectedTime ? "9:00" : null,
+            isActive,
+            isSelected,
+            hasNoPresentation,
+            filtersDisabled,
+          })),
+        ),
+      ),
+    ),
+  );
+}
+
+function renderRoomChipClassName(testCase: RoomChipSnapshotCase): string {
+  const container = document.createElement("div");
+  document.body.append(container);
+  const root = createRoot(container);
+  const room = "A";
+
+  act(() => {
+    root.render(
+      <ProgramHeader
+        {...baseHeaderProps()}
+        rooms={[room]}
+        activeRooms={testCase.isActive ? [room] : []}
+        selectedRoom={testCase.isSelected ? room : null}
+        selectedTime={testCase.selectedTime}
+        roomHasPresentationsOnSelectedDate={testCase.hasNoPresentation ? { [room]: false } : { [room]: true }}
+        filtersDisabled={testCase.filtersDisabled}
+      />,
+    );
+  });
+
+  const targetButton = findButtonByText(container, room);
+  const className = normalizeClassName(targetButton.className);
+
+  act(() => {
+    root.unmount();
+  });
+  container.remove();
+
+  return className;
+}
+
 type HeaderProps = ComponentProps<typeof ProgramHeader>;
 
 function baseHeaderProps(): HeaderProps {
@@ -244,5 +310,273 @@ describe("ProgramHeader room chip interaction", () => {
       });
       container.remove();
     }
+  });
+
+  it("部屋ボタンの組み合わせクラスをスナップショット固定する（正規化済み）", () => {
+    const rows = buildRoomChipSnapshotCases().map((testCase) => ({
+      ...testCase,
+      className: renderRoomChipClassName(testCase),
+    }));
+
+    expect(rows).toMatchInlineSnapshot(`
+      [
+        {
+          "className": "bg-rose-50/70 border border-rose-400 font-medium px-3 py-1 rounded-full shrink-0 text-rose-700 text-xs",
+          "filtersDisabled": false,
+          "hasNoPresentation": false,
+          "isActive": false,
+          "isSelected": false,
+          "selectedTime": null,
+        },
+        {
+          "className": "bg-gray-200 border border-gray-300 cursor-not-allowed font-medium px-3 py-1 rounded-full shrink-0 text-gray-400 text-xs",
+          "filtersDisabled": true,
+          "hasNoPresentation": false,
+          "isActive": false,
+          "isSelected": false,
+          "selectedTime": null,
+        },
+        {
+          "className": "bg-slate-100 border border-slate-300 font-medium px-3 py-1 rounded-full shrink-0 text-slate-600 text-xs",
+          "filtersDisabled": false,
+          "hasNoPresentation": true,
+          "isActive": false,
+          "isSelected": false,
+          "selectedTime": null,
+        },
+        {
+          "className": "bg-gray-200 border border-gray-300 cursor-not-allowed font-medium px-3 py-1 rounded-full shrink-0 text-gray-400 text-xs",
+          "filtersDisabled": true,
+          "hasNoPresentation": true,
+          "isActive": false,
+          "isSelected": false,
+          "selectedTime": null,
+        },
+        {
+          "className": "bg-rose-600 border border-rose-400 font-medium px-3 py-1 rounded-full shrink-0 text-white text-xs",
+          "filtersDisabled": false,
+          "hasNoPresentation": false,
+          "isActive": false,
+          "isSelected": true,
+          "selectedTime": null,
+        },
+        {
+          "className": "bg-gray-200 border border-gray-300 cursor-not-allowed font-medium px-3 py-1 rounded-full shrink-0 text-gray-400 text-xs",
+          "filtersDisabled": true,
+          "hasNoPresentation": false,
+          "isActive": false,
+          "isSelected": true,
+          "selectedTime": null,
+        },
+        {
+          "className": "bg-slate-500 border border-slate-300 font-medium px-3 py-1 rounded-full shrink-0 text-white text-xs",
+          "filtersDisabled": false,
+          "hasNoPresentation": true,
+          "isActive": false,
+          "isSelected": true,
+          "selectedTime": null,
+        },
+        {
+          "className": "bg-gray-200 border border-gray-300 cursor-not-allowed font-medium px-3 py-1 rounded-full shrink-0 text-gray-400 text-xs",
+          "filtersDisabled": true,
+          "hasNoPresentation": true,
+          "isActive": false,
+          "isSelected": true,
+          "selectedTime": null,
+        },
+        {
+          "className": "bg-rose-50 border border-rose-400 font-medium px-3 py-1 rounded-full shrink-0 text-rose-800 text-xs",
+          "filtersDisabled": false,
+          "hasNoPresentation": false,
+          "isActive": true,
+          "isSelected": false,
+          "selectedTime": null,
+        },
+        {
+          "className": "bg-gray-200 border border-gray-300 cursor-not-allowed font-medium px-3 py-1 rounded-full shrink-0 text-gray-400 text-xs",
+          "filtersDisabled": true,
+          "hasNoPresentation": false,
+          "isActive": true,
+          "isSelected": false,
+          "selectedTime": null,
+        },
+        {
+          "className": "bg-slate-100 border border-slate-300 font-medium px-3 py-1 rounded-full shrink-0 text-slate-600 text-xs",
+          "filtersDisabled": false,
+          "hasNoPresentation": true,
+          "isActive": true,
+          "isSelected": false,
+          "selectedTime": null,
+        },
+        {
+          "className": "bg-gray-200 border border-gray-300 cursor-not-allowed font-medium px-3 py-1 rounded-full shrink-0 text-gray-400 text-xs",
+          "filtersDisabled": true,
+          "hasNoPresentation": true,
+          "isActive": true,
+          "isSelected": false,
+          "selectedTime": null,
+        },
+        {
+          "className": "bg-rose-600 border border-rose-400 font-medium px-3 py-1 rounded-full shrink-0 text-white text-xs",
+          "filtersDisabled": false,
+          "hasNoPresentation": false,
+          "isActive": true,
+          "isSelected": true,
+          "selectedTime": null,
+        },
+        {
+          "className": "bg-gray-200 border border-gray-300 cursor-not-allowed font-medium px-3 py-1 rounded-full shrink-0 text-gray-400 text-xs",
+          "filtersDisabled": true,
+          "hasNoPresentation": false,
+          "isActive": true,
+          "isSelected": true,
+          "selectedTime": null,
+        },
+        {
+          "className": "bg-slate-500 border border-slate-300 font-medium px-3 py-1 rounded-full shrink-0 text-white text-xs",
+          "filtersDisabled": false,
+          "hasNoPresentation": true,
+          "isActive": true,
+          "isSelected": true,
+          "selectedTime": null,
+        },
+        {
+          "className": "bg-gray-200 border border-gray-300 cursor-not-allowed font-medium px-3 py-1 rounded-full shrink-0 text-gray-400 text-xs",
+          "filtersDisabled": true,
+          "hasNoPresentation": true,
+          "isActive": true,
+          "isSelected": true,
+          "selectedTime": null,
+        },
+        {
+          "className": "bg-slate-100 border border-slate-300 font-medium px-3 py-1 rounded-full shrink-0 text-slate-600 text-xs",
+          "filtersDisabled": false,
+          "hasNoPresentation": false,
+          "isActive": false,
+          "isSelected": false,
+          "selectedTime": "9:00",
+        },
+        {
+          "className": "bg-gray-200 border border-gray-300 cursor-not-allowed font-medium px-3 py-1 rounded-full shrink-0 text-gray-400 text-xs",
+          "filtersDisabled": true,
+          "hasNoPresentation": false,
+          "isActive": false,
+          "isSelected": false,
+          "selectedTime": "9:00",
+        },
+        {
+          "className": "bg-slate-100 border border-slate-300 font-medium px-3 py-1 rounded-full shrink-0 text-slate-600 text-xs",
+          "filtersDisabled": false,
+          "hasNoPresentation": true,
+          "isActive": false,
+          "isSelected": false,
+          "selectedTime": "9:00",
+        },
+        {
+          "className": "bg-gray-200 border border-gray-300 cursor-not-allowed font-medium px-3 py-1 rounded-full shrink-0 text-gray-400 text-xs",
+          "filtersDisabled": true,
+          "hasNoPresentation": true,
+          "isActive": false,
+          "isSelected": false,
+          "selectedTime": "9:00",
+        },
+        {
+          "className": "bg-slate-500 border border-slate-300 font-medium px-3 py-1 rounded-full shrink-0 text-white text-xs",
+          "filtersDisabled": false,
+          "hasNoPresentation": false,
+          "isActive": false,
+          "isSelected": true,
+          "selectedTime": "9:00",
+        },
+        {
+          "className": "bg-gray-200 border border-gray-300 cursor-not-allowed font-medium px-3 py-1 rounded-full shrink-0 text-gray-400 text-xs",
+          "filtersDisabled": true,
+          "hasNoPresentation": false,
+          "isActive": false,
+          "isSelected": true,
+          "selectedTime": "9:00",
+        },
+        {
+          "className": "bg-slate-500 border border-slate-300 font-medium px-3 py-1 rounded-full shrink-0 text-white text-xs",
+          "filtersDisabled": false,
+          "hasNoPresentation": true,
+          "isActive": false,
+          "isSelected": true,
+          "selectedTime": "9:00",
+        },
+        {
+          "className": "bg-gray-200 border border-gray-300 cursor-not-allowed font-medium px-3 py-1 rounded-full shrink-0 text-gray-400 text-xs",
+          "filtersDisabled": true,
+          "hasNoPresentation": true,
+          "isActive": false,
+          "isSelected": true,
+          "selectedTime": "9:00",
+        },
+        {
+          "className": "bg-rose-50 border border-rose-400 font-medium px-3 py-1 rounded-full shrink-0 text-rose-800 text-xs",
+          "filtersDisabled": false,
+          "hasNoPresentation": false,
+          "isActive": true,
+          "isSelected": false,
+          "selectedTime": "9:00",
+        },
+        {
+          "className": "bg-gray-200 border border-gray-300 cursor-not-allowed font-medium px-3 py-1 rounded-full shrink-0 text-gray-400 text-xs",
+          "filtersDisabled": true,
+          "hasNoPresentation": false,
+          "isActive": true,
+          "isSelected": false,
+          "selectedTime": "9:00",
+        },
+        {
+          "className": "bg-slate-100 border border-slate-300 font-medium px-3 py-1 rounded-full shrink-0 text-slate-600 text-xs",
+          "filtersDisabled": false,
+          "hasNoPresentation": true,
+          "isActive": true,
+          "isSelected": false,
+          "selectedTime": "9:00",
+        },
+        {
+          "className": "bg-gray-200 border border-gray-300 cursor-not-allowed font-medium px-3 py-1 rounded-full shrink-0 text-gray-400 text-xs",
+          "filtersDisabled": true,
+          "hasNoPresentation": true,
+          "isActive": true,
+          "isSelected": false,
+          "selectedTime": "9:00",
+        },
+        {
+          "className": "bg-rose-600 border border-rose-400 font-medium px-3 py-1 rounded-full shrink-0 text-white text-xs",
+          "filtersDisabled": false,
+          "hasNoPresentation": false,
+          "isActive": true,
+          "isSelected": true,
+          "selectedTime": "9:00",
+        },
+        {
+          "className": "bg-gray-200 border border-gray-300 cursor-not-allowed font-medium px-3 py-1 rounded-full shrink-0 text-gray-400 text-xs",
+          "filtersDisabled": true,
+          "hasNoPresentation": false,
+          "isActive": true,
+          "isSelected": true,
+          "selectedTime": "9:00",
+        },
+        {
+          "className": "bg-slate-500 border border-slate-300 font-medium px-3 py-1 rounded-full shrink-0 text-white text-xs",
+          "filtersDisabled": false,
+          "hasNoPresentation": true,
+          "isActive": true,
+          "isSelected": true,
+          "selectedTime": "9:00",
+        },
+        {
+          "className": "bg-gray-200 border border-gray-300 cursor-not-allowed font-medium px-3 py-1 rounded-full shrink-0 text-gray-400 text-xs",
+          "filtersDisabled": true,
+          "hasNoPresentation": true,
+          "isActive": true,
+          "isSelected": true,
+          "selectedTime": "9:00",
+        },
+      ]
+    `);
   });
 });
