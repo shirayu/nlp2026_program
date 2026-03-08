@@ -91,15 +91,13 @@ function isTimelineSegmentActiveBySession(
     selectedRoom: string | null;
     time: string;
     rooms: Record<string, { name: string }>;
-    presentations: Record<string, { session_id: string }>;
   },
 ): boolean {
   if (isWorkshopParentSession(sessionId, opts.sessionIds)) return false;
   if (!isSessionOnSelectedDate(session, opts.selectedDate)) return false;
   if (!isSessionActiveAtTime(session, opts.time)) return false;
   if (!includesSelectedRoom(session, opts.rooms, opts.selectedRoom)) return false;
-  if (!opts.selectedRoom) return true;
-  return hasPresentationsInSession(sessionId, session, opts.presentations);
+  return true;
 }
 
 function extractEncodedFromInput(raw: string, prefix: string): string | null {
@@ -131,6 +129,56 @@ function extractSettingsEncodedFromInput(raw: string): string | null {
 
 function extractZoomEncodedFromInput(raw: string): string | null {
   return extractEncodedFromInput(raw, "import_zoom_settings=");
+}
+
+type RoomScopeSummary = { hasSession: boolean; hasPresentation: boolean };
+
+function buildRoomScopeSummaryByDateAndTime(
+  data: {
+    sessions: Record<
+      SessionId,
+      { date: string; start_time: string; end_time: string; room_ids: string[]; presentation_ids: string[] }
+    >;
+    rooms: Record<string, { name: string }>;
+    presentations: Record<string, { session_id: string }>;
+  },
+  selectedDate: string,
+  selectedTime: string | null,
+  allRooms: string[],
+): Record<string, RoomScopeSummary> {
+  const sessionIds = Object.keys(data.sessions) as SessionId[];
+  const roomToSummary: Record<string, RoomScopeSummary> = Object.fromEntries(
+    allRooms.map((room) => [room, { hasSession: false, hasPresentation: false }]),
+  );
+
+  for (const [sessionId, session] of Object.entries(data.sessions)) {
+    if (isWorkshopParentSession(sessionId as SessionId, sessionIds)) continue;
+    if (session.date !== selectedDate) continue;
+    if (selectedTime && !isSessionActiveAtTime(session, selectedTime)) continue;
+    const hasPresentation = hasPresentationsInSession(sessionId as SessionId, session, data.presentations);
+    for (const roomId of session.room_ids) {
+      const roomName = data.rooms[roomId]?.name ?? roomId;
+      const short = roomShort(roomName);
+      const summary = roomToSummary[short] ?? { hasSession: false, hasPresentation: false };
+      summary.hasSession = true;
+      if (hasPresentation) summary.hasPresentation = true;
+      roomToSummary[short] = summary;
+    }
+  }
+
+  return roomToSummary;
+}
+
+function buildRoomHasPresentationsInScope(
+  roomScopeSummary: Record<string, RoomScopeSummary>,
+  selectedTime: string | null,
+): Record<string, boolean> {
+  return Object.fromEntries(
+    Object.entries(roomScopeSummary).flatMap(([room, summary]) => {
+      if (selectedTime && !summary.hasSession) return [];
+      return [[room, summary.hasPresentation] as const];
+    }),
+  );
 }
 
 export function useProgramPageState() {
@@ -233,28 +281,23 @@ export function useProgramPageState() {
           selectedRoom,
           time,
           rooms: data.rooms,
-          presentations: data.presentations,
         }),
       ),
     );
   }, [data, allTimes, selectedDate, selectedRoom]);
 
+  const roomScopeSummary = useMemo(() => {
+    if (!data || !deferredSelectedDate) return undefined;
+    return buildRoomScopeSummaryByDateAndTime(data, deferredSelectedDate, deferredSelectedTime, allRooms);
+  }, [allRooms, data, deferredSelectedDate, deferredSelectedTime]);
+  const roomDaySummary = useMemo(() => {
+    if (!data || !deferredSelectedDate) return undefined;
+    return buildRoomScopeSummaryByDateAndTime(data, deferredSelectedDate, null, allRooms);
+  }, [allRooms, data, deferredSelectedDate]);
   const roomHasPresentationsOnSelectedDate = useMemo(() => {
-    if (!data || !selectedDate) return undefined;
-    const roomToHasPresentation: Record<string, boolean> = Object.fromEntries(allRooms.map((room) => [room, false]));
-
-    for (const [sessionId, session] of Object.entries(data.sessions)) {
-      if (session.date !== selectedDate) continue;
-      if (!hasPresentationsInSession(sessionId as SessionId, session, data.presentations)) continue;
-      for (const roomId of session.room_ids) {
-        const roomName = data.rooms[roomId]?.name ?? roomId;
-        const short = roomShort(roomName);
-        roomToHasPresentation[short] = true;
-      }
-    }
-
-    return roomToHasPresentation;
-  }, [allRooms, data, selectedDate]);
+    if (!roomScopeSummary) return undefined;
+    return buildRoomHasPresentationsInScope(roomScopeSummary, deferredSelectedTime);
+  }, [roomScopeSummary, deferredSelectedTime]);
 
   const nextScheduleTimePoint = useMemo(() => {
     if (!data) return null;
@@ -424,9 +467,19 @@ export function useProgramPageState() {
     return filteredSessions.reduce((total, item) => total + item.presIds.length, 0);
   }, [filteredSessions]);
   const noPresentationsInSelectedRoomOnDate = useMemo(() => {
-    if (!selectedDate || !selectedRoom) return false;
-    return roomHasPresentationsOnSelectedDate?.[selectedRoom] === false;
-  }, [roomHasPresentationsOnSelectedDate, selectedDate, selectedRoom]);
+    if (!deferredSelectedDate || !deferredSelectedRoom) return false;
+    const daySummary = roomDaySummary?.[deferredSelectedRoom];
+    if (!daySummary) return false;
+
+    // 日単位でセッション自体が無い会場は、時点指定の有無に関わらず専用メッセージ。
+    if (!daySummary.hasSession) return true;
+    if (!deferredSelectedTime) return !daySummary.hasPresentation;
+
+    // 時点指定中は、同日内の別時刻セッションを誤判定しないよう時点スコープで判断。
+    const scopeSummary = roomScopeSummary?.[deferredSelectedRoom];
+    if (!scopeSummary || !scopeSummary.hasSession) return false;
+    return !scopeSummary.hasPresentation;
+  }, [deferredSelectedDate, deferredSelectedRoom, deferredSelectedTime, roomDaySummary, roomScopeSummary]);
 
   useEffect(() => {
     if (!shouldExitBookmarkFilter(bookmarkCount, showBookmarkedOnly)) {

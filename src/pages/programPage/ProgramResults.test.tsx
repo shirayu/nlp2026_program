@@ -37,10 +37,10 @@ describe("ProgramResults", () => {
         onJumpToSession: vi.fn(),
         onToggleBookmark: vi.fn(),
         onToggleSessionBookmark: vi.fn(),
-        emptyStateMessage: "この日はこの部屋での発表はありません",
+        emptyStateMessage: "この日はこの部屋での発表・セッションはありません",
       }),
     );
 
-    expect(html).toContain("この日はこの部屋での発表はありません");
+    expect(html).toContain("この日はこの部屋での発表・セッションはありません");
   });
 });

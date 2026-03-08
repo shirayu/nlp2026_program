@@ -324,7 +324,7 @@ describe("ProgramHeader", () => {
     expect(html).toContain("3/6(金) 00:01");
   });
 
-  it("非選択会場も会場色を維持し、選択中は会場色の濃色で表示する", () => {
+  it("時点指定中に非アクティブ会場を選択した場合は灰色の選択状態で表示する", () => {
     const html = renderToStaticMarkup(
       createElement(ProgramHeader, {
         query: "",
@@ -364,7 +364,7 @@ describe("ProgramHeader", () => {
 
     expect(html).toContain("border-lime-100 bg-lime-50 text-lime-900");
     expect(html).toContain("border-rose-400 bg-rose-50 text-rose-800");
-    expect(html).toContain("border-amber-400 bg-amber-600 text-white");
+    expect(html).toContain("border-slate-300 bg-slate-500 text-white");
   });
 
   it("その日に発表が1件もない会場は無彩色ボーダーにする", () => {
@@ -537,6 +537,133 @@ describe("ProgramHeader", () => {
     expect(html).toContain("border-rose-400 bg-rose-600 text-white");
     expect(html).toContain("border-amber-400 bg-amber-50 text-amber-800");
     expect(html).not.toContain("border-slate-300");
+  });
+
+  it("roomHasPresentationsOnSelectedDate に会場キーが無い場合は発表なし色にしない", () => {
+    const html = renderToStaticMarkup(
+      createElement(ProgramHeader, {
+        query: "",
+        isSearching: false,
+        searchAll: false,
+        bookmarkCount: 0,
+        bookmarkFilterActive: false,
+        showSettings: false,
+        showInstallButton: false,
+        showInstallDialog: false,
+        slackUrl: null,
+        slackAppUrl: null,
+        useSlackAppLinks: false,
+        allDates: ["2026-03-09"],
+        filtersDisabled: false,
+        selectedDate: "2026-03-09",
+        showFilters: true,
+        allTimes: ["9:00", "9:05"],
+        timelineSegments: [true],
+        selectedTime: null,
+        nowEnabled: false,
+        rooms: ["A", "B"],
+        roomHasPresentationsOnSelectedDate: { A: true },
+        activeRooms: ["A"],
+        selectedRoom: null,
+        onQueryCommit: () => {},
+        onToggleSearchAll: () => {},
+        onToggleBookmarkFilter: () => {},
+        onOpenSettings: () => {},
+        onOpenInstallDialog: () => {},
+        onSelectDate: () => {},
+        onToggleFilters: () => {},
+        onSelectTime: () => {},
+        onSelectNow: () => {},
+        onSelectRoom: () => {},
+      }),
+    );
+
+    expect(html).toContain("border-amber-400");
+    expect(html).not.toContain("bg-slate-100 text-slate-600");
+  });
+
+  it("時点指定中で非アクティブ会場は発表有無情報があっても灰色表示にする", () => {
+    const html = renderToStaticMarkup(
+      createElement(ProgramHeader, {
+        query: "",
+        isSearching: false,
+        searchAll: false,
+        bookmarkCount: 0,
+        bookmarkFilterActive: false,
+        showSettings: false,
+        showInstallButton: false,
+        showInstallDialog: false,
+        slackUrl: null,
+        slackAppUrl: null,
+        useSlackAppLinks: false,
+        allDates: ["2026-03-11"],
+        filtersDisabled: false,
+        selectedDate: "2026-03-11",
+        showFilters: true,
+        allTimes: ["14:55", "15:00", "15:05"],
+        timelineSegments: [false, true],
+        selectedTime: "15:00",
+        nowEnabled: false,
+        rooms: ["P", "C"],
+        roomHasPresentationsOnSelectedDate: { P: false, C: true },
+        activeRooms: ["P"],
+        selectedRoom: null,
+        onQueryCommit: () => {},
+        onToggleSearchAll: () => {},
+        onToggleBookmarkFilter: () => {},
+        onOpenSettings: () => {},
+        onOpenInstallDialog: () => {},
+        onSelectDate: () => {},
+        onToggleFilters: () => {},
+        onSelectTime: () => {},
+        onSelectNow: () => {},
+        onSelectRoom: () => {},
+      }),
+    );
+
+    expect(html).toContain("border-slate-300 bg-slate-100 text-slate-600");
+  });
+
+  it("時点指定中で非アクティブ会場が選択中の場合も濃い灰色で表示する", () => {
+    const html = renderToStaticMarkup(
+      createElement(ProgramHeader, {
+        query: "",
+        isSearching: false,
+        searchAll: false,
+        bookmarkCount: 0,
+        bookmarkFilterActive: false,
+        showSettings: false,
+        showInstallButton: false,
+        showInstallDialog: false,
+        slackUrl: null,
+        slackAppUrl: null,
+        useSlackAppLinks: false,
+        allDates: ["2026-03-11"],
+        filtersDisabled: false,
+        selectedDate: "2026-03-11",
+        showFilters: true,
+        allTimes: ["14:55", "15:00", "15:05"],
+        timelineSegments: [false, true],
+        selectedTime: "15:00",
+        nowEnabled: false,
+        rooms: ["P", "C"],
+        roomHasPresentationsOnSelectedDate: { P: false },
+        activeRooms: ["P"],
+        selectedRoom: "C",
+        onQueryCommit: () => {},
+        onToggleSearchAll: () => {},
+        onToggleBookmarkFilter: () => {},
+        onOpenSettings: () => {},
+        onOpenInstallDialog: () => {},
+        onSelectDate: () => {},
+        onToggleFilters: () => {},
+        onSelectTime: () => {},
+        onSelectNow: () => {},
+        onSelectRoom: () => {},
+      }),
+    );
+
+    expect(html).toContain("border-slate-300 bg-slate-500 text-white");
   });
 });
 

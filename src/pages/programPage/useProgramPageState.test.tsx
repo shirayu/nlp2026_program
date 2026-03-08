@@ -294,7 +294,7 @@ describe("useProgramPageState", () => {
     hook.unmount();
   });
 
-  it("会場選択時のタイムラインは発表あり区間のみアクティブにする（時刻範囲は維持）", async () => {
+  it("会場選択時のタイムラインは発表有無を問わずセッションがある区間をアクティブにする", async () => {
     const dataWithPresentationWindow: ConferenceData = {
       generated_at: "2026-03-04T09:00:00+09:00",
       persons: {},
@@ -361,7 +361,7 @@ describe("useProgramPageState", () => {
     const start1000 = allTimes.indexOf("10:00");
     expect(start0900).toBeGreaterThanOrEqual(0);
     expect(start1000).toBeGreaterThanOrEqual(0);
-    expect(timelineSegments[start0900]).toBe(false);
+    expect(timelineSegments[start0900]).toBe(true);
     expect(timelineSegments[start1000]).toBe(true);
 
     hook.unmount();
@@ -414,7 +414,7 @@ describe("useProgramPageState", () => {
     hook.unmount();
   });
 
-  it("会場選択時に該当会場の発表が無ければタイムラインは未塗り（時刻範囲は維持）", async () => {
+  it("会場選択時に該当会場の発表が無くてもセッション区間はタイムラインを塗る", async () => {
     const dataWithOtherRoomPresentation: ConferenceData = {
       generated_at: "2026-03-04T09:00:00+09:00",
       persons: {},
@@ -477,8 +477,1043 @@ describe("useProgramPageState", () => {
     const { allTimes, timelineSegments } = hook.getLatest().headerProps;
     expect(allTimes[0]).toBe("9:00");
     expect(allTimes[allTimes.length - 1]).toBe("11:00");
-    expect(timelineSegments.some(Boolean)).toBe(false);
-    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表はありません");
+    const start0900 = allTimes.indexOf("9:00");
+    const start1000 = allTimes.indexOf("10:00");
+    expect(start0900).toBeGreaterThanOrEqual(0);
+    expect(start1000).toBeGreaterThanOrEqual(0);
+    expect(timelineSegments[start0900]).toBe(true);
+    expect(timelineSegments[start1000]).toBe(false);
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+
+    hook.unmount();
+  });
+
+  it("3/11 P会場 15:00 のセッション区間はタイムラインを塗る", async () => {
+    const dataWithSponsorMeetup: ConferenceData = {
+      generated_at: "2026-03-11T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        R1: { name: "A会場" },
+        R2: { name: "P会場(1F 大ホール(西))" },
+        R3: { name: "P会場(第2部 1F 大ホール(西)・ホワイエ)" },
+      },
+      sessions: {
+        invited2: {
+          title: "招待講演2",
+          date: "2026-03-11",
+          start_time: "13:55",
+          end_time: "14:55",
+          room_ids: ["R1"],
+          chair: "",
+          presentation_ids: ["P1"],
+        },
+        sponsor: {
+          title: "スポンサーミートアップ",
+          date: "2026-03-11",
+          start_time: "15:00",
+          end_time: "16:50",
+          room_ids: ["R3"],
+          chair: "",
+          presentation_ids: [],
+        },
+      },
+      presentations: {
+        P1: {
+          title: "招待講演",
+          session_id: "invited2",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+      },
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataWithSponsorMeetup,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-11");
+      hook.getLatest().headerProps.onSelectRoom("P");
+      hook.getLatest().headerProps.onSelectTime("15:00");
+    });
+    await act(async () => {});
+
+    const { allTimes, timelineSegments } = hook.getLatest().headerProps;
+    const start1500 = allTimes.indexOf("15:00");
+    expect(start1500).toBeGreaterThanOrEqual(0);
+    expect(timelineSegments[start1500]).toBe(true);
+
+    hook.unmount();
+  });
+
+  it("選択会場に当日のセッション自体が無い場合でも、時点未指定なら専用空メッセージを出す", async () => {
+    const dataWithRoomUnusedOnDate: ConferenceData = {
+      generated_at: "2026-03-04T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        R1: { name: "A会場" },
+        R2: { name: "B会場" },
+      },
+      sessions: {
+        S1: {
+          title: "初日 A会場 発表あり",
+          date: "2026-03-04",
+          start_time: "9:00",
+          end_time: "10:00",
+          room_ids: ["R1"],
+          chair: "",
+          presentation_ids: ["P1"],
+        },
+        S2: {
+          title: "2日目 B会場 発表あり",
+          date: "2026-03-05",
+          start_time: "9:00",
+          end_time: "10:00",
+          room_ids: ["R2"],
+          chair: "",
+          presentation_ids: ["P2"],
+        },
+      },
+      presentations: {
+        P1: {
+          title: "初日発表",
+          session_id: "S1",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+        P2: {
+          title: "2日目発表",
+          session_id: "S2",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+      },
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataWithRoomUnusedOnDate,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-05");
+      hook.getLatest().headerProps.onSelectRoom("A");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().resultsProps.filteredSessions).toHaveLength(0);
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.A).toBe(false);
+
+    hook.unmount();
+  });
+
+  it("選択会場に発表なしセッションが別時刻にのみある場合、時点指定では専用空メッセージを出さない", async () => {
+    const dataWithOutOfTimeNoPresentationSession: ConferenceData = {
+      generated_at: "2026-03-04T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        R1: { name: "3F" },
+        R2: { name: "A会場" },
+      },
+      sessions: {
+        S1: {
+          title: "3F 懇親会（発表なし）",
+          date: "2026-03-11",
+          start_time: "18:00",
+          end_time: "20:00",
+          room_ids: ["R1"],
+          chair: "",
+          presentation_ids: [],
+        },
+        S2: {
+          title: "A会場 発表あり",
+          date: "2026-03-11",
+          start_time: "11:00",
+          end_time: "12:00",
+          room_ids: ["R2"],
+          chair: "",
+          presentation_ids: ["P1"],
+        },
+      },
+      presentations: {
+        P1: {
+          title: "発表1",
+          session_id: "S2",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+      },
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataWithOutOfTimeNoPresentationSession,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-11");
+      hook.getLatest().headerProps.onSelectRoom("3F");
+      hook.getLatest().headerProps.onSelectTime("11:00");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().resultsProps.filteredSessions).toHaveLength(0);
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("該当する発表・セッションがありません");
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.["3F"]).toBeUndefined();
+
+    hook.unmount();
+  });
+
+  it("時点指定がセッション終了時刻ちょうどならスコープ外として専用空メッセージを出さない", async () => {
+    const dataWithEndBoundary: ConferenceData = {
+      generated_at: "2026-03-04T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        R1: { name: "A会場" },
+        R2: { name: "B会場" },
+      },
+      sessions: {
+        SA: {
+          title: "A会場 発表なし",
+          date: "2026-03-04",
+          start_time: "9:00",
+          end_time: "10:00",
+          room_ids: ["R1"],
+          chair: "",
+          presentation_ids: [],
+        },
+        SB: {
+          title: "B会場 発表あり",
+          date: "2026-03-04",
+          start_time: "10:00",
+          end_time: "11:00",
+          room_ids: ["R2"],
+          chair: "",
+          presentation_ids: ["P1"],
+        },
+      },
+      presentations: {
+        P1: {
+          title: "発表1",
+          session_id: "SB",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+      },
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataWithEndBoundary,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-04");
+      hook.getLatest().headerProps.onSelectRoom("A");
+      hook.getLatest().headerProps.onSelectTime("10:00");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("該当する発表・セッションがありません");
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.A).toBeUndefined();
+
+    hook.unmount();
+  });
+
+  it("時点指定がセッション開始時刻ちょうどならスコープ内として専用空メッセージを出す", async () => {
+    const dataWithStartBoundary: ConferenceData = {
+      generated_at: "2026-03-04T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        R1: { name: "A会場" },
+        R2: { name: "B会場" },
+      },
+      sessions: {
+        SA: {
+          title: "A会場 発表なし",
+          date: "2026-03-04",
+          start_time: "9:00",
+          end_time: "10:00",
+          room_ids: ["R1"],
+          chair: "",
+          presentation_ids: [],
+        },
+        SB: {
+          title: "B会場 発表あり",
+          date: "2026-03-04",
+          start_time: "10:00",
+          end_time: "11:00",
+          room_ids: ["R2"],
+          chair: "",
+          presentation_ids: ["P1"],
+        },
+      },
+      presentations: {
+        P1: {
+          title: "発表1",
+          session_id: "SB",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+      },
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataWithStartBoundary,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-04");
+      hook.getLatest().headerProps.onSelectRoom("A");
+      hook.getLatest().headerProps.onSelectTime("9:00");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.A).toBe(false);
+
+    hook.unmount();
+  });
+
+  it("複数会場にまたがる発表ありセッションは各会場で発表ありとして扱う", async () => {
+    const dataWithMultiRoomPresentation: ConferenceData = {
+      generated_at: "2026-03-04T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        R1: { name: "A会場" },
+        R2: { name: "B会場" },
+      },
+      sessions: {
+        S1: {
+          title: "A/B 共同セッション",
+          date: "2026-03-04",
+          start_time: "9:00",
+          end_time: "10:00",
+          room_ids: ["R1", "R2"],
+          chair: "",
+          presentation_ids: ["P1"],
+        },
+      },
+      presentations: {
+        P1: {
+          title: "共同発表",
+          session_id: "S1",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+      },
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataWithMultiRoomPresentation,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-04");
+      hook.getLatest().headerProps.onSelectTime("9:00");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.A).toBe(true);
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.B).toBe(true);
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectRoom("A");
+    });
+    await act(async () => {});
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("該当する発表・セッションがありません");
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectRoom("B");
+    });
+    await act(async () => {});
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("該当する発表・セッションがありません");
+
+    hook.unmount();
+  });
+
+  it("3/11 15:00 で C会場は非アクティブ扱いとなり専用空メッセージを出さない", async () => {
+    const dataWithPOnlyAt1500: ConferenceData = {
+      generated_at: "2026-03-11T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        RC: { name: "C会場(2F 大会議室202)" },
+        RP: { name: "P会場(第2部 1F 大ホール(西)・ホワイエ)" },
+      },
+      sessions: {
+        C6: {
+          title: "C会場 午前発表",
+          date: "2026-03-11",
+          start_time: "11:15",
+          end_time: "12:45",
+          room_ids: ["RC"],
+          chair: "",
+          presentation_ids: ["PC1"],
+        },
+        sponsor: {
+          title: "スポンサーミートアップ",
+          date: "2026-03-11",
+          start_time: "15:00",
+          end_time: "16:50",
+          room_ids: ["RP"],
+          chair: "",
+          presentation_ids: [],
+        },
+      },
+      presentations: {
+        PC1: {
+          title: "C発表",
+          session_id: "C6",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+      },
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataWithPOnlyAt1500,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-11");
+      hook.getLatest().headerProps.onSelectTime("15:00");
+      hook.getLatest().headerProps.onSelectRoom("C");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.activeRooms).toEqual(["P"]);
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.C).toBeUndefined();
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("該当する発表・セッションがありません");
+
+    hook.unmount();
+  });
+
+  it("時点指定中でも当日セッション自体が無い会場は専用空メッセージを出す", async () => {
+    const dataWithoutRoomSessionOnDate: ConferenceData = {
+      generated_at: "2026-03-13T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        RP: { name: "P会場(第2部 1F 大ホール(西)・ホワイエ)" },
+        RQ: { name: "Q会場(1F ホワイエ)" },
+      },
+      sessions: {
+        qPrevDay: {
+          title: "Q会場 別日セッション",
+          date: "2026-03-12",
+          start_time: "10:00",
+          end_time: "11:00",
+          room_ids: ["RQ"],
+          chair: "",
+          presentation_ids: ["PQ1"],
+        },
+        sponsor: {
+          title: "スポンサーミートアップ",
+          date: "2026-03-13",
+          start_time: "15:00",
+          end_time: "16:50",
+          room_ids: ["RP"],
+          chair: "",
+          presentation_ids: [],
+        },
+      },
+      presentations: {
+        PQ1: {
+          title: "Q別日発表",
+          session_id: "qPrevDay",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+      },
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataWithoutRoomSessionOnDate,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-13");
+      hook.getLatest().headerProps.onSelectTime("15:00");
+      hook.getLatest().headerProps.onSelectRoom("Q");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.activeRooms).toEqual(["P"]);
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.Q).toBeUndefined();
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+
+    hook.unmount();
+  });
+
+  it("同じ日付・会場でも時点変更で専用空メッセージ判定が切り替わる（3/11 3F）", async () => {
+    const dataWithNightOnlyRoom: ConferenceData = {
+      generated_at: "2026-03-11T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        R3F: { name: "3F" },
+        RA: { name: "A会場" },
+      },
+      sessions: {
+        invited: {
+          title: "招待講演",
+          date: "2026-03-11",
+          start_time: "11:00",
+          end_time: "12:00",
+          room_ids: ["RA"],
+          chair: "",
+          presentation_ids: ["P1"],
+        },
+        reception: {
+          title: "懇親会",
+          date: "2026-03-11",
+          start_time: "18:00",
+          end_time: "20:00",
+          room_ids: ["R3F"],
+          chair: "",
+          presentation_ids: [],
+        },
+      },
+      presentations: {
+        P1: {
+          title: "招待講演",
+          session_id: "invited",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+      },
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataWithNightOnlyRoom,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-11");
+      hook.getLatest().headerProps.onSelectRoom("3F");
+      hook.getLatest().headerProps.onSelectTime("11:00");
+    });
+    await act(async () => {});
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("該当する発表・セッションがありません");
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.["3F"]).toBeUndefined();
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectTime("18:00");
+    });
+    await act(async () => {});
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.["3F"]).toBe(false);
+
+    hook.unmount();
+  });
+
+  it("専用空メッセージ条件を満たしていても検索語がある場合は通常メッセージを優先する", async () => {
+    const dataWithRoomUnusedOnDate: ConferenceData = {
+      generated_at: "2026-03-04T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        R1: { name: "A会場" },
+        R2: { name: "B会場" },
+      },
+      sessions: {
+        S1: {
+          title: "初日 A会場 発表あり",
+          date: "2026-03-04",
+          start_time: "9:00",
+          end_time: "10:00",
+          room_ids: ["R1"],
+          chair: "",
+          presentation_ids: ["P1"],
+        },
+        S2: {
+          title: "2日目 B会場 発表あり",
+          date: "2026-03-05",
+          start_time: "9:00",
+          end_time: "10:00",
+          room_ids: ["R2"],
+          chair: "",
+          presentation_ids: ["P2"],
+        },
+      },
+      presentations: {
+        P1: {
+          title: "初日発表",
+          session_id: "S1",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+        P2: {
+          title: "2日目発表",
+          session_id: "S2",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+      },
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataWithRoomUnusedOnDate,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-05");
+      hook.getLatest().headerProps.onSelectRoom("A");
+      hook.getLatest().headerProps.onQueryCommit("キーワード");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("該当する発表・セッションがありません");
+
+    hook.unmount();
+  });
+
+  it("時点指定を解除すると会場判定と空メッセージは日単位判定に戻る", async () => {
+    const dataWithNightOnlyRoom: ConferenceData = {
+      generated_at: "2026-03-11T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        R3F: { name: "3F" },
+        RA: { name: "A会場" },
+      },
+      sessions: {
+        invited: {
+          title: "招待講演",
+          date: "2026-03-11",
+          start_time: "11:00",
+          end_time: "12:00",
+          room_ids: ["RA"],
+          chair: "",
+          presentation_ids: ["P1"],
+        },
+        reception: {
+          title: "懇親会",
+          date: "2026-03-11",
+          start_time: "18:00",
+          end_time: "20:00",
+          room_ids: ["R3F"],
+          chair: "",
+          presentation_ids: [],
+        },
+      },
+      presentations: {
+        P1: {
+          title: "招待講演",
+          session_id: "invited",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+      },
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataWithNightOnlyRoom,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-11");
+      hook.getLatest().headerProps.onSelectRoom("3F");
+      hook.getLatest().headerProps.onSelectTime("11:00");
+    });
+    await act(async () => {});
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.["3F"]).toBeUndefined();
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("該当する発表・セッションがありません");
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectTime(null);
+    });
+    await act(async () => {});
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.["3F"]).toBe(false);
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+
+    hook.unmount();
+  });
+
+  it("日付切替時に選択会場の状態は再計算され前日状態が残留しない", async () => {
+    const dataAcrossDates: ConferenceData = {
+      generated_at: "2026-03-11T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        RA: { name: "A会場" },
+        RB: { name: "B会場" },
+      },
+      sessions: {
+        d1a: {
+          title: "1日目 A発表",
+          date: "2026-03-11",
+          start_time: "10:00",
+          end_time: "11:00",
+          room_ids: ["RA"],
+          chair: "",
+          presentation_ids: ["P1"],
+        },
+        d1b: {
+          title: "1日目 Bセッション",
+          date: "2026-03-11",
+          start_time: "10:00",
+          end_time: "11:00",
+          room_ids: ["RB"],
+          chair: "",
+          presentation_ids: [],
+        },
+        d2b: {
+          title: "2日目 B発表",
+          date: "2026-03-12",
+          start_time: "10:00",
+          end_time: "11:00",
+          room_ids: ["RB"],
+          chair: "",
+          presentation_ids: ["P2"],
+        },
+      },
+      presentations: {
+        P1: {
+          title: "A発表",
+          session_id: "d1a",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+        P2: {
+          title: "B発表",
+          session_id: "d2b",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+      },
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataAcrossDates,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-11");
+      hook.getLatest().headerProps.onSelectRoom("B");
+    });
+    await act(async () => {});
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.B).toBe(false);
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-12");
+    });
+    await act(async () => {});
+    expect(hook.getLatest().headerProps.selectedRoom).toBe("B");
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("該当する発表・セッションがありません");
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.B).toBe(true);
+
+    hook.unmount();
+  });
+
+  it("searchAll=true かつ query ありでも専用空メッセージは出さない", async () => {
+    const dataWithRoomUnusedOnDate: ConferenceData = {
+      generated_at: "2026-03-04T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        R1: { name: "A会場" },
+        R2: { name: "B会場" },
+      },
+      sessions: {
+        S1: {
+          title: "初日 A会場 発表あり",
+          date: "2026-03-04",
+          start_time: "9:00",
+          end_time: "10:00",
+          room_ids: ["R1"],
+          chair: "",
+          presentation_ids: ["P1"],
+        },
+      },
+      presentations: {
+        P1: {
+          title: "初日発表",
+          session_id: "S1",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+      },
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataWithRoomUnusedOnDate,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.searchAll).toBe(true);
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-04");
+      hook.getLatest().headerProps.onSelectRoom("B");
+      hook.getLatest().headerProps.onQueryCommit("不存在キーワード");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.searchAll).toBe(true);
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("該当する発表・セッションがありません");
+
+    hook.unmount();
+  });
+
+  it("Workshop 親セッションのみの会場は判定から除外される", async () => {
+    const dataWithWorkshopParentOnly: ConferenceData = {
+      generated_at: "2026-03-04T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        RQ: { name: "Q会場(1F ホワイエ)" },
+        RA: { name: "A会場" },
+      },
+      sessions: {
+        WS3: {
+          title: "WS3 親",
+          date: "2026-03-13",
+          start_time: "9:00",
+          end_time: "16:45",
+          room_ids: ["RQ"],
+          chair: "",
+          presentation_ids: [],
+        },
+        "WS3-1": {
+          title: "WS3 子",
+          date: "2026-03-13",
+          start_time: "9:30",
+          end_time: "10:00",
+          room_ids: ["RA"],
+          chair: "",
+          presentation_ids: ["PWS1"],
+        },
+        A1: {
+          title: "A会場 発表",
+          date: "2026-03-13",
+          start_time: "10:00",
+          end_time: "11:00",
+          room_ids: ["RA"],
+          chair: "",
+          presentation_ids: ["P1"],
+        },
+        qPrevDay: {
+          title: "Q会場 別日通常セッション",
+          date: "2026-03-12",
+          start_time: "10:00",
+          end_time: "11:00",
+          room_ids: ["RQ"],
+          chair: "",
+          presentation_ids: ["PQ1"],
+        },
+      },
+      presentations: {
+        P1: {
+          title: "A発表",
+          session_id: "A1",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+        PWS1: {
+          title: "WS子発表",
+          session_id: "WS3-1",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+        PQ1: {
+          title: "Q別日発表",
+          session_id: "qPrevDay",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+      },
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataWithWorkshopParentOnly,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-13");
+      hook.getLatest().headerProps.onSelectRoom("Q");
+      hook.getLatest().headerProps.onSelectTime("10:00");
+    });
+    await act(async () => {});
+
+    const idx1000 = hook.getLatest().headerProps.allTimes.indexOf("10:00");
+    expect(idx1000).toBeGreaterThanOrEqual(0);
+    expect(hook.getLatest().headerProps.timelineSegments[idx1000]).toBe(false);
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.Q).toBeUndefined();
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
 
     hook.unmount();
   });

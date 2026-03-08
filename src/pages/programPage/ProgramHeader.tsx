@@ -235,6 +235,7 @@ function RoomChips({
   rooms,
   activeRooms,
   roomHasPresentationsOnSelectedDate,
+  selectedTime,
   selectedRoom,
   filtersDisabled,
   onSelectRoom,
@@ -242,6 +243,7 @@ function RoomChips({
   rooms: string[];
   activeRooms?: string[];
   roomHasPresentationsOnSelectedDate?: Record<string, boolean>;
+  selectedTime: string | null;
   selectedRoom: string | null;
   filtersDisabled: boolean;
   onSelectRoom: (room: string | null) => void;
@@ -249,7 +251,7 @@ function RoomChips({
   const activeRoomSet = new Set(activeRooms ?? rooms);
 
   function hasNoPresentationsOnSelectedDate(room: string): boolean {
-    return Boolean(roomHasPresentationsOnSelectedDate && !roomHasPresentationsOnSelectedDate[room]);
+    return roomHasPresentationsOnSelectedDate?.[room] === false;
   }
 
   function roomBorderClass(room: string): string {
@@ -299,26 +301,38 @@ function RoomChips({
     return "bg-indigo-50/70 text-indigo-700";
   }
 
+  function resolveRoomChipState(isSelected: boolean, isActive: boolean, room: string) {
+    if (filtersDisabled) return "disabled" as const;
+    if (selectedTime && !isActive) return "out_of_scope" as const;
+    if (hasNoPresentationsOnSelectedDate(room)) return "no_presentation" as const;
+    if (isSelected) return "selected" as const;
+    if (isActive) return "active" as const;
+    return "inactive" as const;
+  }
+
+  function roomChipClassByState(
+    state: "disabled" | "out_of_scope" | "no_presentation" | "selected" | "active" | "inactive",
+    room: string,
+    isSelected: boolean,
+  ): string {
+    const handlers: Record<typeof state, () => string> = {
+      disabled: () => "cursor-not-allowed bg-gray-200 text-gray-400 border-gray-300",
+      out_of_scope: () =>
+        isSelected ? "border-slate-300 bg-slate-500 text-white" : "border-slate-300 bg-slate-100 text-slate-600",
+      no_presentation: () =>
+        isSelected
+          ? `${roomBorderClass(room)} bg-slate-500 text-white`
+          : `${roomBorderClass(room)} bg-slate-100 text-slate-600`,
+      selected: () => `${roomBorderClass(room)} ${roomSelectedClass(room)}`,
+      active: () => `${roomBorderClass(room)} ${roomActiveClass(room)}`,
+      inactive: () => `${roomBorderClass(room)} ${roomInactiveClass(room)}`,
+    };
+    return handlers[state]();
+  }
+
   function roomChipClass(room: string, isSelected: boolean, isActive: boolean): string {
-    if (filtersDisabled) {
-      return "cursor-not-allowed bg-gray-200 text-gray-400 border-gray-300";
-    }
-
-    if (hasNoPresentationsOnSelectedDate(room)) {
-      return isSelected
-        ? `${roomBorderClass(room)} bg-slate-500 text-white`
-        : `${roomBorderClass(room)} bg-slate-100 text-slate-600`;
-    }
-
-    if (isSelected) {
-      return `${roomBorderClass(room)} ${roomSelectedClass(room)}`;
-    }
-
-    if (isActive) {
-      return `${roomBorderClass(room)} ${roomActiveClass(room)}`;
-    }
-
-    return `${roomBorderClass(room)} ${roomInactiveClass(room)}`;
+    const state = resolveRoomChipState(isSelected, isActive, room);
+    return roomChipClassByState(state, room, isSelected);
   }
 
   return (
@@ -499,6 +513,7 @@ export function ProgramHeader({
               rooms={roomSorted}
               activeRooms={activeRooms}
               roomHasPresentationsOnSelectedDate={roomHasPresentationsOnSelectedDate}
+              selectedTime={selectedTime}
               selectedRoom={selectedRoom}
               filtersDisabled={filtersDisabled}
               onSelectRoom={onSelectRoom}
