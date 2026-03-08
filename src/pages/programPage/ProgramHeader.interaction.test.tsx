@@ -373,6 +373,40 @@ describe("ProgramHeader room chip interaction", () => {
     }
   });
 
+  it("全会場ボタンは selectedRoom と filtersDisabled に応じたクラスを適用する", () => {
+    const enabledContainer = document.createElement("div");
+    document.body.append(enabledContainer);
+    const enabledRoot = createRoot(enabledContainer);
+
+    act(() => {
+      enabledRoot.render(<ProgramHeader {...baseHeaderProps()} selectedRoom={null} />);
+    });
+
+    const allRoomsEnabled = findButtonByText(enabledContainer, "全会場");
+    expect(allRoomsEnabled.className).toContain("border-lime-300 bg-lime-200 text-lime-950");
+
+    act(() => {
+      enabledRoot.unmount();
+    });
+    enabledContainer.remove();
+
+    const disabledContainer = document.createElement("div");
+    document.body.append(disabledContainer);
+    const disabledRoot = createRoot(disabledContainer);
+
+    act(() => {
+      disabledRoot.render(<ProgramHeader {...baseHeaderProps()} filtersDisabled selectedRoom={null} />);
+    });
+
+    const allRoomsDisabled = findButtonByText(disabledContainer, "全会場");
+    expect(allRoomsDisabled.className).toContain("cursor-not-allowed bg-gray-200 text-gray-400 border-gray-300");
+
+    act(() => {
+      disabledRoot.unmount();
+    });
+    disabledContainer.remove();
+  });
+
   it("部屋ボタンの組み合わせクラスをスナップショット固定する（正規化済み）", () => {
     const rows = buildRoomChipSnapshotCases().map((testCase) => ({
       ...testCase,

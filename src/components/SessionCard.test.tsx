@@ -484,6 +484,34 @@ describe("SessionCard", () => {
     );
   });
 
+  it("3部屋のセッションは3分割グラデーションで描画する", () => {
+    const html = renderToStaticMarkup(
+      <SessionCard
+        bookmarkedPresentationIds={new Set()}
+        bookmarkedSessionIds={new Set()}
+        sessionId="s1"
+        session={{ ...data.sessions.s1, room_ids: ["r1", "r2", "r3"] }}
+        presIds={["pr1"]}
+        data={data}
+        showAuthors
+        query=""
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
+        expanded={false}
+        onToggleExpanded={vi.fn()}
+        onScrollToSessionTop={vi.fn()}
+        onPersonClick={vi.fn()}
+        onJumpToSession={vi.fn()}
+        onToggleBookmark={vi.fn()}
+        onToggleSessionBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).toContain(
+      'style="background-image:linear-gradient(90deg, #ffe4e6 0%, #ffe4e6 33.333333333333336%, #fef3c7 33.333333333333336%, #fef3c7 66.66666666666667%, #d1fae5 66.66666666666667%, #d1fae5 100%)"',
+    );
+  });
+
   it("単一部屋のセッションはヘッダに background-image を付与しない", () => {
     const html = renderToStaticMarkup(
       <SessionCard

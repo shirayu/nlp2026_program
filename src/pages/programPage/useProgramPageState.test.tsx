@@ -331,6 +331,28 @@ describe("useProgramPageState", () => {
     hook.unmount();
   });
 
+  it("selectedTime が候補外でも allTimes が空なら selectedTime を維持する", async () => {
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-04");
+      hook.getLatest().headerProps.onSelectTime("9:00");
+    });
+    await act(async () => {});
+    expect(hook.getLatest().headerProps.selectedTime).toBe("9:00");
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-99");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.allTimes).toEqual([]);
+    expect(hook.getLatest().headerProps.selectedTime).toBe("9:00");
+
+    hook.unmount();
+  });
+
   it("onSelectNow は次スケジュールがあれば selectedDate/selectedTime を設定する", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-03-04T08:58:00+09:00"));
