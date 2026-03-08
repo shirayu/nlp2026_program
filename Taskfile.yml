@@ -12,7 +12,7 @@ vars:
 tasks:
   default:
     cmds:
-      - task: install
+      - task: setup
       - task: extract
       - task: format
       - task: lint
@@ -21,18 +21,18 @@ tasks:
 
   ci:
     cmds:
-      - task: install
+      - task: setup
       - task: format
       - task: lint
       - task: test
       - task: build
 
 
-  install:
+  setup:
     desc: "Install project dependencies"
-    deps: [deps:python, deps:node]
+    deps: [setup:python, setup:node]
 
-  deps:python:
+  setup:python:
     desc: "Sync Python dependencies"
     sources:
       - '{{.FILE_PYPROJECT}}'
@@ -42,7 +42,7 @@ tasks:
     cmds:
       - uv sync
 
-  deps:node:
+  setup:node:
     desc: "Install Node dependencies"
     sources:
       - '{{.FILE_PACKAGE_JSON}}'
