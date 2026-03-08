@@ -249,6 +249,9 @@ function RoomChips({
   onSelectRoom: (room: string | null) => void;
 }) {
   const activeRoomSet = new Set(activeRooms ?? rooms);
+  const groupedRoomCodes = new Set(["B", "C"]);
+  const groupedRooms = rooms.filter((room) => groupedRoomCodes.has(getRoomCode(room) ?? ""));
+  const firstGroupedRoom = groupedRooms[0] ?? null;
 
   function hasNoPresentationsOnSelectedDate(room: string): boolean {
     return roomHasPresentationsOnSelectedDate?.[room] === false;
@@ -336,9 +339,25 @@ function RoomChips({
     return roomChipClassByState(state, room, isSelected);
   }
 
+  function renderRoomButton(room: string) {
+    const isSelected = selectedRoom === room;
+    const isActive = activeRoomSet.has(room);
+    return (
+      <button
+        key={room}
+        type="button"
+        disabled={filtersDisabled}
+        onClick={() => onSelectRoom(room)}
+        className={`shrink-0 rounded-full border px-3 py-1 text-xs font-medium ${roomChipClass(room, isSelected, isActive)}`}
+      >
+        {room}
+      </button>
+    );
+  }
+
   return (
     <div className="border-t border-gray-100 px-3 py-2">
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-end gap-2">
         <button
           type="button"
           disabled={filtersDisabled}
@@ -354,19 +373,27 @@ function RoomChips({
           {ja.allRooms}
         </button>
         {rooms.map((room) => {
-          const isSelected = selectedRoom === room;
-          const isActive = activeRoomSet.has(room);
-          return (
-            <button
-              key={room}
-              type="button"
-              disabled={filtersDisabled}
-              onClick={() => onSelectRoom(room)}
-              className={`shrink-0 rounded-full border px-3 py-1 text-xs font-medium ${roomChipClass(room, isSelected, isActive)}`}
-            >
-              {room}
-            </button>
-          );
+          const roomCode = getRoomCode(room) ?? "";
+          if (groupedRoomCodes.has(roomCode)) {
+            if (room !== firstGroupedRoom) return null;
+            return (
+              <div key="grouped-bc" className="shrink-0">
+                <div className="pointer-events-none mb-1 text-center text-[10px] font-semibold leading-none text-gray-600">
+                  2F
+                </div>
+                <div className="relative">
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -inset-x-1 -inset-y-1 rounded-full bg-gray-200"
+                  />
+                  <div className="relative flex flex-wrap gap-2">
+                    {groupedRooms.map((groupedRoom) => renderRoomButton(groupedRoom))}
+                  </div>
+                </div>
+              </div>
+            );
+          }
+          return renderRoomButton(room);
         })}
         <a
           href={filtersDisabled ? undefined : VENUE_GUIDE_URL}

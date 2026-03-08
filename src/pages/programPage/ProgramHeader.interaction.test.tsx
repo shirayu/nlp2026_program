@@ -202,6 +202,34 @@ describe("ProgramHeader room chip interaction", () => {
     container.remove();
   });
 
+  it("B/C会場ボタンを薄い灰色のグループで囲む", () => {
+    const container = document.createElement("div");
+    document.body.append(container);
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(<ProgramHeader {...baseHeaderProps()} rooms={["A", "B", "C", "P"]} />);
+    });
+
+    const roomB = findButtonByText(container, "B");
+    const roomC = findButtonByText(container, "C");
+    const buttonRow = roomB.parentElement;
+    const group = buttonRow?.parentElement?.parentElement;
+
+    expect(group).not.toBeNull();
+    expect(buttonRow).toBe(roomC.parentElement);
+    expect(buttonRow?.className).toContain("flex");
+    expect(group?.textContent).toContain("2F");
+    expect(group?.querySelector('[aria-hidden="true"]')?.className).toContain("bg-gray-200");
+    expect(roomB.className).toContain("border");
+    expect(roomC.className).toContain("border");
+
+    act(() => {
+      root.unmount();
+    });
+    container.remove();
+  });
+
   it("複数会場が同時にアクティブな発表なし状態でも選択中会場は会場色を維持する", () => {
     const container = document.createElement("div");
     document.body.append(container);
