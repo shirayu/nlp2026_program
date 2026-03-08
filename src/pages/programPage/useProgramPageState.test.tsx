@@ -76,6 +76,7 @@ const baseData: ConferenceData = {
   affiliations: {},
   rooms: {
     R1: { name: "A会場" },
+    R2: { name: "B会場" },
   },
   sessions: {
     S1: {
@@ -84,6 +85,15 @@ const baseData: ConferenceData = {
       start_time: "9:00",
       end_time: "10:00",
       room_ids: ["R1"],
+      chair: "",
+      presentation_ids: [],
+    },
+    S2: {
+      title: "別時刻セッション",
+      date: "2026-03-04",
+      start_time: "11:00",
+      end_time: "12:00",
+      room_ids: ["R2"],
       chair: "",
       presentation_ids: [],
     },
@@ -257,6 +267,30 @@ describe("useProgramPageState", () => {
     await act(async () => {});
 
     expect(hook.getRenderCount()).toBe(renderCountAfterFirstSelect);
+    hook.unmount();
+  });
+
+  it("選択会場は時点変更で該当外になっても維持し、表示候補は全会場のまま", async () => {
+    const hook = setupHook();
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.rooms).toEqual(["A", "B"]);
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectRoom("B");
+    });
+    await act(async () => {});
+    expect(hook.getLatest().headerProps.selectedRoom).toBe("B");
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectTime("9:00");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.selectedRoom).toBe("B");
+    expect(hook.getLatest().headerProps.activeRooms).toEqual(["A"]);
+    expect(hook.getLatest().headerProps.rooms).toEqual(["A", "B"]);
+
     hook.unmount();
   });
 

@@ -1,6 +1,6 @@
 import { ChevronDown, ChevronUp, Download, Globe, MapPinned, Settings, Star } from "lucide-react";
 import { TimelineFilter } from "../../components/TimelineFilter";
-import { compareRooms, getRoomTheme, OFFICIAL_SITE_URL, VENUE_GUIDE_URL, X_SEARCH_URL } from "../../constants";
+import { compareRooms, getRoomCode, OFFICIAL_SITE_URL, VENUE_GUIDE_URL, X_SEARCH_URL } from "../../constants";
 import { formatJapaneseDate } from "../../lib/date";
 import { ja } from "../../locales/ja";
 import { HashIcon, XBrandIcon } from "./icons";
@@ -233,15 +233,41 @@ function DateTabs({
 
 function RoomChips({
   rooms,
+  activeRooms,
   selectedRoom,
   filtersDisabled,
   onSelectRoom,
 }: {
   rooms: string[];
+  activeRooms?: string[];
   selectedRoom: string | null;
   filtersDisabled: boolean;
   onSelectRoom: (room: string | null) => void;
 }) {
+  const activeRoomSet = new Set(activeRooms ?? rooms);
+
+  function roomBorderClass(room: string): string {
+    const roomCode = getRoomCode(room);
+    if (roomCode === "A") return "border-rose-400";
+    if (roomCode === "B") return "border-amber-400";
+    if (roomCode === "C") return "border-emerald-400";
+    if (roomCode === "P") return "border-sky-400";
+    if (roomCode === "Q") return "border-fuchsia-400";
+    if (roomCode === "M") return "border-violet-400";
+    return "border-slate-300";
+  }
+
+  function roomActiveClass(room: string): string {
+    const roomCode = getRoomCode(room);
+    if (roomCode === "A") return "bg-rose-50 text-rose-800";
+    if (roomCode === "B") return "bg-amber-50 text-amber-800";
+    if (roomCode === "C") return "bg-emerald-50 text-emerald-800";
+    if (roomCode === "P") return "bg-sky-50 text-sky-800";
+    if (roomCode === "Q") return "bg-fuchsia-50 text-fuchsia-800";
+    if (roomCode === "M") return "bg-violet-50 text-violet-800";
+    return "bg-slate-50 text-slate-700";
+  }
+
   return (
     <div className="border-t border-gray-100 px-3 py-2">
       <div className="flex flex-wrap gap-2">
@@ -259,23 +285,29 @@ function RoomChips({
         >
           {ja.allRooms}
         </button>
-        {rooms.map((room) => (
-          <button
-            key={room}
-            type="button"
-            disabled={filtersDisabled}
-            onClick={() => onSelectRoom(room)}
-            className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${
-              filtersDisabled
-                ? "cursor-not-allowed bg-gray-200 text-gray-400"
-                : selectedRoom === room
-                  ? getRoomTheme(room).chipActive
-                  : getRoomTheme(room).chipInactive
-            }`}
-          >
-            {room}
-          </button>
-        ))}
+        {rooms.map((room) => {
+          const isSelected = selectedRoom === room;
+          const isActive = activeRoomSet.has(room);
+          return (
+            <button
+              key={room}
+              type="button"
+              disabled={filtersDisabled}
+              onClick={() => onSelectRoom(room)}
+              className={`shrink-0 rounded-full border px-3 py-1 text-xs font-medium ${
+                filtersDisabled
+                  ? "cursor-not-allowed bg-gray-200 text-gray-400 border-gray-300"
+                  : isSelected
+                    ? `${roomBorderClass(room)} bg-gray-700 text-white`
+                    : isActive
+                      ? `${roomBorderClass(room)} ${roomActiveClass(room)}`
+                      : `${roomBorderClass(room)} bg-gray-200 text-gray-500`
+              }`}
+            >
+              {room}
+            </button>
+          );
+        })}
         <a
           href={filtersDisabled ? undefined : VENUE_GUIDE_URL}
           target={filtersDisabled ? undefined : "_blank"}
@@ -322,6 +354,7 @@ export function ProgramHeader({
   selectedTime,
   nowEnabled,
   rooms,
+  activeRooms,
   selectedRoom,
   onQueryCommit,
   onToggleSearchAll,
@@ -355,6 +388,7 @@ export function ProgramHeader({
   selectedTime: string | null;
   nowEnabled: boolean;
   rooms: string[];
+  activeRooms?: string[];
   selectedRoom: string | null;
   onQueryCommit: (nextValue: string) => void;
   onToggleSearchAll: () => void;
@@ -413,6 +447,7 @@ export function ProgramHeader({
             />
             <RoomChips
               rooms={roomSorted}
+              activeRooms={activeRooms}
               selectedRoom={selectedRoom}
               filtersDisabled={filtersDisabled}
               onSelectRoom={onSelectRoom}

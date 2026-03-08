@@ -152,6 +152,11 @@ export function useProgramPageState() {
 
   const allRooms = useMemo(() => {
     if (!data) return [];
+    return getAvailableRooms(data.sessions, data.rooms, null, null);
+  }, [data]);
+
+  const availableRooms = useMemo(() => {
+    if (!data) return [];
     return getAvailableRooms(data.sessions, data.rooms, selectedDate, selectedTime);
   }, [data, selectedDate, selectedTime]);
 
@@ -182,12 +187,6 @@ export function useProgramPageState() {
       setSelectedTime(null);
     }
   }, [allTimes, selectedTime]);
-
-  useEffect(() => {
-    if (selectedRoom && allRooms.length > 0 && !allRooms.includes(selectedRoom)) {
-      setSelectedRoom(null);
-    }
-  }, [allRooms, selectedRoom]);
 
   useEffect(() => {
     setInstallContext({
@@ -676,6 +675,7 @@ export function useProgramPageState() {
       selectedTime,
       nowEnabled,
       rooms: allRooms,
+      activeRooms: availableRooms,
       selectedRoom,
       onQueryCommit: setQuery,
       onToggleSearchAll: () => setSearchAll((value) => !value),

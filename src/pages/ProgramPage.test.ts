@@ -323,6 +323,48 @@ describe("ProgramHeader", () => {
     expect(html).toContain("データ最終更新");
     expect(html).toContain("3/6(金) 00:01");
   });
+
+  it("非該当会場はグレー、選択中は濃いグレーで会場色ボーダーを維持する", () => {
+    const html = renderToStaticMarkup(
+      createElement(ProgramHeader, {
+        query: "",
+        isSearching: false,
+        searchAll: false,
+        bookmarkCount: 0,
+        bookmarkFilterActive: false,
+        showSettings: false,
+        showInstallButton: false,
+        showInstallDialog: false,
+        slackUrl: null,
+        slackAppUrl: null,
+        useSlackAppLinks: false,
+        allDates: ["2026-03-09"],
+        filtersDisabled: false,
+        selectedDate: "2026-03-09",
+        showFilters: true,
+        allTimes: ["9:00", "9:05"],
+        timelineSegments: [true],
+        selectedTime: "9:00",
+        nowEnabled: false,
+        rooms: ["A", "B"],
+        activeRooms: ["A"],
+        selectedRoom: "B",
+        onQueryCommit: () => {},
+        onToggleSearchAll: () => {},
+        onToggleBookmarkFilter: () => {},
+        onOpenSettings: () => {},
+        onOpenInstallDialog: () => {},
+        onSelectDate: () => {},
+        onToggleFilters: () => {},
+        onSelectTime: () => {},
+        onSelectNow: () => {},
+        onSelectRoom: () => {},
+      }),
+    );
+
+    expect(html).toContain("border-rose-400 bg-rose-50 text-rose-800");
+    expect(html).toContain("border-amber-400 bg-gray-700 text-white");
+  });
 });
 
 describe("syncSearchAllWithBookmarkFilter", () => {
