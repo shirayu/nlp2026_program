@@ -205,6 +205,23 @@ describe("SettingsDialog", () => {
     expect(html.indexOf("データの入出力")).toBeLessThan(html.indexOf("アイコン凡例"));
   });
 
+  it("バックアップがない場合は復元ボタンを無効状態で表示する", () => {
+    const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} hasBackup={false} />);
+
+    expect(html).toContain("復元");
+    expect(html).not.toContain("復元できるバックアップがありません。");
+    expect(html).toContain("cursor-not-allowed");
+  });
+
+  it("バックアップがある場合は復元ボタンを有効表示する", () => {
+    const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} hasBackup />);
+
+    expect(html).toContain("復元");
+    expect(html).not.toContain("復元できるバックアップがありません。");
+    expect(html).toContain("text-gray-600");
+    expect(html).not.toContain("text-amber-700");
+  });
+
   it("全てのデータを削除ボタンを常に表示する", () => {
     const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 

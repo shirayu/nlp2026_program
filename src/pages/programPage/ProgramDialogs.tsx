@@ -1213,8 +1213,8 @@ export function SettingsDialog({
   onToggleIncludeSessionTitleForPresentationSessions,
   onToggleShowTimeAtPresentationLevel,
   onExport,
-  hasBackup: _hasBackup,
-  onRestore: _onRestore,
+  hasBackup,
+  onRestore,
   onClearAllData,
 }: {
   dialogRef: RefObject<HTMLDialogElement | null>;
@@ -1379,6 +1379,18 @@ export function SettingsDialog({
                   className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-indigo-300 hover:text-indigo-600"
                 >
                   {ja.exportAppData}
+                </button>
+                <button
+                  type="button"
+                  disabled={!hasBackup}
+                  onClick={onRestore}
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                    hasBackup
+                      ? "border-gray-300 bg-white text-gray-600 hover:border-indigo-300 hover:text-indigo-600"
+                      : "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
+                  }`}
+                >
+                  {ja.restoreBackup}
                 </button>
               </div>
             </section>
