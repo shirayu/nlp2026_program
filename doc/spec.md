@@ -475,25 +475,25 @@ interface ZoomCustomUrls {
 ### キャッシュとフォールバック
 
 - `data.json`:
-  - SW runtime cache（NetworkFirst）で最新取得優先
-  - 取得成功時に `localStorage` に保存
-  - ネットワーク失敗時は `localStorage` を復元に使う
+    - SW runtime cache（NetworkFirst）で最新取得優先
+    - 取得成功時に `localStorage` に保存
+    - ネットワーク失敗時は `localStorage` を復元に使う
 - `slack.json`:
-  - 更新頻度が低いため SW precache 寄りで配信
-  - 取得成功時に `localStorage` に保存
-  - ネットワーク失敗時は `localStorage` を復元に使う
+    - 更新頻度が低いため SW precache 寄りで配信
+    - 取得成功時に `localStorage` に保存
+    - ネットワーク失敗時は `localStorage` を復元に使う
 
 ### localStorage 保存形式
 
 - 保存キー:
-  - `nlp2026-offline-conference-data`
-  - `nlp2026-offline-slack-channels`
+    - `nlp2026-offline-conference-data`
+    - `nlp2026-offline-slack-channels`
 - 保存値:
-  - `{ schemaVersion: number, savedAt: string, payload: object }`
+    - `{ schemaVersion: number, savedAt: string, payload: object }`
 - 仕様:
-  - `schemaVersion` 不一致時は無効として扱う
-  - JSON parse 失敗時は破損データとして破棄する
-  - 保存時の容量不足等は非致命として扱い、アプリは継続する
+    - `schemaVersion` 不一致時は無効として扱う
+    - JSON parse 失敗時は破損データとして破棄する
+    - 保存時の容量不足等は非致命として扱い、アプリは継続する
 
 ### 初期表示状態
 
