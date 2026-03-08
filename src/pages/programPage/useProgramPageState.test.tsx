@@ -478,6 +478,7 @@ describe("useProgramPageState", () => {
     expect(allTimes[0]).toBe("9:00");
     expect(allTimes[allTimes.length - 1]).toBe("11:00");
     expect(timelineSegments.some(Boolean)).toBe(false);
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表はありません");
 
     hook.unmount();
   });

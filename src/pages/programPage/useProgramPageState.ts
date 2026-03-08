@@ -239,6 +239,23 @@ export function useProgramPageState() {
     );
   }, [data, allTimes, selectedDate, selectedRoom]);
 
+  const roomHasPresentationsOnSelectedDate = useMemo(() => {
+    if (!data || !selectedDate) return undefined;
+    const roomToHasPresentation: Record<string, boolean> = Object.fromEntries(allRooms.map((room) => [room, false]));
+
+    for (const [sessionId, session] of Object.entries(data.sessions)) {
+      if (session.date !== selectedDate) continue;
+      if (!hasPresentationsInSession(sessionId as SessionId, session, data.presentations)) continue;
+      for (const roomId of session.room_ids) {
+        const roomName = data.rooms[roomId]?.name ?? roomId;
+        const short = roomShort(roomName);
+        roomToHasPresentation[short] = true;
+      }
+    }
+
+    return roomToHasPresentation;
+  }, [allRooms, data, selectedDate]);
+
   const nextScheduleTimePoint = useMemo(() => {
     if (!data) return null;
     return getNextScheduleTimePoint(data.sessions, new Date());
@@ -406,6 +423,10 @@ export function useProgramPageState() {
   const matchedPresentationCount = useMemo(() => {
     return filteredSessions.reduce((total, item) => total + item.presIds.length, 0);
   }, [filteredSessions]);
+  const noPresentationsInSelectedRoomOnDate = useMemo(() => {
+    if (!selectedDate || !selectedRoom) return false;
+    return roomHasPresentationsOnSelectedDate?.[selectedRoom] === false;
+  }, [roomHasPresentationsOnSelectedDate, selectedDate, selectedRoom]);
 
   useEffect(() => {
     if (!shouldExitBookmarkFilter(bookmarkCount, showBookmarkedOnly)) {
@@ -739,6 +760,7 @@ export function useProgramPageState() {
       nowEnabled,
       rooms: allRooms,
       activeRooms: availableRooms,
+      roomHasPresentationsOnSelectedDate,
       selectedRoom,
       onQueryCommit: setQuery,
       onToggleSearchAll: () => setSearchAll((value) => !value),
@@ -775,6 +797,10 @@ export function useProgramPageState() {
       onJumpToSession: handleJumpToSession,
       onToggleBookmark: toggleBookmark,
       onToggleSessionBookmark: toggleSessionBookmark,
+      emptyStateMessage:
+        noPresentationsInSelectedRoomOnDate && trimmedQuery.length === 0 && !showBookmarkedOnly
+          ? ja.noPresentationsInSelectedRoomOnDate
+          : ja.noResults,
     },
     overlayProps: {
       personModal,

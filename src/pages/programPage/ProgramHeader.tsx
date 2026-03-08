@@ -234,12 +234,14 @@ function DateTabs({
 function RoomChips({
   rooms,
   activeRooms,
+  roomHasPresentationsOnSelectedDate,
   selectedRoom,
   filtersDisabled,
   onSelectRoom,
 }: {
   rooms: string[];
   activeRooms?: string[];
+  roomHasPresentationsOnSelectedDate?: Record<string, boolean>;
   selectedRoom: string | null;
   filtersDisabled: boolean;
   onSelectRoom: (room: string | null) => void;
@@ -247,6 +249,9 @@ function RoomChips({
   const activeRoomSet = new Set(activeRooms ?? rooms);
 
   function roomBorderClass(room: string): string {
+    if (roomHasPresentationsOnSelectedDate && !roomHasPresentationsOnSelectedDate[room]) {
+      return "border-slate-300";
+    }
     const roomCode = getRoomCode(room);
     if (roomCode === "A") return "border-rose-400";
     if (roomCode === "B") return "border-amber-400";
@@ -356,6 +361,7 @@ export function ProgramHeader({
   nowEnabled,
   rooms,
   activeRooms,
+  roomHasPresentationsOnSelectedDate,
   selectedRoom,
   onQueryCommit,
   onToggleSearchAll,
@@ -391,6 +397,7 @@ export function ProgramHeader({
   nowEnabled: boolean;
   rooms: string[];
   activeRooms?: string[];
+  roomHasPresentationsOnSelectedDate?: Record<string, boolean>;
   selectedRoom: string | null;
   onQueryCommit: (nextValue: string) => void;
   onToggleSearchAll: () => void;
@@ -451,6 +458,7 @@ export function ProgramHeader({
             <RoomChips
               rooms={roomSorted}
               activeRooms={activeRooms}
+              roomHasPresentationsOnSelectedDate={roomHasPresentationsOnSelectedDate}
               selectedRoom={selectedRoom}
               filtersDisabled={filtersDisabled}
               onSelectRoom={onSelectRoom}
