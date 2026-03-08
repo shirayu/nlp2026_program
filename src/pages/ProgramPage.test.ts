@@ -408,6 +408,135 @@ describe("ProgramHeader", () => {
 
     expect(html).toContain("border-rose-400");
     expect(html).toContain("border-slate-300");
+    expect(html).toContain("bg-slate-100 text-slate-600");
+  });
+
+  it("その日に発表がない会場でも選択中は濃い灰色で判別できる", () => {
+    const html = renderToStaticMarkup(
+      createElement(ProgramHeader, {
+        query: "",
+        isSearching: false,
+        searchAll: false,
+        bookmarkCount: 0,
+        bookmarkFilterActive: false,
+        showSettings: false,
+        showInstallButton: false,
+        showInstallDialog: false,
+        slackUrl: null,
+        slackAppUrl: null,
+        useSlackAppLinks: false,
+        allDates: ["2026-03-09"],
+        filtersDisabled: false,
+        selectedDate: "2026-03-09",
+        showFilters: true,
+        allTimes: ["9:00", "9:05"],
+        timelineSegments: [true],
+        selectedTime: "9:00",
+        nowEnabled: false,
+        rooms: ["A", "B"],
+        roomHasPresentationsOnSelectedDate: { A: true, B: false },
+        activeRooms: ["A", "B"],
+        selectedRoom: "B",
+        onQueryCommit: () => {},
+        onToggleSearchAll: () => {},
+        onToggleBookmarkFilter: () => {},
+        onOpenSettings: () => {},
+        onOpenInstallDialog: () => {},
+        onSelectDate: () => {},
+        onToggleFilters: () => {},
+        onSelectTime: () => {},
+        onSelectNow: () => {},
+        onSelectRoom: () => {},
+      }),
+    );
+
+    expect(html).toContain("border-slate-300 bg-slate-500 text-white");
+  });
+
+  it("filtersDisabled が有効なら会場の状態に関係なく disabled スタイルを優先する", () => {
+    const html = renderToStaticMarkup(
+      createElement(ProgramHeader, {
+        query: "",
+        isSearching: false,
+        searchAll: false,
+        bookmarkCount: 0,
+        bookmarkFilterActive: false,
+        showSettings: false,
+        showInstallButton: false,
+        showInstallDialog: false,
+        slackUrl: null,
+        slackAppUrl: null,
+        useSlackAppLinks: false,
+        allDates: ["2026-03-09"],
+        filtersDisabled: true,
+        selectedDate: "2026-03-09",
+        showFilters: true,
+        allTimes: ["9:00", "9:05"],
+        timelineSegments: [true],
+        selectedTime: "9:00",
+        nowEnabled: false,
+        rooms: ["A", "B"],
+        roomHasPresentationsOnSelectedDate: { A: true, B: false },
+        activeRooms: ["A", "B"],
+        selectedRoom: "B",
+        onQueryCommit: () => {},
+        onToggleSearchAll: () => {},
+        onToggleBookmarkFilter: () => {},
+        onOpenSettings: () => {},
+        onOpenInstallDialog: () => {},
+        onSelectDate: () => {},
+        onToggleFilters: () => {},
+        onSelectTime: () => {},
+        onSelectNow: () => {},
+        onSelectRoom: () => {},
+      }),
+    );
+
+    expect(html).toContain("cursor-not-allowed bg-gray-200 text-gray-400 border-gray-300");
+    expect(html).not.toContain("bg-slate-500 text-white");
+  });
+
+  it("roomHasPresentationsOnSelectedDate 未指定時は既存の会場色を維持する", () => {
+    const html = renderToStaticMarkup(
+      createElement(ProgramHeader, {
+        query: "",
+        isSearching: false,
+        searchAll: false,
+        bookmarkCount: 0,
+        bookmarkFilterActive: false,
+        showSettings: false,
+        showInstallButton: false,
+        showInstallDialog: false,
+        slackUrl: null,
+        slackAppUrl: null,
+        useSlackAppLinks: false,
+        allDates: ["2026-03-09"],
+        filtersDisabled: false,
+        selectedDate: "2026-03-09",
+        showFilters: true,
+        allTimes: ["9:00", "9:05"],
+        timelineSegments: [true],
+        selectedTime: "9:00",
+        nowEnabled: false,
+        rooms: ["A", "B"],
+        activeRooms: ["A", "B"],
+        selectedRoom: "A",
+        onQueryCommit: () => {},
+        onToggleSearchAll: () => {},
+        onToggleBookmarkFilter: () => {},
+        onOpenSettings: () => {},
+        onOpenInstallDialog: () => {},
+        onSelectDate: () => {},
+        onToggleFilters: () => {},
+        onSelectTime: () => {},
+        onSelectNow: () => {},
+        onSelectRoom: () => {},
+      }),
+    );
+
+    expect(html).toContain("border-rose-400 bg-rose-600 text-white");
+    expect(html).toContain("border-amber-400 bg-amber-50 text-amber-800");
+    expect(html).not.toContain("border-slate-300");
   });
 });
 

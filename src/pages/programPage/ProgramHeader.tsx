@@ -248,8 +248,12 @@ function RoomChips({
 }) {
   const activeRoomSet = new Set(activeRooms ?? rooms);
 
+  function hasNoPresentationsOnSelectedDate(room: string): boolean {
+    return Boolean(roomHasPresentationsOnSelectedDate && !roomHasPresentationsOnSelectedDate[room]);
+  }
+
   function roomBorderClass(room: string): string {
-    if (roomHasPresentationsOnSelectedDate && !roomHasPresentationsOnSelectedDate[room]) {
+    if (hasNoPresentationsOnSelectedDate(room)) {
       return "border-slate-300";
     }
     const roomCode = getRoomCode(room);
@@ -295,6 +299,28 @@ function RoomChips({
     return "bg-indigo-50/70 text-indigo-700";
   }
 
+  function roomChipClass(room: string, isSelected: boolean, isActive: boolean): string {
+    if (filtersDisabled) {
+      return "cursor-not-allowed bg-gray-200 text-gray-400 border-gray-300";
+    }
+
+    if (hasNoPresentationsOnSelectedDate(room)) {
+      return isSelected
+        ? `${roomBorderClass(room)} bg-slate-500 text-white`
+        : `${roomBorderClass(room)} bg-slate-100 text-slate-600`;
+    }
+
+    if (isSelected) {
+      return `${roomBorderClass(room)} ${roomSelectedClass(room)}`;
+    }
+
+    if (isActive) {
+      return `${roomBorderClass(room)} ${roomActiveClass(room)}`;
+    }
+
+    return `${roomBorderClass(room)} ${roomInactiveClass(room)}`;
+  }
+
   return (
     <div className="border-t border-gray-100 px-3 py-2">
       <div className="flex flex-wrap gap-2">
@@ -321,15 +347,7 @@ function RoomChips({
               type="button"
               disabled={filtersDisabled}
               onClick={() => onSelectRoom(room)}
-              className={`shrink-0 rounded-full border px-3 py-1 text-xs font-medium ${
-                filtersDisabled
-                  ? "cursor-not-allowed bg-gray-200 text-gray-400 border-gray-300"
-                  : isSelected
-                    ? `${roomBorderClass(room)} ${roomSelectedClass(room)}`
-                    : isActive
-                      ? `${roomBorderClass(room)} ${roomActiveClass(room)}`
-                      : `${roomBorderClass(room)} ${roomInactiveClass(room)}`
-              }`}
+              className={`shrink-0 rounded-full border px-3 py-1 text-xs font-medium ${roomChipClass(room, isSelected, isActive)}`}
             >
               {room}
             </button>
