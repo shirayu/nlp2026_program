@@ -74,7 +74,7 @@ describe("TimelineFilter", () => {
     );
 
     expect(countMatches(html, /bg-gray-600/g)).toBe(2);
-    expect(countMatches(html, /bg-lime-100/g)).toBe(1);
+    expect(countMatches(html, /bg-lime-300/g)).toBe(1);
   });
 
   it("過去日ではアクティブな全セグメントを濃い灰色にする", () => {
@@ -94,7 +94,7 @@ describe("TimelineFilter", () => {
     );
 
     expect(countMatches(html, /bg-gray-600/g)).toBe(3);
-    expect(html).not.toContain("bg-lime-100");
+    expect(html).not.toContain("bg-lime-300");
   });
 
   it("未来日ではアクティブなセグメントを濃い灰色にしない", () => {
@@ -114,7 +114,7 @@ describe("TimelineFilter", () => {
     );
 
     expect(html).not.toContain("bg-gray-600");
-    expect(countMatches(html, /bg-lime-100/g)).toBe(3);
+    expect(countMatches(html, /bg-lime-300/g)).toBe(3);
   });
 
   it("会場選択時は該当会場の色でアクティブセグメントを塗る", () => {
@@ -132,7 +132,7 @@ describe("TimelineFilter", () => {
     );
 
     expect(countMatches(html, /bg-rose-200/g)).toBe(3);
-    expect(html).not.toContain("bg-lime-100");
+    expect(html).not.toContain("bg-lime-300");
   });
 
   it("会場選択時でも過去セグメントは会場色より濃い灰色を優先する", () => {

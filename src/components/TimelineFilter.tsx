@@ -82,7 +82,7 @@ function buildTimelineSegments(points: string[], activeSegments: boolean[], past
 }
 
 function getActiveSegmentClass(selectedRoom: string | null | undefined): string {
-  if (!selectedRoom) return "bg-lime-100";
+  if (!selectedRoom) return "bg-lime-300";
   const roomCode = selectedRoom ? getRoomCode(selectedRoom) : null;
   if (roomCode === "A") return "bg-rose-200";
   if (roomCode === "B") return "bg-amber-200";
