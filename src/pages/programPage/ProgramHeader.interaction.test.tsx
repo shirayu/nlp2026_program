@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
 
-import { act, useState } from "react";
+import { act, type ComponentProps, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ProgramHeader } from "./ProgramHeader";
@@ -13,6 +13,46 @@ function findButtonByText(container: HTMLElement, label: string): HTMLButtonElem
     throw new Error(`button not found: ${label}`);
   }
   return button as HTMLButtonElement;
+}
+
+type HeaderProps = ComponentProps<typeof ProgramHeader>;
+
+function baseHeaderProps(): HeaderProps {
+  return {
+    query: "",
+    isSearching: false,
+    searchAll: false,
+    bookmarkCount: 0,
+    bookmarkFilterActive: false,
+    showSettings: false,
+    showInstallButton: false,
+    showInstallDialog: false,
+    slackUrl: null,
+    slackAppUrl: null,
+    useSlackAppLinks: false,
+    allDates: ["2026-03-09"],
+    filtersDisabled: false,
+    selectedDate: "2026-03-09",
+    showFilters: true,
+    allTimes: ["9:00", "9:05"],
+    timelineSegments: [true],
+    selectedTime: null,
+    nowEnabled: false,
+    rooms: ["A", "B"],
+    roomHasPresentationsOnSelectedDate: undefined,
+    activeRooms: ["A", "B"],
+    selectedRoom: null,
+    onQueryCommit: () => {},
+    onToggleSearchAll: () => {},
+    onToggleBookmarkFilter: () => {},
+    onOpenSettings: () => {},
+    onOpenInstallDialog: () => {},
+    onSelectDate: () => {},
+    onToggleFilters: () => {},
+    onSelectTime: () => {},
+    onSelectNow: () => {},
+    onSelectRoom: () => {},
+  };
 }
 
 describe("ProgramHeader room chip interaction", () => {
@@ -94,5 +134,115 @@ describe("ProgramHeader room chip interaction", () => {
       root.unmount();
     });
     container.remove();
+  });
+
+  it("同一入力で部屋ボタンのクラスが一意に決まる（テーブルドリブン）", () => {
+    const cases: Array<{
+      name: string;
+      props: Partial<HeaderProps>;
+      targetRoom: string;
+      expected: string;
+      unexpected: string[];
+    }> = [
+      {
+        name: "disabled",
+        props: { filtersDisabled: true, selectedRoom: "B" },
+        targetRoom: "B",
+        expected: "cursor-not-allowed bg-gray-200 text-gray-400 border-gray-300",
+        unexpected: ["bg-slate-500 text-white", "bg-amber-600 text-white"],
+      },
+      {
+        name: "out_of_scope_unselected",
+        props: {
+          selectedDate: "2026-03-11",
+          selectedTime: "15:00",
+          rooms: ["P", "C"],
+          activeRooms: ["P"],
+          roomHasPresentationsOnSelectedDate: { P: false, C: true },
+          selectedRoom: null,
+        },
+        targetRoom: "C",
+        expected: "border-slate-300 bg-slate-100 text-slate-600",
+        unexpected: ["bg-emerald-50 text-emerald-800", "bg-emerald-600 text-white"],
+      },
+      {
+        name: "out_of_scope_selected",
+        props: {
+          selectedDate: "2026-03-11",
+          selectedTime: "15:00",
+          rooms: ["P", "C"],
+          activeRooms: ["P"],
+          roomHasPresentationsOnSelectedDate: { P: false },
+          selectedRoom: "C",
+        },
+        targetRoom: "C",
+        expected: "border-slate-300 bg-slate-500 text-white",
+        unexpected: ["bg-emerald-600 text-white", "bg-slate-100 text-slate-600"],
+      },
+      {
+        name: "no_presentation_unselected",
+        props: {
+          selectedTime: null,
+          roomHasPresentationsOnSelectedDate: { A: true, B: false },
+          selectedRoom: null,
+        },
+        targetRoom: "B",
+        expected: "border-slate-300 bg-slate-100 text-slate-600",
+        unexpected: ["bg-amber-50 text-amber-800", "bg-amber-600 text-white"],
+      },
+      {
+        name: "no_presentation_selected",
+        props: {
+          selectedTime: null,
+          roomHasPresentationsOnSelectedDate: { A: true, B: false },
+          selectedRoom: "B",
+        },
+        targetRoom: "B",
+        expected: "border-slate-300 bg-slate-500 text-white",
+        unexpected: ["bg-amber-600 text-white", "bg-slate-100 text-slate-600"],
+      },
+      {
+        name: "selected",
+        props: { selectedRoom: "A" },
+        targetRoom: "A",
+        expected: "border-rose-400 bg-rose-600 text-white",
+        unexpected: ["bg-slate-500 text-white", "bg-rose-50 text-rose-800"],
+      },
+      {
+        name: "active",
+        props: { selectedRoom: null, activeRooms: ["A"] },
+        targetRoom: "A",
+        expected: "border-rose-400 bg-rose-50 text-rose-800",
+        unexpected: ["bg-rose-600 text-white", "bg-slate-100 text-slate-600"],
+      },
+      {
+        name: "inactive",
+        props: { selectedRoom: null, activeRooms: ["A"] },
+        targetRoom: "B",
+        expected: "border-amber-400 bg-amber-50/70 text-amber-700",
+        unexpected: ["bg-slate-100 text-slate-600", "bg-amber-600 text-white"],
+      },
+    ];
+
+    for (const testCase of cases) {
+      const container = document.createElement("div");
+      document.body.append(container);
+      const root = createRoot(container);
+
+      act(() => {
+        root.render(<ProgramHeader {...baseHeaderProps()} {...testCase.props} />);
+      });
+
+      const targetButton = findButtonByText(container, testCase.targetRoom);
+      expect(targetButton.className, testCase.name).toContain(testCase.expected);
+      for (const bad of testCase.unexpected) {
+        expect(targetButton.className, `${testCase.name}: not ${bad}`).not.toContain(bad);
+      }
+
+      act(() => {
+        root.unmount();
+      });
+      container.remove();
+    }
   });
 });
