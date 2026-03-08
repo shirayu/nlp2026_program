@@ -11,6 +11,7 @@ import { fullscreenDialogClassName, getNextScheduleTimePoint } from "./programPa
 export { SearchField, fullscreenDialogClassName, getNextScheduleTimePoint };
 
 export default function ProgramPage() {
+  const loadingImageSrc = `${import.meta.env.BASE_URL}loading.avif`;
   const { data, initialLoadStatus, onRetryInitialLoad, headerProps, resultsProps, overlayProps } =
     useProgramPageState();
   const [remainingSeconds, setRemainingSeconds] = useState(CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS);
@@ -37,8 +38,9 @@ export default function ProgramPage() {
   if (initialLoadStatus === "loading") {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-1">
-        <p className="text-gray-500">{ja.loading}</p>
-        {shouldShowCountdown ? <p className="text-xs text-gray-400">{ja.loadingCountdown(remainingSeconds)}</p> : null}
+        <p className="text-lg text-gray-500">{ja.loading}</p>
+        {shouldShowCountdown ? <p className="text-sm text-gray-400">{ja.loadingCountdown(remainingSeconds)}</p> : null}
+        <img src={loadingImageSrc} alt="読み込み画像" className="mt-3 w-36 max-w-[60vw]" />
       </div>
     );
   }

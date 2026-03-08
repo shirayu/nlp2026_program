@@ -79,7 +79,7 @@ export default defineConfig(({ mode }) => {
           // runtimeCaching で最新取得優先の NetworkFirst に寄せる。
           // slack.json は更新頻度が低いため precache に含め、オフライン再起動時の
           // 取得失敗率を下げる。
-          globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
+          globPatterns: ["**/*.{js,css,html,png,svg,ico,avif}"],
           additionalManifestEntries: [
             {
               url: sessionSlackPath,

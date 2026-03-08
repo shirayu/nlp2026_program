@@ -65,6 +65,8 @@ describe("ProgramPage view states", () => {
 
     expect(page.container.textContent).toContain("読み込み中...");
     expect(page.container.textContent).not.toContain("キャッシュ利用まで:");
+    const image = page.container.querySelector('img[alt="読み込み画像"]');
+    expect(image?.getAttribute("src")).toBe("/loading.avif");
     page.unmount();
   });
 
