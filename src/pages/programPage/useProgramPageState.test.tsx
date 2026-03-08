@@ -270,6 +270,115 @@ describe("useProgramPageState", () => {
     hook.unmount();
   });
 
+  it("時点指定中に日付変更で選択時刻が候補外になったら selectedTime を自動解除する", async () => {
+    const dataWithDifferentTimeByDate: ConferenceData = {
+      generated_at: "2026-03-04T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        R1: { name: "A会場" },
+      },
+      sessions: {
+        D1: {
+          title: "初日セッション",
+          date: "2026-03-04",
+          start_time: "9:00",
+          end_time: "10:00",
+          room_ids: ["R1"],
+          chair: "",
+          presentation_ids: [],
+        },
+        D2: {
+          title: "2日目セッション",
+          date: "2026-03-05",
+          start_time: "13:00",
+          end_time: "14:00",
+          room_ids: ["R1"],
+          chair: "",
+          presentation_ids: [],
+        },
+      },
+      presentations: {},
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataWithDifferentTimeByDate,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-04");
+      hook.getLatest().headerProps.onSelectTime("9:00");
+    });
+    await act(async () => {});
+    expect(hook.getLatest().headerProps.selectedTime).toBe("9:00");
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-05");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.allTimes).toContain("13:00");
+    expect(hook.getLatest().headerProps.selectedTime).toBeNull();
+
+    hook.unmount();
+  });
+
+  it("onSelectNow は次スケジュールがあれば selectedDate/selectedTime を設定する", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-03-04T08:58:00+09:00"));
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.nowEnabled).toBe(true);
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectNow();
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.selectedDate).toBe("2026-03-04");
+    expect(hook.getLatest().headerProps.selectedTime).toBe("9:00");
+
+    hook.unmount();
+    vi.useRealTimers();
+  });
+
+  it("onSelectNow は次スケジュールがなければ selectedDate/selectedTime を変更しない", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-03-06T09:00:00+09:00"));
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-04");
+      hook.getLatest().headerProps.onSelectTime("9:00");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.nowEnabled).toBe(false);
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectNow();
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.selectedDate).toBe("2026-03-04");
+    expect(hook.getLatest().headerProps.selectedTime).toBe("9:00");
+
+    hook.unmount();
+    vi.useRealTimers();
+  });
+
   it("選択会場は時点変更で該当外になっても維持し、表示候補は全会場のまま", async () => {
     const hook = setupHook();
     await act(async () => {});
