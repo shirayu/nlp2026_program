@@ -428,7 +428,7 @@ describe("SessionCard", () => {
     expect(html).toContain("<mark");
   });
 
-  it("複数部屋のセッションはヘッダ背景を均等分割で描画する", () => {
+  it("複数会場のセッションはヘッダ背景を均等分割で描画する", () => {
     const html = renderToStaticMarkup(
       <SessionCard
         bookmarkedPresentationIds={new Set()}
@@ -456,7 +456,7 @@ describe("SessionCard", () => {
     );
   });
 
-  it("4部屋のセッションは25%刻みで均等分割する", () => {
+  it("4会場のセッションは25%刻みで均等分割する", () => {
     const html = renderToStaticMarkup(
       <SessionCard
         bookmarkedPresentationIds={new Set()}
@@ -484,7 +484,7 @@ describe("SessionCard", () => {
     );
   });
 
-  it("3部屋のセッションは3分割グラデーションで描画する", () => {
+  it("3会場のセッションは3分割グラデーションで描画する", () => {
     const html = renderToStaticMarkup(
       <SessionCard
         bookmarkedPresentationIds={new Set()}
@@ -512,7 +512,7 @@ describe("SessionCard", () => {
     );
   });
 
-  it("単一部屋のセッションはヘッダに background-image を付与しない", () => {
+  it("単一会場のセッションはヘッダに background-image を付与しない", () => {
     const html = renderToStaticMarkup(
       <SessionCard
         bookmarkedPresentationIds={new Set()}
@@ -538,7 +538,7 @@ describe("SessionCard", () => {
     expect(html).not.toContain("background-image");
   });
 
-  it("未知会場を含む複数部屋セッションはフォールバック色を使う", () => {
+  it("未知会場を含む複数会場セッションはフォールバック色を使う", () => {
     const html = renderToStaticMarkup(
       <SessionCard
         bookmarkedPresentationIds={new Set()}

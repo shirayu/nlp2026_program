@@ -277,7 +277,7 @@ describe("ProgramHeader room chip interaction", () => {
     container.remove();
   });
 
-  it("同一入力で部屋ボタンのクラスが一意に決まる（テーブルドリブン）", () => {
+  it("同一入力で会場ボタンのクラスが一意に決まる（テーブルドリブン）", () => {
     const cases: Array<{
       name: string;
       props: Partial<HeaderProps>;
@@ -454,7 +454,7 @@ describe("ProgramHeader room chip interaction", () => {
     disabledContainer.remove();
   });
 
-  it("部屋ボタンの組み合わせクラスをスナップショット固定する（正規化済み）", () => {
+  it("会場ボタンの組み合わせクラスをスナップショット固定する（正規化済み）", () => {
     const rows = buildRoomChipSnapshotCases().map((testCase) => ({
       ...testCase,
       className: renderRoomChipClassName(testCase),

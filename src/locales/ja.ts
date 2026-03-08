@@ -7,7 +7,7 @@ export const ja = {
   loadingFailed: "データの読み込みに失敗しました。オンライン接続後に再試行してください。",
   retryLoading: "再試行",
   noResults: "該当する発表・セッションがありません",
-  noPresentationsInSelectedRoomOnDate: "この日はこの部屋での発表・セッションはありません",
+  noPresentationsInSelectedRoomOnDate: "この日はこの会場での発表・セッションはありません",
   allDates: "全日程",
   allTimes: "時点指定なし",
   allRooms: "全会場",

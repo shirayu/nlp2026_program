@@ -614,7 +614,7 @@ describe("useProgramPageState", () => {
     expect(start1000).toBeGreaterThanOrEqual(0);
     expect(timelineSegments[start0900]).toBe(true);
     expect(timelineSegments[start1000]).toBe(false);
-    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの会場での発表・セッションはありません");
 
     hook.unmount();
   });
@@ -795,7 +795,7 @@ describe("useProgramPageState", () => {
     expect(idx1500D1).toBeGreaterThanOrEqual(0);
     expect(hook.getLatest().headerProps.timelineSegments[idx1500D1]).toBe(true);
     expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.P).toBe(false);
-    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの会場での発表・セッションはありません");
 
     act(() => {
       hook.getLatest().headerProps.onSelectDate("2026-03-13");
@@ -809,7 +809,7 @@ describe("useProgramPageState", () => {
     expect(hook.getLatest().headerProps.timelineSegments[idx1500D3]).toBe(false);
     expect(hook.getLatest().headerProps.activeRooms).toEqual(["P"]);
     expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.Q).toBeUndefined();
-    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの会場での発表・セッションはありません");
 
     hook.unmount();
   });
@@ -884,7 +884,7 @@ describe("useProgramPageState", () => {
     await act(async () => {});
 
     expect(hook.getLatest().resultsProps.filteredSessions).toHaveLength(0);
-    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの会場での発表・セッションはありません");
     expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.A).toBe(false);
 
     hook.unmount();
@@ -1086,7 +1086,7 @@ describe("useProgramPageState", () => {
     });
     await act(async () => {});
 
-    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの会場での発表・セッションはありません");
     expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.A).toBe(false);
 
     hook.unmount();
@@ -1278,13 +1278,13 @@ describe("useProgramPageState", () => {
       hook.getLatest().headerProps.onSelectRoom("A");
     });
     await act(async () => {});
-    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの会場での発表・セッションはありません");
 
     act(() => {
       hook.getLatest().headerProps.onSelectRoom("B");
     });
     await act(async () => {});
-    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの会場での発表・セッションはありません");
 
     hook.unmount();
   });
@@ -1420,7 +1420,7 @@ describe("useProgramPageState", () => {
 
     expect(hook.getLatest().headerProps.activeRooms).toEqual(["P"]);
     expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.Q).toBeUndefined();
-    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの会場での発表・セッションはありません");
 
     hook.unmount();
   });
@@ -1492,7 +1492,7 @@ describe("useProgramPageState", () => {
       hook.getLatest().headerProps.onSelectTime("18:00");
     });
     await act(async () => {});
-    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの会場での発表・セッションはありません");
     expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.["3F"]).toBe(false);
 
     hook.unmount();
@@ -1641,7 +1641,7 @@ describe("useProgramPageState", () => {
     });
     await act(async () => {});
     expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.["3F"]).toBe(false);
-    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの会場での発表・セッションはありません");
 
     hook.unmount();
   });
@@ -1723,7 +1723,7 @@ describe("useProgramPageState", () => {
       hook.getLatest().headerProps.onSelectRoom("B");
     });
     await act(async () => {});
-    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの会場での発表・セッションはありません");
     expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.B).toBe(false);
 
     act(() => {
@@ -1897,7 +1897,7 @@ describe("useProgramPageState", () => {
     expect(idx1000).toBeGreaterThanOrEqual(0);
     expect(hook.getLatest().headerProps.timelineSegments[idx1000]).toBe(false);
     expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.Q).toBeUndefined();
-    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの会場での発表・セッションはありません");
 
     hook.unmount();
   });
