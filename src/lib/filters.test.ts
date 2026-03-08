@@ -300,6 +300,76 @@ describe("filterSessions - 日付・時刻・会場フィルタ", () => {
     expect(result.map((r) => r.sessionId)).toEqual(["s3"]);
   });
 
+  it("複数会場かつ発表なしセッションも含まれる会場のどれでも絞り込める", () => {
+    const dataWithMultiRoomNoPresentation: ConferenceData = {
+      ...data,
+      sessions: {
+        ...data.sessions,
+        opening: {
+          title: "合同オープニング",
+          date: "2026-03-10",
+          start_time: "11:00",
+          end_time: "11:30",
+          room_ids: ["r1", "r2"],
+          chair: "",
+          presentation_ids: [],
+        },
+      },
+    };
+
+    const room1Result = filterSessions(dataWithMultiRoomNoPresentation, {
+      ...noFilter,
+      selectedDate: "2026-03-10",
+      selectedRoom: "第1会場",
+    });
+    expect(room1Result.map((r) => r.sessionId)).toContain("opening");
+
+    const room2Result = filterSessions(dataWithMultiRoomNoPresentation, {
+      ...noFilter,
+      selectedDate: "2026-03-10",
+      selectedRoom: "第2会場",
+    });
+    expect(room2Result.map((r) => r.sessionId)).toContain("opening");
+  });
+
+  it("presentation_ids が空でも発表が紐づく複数会場セッションは会場絞り込みで表示できる", () => {
+    const dataWithMultiRoomPresentationFallback: ConferenceData = {
+      ...data,
+      sessions: {
+        ...data.sessions,
+        s4: {
+          title: "合同口頭発表",
+          date: "2026-03-10",
+          start_time: "11:30",
+          end_time: "12:00",
+          room_ids: ["r1", "r2"],
+          chair: "",
+          presentation_ids: [],
+        },
+      },
+      presentations: {
+        ...data.presentations,
+        pr5: {
+          title: "合同発表",
+          session_id: "s4",
+          presenter_id: "p1",
+          is_english: false,
+          is_online: false,
+          authors: [{ person_id: "p1", affiliation_id: "a1" }],
+          pdf_url: null,
+        },
+      },
+    };
+
+    const result = filterSessions(dataWithMultiRoomPresentationFallback, {
+      ...noFilter,
+      selectedDate: "2026-03-10",
+      selectedRoom: "第2会場",
+    });
+    expect(result.map((r) => r.sessionId)).toContain("s4");
+    expect(result.find((r) => r.sessionId === "s4")?.presIds).toEqual(["pr5"]);
+  });
+
   it("searchAll=true でも日付フィルタが効く（バグ修正確認）", () => {
     const result = filterSessions(data, {
       ...noFilter,
@@ -510,6 +580,33 @@ describe("filterSessions - テキスト検索", () => {
       includeSessionTitleForNoPresentationSessions: false,
     });
     expect(result).toHaveLength(0);
+  });
+
+  it("複数会場の発表なしセッションも設定オンならセッションタイトルでヒットする", () => {
+    const dataWithMultiRoomOpening: ConferenceData = {
+      ...data,
+      sessions: {
+        ...data.sessions,
+        opening: {
+          title: "合同オープニング",
+          date: "2026-03-10",
+          start_time: "11:00",
+          end_time: "11:30",
+          room_ids: ["r1", "r2"],
+          chair: "",
+          presentation_ids: [],
+        },
+      },
+    };
+
+    const result = filterSessions(dataWithMultiRoomOpening, {
+      ...noFilter,
+      query: "合同オープニング",
+      selectedDate: "2026-03-10",
+      selectedRoom: "第2会場",
+    });
+    expect(result.map((r) => r.sessionId)).toEqual(["opening"]);
+    expect(result[0]?.presIds).toEqual([]);
   });
 
   it("座長名ではヒットしない", () => {

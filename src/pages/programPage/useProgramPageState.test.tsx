@@ -1161,6 +1161,134 @@ describe("useProgramPageState", () => {
     hook.unmount();
   });
 
+  it("presentation_ids が空でも発表が紐づく複数会場セッションは各会場で発表ありとして扱う", async () => {
+    const dataWithMultiRoomPresentationFallback: ConferenceData = {
+      generated_at: "2026-03-04T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        R1: { name: "A会場" },
+        R2: { name: "B会場" },
+      },
+      sessions: {
+        S1: {
+          title: "A/B 共同セッション",
+          date: "2026-03-04",
+          start_time: "9:00",
+          end_time: "10:00",
+          room_ids: ["R1", "R2"],
+          chair: "",
+          presentation_ids: [],
+        },
+      },
+      presentations: {
+        P1: {
+          title: "共同発表",
+          session_id: "S1",
+          presenter_id: null,
+          is_english: false,
+          is_online: false,
+          authors: [],
+          pdf_url: null,
+        },
+      },
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataWithMultiRoomPresentationFallback,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-04");
+      hook.getLatest().headerProps.onSelectTime("9:00");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.A).toBe(true);
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.B).toBe(true);
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectRoom("A");
+    });
+    await act(async () => {});
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("該当する発表・セッションがありません");
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectRoom("B");
+    });
+    await act(async () => {});
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("該当する発表・セッションがありません");
+
+    hook.unmount();
+  });
+
+  it("複数会場にまたがる発表なしセッションは各会場で発表なしとして扱う", async () => {
+    const dataWithMultiRoomNoPresentation: ConferenceData = {
+      generated_at: "2026-03-04T09:00:00+09:00",
+      persons: {},
+      affiliations: {},
+      rooms: {
+        R1: { name: "A会場" },
+        R2: { name: "B会場" },
+      },
+      sessions: {
+        S1: {
+          title: "A/B 合同案内",
+          date: "2026-03-04",
+          start_time: "9:00",
+          end_time: "10:00",
+          room_ids: ["R1", "R2"],
+          chair: "",
+          presentation_ids: [],
+        },
+      },
+      presentations: {},
+    };
+    mockUseConferenceData.mockReturnValue({
+      data: dataWithMultiRoomNoPresentation,
+      sessionSlackChannels: {},
+      isReloading: false,
+      reloadStatus: "idle",
+      reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-04");
+      hook.getLatest().headerProps.onSelectTime("9:00");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.A).toBe(false);
+    expect(hook.getLatest().headerProps.roomHasPresentationsOnSelectedDate?.B).toBe(false);
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectRoom("A");
+    });
+    await act(async () => {});
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectRoom("B");
+    });
+    await act(async () => {});
+    expect(hook.getLatest().resultsProps.emptyStateMessage).toBe("この日はこの部屋での発表・セッションはありません");
+
+    hook.unmount();
+  });
+
   it("3/11 15:00 で C会場は非アクティブ扱いとなり専用空メッセージを出さない", async () => {
     const dataWithPOnlyAt1500: ConferenceData = {
       generated_at: "2026-03-11T09:00:00+09:00",
