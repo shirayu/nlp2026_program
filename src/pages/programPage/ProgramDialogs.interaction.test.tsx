@@ -53,8 +53,7 @@ function renderSettingsDialog(props?: Partial<Parameters<typeof SettingsDialog>[
     onToggleShowAuthors: vi.fn(),
     onToggleUseSlackAppLinks: vi.fn(),
     onSetZoomCustomUrls: vi.fn(),
-    onImportSettingsFromCode: async () => true,
-    onImportZoomFromCode: async () => true,
+    onImportFromCode: async () => true,
     onToggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
     onToggleIncludeSessionTitleForPresentationSessions: vi.fn(),
     onToggleShowTimeAtPresentationLevel: vi.fn(),
@@ -89,65 +88,32 @@ describe("SettingsDialog import button state", () => {
     vi.clearAllMocks();
   });
 
-  it("Zoom コードインポートは処理中にボタンを無効化し文言を切り替える", async () => {
+  it("コードインポートは処理中にボタンを無効化し文言を切り替える", async () => {
     let resolveImport: ((value: boolean) => void) | undefined;
-    const onImportZoomFromCode = vi.fn(
+    const onImportFromCode = vi.fn(
       () =>
         new Promise<boolean>((resolve) => {
           resolveImport = resolve;
         }),
     );
-    const page = renderSettingsDialog({ onImportZoomFromCode });
-
-    act(() => {
-      findButton(page.container, ja.zoomCodeImport).click();
-    });
-    const zoomImportDialog = findImportDialog(page.container, ja.zoomImportCodePlaceholder);
-    act(() => {
-      const textarea = findTextarea(zoomImportDialog);
-      textarea.value = "https://example.com/#import_zoom_settings=encoded";
-      textarea.dispatchEvent(new Event("input", { bubbles: true }));
-    });
-    act(() => {
-      findButton(zoomImportDialog, ja.zoomImportCodeRun).click();
-    });
-
-    const importingButton = findButton(zoomImportDialog, ja.zoomImportCodeRunning);
-    expect(importingButton.disabled).toBe(true);
-    expect(onImportZoomFromCode).toHaveBeenCalledTimes(1);
-
-    await act(async () => {
-      resolveImport?.(true);
-    });
-    page.unmount();
-  });
-
-  it("設定インポートは処理中にボタンを無効化し文言を切り替える", async () => {
-    let resolveImport: ((value: boolean) => void) | undefined;
-    const onImportSettingsFromCode = vi.fn(
-      () =>
-        new Promise<boolean>((resolve) => {
-          resolveImport = resolve;
-        }),
-    );
-    const page = renderSettingsDialog({ onImportSettingsFromCode });
+    const page = renderSettingsDialog({ onImportFromCode });
 
     act(() => {
       findButton(page.container, ja.settingsCodeImport).click();
     });
-    const settingsImportDialog = findImportDialog(page.container, ja.settingsImportCodePlaceholder);
+    const importDialog = findImportDialog(page.container, ja.settingsImportCodePlaceholder);
     act(() => {
-      const textarea = findTextarea(settingsImportDialog);
-      textarea.value = "https://example.com/#import_settings=encoded";
+      const textarea = findTextarea(importDialog);
+      textarea.value = "https://example.com/#import_zoom_settings=encoded";
       textarea.dispatchEvent(new Event("input", { bubbles: true }));
     });
     act(() => {
-      findButton(settingsImportDialog, ja.settingsImportCodeRun).click();
+      findButton(importDialog, ja.settingsImportCodeRun).click();
     });
 
-    const importingButton = findButton(settingsImportDialog, ja.settingsImportCodeRunning);
+    const importingButton = findButton(importDialog, ja.settingsImportCodeRunning);
     expect(importingButton.disabled).toBe(true);
-    expect(onImportSettingsFromCode).toHaveBeenCalledTimes(1);
+    expect(onImportFromCode).toHaveBeenCalledTimes(1);
 
     await act(async () => {
       resolveImport?.(true);

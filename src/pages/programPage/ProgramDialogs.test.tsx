@@ -136,8 +136,7 @@ const defaultSettingsDialogProps = {
   onToggleShowAuthors: () => {},
   onToggleUseSlackAppLinks: () => {},
   onSetZoomCustomUrls: () => {},
-  onImportSettingsFromCode: async () => true,
-  onImportZoomFromCode: async () => true,
+  onImportFromCode: async () => true,
   onToggleIncludeSessionTitleForNoPresentationSessions: () => {},
   onToggleIncludeSessionTitleForPresentationSessions: () => {},
   onToggleShowTimeAtPresentationLevel: () => {},
@@ -183,19 +182,18 @@ describe("SettingsDialog", () => {
     );
   });
 
-  it("Zoom カスタムURL設定の起動ボタンを表示する", () => {
+  it("Zoom欄なしでカスタムURL設定の起動ボタンを表示する", () => {
     const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
-    expect(html).toContain("Zoom");
-    expect(html).toContain("コードでインポート");
-    expect(html).toContain("カスタムURLを設定");
+    expect(html).not.toContain('<h3 class="text-sm font-semibold text-gray-800">Zoom</h3>');
+    expect(html).toContain("ZoomカスタムURL");
   });
 
   it("大枠の下部にエクスポートボタンを表示する", () => {
     const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
     expect(html).toContain("エクスポート");
-    expect(html).toContain("インポート");
+    expect(html).toContain("📥 コードでインポート");
     expect(html).not.toContain("設定・ブックマークのエクスポート</h3>");
   });
 
@@ -260,7 +258,7 @@ describe("SettingsImportConfirmDialog", () => {
 
     expect(html).toContain("上書きされます");
     expect(html).toContain("Zoom カスタムURL は上書きされず、現在の設定を維持します。");
-    expect(html).toContain("復元");
+    expect(html).toContain("「復元」ボタン");
     expect(html).toContain("インポートする");
   });
 

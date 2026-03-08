@@ -610,7 +610,7 @@ describe("useProgramPageState", () => {
     await act(async () => {
       const accepted = await hook
         .getLatest()
-        .overlayProps.onImportZoomFromCode("https://example.com/#import_zoom_settings=encoded-zoom");
+        .overlayProps.onImportFromCode("https://example.com/#import_zoom_settings=encoded-zoom");
       expect(accepted).toBe(true);
     });
 
@@ -638,7 +638,7 @@ describe("useProgramPageState", () => {
     await act(async () => {
       const accepted = await hook
         .getLatest()
-        .overlayProps.onImportSettingsFromCode("https://example.com/#import_settings=encoded-settings");
+        .overlayProps.onImportFromCode("https://example.com/#import_settings=encoded-settings");
       expect(accepted).toBe(true);
     });
 
@@ -649,30 +649,16 @@ describe("useProgramPageState", () => {
     hook.unmount();
   });
 
-  it("コード入力が不正なら設定インポート確認を開かない", async () => {
+  it("コード入力が不正ならインポート確認を開かない", async () => {
     const hook = setupHook();
     await act(async () => {});
 
     await act(async () => {
-      const accepted = await hook.getLatest().overlayProps.onImportSettingsFromCode("not-a-settings-import-code");
+      const accepted = await hook.getLatest().overlayProps.onImportFromCode("not-an-import-code");
       expect(accepted).toBe(false);
     });
 
     expect(mockDecodePayload).not.toHaveBeenCalled();
-    expect(hook.getLatest().overlayProps.showSettingsImportConfirm).toBe(false);
-
-    hook.unmount();
-  });
-
-  it("コード入力が不正なら Zoom インポート確認を開かない", async () => {
-    const hook = setupHook();
-    await act(async () => {});
-
-    await act(async () => {
-      const accepted = await hook.getLatest().overlayProps.onImportZoomFromCode("not-a-zoom-import-code");
-      expect(accepted).toBe(false);
-    });
-
     expect(mockDecodeZoomPayload).not.toHaveBeenCalled();
     expect(hook.getLatest().overlayProps.showSettingsImportConfirm).toBe(false);
 

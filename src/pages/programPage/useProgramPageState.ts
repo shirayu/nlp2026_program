@@ -613,31 +613,28 @@ export function useProgramPageState() {
     setSettings((current) => ({ ...current, zoomCustomUrls }));
   }
 
-  async function handleImportSettingsFromCode(input: string): Promise<boolean> {
-    const encoded = extractSettingsEncodedFromInput(input);
-    if (!encoded) {
-      return false;
+  async function handleImportFromCode(input: string): Promise<boolean> {
+    const settingsEncoded = extractSettingsEncodedFromInput(input);
+    if (settingsEncoded) {
+      const decoded = decodePayload(settingsEncoded);
+      setImportTarget("settings");
+      setPendingZoomImport(null);
+      if (decoded) {
+        setPendingSettingsImport(decoded);
+        setImportInvalid(false);
+      } else {
+        setPendingSettingsImport(null);
+        setImportInvalid(true);
+      }
+      setShowSettingsImportConfirm(true);
+      return decoded !== null;
     }
-    const decoded = decodePayload(encoded);
-    setImportTarget("settings");
-    setPendingZoomImport(null);
-    if (decoded) {
-      setPendingSettingsImport(decoded);
-      setImportInvalid(false);
-    } else {
-      setPendingSettingsImport(null);
-      setImportInvalid(true);
-    }
-    setShowSettingsImportConfirm(true);
-    return decoded !== null;
-  }
 
-  async function handleImportZoomFromCode(input: string): Promise<boolean> {
-    const encoded = extractZoomEncodedFromInput(input);
-    if (!encoded) {
+    const zoomEncoded = extractZoomEncodedFromInput(input);
+    if (!zoomEncoded) {
       return false;
     }
-    const decoded = await decodeZoomPayload(encoded);
+    const decoded = await decodeZoomPayload(zoomEncoded);
     setImportTarget("zoom");
     setPendingSettingsImport(null);
     if (decoded !== null) {
@@ -755,8 +752,7 @@ export function useProgramPageState() {
       onToggleShowAuthors: toggleShowAuthors,
       onToggleUseSlackAppLinks: toggleUseSlackAppLinks,
       onSetZoomCustomUrls: handleSetZoomCustomUrls,
-      onImportSettingsFromCode: handleImportSettingsFromCode,
-      onImportZoomFromCode: handleImportZoomFromCode,
+      onImportFromCode: handleImportFromCode,
       onToggleIncludeSessionTitleForNoPresentationSessions: toggleIncludeSessionTitleForNoPresentationSessions,
       onToggleIncludeSessionTitleForPresentationSessions: toggleIncludeSessionTitleForPresentationSessions,
       onToggleShowTimeAtPresentationLevel: toggleShowTimeAtPresentationLevel,

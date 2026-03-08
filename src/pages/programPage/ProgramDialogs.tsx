@@ -576,99 +576,7 @@ function ZoomCustomUrlDialog({
   );
 }
 
-function ZoomImportCodeDialog({
-  open,
-  onClose,
-  onImport,
-}: {
-  open: boolean;
-  onClose: () => void;
-  onImport: (value: string) => Promise<boolean>;
-}) {
-  const [code, setCode] = useState("");
-  const [invalid, setInvalid] = useState(false);
-  const [isImporting, setIsImporting] = useState(false);
-
-  useEffect(() => {
-    if (!open) return;
-    setCode("");
-    setInvalid(false);
-    setIsImporting(false);
-  }, [open]);
-
-  async function handleImport() {
-    if (isImporting) return;
-    setIsImporting(true);
-    try {
-      const accepted = await onImport(code);
-      if (!accepted) {
-        setInvalid(true);
-        return;
-      }
-      onClose();
-    } finally {
-      setIsImporting(false);
-    }
-  }
-
-  return (
-    <dialog open={open} onClose={onClose} onCancel={onClose} className={fullscreenDialogClassName}>
-      <div className="flex min-h-dvh items-center justify-center p-4" style={dialogFramePaddingStyle}>
-        <button
-          type="button"
-          aria-label={ja.zoomImportCodeDialogTitle}
-          className="fixed inset-0 bg-black/55"
-          onClick={onClose}
-        />
-        <div className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
-          <div className="flex items-center justify-between border-b border-gray-200 bg-indigo-50 px-4 py-3">
-            <h2 className="text-sm font-bold text-gray-800">{ja.zoomImportCodeDialogTitle}</h2>
-            <button
-              type="button"
-              onClick={onClose}
-              className="text-gray-400 transition-colors hover:text-gray-600"
-              aria-label={ja.zoomImportCodeDialogTitle}
-            >
-              <CloseIcon className="h-5 w-5" />
-            </button>
-          </div>
-          <div className="space-y-3 px-4 py-4">
-            <p className="text-sm text-gray-700">{ja.zoomImportCodeDescription}</p>
-            {invalid && (
-              <p className="rounded-lg bg-rose-50 px-3 py-2 text-xs text-rose-700">{ja.zoomImportCodeInvalid}</p>
-            )}
-            <textarea
-              value={code}
-              onChange={(event) => setCode(event.target.value)}
-              rows={4}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:border-indigo-400 focus:outline-none"
-              placeholder={ja.zoomImportCodePlaceholder}
-            />
-            <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="rounded-full border border-gray-300 px-4 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50"
-              >
-                {ja.zoomCustomUrlCancel}
-              </button>
-              <button
-                type="button"
-                onClick={() => void handleImport()}
-                disabled={isImporting}
-                className="rounded-full bg-indigo-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
-              >
-                {isImporting ? ja.zoomImportCodeRunning : ja.zoomImportCodeRun}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </dialog>
-  );
-}
-
-function SettingsImportCodeDialog({
+function ImportCodeDialog({
   open,
   onClose,
   onImport,
@@ -1225,8 +1133,7 @@ export function SettingsDialog({
   onToggleShowAuthors,
   onToggleUseSlackAppLinks,
   onSetZoomCustomUrls,
-  onImportSettingsFromCode,
-  onImportZoomFromCode,
+  onImportFromCode,
   onToggleIncludeSessionTitleForNoPresentationSessions,
   onToggleIncludeSessionTitleForPresentationSessions,
   onToggleShowTimeAtPresentationLevel,
@@ -1248,8 +1155,7 @@ export function SettingsDialog({
   onToggleShowAuthors: () => void;
   onToggleUseSlackAppLinks: () => void;
   onSetZoomCustomUrls: (value: ZoomCustomUrls | undefined) => void;
-  onImportSettingsFromCode: (value: string) => Promise<boolean>;
-  onImportZoomFromCode: (value: string) => Promise<boolean>;
+  onImportFromCode: (value: string) => Promise<boolean>;
   onToggleIncludeSessionTitleForNoPresentationSessions: () => void;
   onToggleIncludeSessionTitleForPresentationSessions: () => void;
   onToggleShowTimeAtPresentationLevel: () => void;
@@ -1260,8 +1166,7 @@ export function SettingsDialog({
 }) {
   const formattedBuildGitDate = formatBuildGitDate(BUILD_GIT_DATE);
   const [showZoomCustomUrlDialog, setShowZoomCustomUrlDialog] = useState(false);
-  const [showSettingsImportCodeDialog, setShowSettingsImportCodeDialog] = useState(false);
-  const [showZoomImportCodeDialog, setShowZoomImportCodeDialog] = useState(false);
+  const [showImportCodeDialog, setShowImportCodeDialog] = useState(false);
 
   const shouldShowOperatorSection =
     OPERATOR_NAME !== DEVELOPER_NAME ||
@@ -1360,33 +1265,14 @@ export function SettingsDialog({
                   </label>
                 </div>
               </section>
-              <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
-                <h3 className="text-sm font-semibold text-gray-800">{ja.zoomSettings}</h3>
-                <p className="mt-1 text-xs text-gray-600">{ja.zoomCustomUrlDescription}</p>
-                <div className="mt-2 flex items-center justify-between gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowZoomImportCodeDialog(true)}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-indigo-300 hover:text-indigo-600"
-                  >
-                    {ja.zoomCodeImport}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowZoomCustomUrlDialog(true)}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-indigo-300 hover:text-indigo-600"
-                  >
-                    {ja.zoomCustomUrlSettings}
-                  </button>
-                </div>
-              </section>
             </section>
             <section className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
               <h3 className="text-sm font-semibold text-gray-800">{ja.exportDataSectionTitle}</h3>
               <div className="mt-2 flex items-center justify-end gap-2">
                 <button
                   type="button"
-                  onClick={() => setShowSettingsImportCodeDialog(true)}
+                  onClick={() => setShowImportCodeDialog(true)}
+                  aria-label="コードでインポート"
                   className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-indigo-300 hover:text-indigo-600"
                 >
                   {ja.settingsCodeImport}
@@ -1394,6 +1280,7 @@ export function SettingsDialog({
                 <button
                   type="button"
                   onClick={onExport}
+                  aria-label="エクスポート"
                   className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-indigo-300 hover:text-indigo-600"
                 >
                   {ja.exportAppData}
@@ -1402,6 +1289,7 @@ export function SettingsDialog({
                   type="button"
                   disabled={!hasBackup}
                   onClick={onRestore}
+                  aria-label="復元"
                   className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
                     hasBackup
                       ? "border-gray-300 bg-white text-gray-600 hover:border-indigo-300 hover:text-indigo-600"
@@ -1409,6 +1297,17 @@ export function SettingsDialog({
                   }`}
                 >
                   {ja.restoreBackup}
+                </button>
+              </div>
+              <hr className="mt-3 border-gray-200" />
+              <div className="mt-3 flex items-center justify-end">
+                <button
+                  type="button"
+                  onClick={() => setShowZoomCustomUrlDialog(true)}
+                  aria-label="ZoomカスタムURL"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-indigo-300 hover:text-indigo-600"
+                >
+                  {ja.zoomCustomUrlSettings}
                 </button>
               </div>
             </section>
@@ -1522,15 +1421,10 @@ export function SettingsDialog({
         onClose={() => setShowZoomCustomUrlDialog(false)}
         onSave={onSetZoomCustomUrls}
       />
-      <SettingsImportCodeDialog
-        open={showSettingsImportCodeDialog}
-        onClose={() => setShowSettingsImportCodeDialog(false)}
-        onImport={onImportSettingsFromCode}
-      />
-      <ZoomImportCodeDialog
-        open={showZoomImportCodeDialog}
-        onClose={() => setShowZoomImportCodeDialog(false)}
-        onImport={onImportZoomFromCode}
+      <ImportCodeDialog
+        open={showImportCodeDialog}
+        onClose={() => setShowImportCodeDialog(false)}
+        onImport={onImportFromCode}
       />
     </dialog>
   );
