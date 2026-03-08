@@ -49,7 +49,7 @@ describe("conferenceService", () => {
       VITE_DATA_VERSION: "data-hash-1",
     });
 
-    const fetchMock = vi.fn(async () => ({ json: async () => ({}) })) as unknown as typeof fetch;
+    const fetchMock = vi.fn(async () => ({ ok: true, json: async () => ({}) })) as unknown as typeof fetch;
     vi.stubGlobal("fetch", fetchMock);
 
     await fetchConferenceData();
@@ -64,7 +64,7 @@ describe("conferenceService", () => {
       VITE_SLACK_VERSION: "slack-hash-1",
     });
 
-    const fetchMock = vi.fn(async () => ({ json: async () => ({}) })) as unknown as typeof fetch;
+    const fetchMock = vi.fn(async () => ({ ok: true, json: async () => ({}) })) as unknown as typeof fetch;
     vi.stubGlobal("fetch", fetchMock);
 
     await fetchSessionSlackChannels();
@@ -81,11 +81,28 @@ describe("conferenceService", () => {
       VITE_BUILD_HASH: "",
     });
 
-    const fetchMock = vi.fn(async () => ({ json: async () => ({}) })) as unknown as typeof fetch;
+    const fetchMock = vi.fn(async () => ({ ok: true, json: async () => ({}) })) as unknown as typeof fetch;
     vi.stubGlobal("fetch", fetchMock);
 
     await fetchConferenceData();
 
     expect(fetchMock).toHaveBeenCalledWith("/base/data.json?v=2026-03-05T11%3A00%3A00Z");
+  });
+
+  it("HTTP エラー時は例外を投げる", async () => {
+    setEnv({
+      BASE_URL: "/base/",
+      VITE_CONFERENCE_DATA_FILE: "data.json",
+      VITE_DATA_VERSION: "data-hash-1",
+    });
+
+    const fetchMock = vi.fn(async () => ({
+      ok: false,
+      status: 503,
+      json: async () => ({}),
+    })) as unknown as typeof fetch;
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(fetchConferenceData()).rejects.toThrow("Failed to fetch /base/data.json?v=data-hash-1: 503");
   });
 });

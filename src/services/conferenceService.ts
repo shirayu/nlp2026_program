@@ -16,8 +16,7 @@ function withExplicitVersion(path: string, version?: string): string {
 export async function fetchConferenceData(): Promise<ConferenceData> {
   const basePath = `${import.meta.env.BASE_URL}${import.meta.env.VITE_CONFERENCE_DATA_FILE}`;
   const pathWithVersion = withExplicitVersion(basePath, import.meta.env.VITE_DATA_VERSION);
-  const response = await fetch(pathWithVersion);
-  return response.json();
+  return fetchJson<ConferenceData>(pathWithVersion);
 }
 
 export async function fetchSessionSlackChannels(): Promise<Partial<Record<SessionId, SlackChannelRef>>> {
@@ -25,6 +24,13 @@ export async function fetchSessionSlackChannels(): Promise<Partial<Record<Sessio
     `${import.meta.env.BASE_URL}${import.meta.env.VITE_SESSION_SLACK_FILE}`,
     import.meta.env.VITE_SLACK_VERSION,
   );
+  return fetchJson<Partial<Record<SessionId, SlackChannelRef>>>(pathWithVersion);
+}
+
+async function fetchJson<T>(pathWithVersion: string): Promise<T> {
   const response = await fetch(pathWithVersion);
-  return (await response.json()) as Partial<Record<SessionId, SlackChannelRef>>;
+  if (!response.ok) {
+    throw new Error(`Failed to fetch ${pathWithVersion}: ${response.status}`);
+  }
+  return (await response.json()) as T;
 }

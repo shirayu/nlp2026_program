@@ -70,7 +70,8 @@ function extractZoomEncodedFromInput(raw: string): string | null {
 }
 
 export function useProgramPageState() {
-  const { data, sessionSlackChannels, isReloading, reloadStatus, reload } = useConferenceData();
+  const { data, sessionSlackChannels, isReloading, reloadStatus, reload, initialLoadStatus, retryInitialLoad } =
+    useConferenceData();
   const {
     settings,
     setSettings,
@@ -593,6 +594,10 @@ export function useProgramPageState() {
 
   return {
     data,
+    initialLoadStatus,
+    onRetryInitialLoad: () => {
+      void retryInitialLoad();
+    },
     headerProps: {
       query,
       isSearching,

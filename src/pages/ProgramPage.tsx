@@ -9,12 +9,28 @@ import { fullscreenDialogClassName, getNextScheduleTimePoint } from "./programPa
 export { SearchField, fullscreenDialogClassName, getNextScheduleTimePoint };
 
 export default function ProgramPage() {
-  const { data, headerProps, resultsProps, overlayProps } = useProgramPageState();
+  const { data, initialLoadStatus, onRetryInitialLoad, headerProps, resultsProps, overlayProps } =
+    useProgramPageState();
 
-  if (!data) {
+  if (initialLoadStatus === "loading") {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p className="text-gray-500">{ja.loading}</p>
+      </div>
+    );
+  }
+
+  if (initialLoadStatus === "error" || !data) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-4 text-center">
+        <p className="text-gray-600">{ja.loadingFailed}</p>
+        <button
+          type="button"
+          onClick={onRetryInitialLoad}
+          className="rounded border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+        >
+          {ja.retryLoading}
+        </button>
       </div>
     );
   }

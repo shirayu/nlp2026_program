@@ -74,28 +74,35 @@ export default defineConfig(({ mode }) => {
         workbox: {
           cleanupOutdatedCaches: true,
           // ビルド成果物と静的アセットだけを precache する。
-          // data.json / slack.json は更新頻度が高いため precache には含めず、
-          // 下の runtimeCaching で最新取得優先の NetworkFirst に寄せる。
+          // data.json は更新頻度が高いため precache には含めず、
+          // runtimeCaching で最新取得優先の NetworkFirst に寄せる。
+          // slack.json は更新頻度が低いため precache に含め、オフライン再起動時の
+          // 取得失敗率を下げる。
           globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
+          additionalManifestEntries: [
+            {
+              url: sessionSlackPath,
+              revision: slackVersion || buildVersion || null,
+            },
+          ],
           runtimeCaching: [
             {
-              // 公開 JSON は毎回 fetch されるデータソースなので、SW 更新まで固定される
+              // 公開 data.json は毎回 fetch されるデータソースなので、SW 更新まで固定される
               // precache ではなく runtime cache に分離する。
               // handler は NetworkFirst を選び、オンライン時は変更されたタイムテーブルや
-              // Slack 導線をできるだけ早く反映し、オフライン時だけ直近キャッシュへフォール
-              // バックする。
+              // 情報をできるだけ早く反映し、オフライン時だけ直近キャッシュへフォールバックする。
               // 学会の数日前に一度アプリを開いたあと、会場や地下で長時間オフラインになっても
               // 表示できるよう、キャッシュ保持期間は 14 日にしている。
               // pathname は完全一致で判定し、意図しない別パスへの誤マッチを避ける。
-              urlPattern: ({ url }) => url.pathname === conferenceDataPath || url.pathname === sessionSlackPath,
+              urlPattern: ({ url }) => url.pathname === conferenceDataPath,
               handler: "NetworkFirst",
               options: {
                 cacheName: "conference-json",
                 // 電波が弱い会場では長く待たず、3 秒でキャッシュ利用へ切り替える。
                 networkTimeoutSeconds: 3,
                 expiration: {
-                  // data.json と slack.json の 2 件だけを保持対象にする。
-                  maxEntries: 2,
+                  // data.json のみを保持対象にする。
+                  maxEntries: 1,
                   maxAgeSeconds: 60 * 60 * 24 * 14,
                 },
                 cacheableResponse: {

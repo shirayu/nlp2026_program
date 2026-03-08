@@ -144,6 +144,8 @@ describe("useProgramPageState", () => {
       isReloading: false,
       reloadStatus: "idle",
       reload: vi.fn().mockResolvedValue(undefined),
+      initialLoadStatus: "ready",
+      retryInitialLoad: vi.fn().mockResolvedValue(undefined),
     });
     mockUseAppSettings.mockReturnValue({
       settings: {
