@@ -12,7 +12,7 @@ export { SearchField, fullscreenDialogClassName, getNextScheduleTimePoint };
 
 export default function ProgramPage() {
   const loadingImageSrc = `${import.meta.env.BASE_URL}loading.avif`;
-  const { data, initialLoadStatus, onRetryInitialLoad, headerProps, resultsProps, overlayProps } =
+  const { data, initialLoadStatus, onRetryInitialLoad, headerProps, resultsProps, overlayProps, importToast } =
     useProgramPageState();
   const [remainingSeconds, setRemainingSeconds] = useState(CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS);
   const shouldShowCountdown = remainingSeconds <= CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS - 1;
@@ -65,6 +65,18 @@ export default function ProgramPage() {
       <ProgramHeader {...headerProps} />
       <ProgramResults data={data} {...resultsProps} />
       <ProgramOverlays data={data} {...overlayProps} />
+      {importToast ? (
+        <div className="pointer-events-none fixed right-4 bottom-4 z-50">
+          <div
+            role={importToast.kind === "error" ? "alert" : "status"}
+            className={`rounded-lg px-4 py-3 text-sm font-medium text-white shadow-lg ${
+              importToast.kind === "error" ? "bg-red-600" : "bg-slate-800"
+            }`}
+          >
+            {importToast.message}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

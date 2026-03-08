@@ -455,6 +455,40 @@ describe("useProgramPageState", () => {
     hook.unmount();
   });
 
+  it("インポート成功時にトーストを表示し、3秒後に自動で閉じる", async () => {
+    vi.useFakeTimers();
+    const decodedSettings = {
+      showAuthors: true,
+      useSlackAppLinks: false,
+      includeSessionTitleForNoPresentationSessions: false,
+      includeSessionTitleForPresentationSessions: true,
+      showTimeAtPresentationLevel: false,
+    };
+    mockExtractImportFragment.mockReturnValue("validencoded");
+    mockDecodePayload.mockReturnValue({
+      settings: decodedSettings,
+      bookmarks: { presentationIds: [], sessionIds: [] },
+    });
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().overlayProps.onConfirmImport();
+    });
+
+    expect(hook.getLatest().importToast?.kind).toBe("success");
+    expect(hook.getLatest().importToast?.message).toBe("設定・ブックマークをインポートしました。");
+
+    await act(async () => {
+      vi.advanceTimersByTime(3000);
+    });
+    expect(hook.getLatest().importToast).toBeNull();
+
+    hook.unmount();
+    vi.useRealTimers();
+  });
+
   it("設定インポート時は既存 zoomCustomUrls を維持し、インポート値を上書きしない", async () => {
     const decodedSettings = {
       showAuthors: true,

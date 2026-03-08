@@ -125,10 +125,12 @@ export function useProgramPageState() {
   );
   const [showRestoreConfirm, setShowRestoreConfirm] = useState(false);
   const [showClearAllDataConfirm, setShowClearAllDataConfirm] = useState(false);
+  const [importToast, setImportToast] = useState<{ kind: "success" | "error"; message: string } | null>(null);
   const mainRef = useRef<HTMLElement | null>(null);
   const settingsDialogRef = useRef<HTMLDialogElement | null>(null);
   const installDialogRef = useRef<HTMLDialogElement | null>(null);
   const appUpdateStatusResetTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const importToastResetTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const deferredQuery = useDeferredValue(query);
   const deferredSelectedDate = useDeferredValue(selectedDate);
   const deferredSelectedRoom = useDeferredValue(selectedRoom);
@@ -218,9 +220,23 @@ export function useProgramPageState() {
       if (appUpdateStatusResetTimerRef.current !== null) {
         globalThis.clearTimeout(appUpdateStatusResetTimerRef.current);
       }
+      if (importToastResetTimerRef.current !== null) {
+        globalThis.clearTimeout(importToastResetTimerRef.current);
+      }
     },
     [],
   );
+
+  function showImportToast(kind: "success" | "error", message: string) {
+    if (importToastResetTimerRef.current !== null) {
+      globalThis.clearTimeout(importToastResetTimerRef.current);
+    }
+    setImportToast({ kind, message });
+    importToastResetTimerRef.current = globalThis.setTimeout(() => {
+      setImportToast(null);
+      importToastResetTimerRef.current = null;
+    }, 3000);
+  }
 
   useEffect(() => {
     let canceled = false;
@@ -522,24 +538,41 @@ export function useProgramPageState() {
     setShowSettingsExport(true);
   }
 
+  function applyPendingSettingsImport(): boolean {
+    if (pendingSettingsImport === null || importTarget !== "settings") {
+      return false;
+    }
+
+    saveBeforeImport();
+    const nextSettings = { ...pendingSettingsImport.settings };
+    if (settings.zoomCustomUrls) {
+      nextSettings.zoomCustomUrls = settings.zoomCustomUrls;
+    } else {
+      Reflect.deleteProperty(nextSettings, "zoomCustomUrls");
+    }
+    setSettings(nextSettings);
+    setBookmarks(pendingSettingsImport.bookmarks);
+    setBackupEntries(listBackups());
+    return true;
+  }
+
+  function applyPendingZoomImport(): boolean {
+    if (importTarget !== "zoom" || pendingZoomImport === null) {
+      return false;
+    }
+    setSettings((current) => ({ ...current, zoomCustomUrls: pendingZoomImport || undefined }));
+    return true;
+  }
+
   function handleConfirmImport() {
-    if (pendingSettingsImport) {
-      if (importTarget === "settings") {
-        saveBeforeImport();
-        const nextSettings = { ...pendingSettingsImport.settings };
-        if (settings.zoomCustomUrls) {
-          nextSettings.zoomCustomUrls = settings.zoomCustomUrls;
-        } else {
-          Reflect.deleteProperty(nextSettings, "zoomCustomUrls");
-        }
-        setSettings(nextSettings);
-        setBookmarks(pendingSettingsImport.bookmarks);
-        setBackupEntries(listBackups());
-      }
+    const imported = applyPendingSettingsImport() || applyPendingZoomImport();
+
+    if (imported) {
+      showImportToast("success", importTarget === "settings" ? ja.importAppDataSuccess : ja.importZoomDataSuccess);
+    } else {
+      showImportToast("error", ja.importAppDataApplyFailed);
     }
-    if (importTarget === "zoom" && pendingZoomImport !== null) {
-      setSettings((current) => ({ ...current, zoomCustomUrls: pendingZoomImport || undefined }));
-    }
+
     clearImportPendingFlag();
     clearZoomImportPendingFlag();
     setShowSettingsImportConfirm(false);
@@ -747,5 +780,6 @@ export function useProgramPageState() {
       onConfirmClearAllData: handleConfirmClearAllData,
       onCancelClearAllData: () => setShowClearAllDataConfirm(false),
     },
+    importToast,
   };
 }
