@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-07T14:54:47Z",
+  "generated_at": "2026-03-08T04:42:47Z",
   "last_update": {
     "program_main": {
       "sha256": "8169365fa4091a1bac8c0ac302fa2a347db8c3e5df15c8c0e3aeb040dc10e93b",
@@ -7,15 +7,277 @@
     },
     "workshop": {
       "sha256": "55c4a7d51914ff59be558ef6e028bd05d8904c40b6eee35fb0d6199d2f192ed9",
-      "time": "2026-03-07T17:36:00+09:00"
+      "time": "2026-03-08T08:16:50+09:00"
     },
     "invitedpapers": {
       "sha256": "1383c3c3c2fd57240adc5d25ae7b760966287c460ef40f20cbd5b68fa2e5b090",
-      "time": "2026-03-04T18:39:47+09:00"
+      "time": "2026-03-08T08:16:50+09:00"
     },
     "youtube": {
       "sha256": "7018232ae40bb9e3b3f845115004c317f06b889d41bd1d661f2ace928a055da9",
-      "time": "2026-03-04T20:17:57+09:00"
+      "time": "2026-03-08T08:16:50+09:00"
+    },
+    "slack": {
+      "sha256": "79446eb079f17bf72f71487b92d2f604c9c39a0e194a6ab0d2284c64ea16d3a4",
+      "time": "2026-03-08T13:37:15+09:00"
+    }
+  },
+  "session_slack_channels": {
+    "A1": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFSJ7LWT0"
+    },
+    "A2": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFD6RT0JK"
+    },
+    "A3": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFN8HLS67"
+    },
+    "A4": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFR7GK477"
+    },
+    "A5": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AGNU6J4CQ"
+    },
+    "A6": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFR7J4M6H"
+    },
+    "A7": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFUL32S6N"
+    },
+    "A8": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFN8J7XNX"
+    },
+    "A9": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFD6VGRHV"
+    },
+    "B1": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFD6X51M5"
+    },
+    "B2": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFUL7MS3U"
+    },
+    "B3": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFSJGLDT8"
+    },
+    "B4": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFULAP55Y"
+    },
+    "B5": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFN8QH7GT"
+    },
+    "B6": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AG7HZ38HX"
+    },
+    "B7": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFULFMK8A"
+    },
+    "B8": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AGNUPF8TA"
+    },
+    "B9": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AGNUQ9RK2"
+    },
+    "C1": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AG7HQQJPK"
+    },
+    "C2": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFSJG4XFY"
+    },
+    "C3": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AG7HTBT8R"
+    },
+    "C4": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFULB5KL2"
+    },
+    "C5": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFY8PKG04"
+    },
+    "C6": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFY8T7R4L"
+    },
+    "C7": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFD77T5SB"
+    },
+    "C8": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFULJ201Y"
+    },
+    "C9": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFY8Y16GL"
+    },
+    "P1": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFD6THF1D"
+    },
+    "P2": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFUL8KCF4"
+    },
+    "P3": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFSJHUDF0"
+    },
+    "P4": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFR7TP7V3"
+    },
+    "P5": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFULDQZ34"
+    },
+    "P6": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFSJNLNG6"
+    },
+    "P7": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AGNUM11UY"
+    },
+    "P8": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFY8XB8P6"
+    },
+    "P9": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFY8Z30E8"
+    },
+    "Q1": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFY8KBS4U"
+    },
+    "Q2": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFSJHDN4W"
+    },
+    "Q3": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AGNUFBRHN"
+    },
+    "Q4": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFULC4XT4"
+    },
+    "Q5": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AG7HY2MRP"
+    },
+    "Q6": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AG7J06U73"
+    },
+    "Q7": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFN8ZDCNP"
+    },
+    "Q8": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFR814US1"
+    },
+    "Q9": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFSJTV1JS"
+    },
+    "T1": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AG77M15C1"
+    },
+    "T2": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFXTV2PN0"
+    },
+    "T3": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AGNJ8FCSC"
+    },
+    "T4": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFCS93XJB"
+    },
+    "TS1-a": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFUL5CC1Y"
+    },
+    "TS1-q": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFULHFC5Q"
+    },
+    "TS2-a": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFY8GQ58U"
+    },
+    "TS2-q": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFR7P56BF"
+    },
+    "TS3-a": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFD6WCPNK"
+    },
+    "TS3-q": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFSJN7DKQ"
+    },
+    "TS4-a": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFUL4QQ10"
+    },
+    "TS4-q": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFN8T1F7V"
+    },
+    "opening": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFS8BLEH4"
+    },
+    "closing": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFCSBRRK9"
+    },
+    "sponsor": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AGNJA1K8Q"
+    },
+    "reception": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFMU2F08K"
+    },
+    "invitedpapers": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFQT0NNE9"
+    },
+    "invited1": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFMU143KM"
+    },
+    "invited2": {
+      "team": "T0AFE8T2X2M",
+      "channel_id": "C0AFCSBJZ2B"
     }
   },
   "persons": {

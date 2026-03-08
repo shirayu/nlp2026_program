@@ -119,6 +119,7 @@ export const ja = {
   workshopLastUpdatedAt: "Workshop",
   invitedpapersLastUpdatedAt: "Invitedpapers",
   youtubeLastUpdatedAt: "YouTube",
+  slackLastUpdatedAt: "Slack",
   noSessionData: "-",
   noPresenter: "発表者情報なし",
   expandPresentationDetails: "発表詳細を開く",

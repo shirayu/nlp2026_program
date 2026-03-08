@@ -12,6 +12,30 @@ export type DataReloadStatus = "idle" | "updated" | "no_change" | "error";
 export type InitialLoadStatus = "loading" | "ready" | "error";
 export const RELOAD_STATUS_AUTO_HIDE_MS = 3000;
 
+function hasSlackChannels(channels: Partial<Record<SessionId, SlackChannelRef>> | undefined): boolean {
+  if (!channels) return false;
+  return Object.keys(channels).length > 0;
+}
+
+async function resolveSlackChannels(
+  conferenceData: ConferenceData | null,
+  fallbackSlackChannels: Partial<Record<SessionId, SlackChannelRef>>,
+): Promise<Partial<Record<SessionId, SlackChannelRef>>> {
+  const embeddedSlackChannels = conferenceData?.session_slack_channels ?? {};
+  if (hasSlackChannels(embeddedSlackChannels)) {
+    saveSlackChannelsCache(embeddedSlackChannels);
+    return embeddedSlackChannels;
+  }
+
+  try {
+    const fetchedSlackChannels = await fetchSessionSlackChannels();
+    saveSlackChannelsCache(fetchedSlackChannels);
+    return fetchedSlackChannels;
+  } catch {
+    return loadSlackChannelsCache() ?? fallbackSlackChannels;
+  }
+}
+
 export function scheduleReloadStatusReset(
   timerRef: { current: ReturnType<typeof globalThis.setTimeout> | null },
   setReloadStatus: (status: DataReloadStatus) => void,
@@ -47,16 +71,7 @@ export function useConferenceData() {
       const previousSlackChannels = previousSlackChannelsRef.current;
       const conferenceData = await fetchConferenceData();
       saveConferenceDataCache(conferenceData);
-      let slackChannels = previousSlackChannels;
-      try {
-        slackChannels = await fetchSessionSlackChannels();
-        saveSlackChannelsCache(slackChannels);
-      } catch {
-        const cachedSlackChannels = loadSlackChannelsCache();
-        if (cachedSlackChannels !== null) {
-          slackChannels = cachedSlackChannels;
-        }
-      }
+      const slackChannels = await resolveSlackChannels(conferenceData, previousSlackChannels);
       const hasDataChanged =
         JSON.stringify(conferenceData) !== JSON.stringify(previousData) ||
         JSON.stringify(slackChannels) !== JSON.stringify(previousSlackChannels);
@@ -91,12 +106,7 @@ export function useConferenceData() {
       resolvedData = loadConferenceDataCache();
     }
 
-    try {
-      resolvedSlackChannels = await fetchSessionSlackChannels();
-      saveSlackChannelsCache(resolvedSlackChannels);
-    } catch {
-      resolvedSlackChannels = loadSlackChannelsCache() ?? {};
-    }
+    resolvedSlackChannels = await resolveSlackChannels(resolvedData, {});
 
     if (resolvedData === null) {
       setData(null);

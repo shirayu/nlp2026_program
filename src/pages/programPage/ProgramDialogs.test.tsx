@@ -32,6 +32,7 @@ describe("InstallDialog", () => {
           workshop: { sha256: "bbb", time: "2026-03-05T08:00:00+09:00" },
           invitedpapers: { sha256: "ccc", time: "2026-03-05T08:10:00+09:00" },
           youtube: { sha256: "ddd", time: "2026-03-05T08:20:00+09:00" },
+          slack: { sha256: "eee", time: "2026-03-05T08:30:00+09:00" },
         }}
         isReloadingData={false}
         reloadDataStatus="idle"
@@ -53,10 +54,12 @@ describe("InstallDialog", () => {
     expect(html).toContain("Workshop");
     expect(html).toContain("Invitedpapers");
     expect(html).toContain("YouTube");
+    expect(html).toContain("Slack");
     expect(html).toContain("(aaa)");
     expect(html).toContain("(bbb)");
     expect(html).toContain("(ccc)");
     expect(html).toContain("(ddd)");
+    expect(html).toContain("(eee)");
     expect(html).toMatch(/(JST|GMT\+9|GMT\+09:00|UTC\+09:00)/);
     expect(html.indexOf("データを再取得")).toBeLessThan(html.indexOf("Main"));
   });

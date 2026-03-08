@@ -100,6 +100,7 @@ export interface LastUpdateEntry {
 export interface ConferenceData {
   generated_at?: string;
   last_update?: Record<string, LastUpdateEntry>;
+  session_slack_channels?: Partial<Record<SessionId, SlackChannelRef>>;
   persons: Record<PersonId, Person>;
   affiliations: Record<AffiliationId, Affiliation>;
   rooms: Record<RoomId, Room>;

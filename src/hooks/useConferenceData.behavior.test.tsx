@@ -135,4 +135,22 @@ describe("useConferenceData behavior", () => {
     expect(saveSlackChannelsCacheMock).toHaveBeenCalled();
     hook.unmount();
   });
+
+  it("data.json に埋め込み Slack 情報があれば slack.json を読まない", async () => {
+    fetchConferenceDataMock.mockResolvedValue({
+      ...baseData,
+      session_slack_channels: {
+        A1: { team: "T123", channel_id: "C123" },
+      },
+    });
+
+    const hook = setupHook();
+    await flushEffects();
+
+    expect(hook.getLatest().sessionSlackChannels).toEqual({
+      A1: { team: "T123", channel_id: "C123" },
+    });
+    expect(fetchSessionSlackChannelsMock).not.toHaveBeenCalled();
+    hook.unmount();
+  });
 });

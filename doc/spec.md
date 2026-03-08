@@ -252,6 +252,33 @@
 - 文字列フィールドに空文字列や空白のみは指定できない
 - `task extract` では自動的に `data_for_extraction/youtube.json` も入力として扱う
 
+#### data_for_extraction/slack.json
+
+`extract.py --slack-config data_for_extraction/slack.json` で読み込む任意設定ファイル。
+引数を省略した場合は読み込まない。`task extract` では `Taskfile.yml` からこのパスを明示的に渡す。
+
+`data_for_extraction/slack.json` は「`session_id -> { team, channel_id }`」の辞書形式で、
+`data.json.session_slack_channels` に埋め込まれる。
+
+```json
+{
+  "A1": { "team": "T0AFE8T2X2M", "channel_id": "C0AFSJ7LWT0" },
+  "B1": { "team": "T0AFE8T2X2M", "channel_id": "C0AFD6X51M5" }
+}
+```
+
+| フィールド | 型 | 説明 |
+|---|---|---|
+| `キー` | `string` | セッションID（互換用途で任意のIDも可） |
+| `値.team` | `string` | Slack Team ID |
+| `値.channel_id` | `string` | Slack Channel ID |
+
+補足:
+
+- `data_for_extraction/slack.json` はオブジェクト形式
+- 空文字列や空白のみの値は指定できない
+- `task extract` では自動的に `data_for_extraction/slack.json` も入力として扱う
+
 `presentations[*]` の各要素は以下を持つ。
 
 | フィールド | 型 | 説明 |
@@ -440,7 +467,8 @@ interface ZoomCustomUrls {
 ### 必須データと任意データ
 
 - `data.json` は必須データとして扱う
-- `slack.json` は任意データとして扱う
+- `data.json.session_slack_channels` があれば Slack 情報はそれを優先利用する
+- `slack.json` は後方互換の任意フォールバックとして扱う
 - `data.json` が取得不能かつローカル復元不能な場合のみ、初期表示を `error` 状態にする
 - `slack.json` が取得不能でも本体表示は継続し、Slack 導線のみ縮退させる
 

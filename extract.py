@@ -1165,6 +1165,28 @@ class YoutubeConfigFile(RootModel[dict[str, str]]):
         return value
 
 
+class SlackChannelConfigEntry(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    team: str
+    channel_id: str
+
+    @field_validator("team", "channel_id")
+    @classmethod
+    def validate_non_empty(cls, value: str, info: ValidationInfo) -> str:
+        _require_non_empty(value, info.field_name or "slack_field")
+        return value
+
+
+class SlackConfigFile(RootModel[dict[str, SlackChannelConfigEntry]]):
+    @field_validator("root")
+    @classmethod
+    def validate_entries(cls, value: dict[str, SlackChannelConfigEntry]) -> dict[str, SlackChannelConfigEntry]:
+        for session_id in value:
+            _require_non_empty(session_id, "session_id")
+        return value
+
+
 class PersonRecord(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -1233,6 +1255,7 @@ class DataJsonRecord(BaseModel):
 
     generated_at: str | None = None
     last_update: dict[str, LastUpdateRecord] | None = None
+    session_slack_channels: dict[str, SlackChannelConfigEntry] | None = None
     persons: dict[str, PersonRecord]
     affiliations: dict[str, AffiliationRecord]
     rooms: dict[str, RoomRecord]
@@ -1274,6 +1297,18 @@ def load_youtube_config(path: Path | None) -> dict[str, str]:
         return YoutubeConfigFile.model_validate(raw).root
     except ValidationError as error:
         raise ValueError(_validation_error_to_message(error, "data_for_extraction/youtube.json")) from error
+
+
+def load_slack_config(path: Path | None) -> dict[str, SlackChannelConfigEntry]:
+    """data_for_extraction/slack.json を読み込む。存在しない場合は空辞書を返す。"""
+    if path is None or not path.exists():
+        return {}
+
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    try:
+        return SlackConfigFile.model_validate(raw).root
+    except ValidationError as error:
+        raise ValueError(_validation_error_to_message(error, "data_for_extraction/slack.json")) from error
 
 
 def apply_workshop_overrides(result: JsonDict, workshop_config: dict[str, WorkshopConfigEntry]) -> None:
@@ -1485,6 +1520,19 @@ def apply_youtube_config(result: JsonDict, youtube_config: dict[str, str]) -> No
         if session is None:
             raise ValueError(f"data_for_extraction/youtube.json のセッションIDが存在しません: {session_id}")
         session["youtube_url"] = youtube_url
+
+
+def apply_slack_config(result: JsonDict, slack_config: dict[str, SlackChannelConfigEntry]) -> None:
+    """data_for_extraction/slack.json の内容で Slack チャンネル情報を付与する。"""
+    if not slack_config:
+        return
+    result["session_slack_channels"] = {
+        session_id: {
+            "team": channel.team,
+            "channel_id": channel.channel_id,
+        }
+        for session_id, channel in slack_config.items()
+    }
 
 
 def validate_session_presentation_time_consistency(result: JsonDict) -> None:
@@ -1720,6 +1768,16 @@ def main() -> None:
         default=None,
         help="セッションごとの YouTube URL を付与するJSON。未指定または存在しない場合は無視する",
     )
+    parser.add_argument(
+        "--slack-config",
+        default=None,
+        help="セッションごとの Slack チャンネル情報を付与するJSON。未指定または存在しない場合は無視する",
+    )
+    parser.add_argument(
+        "--slack-out",
+        default=None,
+        help="互換向け slack.json の出力先。指定時は session_slack_channels を書き出す",
+    )
     args = parser.parse_args()
 
     html_path = Path(args.html)
@@ -1740,6 +1798,8 @@ def main() -> None:
     invitedpapers_config = load_invitedpapers_config(invitedpapers_config_path)
     youtube_config_path = Path(args.youtube_config) if args.youtube_config else None
     youtube_config = load_youtube_config(youtube_config_path)
+    slack_config_path = Path(args.slack_config) if args.slack_config else None
+    slack_config = load_slack_config(slack_config_path)
 
     print("正規化中...")
     if args.base_url:
@@ -1764,6 +1824,8 @@ def main() -> None:
         add_last_update_entry("invitedpapers", invitedpapers_config_path)
     if youtube_config_path is not None:
         add_last_update_entry("youtube", youtube_config_path)
+    if slack_config_path is not None:
+        add_last_update_entry("slack", slack_config_path)
 
     if last_update:
         result["last_update"] = last_update
@@ -1798,6 +1860,7 @@ def main() -> None:
     apply_workshop_overrides(result, workshop_config)
     apply_invitedpapers_config(result, invitedpapers_config)
     apply_youtube_config(result, youtube_config)
+    apply_slack_config(result, slack_config)
     apply_zoom_url_defaults(result, _ZOOM_FALLBACK_SLACK_URL)
     validate_session_presentation_time_consistency(result)
 
@@ -1822,6 +1885,13 @@ def main() -> None:
 
     out_path = Path(args.out)
     out_path.write_text(json.dumps(validated_result, ensure_ascii=False, indent=2), encoding="utf-8")
+    if args.slack_out:
+        slack_out_path = Path(args.slack_out)
+        slack_payload = {
+            session_id: {"team": channel.team, "channel_id": channel.channel_id}
+            for session_id, channel in slack_config.items()
+        }
+        slack_out_path.write_text(json.dumps(slack_payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
     print(f"\n✅ 完了: {out_path}")
     print(f"   セッション数        : {len(result['sessions'])}")

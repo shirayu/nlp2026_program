@@ -15,10 +15,12 @@ data_for_extraction/original_program.html
 data_for_extraction/workshop.json
 data_for_extraction/invitedpapers.json
 data_for_extraction/youtube.json
-public/slack.json
+data_for_extraction/slack.json
 ```
 
-`public/slack.json` は `session_id -> { team, channel_id }` の辞書形式です。
+`data_for_extraction/slack.json` は `task extract` で `data.json` に埋め込まれる Slack 設定です。
+`public/slack.json` は後方互換のフォールバックとして `task extract` で自動生成されます。
+どちらも `session_id -> { team, channel_id }` の辞書形式です。
 
 `data_for_extraction/invitedpapers.json` は `invitedpapers` セッションに差し込む発表一覧です。
 

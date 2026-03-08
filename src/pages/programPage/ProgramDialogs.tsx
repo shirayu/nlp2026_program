@@ -668,6 +668,7 @@ function buildLastUpdateRows(lastUpdate?: Record<string, LastUpdateEntry>): {
     { key: "workshop", label: ja.workshopLastUpdatedAt },
     { key: "invitedpapers", label: ja.invitedpapersLastUpdatedAt },
     { key: "youtube", label: ja.youtubeLastUpdatedAt },
+    { key: "slack", label: ja.slackLastUpdatedAt },
   ]
     .map(({ key, label }) => {
       const entry = lastUpdate?.[key];
