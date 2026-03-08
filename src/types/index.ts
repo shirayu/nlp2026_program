@@ -65,6 +65,7 @@ export interface SlackChannelRef {
 export interface AppSettings {
   showAuthors: boolean;
   useSlackAppLinks: boolean;
+  showRoomFloorLabels: boolean;
   includeSessionTitleForNoPresentationSessions: boolean;
   includeSessionTitleForPresentationSessions: boolean;
   showTimeAtPresentationLevel: boolean;

@@ -105,6 +105,7 @@ function baseHeaderProps(): HeaderProps {
     selectedTime: null,
     nowEnabled: false,
     rooms: ["A", "B"],
+    showRoomFloorLabels: true,
     roomHasPresentationsOnSelectedDate: undefined,
     activeRooms: ["A", "B"],
     selectedRoom: null,
@@ -223,6 +224,24 @@ describe("ProgramHeader room chip interaction", () => {
     expect(group?.querySelector('[aria-hidden="true"]')?.className).toContain("bg-gray-200");
     expect(roomB.className).toContain("border");
     expect(roomC.className).toContain("border");
+
+    act(() => {
+      root.unmount();
+    });
+    container.remove();
+  });
+
+  it("階数表示設定オフのとき 2F ラベルを表示しない", () => {
+    const container = document.createElement("div");
+    document.body.append(container);
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(<ProgramHeader {...baseHeaderProps()} rooms={["A", "B", "C", "P"]} showRoomFloorLabels={false} />);
+    });
+
+    expect(container.textContent).not.toContain("2F");
+    expect(container.querySelector(".rounded-full.bg-gray-200")).toBeNull();
 
     act(() => {
       root.unmount();

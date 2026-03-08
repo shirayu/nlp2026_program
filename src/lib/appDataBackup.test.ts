@@ -16,6 +16,7 @@ import {
 const settingsA = {
   showAuthors: true,
   useSlackAppLinks: false,
+  showRoomFloorLabels: true,
   includeSessionTitleForNoPresentationSessions: true,
   includeSessionTitleForPresentationSessions: false,
   showTimeAtPresentationLevel: false,
@@ -26,6 +27,7 @@ const payloadA: ExportPayload = { settings: settingsA, bookmarks: bookmarksA };
 const settingsB = {
   showAuthors: false,
   useSlackAppLinks: true,
+  showRoomFloorLabels: true,
   includeSessionTitleForNoPresentationSessions: false,
   includeSessionTitleForPresentationSessions: true,
   showTimeAtPresentationLevel: false,

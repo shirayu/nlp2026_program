@@ -29,6 +29,7 @@ export const ja = {
   reloadAppFailed: "アプリ更新に失敗しました",
   showAuthors: "著者名を表示",
   useSlackAppLinks: "Slack をアプリリンクで開く",
+  showRoomFloorLabels: "会場ボタンに階数表示",
   zoomCustomUrlSettings: "ZoomカスタムURL",
   zoomCustomUrlSummary: (presentations: number, sessions: number, venues: number, workshops: number) =>
     `発表 ${presentations} 件 / セッション ${sessions} 件 / 会場 ${venues} 件 / Workshop ${workshops} 件`,

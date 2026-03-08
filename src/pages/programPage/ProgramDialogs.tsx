@@ -1125,6 +1125,7 @@ export function SettingsDialog({
   data,
   showAuthors,
   useSlackAppLinks,
+  showRoomFloorLabels,
   zoomCustomUrls,
   includeSessionTitleForNoPresentationSessions,
   includeSessionTitleForPresentationSessions,
@@ -1132,6 +1133,7 @@ export function SettingsDialog({
   onClose,
   onToggleShowAuthors,
   onToggleUseSlackAppLinks,
+  onToggleShowRoomFloorLabels,
   onSetZoomCustomUrls,
   onImportFromCode,
   onToggleIncludeSessionTitleForNoPresentationSessions,
@@ -1147,6 +1149,7 @@ export function SettingsDialog({
   data: ConferenceData;
   showAuthors: boolean;
   useSlackAppLinks: boolean;
+  showRoomFloorLabels: boolean;
   zoomCustomUrls?: ZoomCustomUrls;
   includeSessionTitleForNoPresentationSessions: boolean;
   includeSessionTitleForPresentationSessions: boolean;
@@ -1154,6 +1157,7 @@ export function SettingsDialog({
   onClose: () => void;
   onToggleShowAuthors: () => void;
   onToggleUseSlackAppLinks: () => void;
+  onToggleShowRoomFloorLabels: () => void;
   onSetZoomCustomUrls: (value: ZoomCustomUrls | undefined) => void;
   onImportFromCode: (value: string) => Promise<boolean>;
   onToggleIncludeSessionTitleForNoPresentationSessions: () => void;
@@ -1218,6 +1222,19 @@ export function SettingsDialog({
                 >
                   <span
                     className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${useSlackAppLinks ? "translate-x-4" : "translate-x-0"}`}
+                  />
+                </button>
+              </label>
+              <label className="flex items-center justify-between">
+                <span className="text-sm text-gray-700">{ja.showRoomFloorLabels}</span>
+                <button
+                  type="button"
+                  onClick={onToggleShowRoomFloorLabels}
+                  className={`relative inline-flex h-5 w-9 rounded-full transition-colors ${showRoomFloorLabels ? "bg-indigo-600" : "bg-gray-300"}`}
+                  aria-pressed={showRoomFloorLabels}
+                >
+                  <span
+                    className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showRoomFloorLabels ? "translate-x-4" : "translate-x-0"}`}
                   />
                 </button>
               </label>

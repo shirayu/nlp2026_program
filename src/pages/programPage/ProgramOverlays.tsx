@@ -37,6 +37,7 @@ export function ProgramOverlays({
   isReloadingData,
   reloadDataStatus,
   useSlackAppLinks,
+  showRoomFloorLabels,
   zoomCustomUrls,
   includeSessionTitleForNoPresentationSessions,
   includeSessionTitleForPresentationSessions,
@@ -44,6 +45,7 @@ export function ProgramOverlays({
   onCloseSettings,
   onToggleShowAuthors,
   onToggleUseSlackAppLinks,
+  onToggleShowRoomFloorLabels,
   onSetZoomCustomUrls,
   onImportFromCode,
   onToggleIncludeSessionTitleForNoPresentationSessions,
@@ -93,6 +95,7 @@ export function ProgramOverlays({
   isReloadingData: boolean;
   reloadDataStatus: DataReloadStatus;
   useSlackAppLinks: boolean;
+  showRoomFloorLabels: boolean;
   zoomCustomUrls?: ZoomCustomUrls;
   includeSessionTitleForNoPresentationSessions: boolean;
   includeSessionTitleForPresentationSessions: boolean;
@@ -100,6 +103,7 @@ export function ProgramOverlays({
   onCloseSettings: () => void;
   onToggleShowAuthors: () => void;
   onToggleUseSlackAppLinks: () => void;
+  onToggleShowRoomFloorLabels: () => void;
   onSetZoomCustomUrls: (value: ZoomCustomUrls | undefined) => void;
   onImportFromCode: (value: string) => Promise<boolean>;
   onToggleIncludeSessionTitleForNoPresentationSessions: () => void;
@@ -166,6 +170,7 @@ export function ProgramOverlays({
         data={data}
         showAuthors={showAuthors}
         useSlackAppLinks={useSlackAppLinks}
+        showRoomFloorLabels={showRoomFloorLabels}
         zoomCustomUrls={zoomCustomUrls}
         includeSessionTitleForNoPresentationSessions={includeSessionTitleForNoPresentationSessions}
         includeSessionTitleForPresentationSessions={includeSessionTitleForPresentationSessions}
@@ -173,6 +178,7 @@ export function ProgramOverlays({
         onClose={onCloseSettings}
         onToggleShowAuthors={onToggleShowAuthors}
         onToggleUseSlackAppLinks={onToggleUseSlackAppLinks}
+        onToggleShowRoomFloorLabels={onToggleShowRoomFloorLabels}
         onSetZoomCustomUrls={onSetZoomCustomUrls}
         onImportFromCode={onImportFromCode}
         onToggleIncludeSessionTitleForNoPresentationSessions={onToggleIncludeSessionTitleForNoPresentationSessions}

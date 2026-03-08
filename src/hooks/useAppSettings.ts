@@ -7,6 +7,7 @@ const APP_SETTINGS_STORAGE_KEY = `${APP_LOCALSTORAGE_PREFIX}settings`;
 const DEFAULT_APP_SETTINGS: AppSettings = {
   showAuthors: true,
   useSlackAppLinks: true,
+  showRoomFloorLabels: true,
   includeSessionTitleForNoPresentationSessions: true,
   includeSessionTitleForPresentationSessions: false,
   showTimeAtPresentationLevel: false,
@@ -76,6 +77,7 @@ function parseAppSettings(value: string | null): AppSettings {
     return {
       showAuthors: parseBoolean(parsed.showAuthors, DEFAULT_APP_SETTINGS.showAuthors),
       useSlackAppLinks: parseBoolean(parsed.useSlackAppLinks, DEFAULT_APP_SETTINGS.useSlackAppLinks),
+      showRoomFloorLabels: parseBoolean(parsed.showRoomFloorLabels, DEFAULT_APP_SETTINGS.showRoomFloorLabels),
       includeSessionTitleForNoPresentationSessions: parseBoolean(
         parsed.includeSessionTitleForNoPresentationSessions,
         DEFAULT_APP_SETTINGS.includeSessionTitleForNoPresentationSessions,
@@ -122,6 +124,11 @@ export function useAppSettings() {
       setSettings((current) => ({
         ...current,
         useSlackAppLinks: !current.useSlackAppLinks,
+      })),
+    toggleShowRoomFloorLabels: () =>
+      setSettings((current) => ({
+        ...current,
+        showRoomFloorLabels: !current.showRoomFloorLabels,
       })),
     toggleIncludeSessionTitleForNoPresentationSessions: () =>
       setSettings((current) => ({

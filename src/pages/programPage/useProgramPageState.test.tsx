@@ -1980,6 +1980,7 @@ describe("useProgramPageState", () => {
       settings: {
         showAuthors: true,
         useSlackAppLinks: false,
+        showRoomFloorLabels: true,
         includeSessionTitleForNoPresentationSessions: false,
         includeSessionTitleForPresentationSessions: true,
         showTimeAtPresentationLevel: false,
@@ -2049,6 +2050,7 @@ describe("useProgramPageState", () => {
     const decodedSettings = {
       showAuthors: true,
       useSlackAppLinks: false,
+      showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: false,
       includeSessionTitleForPresentationSessions: true,
       showTimeAtPresentationLevel: false,
@@ -2062,6 +2064,7 @@ describe("useProgramPageState", () => {
       settings: {
         showAuthors: false,
         useSlackAppLinks: false,
+        showRoomFloorLabels: true,
         includeSessionTitleForNoPresentationSessions: true,
         includeSessionTitleForPresentationSessions: false,
         showTimeAtPresentationLevel: false,
@@ -2102,6 +2105,7 @@ describe("useProgramPageState", () => {
     const decodedSettings = {
       showAuthors: true,
       useSlackAppLinks: false,
+      showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: false,
       includeSessionTitleForPresentationSessions: true,
       showTimeAtPresentationLevel: false,
@@ -2135,6 +2139,7 @@ describe("useProgramPageState", () => {
     const decodedSettings = {
       showAuthors: true,
       useSlackAppLinks: false,
+      showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: false,
       includeSessionTitleForPresentationSessions: true,
       showTimeAtPresentationLevel: false,
@@ -2157,6 +2162,7 @@ describe("useProgramPageState", () => {
       settings: {
         showAuthors: false,
         useSlackAppLinks: false,
+        showRoomFloorLabels: true,
         includeSessionTitleForNoPresentationSessions: true,
         includeSessionTitleForPresentationSessions: false,
         showTimeAtPresentationLevel: false,
@@ -2206,6 +2212,7 @@ describe("useProgramPageState", () => {
       settings: {
         showAuthors: false,
         useSlackAppLinks: false,
+        showRoomFloorLabels: true,
         includeSessionTitleForNoPresentationSessions: true,
         includeSessionTitleForPresentationSessions: false,
         showTimeAtPresentationLevel: false,
@@ -2268,6 +2275,7 @@ describe("useProgramPageState", () => {
       settings: {
         showAuthors: true,
         useSlackAppLinks: false,
+        showRoomFloorLabels: true,
         includeSessionTitleForNoPresentationSessions: true,
         includeSessionTitleForPresentationSessions: false,
         showTimeAtPresentationLevel: false,
@@ -2313,6 +2321,7 @@ describe("useProgramPageState", () => {
       settings: {
         showAuthors: true,
         useSlackAppLinks: false,
+        showRoomFloorLabels: true,
         includeSessionTitleForNoPresentationSessions: false,
         includeSessionTitleForPresentationSessions: true,
         showTimeAtPresentationLevel: false,
@@ -2338,6 +2347,7 @@ describe("useProgramPageState", () => {
       settings: {
         showAuthors: true,
         useSlackAppLinks: false,
+        showRoomFloorLabels: true,
         includeSessionTitleForNoPresentationSessions: false,
         includeSessionTitleForPresentationSessions: true,
         showTimeAtPresentationLevel: false,
@@ -2363,6 +2373,7 @@ describe("useProgramPageState", () => {
       settings: {
         showAuthors: true,
         useSlackAppLinks: false,
+        showRoomFloorLabels: true,
         includeSessionTitleForNoPresentationSessions: false,
         includeSessionTitleForPresentationSessions: true,
         showTimeAtPresentationLevel: false,
@@ -2386,6 +2397,7 @@ describe("useProgramPageState", () => {
     const settingsA = {
       showAuthors: true,
       useSlackAppLinks: false,
+      showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: false,
       includeSessionTitleForPresentationSessions: true,
       showTimeAtPresentationLevel: false,
@@ -2393,6 +2405,7 @@ describe("useProgramPageState", () => {
     const settingsB = {
       showAuthors: false,
       useSlackAppLinks: true,
+      showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: true,
       includeSessionTitleForPresentationSessions: false,
       showTimeAtPresentationLevel: false,
@@ -2414,6 +2427,7 @@ describe("useProgramPageState", () => {
       setSettings,
       toggleShowAuthors: vi.fn(),
       toggleUseSlackAppLinks: vi.fn(),
+      toggleShowRoomFloorLabels: vi.fn(),
       toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
       toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
       toggleShowTimeAtPresentationLevel: vi.fn(),
@@ -2441,6 +2455,7 @@ describe("useProgramPageState", () => {
     const settingsA = {
       showAuthors: true,
       useSlackAppLinks: false,
+      showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: false,
       includeSessionTitleForPresentationSessions: true,
       showTimeAtPresentationLevel: false,
@@ -2448,6 +2463,7 @@ describe("useProgramPageState", () => {
     const settingsB = {
       showAuthors: false,
       useSlackAppLinks: true,
+      showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: true,
       includeSessionTitleForPresentationSessions: false,
       showTimeAtPresentationLevel: false,
@@ -2469,6 +2485,7 @@ describe("useProgramPageState", () => {
       setSettings,
       toggleShowAuthors: vi.fn(),
       toggleUseSlackAppLinks: vi.fn(),
+      toggleShowRoomFloorLabels: vi.fn(),
       toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
       toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
       toggleShowTimeAtPresentationLevel: vi.fn(),
@@ -2512,6 +2529,7 @@ describe("useProgramPageState", () => {
       settings: {
         showAuthors: false,
         useSlackAppLinks: false,
+        showRoomFloorLabels: true,
         includeSessionTitleForNoPresentationSessions: false,
         includeSessionTitleForPresentationSessions: true,
         showTimeAtPresentationLevel: false,
@@ -2519,6 +2537,7 @@ describe("useProgramPageState", () => {
       setSettings: vi.fn(),
       toggleShowAuthors: vi.fn(),
       toggleUseSlackAppLinks: vi.fn(),
+      toggleShowRoomFloorLabels: vi.fn(),
       toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
       toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
       toggleShowTimeAtPresentationLevel: vi.fn(),
@@ -2544,6 +2563,7 @@ describe("useProgramPageState", () => {
     const settingsA = {
       showAuthors: true,
       useSlackAppLinks: false,
+      showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: false,
       includeSessionTitleForPresentationSessions: true,
       showTimeAtPresentationLevel: false,
@@ -2551,6 +2571,7 @@ describe("useProgramPageState", () => {
     const settingsB = {
       showAuthors: false,
       useSlackAppLinks: true,
+      showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: true,
       includeSessionTitleForPresentationSessions: false,
       showTimeAtPresentationLevel: false,
@@ -2569,6 +2590,7 @@ describe("useProgramPageState", () => {
         }),
         toggleShowAuthors: vi.fn(),
         toggleUseSlackAppLinks: vi.fn(),
+        toggleShowRoomFloorLabels: vi.fn(),
         toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
         toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
         toggleShowTimeAtPresentationLevel: vi.fn(),

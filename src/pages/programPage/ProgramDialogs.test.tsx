@@ -128,6 +128,7 @@ const defaultSettingsDialogProps = {
   },
   showAuthors: true,
   useSlackAppLinks: false,
+  showRoomFloorLabels: true,
   zoomCustomUrls: undefined,
   includeSessionTitleForNoPresentationSessions: true,
   includeSessionTitleForPresentationSessions: false,
@@ -135,6 +136,7 @@ const defaultSettingsDialogProps = {
   onClose: () => {},
   onToggleShowAuthors: () => {},
   onToggleUseSlackAppLinks: () => {},
+  onToggleShowRoomFloorLabels: () => {},
   onSetZoomCustomUrls: () => {},
   onImportFromCode: async () => true,
   onToggleIncludeSessionTitleForNoPresentationSessions: () => {},
@@ -171,12 +173,12 @@ describe("SettingsDialog", () => {
     const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
     expect(html).toContain("発表単位で表示（時間情報がある場合）");
+    expect(html).toContain("会場ボタンに階数表示");
     expect(html).toContain("セッションタイトルを検索対象にする");
     expect(html).toContain("発表情報が無いセッション");
     expect(html).toContain("発表情報が有るセッション");
-    expect(html.indexOf("Slack をアプリリンクで開く")).toBeLessThan(
-      html.indexOf("発表単位で表示（時間情報がある場合）"),
-    );
+    expect(html.indexOf("Slack をアプリリンクで開く")).toBeLessThan(html.indexOf("会場ボタンに階数表示"));
+    expect(html.indexOf("会場ボタンに階数表示")).toBeLessThan(html.indexOf("発表単位で表示（時間情報がある場合）"));
     expect(html.indexOf("発表単位で表示（時間情報がある場合）")).toBeLessThan(
       html.indexOf("セッションタイトルを検索対象にする"),
     );
@@ -286,6 +288,7 @@ const backupPayload = {
   settings: {
     showAuthors: true,
     useSlackAppLinks: false,
+    showRoomFloorLabels: true,
     includeSessionTitleForNoPresentationSessions: true,
     includeSessionTitleForPresentationSessions: false,
     showTimeAtPresentationLevel: false,

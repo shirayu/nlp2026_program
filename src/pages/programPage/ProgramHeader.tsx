@@ -235,6 +235,7 @@ function RoomChips({
   rooms,
   activeRooms,
   roomHasPresentationsOnSelectedDate,
+  showRoomFloorLabels = true,
   selectedTime,
   selectedRoom,
   filtersDisabled,
@@ -243,6 +244,7 @@ function RoomChips({
   rooms: string[];
   activeRooms?: string[];
   roomHasPresentationsOnSelectedDate?: Record<string, boolean>;
+  showRoomFloorLabels?: boolean;
   selectedTime: string | null;
   selectedRoom: string | null;
   filtersDisabled: boolean;
@@ -378,14 +380,18 @@ function RoomChips({
             if (room !== firstGroupedRoom) return null;
             return (
               <div key="grouped-bc" className="shrink-0">
-                <div className="pointer-events-none mb-1 text-center text-[10px] font-semibold leading-none text-gray-600">
-                  2F
-                </div>
+                {showRoomFloorLabels ? (
+                  <div className="pointer-events-none mb-1 text-center text-[10px] font-semibold leading-none text-gray-600">
+                    2F
+                  </div>
+                ) : null}
                 <div className="relative">
-                  <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute -inset-x-1 -inset-y-1 rounded-full bg-gray-200"
-                  />
+                  {showRoomFloorLabels ? (
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute -inset-x-1 -inset-y-1 rounded-full bg-gray-200"
+                    />
+                  ) : null}
                   <div className="relative flex flex-wrap gap-2">
                     {groupedRooms.map((groupedRoom) => renderRoomButton(groupedRoom))}
                   </div>
@@ -444,6 +450,7 @@ export function ProgramHeader({
   rooms,
   activeRooms,
   roomHasPresentationsOnSelectedDate,
+  showRoomFloorLabels = true,
   selectedRoom,
   onQueryCommit,
   onToggleSearchAll,
@@ -480,6 +487,7 @@ export function ProgramHeader({
   rooms: string[];
   activeRooms?: string[];
   roomHasPresentationsOnSelectedDate?: Record<string, boolean>;
+  showRoomFloorLabels?: boolean;
   selectedRoom: string | null;
   onQueryCommit: (nextValue: string) => void;
   onToggleSearchAll: () => void;
@@ -541,6 +549,7 @@ export function ProgramHeader({
               rooms={roomSorted}
               activeRooms={activeRooms}
               roomHasPresentationsOnSelectedDate={roomHasPresentationsOnSelectedDate}
+              showRoomFloorLabels={showRoomFloorLabels}
               selectedTime={selectedTime}
               selectedRoom={selectedRoom}
               filtersDisabled={filtersDisabled}

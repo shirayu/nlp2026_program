@@ -11,6 +11,7 @@ describe("appSettingsStorage", () => {
     expect(appSettingsStorage.parseAppSettings(null)).toEqual({
       showAuthors: true,
       useSlackAppLinks: true,
+      showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: true,
       includeSessionTitleForPresentationSessions: false,
       showTimeAtPresentationLevel: false,
@@ -21,6 +22,7 @@ describe("appSettingsStorage", () => {
     expect(appSettingsStorage.parseAppSettings("{broken")).toEqual({
       showAuthors: true,
       useSlackAppLinks: true,
+      showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: true,
       includeSessionTitleForPresentationSessions: false,
       showTimeAtPresentationLevel: false,
@@ -31,6 +33,7 @@ describe("appSettingsStorage", () => {
     expect(appSettingsStorage.parseAppSettings('{"showAuthors":false}')).toEqual({
       showAuthors: false,
       useSlackAppLinks: true,
+      showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: true,
       includeSessionTitleForPresentationSessions: false,
       showTimeAtPresentationLevel: false,
@@ -53,6 +56,31 @@ describe("appSettingsStorage", () => {
     expect(appSettingsStorage.readAppSettings()).toEqual({
       showAuthors: false,
       useSlackAppLinks: false,
+      showRoomFloorLabels: true,
+      includeSessionTitleForNoPresentationSessions: false,
+      includeSessionTitleForPresentationSessions: true,
+      showTimeAtPresentationLevel: true,
+      zoomCustomUrls: { venues: { A: "https://example.com/a" } },
+    });
+  });
+
+  it("showRoomFloorLabels を保存済み設定から読み出す", () => {
+    Object.defineProperty(globalThis, "window", {
+      configurable: true,
+      value: {
+        localStorage: {
+          getItem: (key: string) =>
+            key === appSettingsStorageKey
+              ? '{"showAuthors":false,"useSlackAppLinks":false,"showRoomFloorLabels":false,"includeSessionTitleForNoPresentationSessions":false,"includeSessionTitleForPresentationSessions":true,"showTimeAtPresentationLevel":true,"zoomCustomUrls":{"venues":{"A":"https://example.com/a"}}}'
+              : null,
+        },
+      },
+    });
+
+    expect(appSettingsStorage.readAppSettings()).toEqual({
+      showAuthors: false,
+      useSlackAppLinks: false,
+      showRoomFloorLabels: false,
       includeSessionTitleForNoPresentationSessions: false,
       includeSessionTitleForPresentationSessions: true,
       showTimeAtPresentationLevel: true,
@@ -68,6 +96,7 @@ describe("appSettingsStorage", () => {
     ).toEqual({
       showAuthors: true,
       useSlackAppLinks: true,
+      showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: true,
       includeSessionTitleForPresentationSessions: false,
       showTimeAtPresentationLevel: false,
@@ -83,6 +112,7 @@ describe("appSettingsStorage", () => {
     expect(appSettingsStorage.parseAppSettings('{"venueZoomUrls":{"A":"https://example.com/a"}}')).toEqual({
       showAuthors: true,
       useSlackAppLinks: true,
+      showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: true,
       includeSessionTitleForPresentationSessions: false,
       showTimeAtPresentationLevel: false,

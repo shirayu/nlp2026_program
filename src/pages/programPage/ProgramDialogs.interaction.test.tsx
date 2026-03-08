@@ -16,6 +16,15 @@ function findButton(container: HTMLElement, label: string): HTMLButtonElement {
   return button as HTMLButtonElement;
 }
 
+function findToggleButtonByLabel(container: HTMLElement, label: string): HTMLButtonElement {
+  const row = Array.from(container.querySelectorAll("label")).find((element) => element.textContent?.includes(label));
+  const button = row?.querySelector("button");
+  if (!button) {
+    throw new Error(`toggle button not found: ${label}`);
+  }
+  return button as HTMLButtonElement;
+}
+
 function findImportDialog(container: HTMLElement, placeholder: string): HTMLElement {
   const dialog = Array.from(container.querySelectorAll("dialog")).find((element) => {
     const textarea = element.querySelector("textarea");
@@ -45,6 +54,7 @@ function renderSettingsDialog(props?: Partial<Parameters<typeof SettingsDialog>[
     data: { persons: {}, affiliations: {}, rooms: {}, sessions: {}, presentations: {} },
     showAuthors: true,
     useSlackAppLinks: false,
+    showRoomFloorLabels: true,
     zoomCustomUrls: undefined,
     includeSessionTitleForNoPresentationSessions: true,
     includeSessionTitleForPresentationSessions: false,
@@ -52,6 +62,7 @@ function renderSettingsDialog(props?: Partial<Parameters<typeof SettingsDialog>[
     onClose: vi.fn(),
     onToggleShowAuthors: vi.fn(),
     onToggleUseSlackAppLinks: vi.fn(),
+    onToggleShowRoomFloorLabels: vi.fn(),
     onSetZoomCustomUrls: vi.fn(),
     onImportFromCode: async () => true,
     onToggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
@@ -118,6 +129,18 @@ describe("SettingsDialog import button state", () => {
     await act(async () => {
       resolveImport?.(true);
     });
+    page.unmount();
+  });
+
+  it("階数表示トグルを押すとハンドラを呼ぶ", () => {
+    const onToggleShowRoomFloorLabels = vi.fn();
+    const page = renderSettingsDialog({ onToggleShowRoomFloorLabels });
+
+    act(() => {
+      findToggleButtonByLabel(page.container, ja.showRoomFloorLabels).click();
+    });
+
+    expect(onToggleShowRoomFloorLabels).toHaveBeenCalledTimes(1);
     page.unmount();
   });
 });
