@@ -136,6 +136,7 @@ const defaultSettingsDialogProps = {
   onToggleShowAuthors: () => {},
   onToggleUseSlackAppLinks: () => {},
   onSetZoomCustomUrls: () => {},
+  onImportSettingsFromCode: async () => true,
   onImportZoomFromCode: async () => true,
   onToggleIncludeSessionTitleForNoPresentationSessions: () => {},
   onToggleIncludeSessionTitleForPresentationSessions: () => {},
@@ -194,13 +195,14 @@ describe("SettingsDialog", () => {
     const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
     expect(html).toContain("エクスポート");
+    expect(html).toContain("インポート");
     expect(html).not.toContain("設定・ブックマークのエクスポート</h3>");
   });
 
   it("エクスポートセクションはアイコン凡例より前に表示される", () => {
     const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
-    expect(html.indexOf("データのエクスポート")).toBeLessThan(html.indexOf("アイコン凡例"));
+    expect(html.indexOf("データの入出力")).toBeLessThan(html.indexOf("アイコン凡例"));
   });
 
   it("全てのデータを削除ボタンを常に表示する", () => {

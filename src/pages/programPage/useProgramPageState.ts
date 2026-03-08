@@ -45,12 +45,11 @@ import {
   toMinutes,
 } from "./utils";
 
-function extractZoomEncodedFromInput(raw: string): string | null {
+function extractEncodedFromInput(raw: string, prefix: string): string | null {
   const trimmed = raw.trim();
   if (!trimmed) return null;
 
   const extractByPrefix = (value: string): string | null => {
-    const prefix = "import_zoom_settings=";
     const index = value.indexOf(prefix);
     if (index < 0) return null;
     return value.slice(index + prefix.length).trim();
@@ -67,6 +66,14 @@ function extractZoomEncodedFromInput(raw: string): string | null {
 
   const fromRaw = extractByPrefix(trimmed);
   return fromRaw && fromRaw.length > 0 ? fromRaw : null;
+}
+
+function extractSettingsEncodedFromInput(raw: string): string | null {
+  return extractEncodedFromInput(raw, "import_settings=");
+}
+
+function extractZoomEncodedFromInput(raw: string): string | null {
+  return extractEncodedFromInput(raw, "import_zoom_settings=");
 }
 
 export function useProgramPageState() {
@@ -573,6 +580,25 @@ export function useProgramPageState() {
     setSettings((current) => ({ ...current, zoomCustomUrls }));
   }
 
+  async function handleImportSettingsFromCode(input: string): Promise<boolean> {
+    const encoded = extractSettingsEncodedFromInput(input);
+    if (!encoded) {
+      return false;
+    }
+    const decoded = decodePayload(encoded);
+    setImportTarget("settings");
+    setPendingZoomImport(null);
+    if (decoded) {
+      setPendingSettingsImport(decoded);
+      setImportInvalid(false);
+    } else {
+      setPendingSettingsImport(null);
+      setImportInvalid(true);
+    }
+    setShowSettingsImportConfirm(true);
+    return decoded !== null;
+  }
+
   async function handleImportZoomFromCode(input: string): Promise<boolean> {
     const encoded = extractZoomEncodedFromInput(input);
     if (!encoded) {
@@ -696,6 +722,7 @@ export function useProgramPageState() {
       onToggleShowAuthors: toggleShowAuthors,
       onToggleUseSlackAppLinks: toggleUseSlackAppLinks,
       onSetZoomCustomUrls: handleSetZoomCustomUrls,
+      onImportSettingsFromCode: handleImportSettingsFromCode,
       onImportZoomFromCode: handleImportZoomFromCode,
       onToggleIncludeSessionTitleForNoPresentationSessions: toggleIncludeSessionTitleForNoPresentationSessions,
       onToggleIncludeSessionTitleForPresentationSessions: toggleIncludeSessionTitleForPresentationSessions,

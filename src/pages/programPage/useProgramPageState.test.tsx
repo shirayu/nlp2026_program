@@ -587,6 +587,49 @@ describe("useProgramPageState", () => {
     hook.unmount();
   });
 
+  it("コード入力から設定インポート確認ダイアログを開ける", async () => {
+    mockDecodePayload.mockReturnValue({
+      settings: {
+        showAuthors: true,
+        useSlackAppLinks: false,
+        includeSessionTitleForNoPresentationSessions: true,
+        includeSessionTitleForPresentationSessions: false,
+        showTimeAtPresentationLevel: false,
+      },
+      bookmarks: { presentationIds: ["P1"], sessionIds: ["S1"] },
+    });
+    const hook = setupHook();
+    await act(async () => {});
+
+    await act(async () => {
+      const accepted = await hook
+        .getLatest()
+        .overlayProps.onImportSettingsFromCode("https://example.com/#import_settings=encoded-settings");
+      expect(accepted).toBe(true);
+    });
+
+    expect(mockDecodePayload).toHaveBeenCalledWith("encoded-settings");
+    expect(hook.getLatest().overlayProps.showSettingsImportConfirm).toBe(true);
+    expect(hook.getLatest().overlayProps.importTarget).toBe("settings");
+
+    hook.unmount();
+  });
+
+  it("コード入力が不正なら設定インポート確認を開かない", async () => {
+    const hook = setupHook();
+    await act(async () => {});
+
+    await act(async () => {
+      const accepted = await hook.getLatest().overlayProps.onImportSettingsFromCode("not-a-settings-import-code");
+      expect(accepted).toBe(false);
+    });
+
+    expect(mockDecodePayload).not.toHaveBeenCalled();
+    expect(hook.getLatest().overlayProps.showSettingsImportConfirm).toBe(false);
+
+    hook.unmount();
+  });
+
   it("コード入力が不正なら Zoom インポート確認を開かない", async () => {
     const hook = setupHook();
     await act(async () => {});
