@@ -483,4 +483,58 @@ describe("SessionCard", () => {
       'style="background-image:linear-gradient(90deg, #ffe4e6 0%, #ffe4e6 25%, #fef3c7 25%, #fef3c7 50%, #d1fae5 50%, #d1fae5 75%, #e0f2fe 75%, #e0f2fe 100%)"',
     );
   });
+
+  it("単一部屋のセッションはヘッダに background-image を付与しない", () => {
+    const html = renderToStaticMarkup(
+      <SessionCard
+        bookmarkedPresentationIds={new Set()}
+        bookmarkedSessionIds={new Set()}
+        sessionId="s1"
+        session={{ ...data.sessions.s1, room_ids: ["r1"] }}
+        presIds={["pr1"]}
+        data={data}
+        showAuthors
+        query=""
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
+        expanded={false}
+        onToggleExpanded={vi.fn()}
+        onScrollToSessionTop={vi.fn()}
+        onPersonClick={vi.fn()}
+        onJumpToSession={vi.fn()}
+        onToggleBookmark={vi.fn()}
+        onToggleSessionBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).not.toContain("background-image");
+  });
+
+  it("未知会場を含む複数部屋セッションはフォールバック色を使う", () => {
+    const html = renderToStaticMarkup(
+      <SessionCard
+        bookmarkedPresentationIds={new Set()}
+        bookmarkedSessionIds={new Set()}
+        sessionId="s1"
+        session={{ ...data.sessions.s1, room_ids: ["r1", "r999"] }}
+        presIds={["pr1"]}
+        data={data}
+        showAuthors
+        query=""
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
+        expanded={false}
+        onToggleExpanded={vi.fn()}
+        onScrollToSessionTop={vi.fn()}
+        onPersonClick={vi.fn()}
+        onJumpToSession={vi.fn()}
+        onToggleBookmark={vi.fn()}
+        onToggleSessionBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).toContain(
+      'style="background-image:linear-gradient(90deg, #ffe4e6 0%, #ffe4e6 50%, #f1f5f9 50%, #f1f5f9 100%)"',
+    );
+  });
 });

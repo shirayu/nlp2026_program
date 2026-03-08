@@ -340,6 +340,39 @@ describe("ProgramHeader room chip interaction", () => {
     }
   });
 
+  it("Q/M/未知会場の選択状態で会場ごとの枠線・塗り色を適用する", () => {
+    const cases: Array<{ room: string; expected: string }> = [
+      { room: "Q", expected: "border-fuchsia-400 bg-fuchsia-600 text-white" },
+      { room: "M", expected: "border-violet-400 bg-violet-600 text-white" },
+      { room: "X", expected: "border-indigo-300 bg-indigo-600 text-white" },
+    ];
+
+    for (const testCase of cases) {
+      const container = document.createElement("div");
+      document.body.append(container);
+      const root = createRoot(container);
+
+      act(() => {
+        root.render(
+          <ProgramHeader
+            {...baseHeaderProps()}
+            rooms={[testCase.room]}
+            activeRooms={[testCase.room]}
+            selectedRoom={testCase.room}
+          />,
+        );
+      });
+
+      const targetButton = findButtonByText(container, testCase.room);
+      expect(targetButton.className, testCase.room).toContain(testCase.expected);
+
+      act(() => {
+        root.unmount();
+      });
+      container.remove();
+    }
+  });
+
   it("部屋ボタンの組み合わせクラスをスナップショット固定する（正規化済み）", () => {
     const rows = buildRoomChipSnapshotCases().map((testCase) => ({
       ...testCase,
