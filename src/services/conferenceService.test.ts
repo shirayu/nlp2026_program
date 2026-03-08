@@ -54,7 +54,10 @@ describe("conferenceService", () => {
 
     await fetchConferenceData();
 
-    expect(fetchMock).toHaveBeenCalledWith("/base/data.json?v=data-hash-1");
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/base/data.json?v=data-hash-1",
+      expect.objectContaining({ signal: expect.any(Object) }),
+    );
   });
 
   it("slack.json は VITE_SLACK_VERSION を v に使う", async () => {
@@ -69,7 +72,10 @@ describe("conferenceService", () => {
 
     await fetchSessionSlackChannels();
 
-    expect(fetchMock).toHaveBeenCalledWith("/base/slack.json?v=slack-hash-1");
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/base/slack.json?v=slack-hash-1",
+      expect.objectContaining({ signal: expect.any(Object) }),
+    );
   });
 
   it("明示バージョンがない場合は build 値にフォールバックする", async () => {
@@ -86,7 +92,10 @@ describe("conferenceService", () => {
 
     await fetchConferenceData();
 
-    expect(fetchMock).toHaveBeenCalledWith("/base/data.json?v=2026-03-05T11%3A00%3A00Z");
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/base/data.json?v=2026-03-05T11%3A00%3A00Z",
+      expect.objectContaining({ signal: expect.any(Object) }),
+    );
   });
 
   it("HTTP エラー時は例外を投げる", async () => {
@@ -104,5 +113,30 @@ describe("conferenceService", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     await expect(fetchConferenceData()).rejects.toThrow("Failed to fetch /base/data.json?v=data-hash-1: 503");
+  });
+
+  it("3秒以内に応答しない場合はタイムアウトエラーを投げる", async () => {
+    vi.useFakeTimers();
+    setEnv({
+      BASE_URL: "/base/",
+      VITE_CONFERENCE_DATA_FILE: "data.json",
+      VITE_DATA_VERSION: "data-hash-1",
+    });
+
+    const fetchMock = vi.fn(
+      (_input: string | URL | Request, init?: RequestInit) =>
+        new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener("abort", () => {
+            reject(new DOMException("The operation was aborted.", "AbortError"));
+          });
+        }),
+    ) as unknown as typeof fetch;
+    vi.stubGlobal("fetch", fetchMock);
+
+    const promise = fetchConferenceData();
+    const expectation = expect(promise).rejects.toThrow("Request timed out after 3s: /base/data.json?v=data-hash-1");
+    await vi.advanceTimersByTimeAsync(3000);
+    await expectation;
+    vi.useRealTimers();
   });
 });

@@ -1,3 +1,4 @@
+import { CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS } from "../constants/network";
 import type { ConferenceData, SessionId, SlackChannelRef } from "../types";
 
 function withBuildVersion(path: string): string {
@@ -28,7 +29,23 @@ export async function fetchSessionSlackChannels(): Promise<Partial<Record<Sessio
 }
 
 async function fetchJson<T>(pathWithVersion: string): Promise<T> {
-  const response = await fetch(pathWithVersion);
+  const timeoutController = new AbortController();
+  const timeoutId = globalThis.setTimeout(() => {
+    timeoutController.abort();
+  }, CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS * 1000);
+
+  let response: Response;
+  try {
+    response = await fetch(pathWithVersion, { signal: timeoutController.signal });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error(`Request timed out after ${CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS}s: ${pathWithVersion}`);
+    }
+    throw error;
+  } finally {
+    globalThis.clearTimeout(timeoutId);
+  }
+
   if (!response.ok) {
     throw new Error(`Failed to fetch ${pathWithVersion}: ${response.status}`);
   }

@@ -123,6 +123,32 @@ describe("useConferenceData behavior", () => {
     hook.unmount();
   });
 
+  it("data取得がタイムアウトでも local data があれば復元して ready になる", async () => {
+    fetchConferenceDataMock.mockRejectedValue(new Error("Request timed out after 3s: /base/data.json?v=data-hash-1"));
+    loadConferenceDataCacheMock.mockReturnValue(baseData);
+
+    const hook = setupHook();
+    await flushEffects();
+
+    expect(loadConferenceDataCacheMock).toHaveBeenCalledTimes(1);
+    expect(hook.getLatest().initialLoadStatus).toBe("ready");
+    expect(hook.getLatest().data).toEqual(baseData);
+    hook.unmount();
+  });
+
+  it("data取得がタイムアウトかつ local data も無い場合は error になる", async () => {
+    fetchConferenceDataMock.mockRejectedValue(new Error("Request timed out after 3s: /base/data.json?v=data-hash-1"));
+    loadConferenceDataCacheMock.mockReturnValue(null);
+
+    const hook = setupHook();
+    await flushEffects();
+
+    expect(loadConferenceDataCacheMock).toHaveBeenCalledTimes(1);
+    expect(hook.getLatest().initialLoadStatus).toBe("error");
+    expect(hook.getLatest().data).toBeNull();
+    hook.unmount();
+  });
+
   it("reload成功時に localStorage 用キャッシュ保存関数を呼ぶ", async () => {
     const hook = setupHook();
     await flushEffects();
