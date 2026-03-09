@@ -302,12 +302,18 @@ export function useProgramPageState() {
   }, [roomScopeSummary, deferredSelectedTime]);
 
   useEffect(() => {
-    const intervalId = globalThis.setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
+    const update = () => setCurrentTime(new Date());
+
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") update();
+    };
+
+    const intervalId = globalThis.setInterval(update, 1000);
+    document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
       globalThis.clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, []);
 
