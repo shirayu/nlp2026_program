@@ -10,6 +10,15 @@ function countMatches(text: string, pattern: RegExp) {
   return [...text.matchAll(pattern)].length;
 }
 
+function tokyoDate(year: number, month: number, day: number, hour: number, minute: number, second = 0) {
+  const monthText = String(month).padStart(2, "0");
+  const dayText = String(day).padStart(2, "0");
+  const hourText = String(hour).padStart(2, "0");
+  const minuteText = String(minute).padStart(2, "0");
+  const secondText = String(second).padStart(2, "0");
+  return new Date(`${year}-${monthText}-${dayText}T${hourText}:${minuteText}:${secondText}+09:00`);
+}
+
 describe("TimelineFilter", () => {
   beforeEach(() => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -79,7 +88,7 @@ describe("TimelineFilter", () => {
 
   it("当日の過去セグメントは緑の代わりに濃い灰色で表示する", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 2, 4, 10, 30, 0));
+    vi.setSystemTime(tokyoDate(2026, 3, 4, 10, 30, 0));
 
     const html = renderToStaticMarkup(
       <TimelineFilter
@@ -99,7 +108,7 @@ describe("TimelineFilter", () => {
 
   it("過去日ではアクティブな全セグメントを濃い灰色にする", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 2, 4, 10, 30, 0));
+    vi.setSystemTime(tokyoDate(2026, 3, 4, 10, 30, 0));
 
     const html = renderToStaticMarkup(
       <TimelineFilter
@@ -119,7 +128,7 @@ describe("TimelineFilter", () => {
 
   it("未来日ではアクティブなセグメントを濃い灰色にしない", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 2, 4, 10, 30, 0));
+    vi.setSystemTime(tokyoDate(2026, 3, 4, 10, 30, 0));
 
     const html = renderToStaticMarkup(
       <TimelineFilter
@@ -157,7 +166,7 @@ describe("TimelineFilter", () => {
 
   it("会場選択時でも過去セグメントは会場色より濃い灰色を優先する", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 2, 4, 10, 30, 0));
+    vi.setSystemTime(tokyoDate(2026, 3, 4, 10, 30, 0));
 
     const html = renderToStaticMarkup(
       <TimelineFilter

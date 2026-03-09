@@ -1,6 +1,7 @@
 import { RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { getRoomCode } from "../constants";
+import { getTokyoSecondsSinceMidnight, toTokyoIsoDate } from "../lib/time";
 import { ja } from "../locales/ja";
 
 type TimelineFilterProps = {
@@ -22,17 +23,10 @@ function toMinutes(time: string): number {
   return hour * 60 + minute;
 }
 
-function toLocalIsoDate(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
 function getPastTimeSet(points: string[], selectedDate: string | null, now: Date) {
   if (!selectedDate) return new Set<string>();
 
-  const today = toLocalIsoDate(now);
+  const today = toTokyoIsoDate(now);
   if (selectedDate < today) {
     return new Set(points);
   }
@@ -41,7 +35,7 @@ function getPastTimeSet(points: string[], selectedDate: string | null, now: Date
     return new Set<string>();
   }
 
-  const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+  const currentSeconds = getTokyoSecondsSinceMidnight(now);
   return new Set(points.filter((time) => toMinutes(time) * 60 < currentSeconds));
 }
 

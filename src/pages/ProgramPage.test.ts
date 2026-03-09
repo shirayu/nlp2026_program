@@ -7,7 +7,12 @@ import { ProgramHeader } from "./programPage/ProgramHeader";
 import { shouldDisableFilters, shouldExitBookmarkFilter, syncSearchAllWithBookmarkFilter } from "./programPage/utils";
 
 function localDate(year: number, month: number, day: number, hour: number, minute: number, second = 0) {
-  return new Date(year, month - 1, day, hour, minute, second);
+  const monthText = String(month).padStart(2, "0");
+  const dayText = String(day).padStart(2, "0");
+  const hourText = String(hour).padStart(2, "0");
+  const minuteText = String(minute).padStart(2, "0");
+  const secondText = String(second).padStart(2, "0");
+  return new Date(`${year}-${monthText}-${dayText}T${hourText}:${minuteText}:${secondText}+09:00`);
 }
 
 describe("fullscreenDialogClassName", () => {
