@@ -12,6 +12,7 @@ type TimelineFilterProps = {
   onChange: (time: string | null) => void;
   onSelectNow: () => void;
   nowEnabled: boolean;
+  nowTitle?: string;
   dataGeneratedAt?: string;
   disabled?: boolean;
 };
@@ -147,10 +148,11 @@ function TimelineActions({
   onChange,
   onSelectNow,
   nowEnabled,
+  nowTitle,
   dataGeneratedAt,
 }: Pick<
   TimelineFilterProps,
-  "disabled" | "selectedTime" | "onChange" | "onSelectNow" | "nowEnabled" | "dataGeneratedAt"
+  "disabled" | "selectedTime" | "onChange" | "onSelectNow" | "nowEnabled" | "nowTitle" | "dataGeneratedAt"
 >) {
   const formattedDataGeneratedAt = formatDataGeneratedAt(dataGeneratedAt);
 
@@ -178,7 +180,7 @@ function TimelineActions({
           type="button"
           onClick={onSelectNow}
           disabled={disabled || !nowEnabled}
-          title={disabled ? undefined : nowEnabled ? ja.now : ja.nowUnavailable}
+          title={disabled ? undefined : nowTitle}
           className={`rounded-full border px-3 py-1 text-xs font-semibold ${
             !disabled && nowEnabled
               ? "border-gray-300 bg-white text-gray-600"
@@ -207,6 +209,7 @@ export function TimelineFilter({
   onChange,
   onSelectNow,
   nowEnabled,
+  nowTitle,
   dataGeneratedAt,
   disabled = false,
 }: TimelineFilterProps) {
@@ -246,6 +249,7 @@ export function TimelineFilter({
         onChange={onChange}
         onSelectNow={onSelectNow}
         nowEnabled={nowEnabled}
+        nowTitle={nowTitle}
         dataGeneratedAt={dataGeneratedAt}
       />
 

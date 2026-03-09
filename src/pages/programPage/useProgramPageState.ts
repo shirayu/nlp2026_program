@@ -232,6 +232,7 @@ export function useProgramPageState() {
   const [showRestoreConfirm, setShowRestoreConfirm] = useState(false);
   const [showClearAllDataConfirm, setShowClearAllDataConfirm] = useState(false);
   const [importToast, setImportToast] = useState<{ kind: "success" | "error"; message: string } | null>(null);
+  const [currentTime, setCurrentTime] = useState(() => new Date());
   const mainRef = useRef<HTMLElement | null>(null);
   const settingsDialogRef = useRef<HTMLDialogElement | null>(null);
   const installDialogRef = useRef<HTMLDialogElement | null>(null);
@@ -300,10 +301,20 @@ export function useProgramPageState() {
     return buildRoomHasPresentationsInScope(roomScopeSummary, deferredSelectedTime);
   }, [roomScopeSummary, deferredSelectedTime]);
 
+  useEffect(() => {
+    const intervalId = globalThis.setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => {
+      globalThis.clearInterval(intervalId);
+    };
+  }, []);
+
   const nextScheduleTimePoint = useMemo(() => {
     if (!data) return null;
-    return getNextScheduleTimePoint(data.sessions, new Date());
-  }, [data]);
+    return getNextScheduleTimePoint(data.sessions, currentTime);
+  }, [currentTime, data]);
 
   useEffect(() => {
     if (selectedTime && allTimes.length > 0 && !allTimes.includes(selectedTime)) {
@@ -462,7 +473,12 @@ export function useProgramPageState() {
   const sessionsVisible = sessionsExpanded || trimmedQuery.length > 0;
   const filtersDisabled = shouldDisableFilters(searchAll, trimmedQuery, showBookmarkedOnly);
   const searchScopeLabel = searchAll ? ja.searchAll : ja.searchFiltered;
-  const nowEnabled = nextScheduleTimePoint !== null;
+  const isShowingNow =
+    nextScheduleTimePoint !== null &&
+    selectedDate === nextScheduleTimePoint.date &&
+    selectedTime === nextScheduleTimePoint.time;
+  const nowEnabled = nextScheduleTimePoint !== null && !isShowingNow;
+  const nowTitle = nowEnabled ? ja.now : isShowingNow ? ja.nowCurrent : ja.nowUnavailable;
   const bookmarkCount = bookmarkIds.length + sessionBookmarkIds.length;
   const matchedPresentationCount = useMemo(() => {
     return filteredSessions.reduce((total, item) => total + item.presIds.length, 0);
@@ -813,6 +829,7 @@ export function useProgramPageState() {
       timelineRoom: selectedRoom,
       selectedTime,
       nowEnabled,
+      nowTitle,
       rooms: allRooms,
       activeRooms: availableRooms,
       roomHasPresentationsOnSelectedDate,

@@ -30,6 +30,7 @@ describe("TimelineFilter", () => {
         onChange={vi.fn()}
         onSelectNow={vi.fn()}
         nowEnabled
+        nowTitle="今"
       />,
     );
 
@@ -49,12 +50,31 @@ describe("TimelineFilter", () => {
         onChange={vi.fn()}
         onSelectNow={vi.fn()}
         nowEnabled={false}
+        nowTitle="次の時点がないため利用できません"
       />,
     );
 
     expect(html).toContain('disabled=""');
     expect(html).toContain('title="次の時点がないため利用できません"');
     expect(html).toContain("border-gray-200 bg-gray-100 text-gray-400");
+  });
+
+  it("今を表示中のときは今ボタンを無効化して理由を表示する", () => {
+    const html = renderToStaticMarkup(
+      <TimelineFilter
+        points={["9:00", "9:05", "9:10"]}
+        activeSegments={[true, true]}
+        selectedDate="2026-03-04"
+        selectedTime="9:00"
+        onChange={vi.fn()}
+        onSelectNow={vi.fn()}
+        nowEnabled={false}
+        nowTitle="今を表示中です"
+      />,
+    );
+
+    expect(html).toContain('disabled=""');
+    expect(html).toContain('title="今を表示中です"');
   });
 
   it("当日の過去セグメントは緑の代わりに濃い灰色で表示する", () => {

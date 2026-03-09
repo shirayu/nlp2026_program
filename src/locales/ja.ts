@@ -15,6 +15,7 @@ export const ja = {
   now: "今",
   resetTimepoint: "時点指定をリセット",
   nowUnavailable: "次の時点がないため利用できません",
+  nowCurrent: "今を表示中です",
   reloadData: "データを再取得",
   reloadDataShort: "更新",
   reloadingData: "更新中",

@@ -199,6 +199,7 @@ describe("useProgramPageState", () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     vi.clearAllMocks();
     document.body.innerHTML = "";
     localStorage.clear();
@@ -361,6 +362,7 @@ describe("useProgramPageState", () => {
     await act(async () => {});
 
     expect(hook.getLatest().headerProps.nowEnabled).toBe(true);
+    expect(hook.getLatest().headerProps.nowTitle).toBe("今");
 
     act(() => {
       hook.getLatest().headerProps.onSelectNow();
@@ -371,7 +373,6 @@ describe("useProgramPageState", () => {
     expect(hook.getLatest().headerProps.selectedTime).toBe("9:00");
 
     hook.unmount();
-    vi.useRealTimers();
   });
 
   it("onSelectNow は次スケジュールがなければ selectedDate/selectedTime を変更しない", async () => {
@@ -388,6 +389,7 @@ describe("useProgramPageState", () => {
     await act(async () => {});
 
     expect(hook.getLatest().headerProps.nowEnabled).toBe(false);
+    expect(hook.getLatest().headerProps.nowTitle).toBe("次の時点がないため利用できません");
 
     act(() => {
       hook.getLatest().headerProps.onSelectNow();
@@ -398,7 +400,158 @@ describe("useProgramPageState", () => {
     expect(hook.getLatest().headerProps.selectedTime).toBe("9:00");
 
     hook.unmount();
-    vi.useRealTimers();
+  });
+
+  it("現在枠を表示中は今ボタンを無効化する", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-03-04T09:00:00+09:00"));
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-04");
+      hook.getLatest().headerProps.onSelectTime("9:00");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.selectedDate).toBe("2026-03-04");
+    expect(hook.getLatest().headerProps.selectedTime).toBe("9:00");
+    expect(hook.getLatest().headerProps.nowEnabled).toBe(false);
+    expect(hook.getLatest().headerProps.nowTitle).toBe("今を表示中です");
+
+    hook.unmount();
+  });
+
+  it("開いたまま時間が進むと今ボタンの状態だけ更新する", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-03-04T09:00:00+09:00"));
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectNow();
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.selectedDate).toBe("2026-03-04");
+    expect(hook.getLatest().headerProps.selectedTime).toBe("9:00");
+    expect(hook.getLatest().headerProps.nowEnabled).toBe(false);
+    expect(hook.getLatest().headerProps.nowTitle).toBe("今を表示中です");
+
+    act(() => {
+      vi.setSystemTime(new Date("2026-03-04T09:00:01+09:00"));
+      vi.advanceTimersByTime(1000);
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.selectedDate).toBe("2026-03-04");
+    expect(hook.getLatest().headerProps.selectedTime).toBe("9:00");
+    expect(hook.getLatest().headerProps.nowEnabled).toBe(true);
+    expect(hook.getLatest().headerProps.nowTitle).toBe("今");
+
+    hook.unmount();
+  });
+
+  it("selectedTime だけ一致していても selectedDate が未選択なら今ボタンを無効化しない", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-03-04T09:00:00+09:00"));
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectTime("9:00");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.selectedDate).toBeNull();
+    expect(hook.getLatest().headerProps.selectedTime).toBe("9:00");
+    expect(hook.getLatest().headerProps.nowEnabled).toBe(true);
+    expect(hook.getLatest().headerProps.nowTitle).toBe("今");
+
+    hook.unmount();
+  });
+
+  it("別日で同時刻を表示中でも今ボタンを無効化しない", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-03-04T09:00:00+09:00"));
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-05");
+      hook.getLatest().headerProps.onSelectTime("9:00");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.selectedDate).toBe("2026-03-05");
+    expect(hook.getLatest().headerProps.selectedTime).toBe("9:00");
+    expect(hook.getLatest().headerProps.nowEnabled).toBe(true);
+    expect(hook.getLatest().headerProps.nowTitle).toBe("今");
+
+    hook.unmount();
+  });
+
+  it("現在枠の直前でも次の5分時点を表示中なら今ボタンを無効化する", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-03-04T09:04:59+09:00"));
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-04");
+      hook.getLatest().headerProps.onSelectTime("9:05");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.nowEnabled).toBe(false);
+    expect(hook.getLatest().headerProps.nowTitle).toBe("今を表示中です");
+
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.selectedDate).toBe("2026-03-04");
+    expect(hook.getLatest().headerProps.selectedTime).toBe("9:05");
+    expect(hook.getLatest().headerProps.nowEnabled).toBe(false);
+    expect(hook.getLatest().headerProps.nowTitle).toBe("今を表示中です");
+
+    hook.unmount();
+  });
+
+  it("最後の時点を表示中のまま終了を過ぎると今ボタンは利用不可に変わる", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-03-04T12:00:00+09:00"));
+
+    const hook = setupHook();
+    await act(async () => {});
+
+    act(() => {
+      hook.getLatest().headerProps.onSelectDate("2026-03-04");
+      hook.getLatest().headerProps.onSelectTime("12:00");
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.nowEnabled).toBe(false);
+    expect(hook.getLatest().headerProps.nowTitle).toBe("今を表示中です");
+
+    act(() => {
+      vi.setSystemTime(new Date("2026-03-04T12:00:01+09:00"));
+      vi.advanceTimersByTime(1000);
+    });
+    await act(async () => {});
+
+    expect(hook.getLatest().headerProps.selectedDate).toBe("2026-03-04");
+    expect(hook.getLatest().headerProps.selectedTime).toBe("12:00");
+    expect(hook.getLatest().headerProps.nowEnabled).toBe(false);
+    expect(hook.getLatest().headerProps.nowTitle).toBe("次の時点がないため利用できません");
+
+    hook.unmount();
   });
 
   it("選択会場は時点変更で該当外になっても維持し、表示候補は全会場のまま", async () => {

@@ -447,6 +447,7 @@ export function ProgramHeader({
   timelineRoom,
   selectedTime,
   nowEnabled,
+  nowTitle,
   rooms,
   activeRooms,
   roomHasPresentationsOnSelectedDate,
@@ -484,6 +485,7 @@ export function ProgramHeader({
   timelineRoom?: string | null;
   selectedTime: string | null;
   nowEnabled: boolean;
+  nowTitle?: string;
   rooms: string[];
   activeRooms?: string[];
   roomHasPresentationsOnSelectedDate?: Record<string, boolean>;
@@ -542,6 +544,7 @@ export function ProgramHeader({
               onChange={onSelectTime}
               onSelectNow={onSelectNow}
               nowEnabled={nowEnabled}
+              nowTitle={nowTitle}
               dataGeneratedAt={dataGeneratedAt}
               disabled={filtersDisabled}
             />
