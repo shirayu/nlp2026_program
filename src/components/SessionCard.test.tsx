@@ -162,6 +162,34 @@ describe("SessionCard", () => {
     expect(html).not.toContain('href="https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"');
   });
 
+  it("元データに Zoom がないセッションでは会場カスタムURLだけでは Zoom リンクを表示しない", () => {
+    const html = renderToStaticMarkup(
+      <SessionCard
+        bookmarkedPresentationIds={new Set()}
+        bookmarkedSessionIds={new Set()}
+        sessionId="s2"
+        session={data.sessions.s2}
+        zoomCustomUrls={{ venues: { A: "https://example.com/custom-a" } }}
+        presIds={[]}
+        data={data}
+        showAuthors
+        query=""
+        includeSessionTitleForNoPresentationSessions
+        includeSessionTitleForPresentationSessions={false}
+        expanded={false}
+        onToggleExpanded={vi.fn()}
+        onScrollToSessionTop={vi.fn()}
+        onPersonClick={vi.fn()}
+        onJumpToSession={vi.fn()}
+        onToggleBookmark={vi.fn()}
+        onToggleSessionBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).not.toContain(ja.openSessionZoom);
+    expect(html).not.toContain('href="https://example.com/custom-a"');
+  });
+
   it("Slack アプリリンク設定ON時は zoom_url を app deep link に変換して表示する", () => {
     const html = renderToStaticMarkup(
       <SessionCard

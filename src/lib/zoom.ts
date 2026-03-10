@@ -56,7 +56,13 @@ export function resolveSessionZoomUrl(
     : null;
   const venueCustomUrl = getCustomVenueZoomUrl(session, rooms, zoomCustomUrls);
   const originalSessionUrl = normalizeZoomUrl(session.zoom_url ?? null);
-  return sessionCustomUrl ?? venueCustomUrl ?? workshopParentCustomUrl ?? originalSessionUrl ?? null;
+  return (
+    sessionCustomUrl ??
+    (originalSessionUrl ? venueCustomUrl : null) ??
+    workshopParentCustomUrl ??
+    originalSessionUrl ??
+    null
+  );
 }
 
 export function resolvePresentationZoomUrl(
