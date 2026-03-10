@@ -106,6 +106,33 @@ describe("PresentationListItem", () => {
     expect(html).not.toContain('href="https://nlp2026utsunomiya.slack.com/archives/C0AGJAH4JV6/p1771937430225469"');
   });
 
+  it("元データに Zoom がない発表では会場カスタムURLだけでは Zoom リンクを表示しない", () => {
+    const withoutZoom: ConferenceData = {
+      ...data,
+      presentations: {
+        ...data.presentations,
+        pr1: {
+          ...data.presentations.pr1,
+          zoom_url: undefined,
+        },
+      },
+    };
+    const html = renderToStaticMarkup(
+      <PresentationListItem
+        pid="pr1"
+        data={withoutZoom}
+        bookmarked={false}
+        showAuthors
+        query=""
+        zoomCustomUrls={{ venues: { A: "https://example.com/custom-a" } }}
+        onToggleBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).not.toContain(ja.openPresentationZoom);
+    expect(html).not.toContain('href="https://example.com/custom-a"');
+  });
+
   it("発表に時刻がある場合はタイトル横に括弧付きで表示する", () => {
     const withTime: ConferenceData = {
       ...data,

@@ -82,10 +82,11 @@ export function resolvePresentationZoomUrl(
   const venueCustomUrl = getCustomVenueZoomUrl(session, data.rooms, zoomCustomUrls);
   const originalPresentationUrl = normalizeZoomUrl(presentation.zoom_url ?? null);
   const originalSessionUrl = normalizeZoomUrl(session.zoom_url ?? null);
+  const hasOriginalZoom = Boolean(originalPresentationUrl ?? originalSessionUrl);
   return (
     sessionCustomUrl ??
-    venueCustomUrl ??
     workshopParentCustomUrl ??
+    (hasOriginalZoom ? venueCustomUrl : null) ??
     originalPresentationUrl ??
     originalSessionUrl ??
     null
