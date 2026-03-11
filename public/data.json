@@ -1351,11 +1351,11 @@
       "name": "日本ガイシ"
     }
   },
-  "generated_at": "2026-03-08T09:57:36Z",
+  "generated_at": "2026-03-11T06:04:17Z",
   "last_update": {
     "invitedpapers": {
-      "sha256": "1383c3c3c2fd57240adc5d25ae7b760966287c460ef40f20cbd5b68fa2e5b090",
-      "time": "2026-03-08T08:16:50+09:00"
+      "sha256": "bae78affe47ba3e8ba3878c0cb07835d0123eceff749b5fa8c0c5e8cb7293931",
+      "time": "2026-03-11T15:04:09+09:00"
     },
     "program_main": {
       "sha256": "8169365fa4091a1bac8c0ac302fa2a347db8c3e5df15c8c0e3aeb040dc10e93b",
@@ -29214,37 +29214,100 @@
       "title": "ロボット基盤モデルにおける言語の役割ー運動と言語の統合ー"
     },
     "invitedpapers-1": {
-      "authors": [],
+      "authors": [
+        {
+          "affiliation_id": "a0029",
+          "person_id": "p0232"
+        },
+        {
+          "affiliation_id": "a0111",
+          "person_id": "p0381"
+        },
+        {
+          "affiliation_id": "a0116",
+          "person_id": "p0509"
+        },
+        {
+          "affiliation_id": "a0186",
+          "person_id": "p1750"
+        },
+        {
+          "affiliation_id": "a0441",
+          "person_id": "p0276"
+        }
+      ],
       "end_time": null,
       "is_english": false,
       "is_online": false,
-      "pdf_url": null,
-      "presenter_id": null,
+      "pdf_url": "https://www.jstage.jst.go.jp/article/jnlp/32/2/32_480/_article/-char/ja/",
+      "presenter_id": "p0232",
       "session_id": "invitedpapers",
       "start_time": null,
-      "title": "招待論文1（未定）"
+      "title": "招待論文: 大規模言語モデルにおける評価バイアスの尤度に基づく緩和"
     },
     "invitedpapers-2": {
-      "authors": [],
+      "authors": [
+        {
+          "affiliation_id": "a0065",
+          "person_id": "p1313"
+        },
+        {
+          "affiliation_id": "a0065",
+          "person_id": "p1308"
+        },
+        {
+          "affiliation_id": "a0391",
+          "person_id": "p1342"
+        },
+        {
+          "affiliation_id": "a0065",
+          "person_id": "p0758"
+        }
+      ],
       "end_time": null,
       "is_english": false,
       "is_online": false,
-      "pdf_url": null,
-      "presenter_id": null,
+      "pdf_url": "https://www.jstage.jst.go.jp/article/jnlp/32/2/32_520/_article/-char/ja/",
+      "presenter_id": "p1313",
       "session_id": "invitedpapers",
       "start_time": null,
-      "title": "招待論文2（未定）"
+      "title": "招待論文: 大規模言語モデルに推論を教えるための人工論理推論コーパスを用いたアプローチ"
     },
     "invitedpapers-3": {
-      "authors": [],
+      "authors": [
+        {
+          "affiliation_id": "a0069",
+          "person_id": "p0464"
+        },
+        {
+          "affiliation_id": "a0113",
+          "person_id": "p0004"
+        },
+        {
+          "affiliation_id": "a0069",
+          "person_id": "p0554"
+        },
+        {
+          "affiliation_id": "a0083",
+          "person_id": "p0294"
+        },
+        {
+          "affiliation_id": "a0047",
+          "person_id": "p0797"
+        },
+        {
+          "affiliation_id": "a0339",
+          "person_id": "p1298"
+        }
+      ],
       "end_time": null,
       "is_english": false,
       "is_online": false,
-      "pdf_url": null,
-      "presenter_id": null,
+      "pdf_url": "https://www.jstage.jst.go.jp/article/jnlp/32/4/32_1189/_article/-char/ja/",
+      "presenter_id": "p0464",
       "session_id": "invitedpapers",
       "start_time": null,
-      "title": "招待論文3（未定）"
+      "title": "招待論文: 通時的な類似度行列に基づく単語の意味変化の分析"
     }
   },
   "rooms": {
