@@ -6,7 +6,7 @@ import { SearchField } from "./programPage/SearchField";
 import { useProgramPageState } from "./programPage/useProgramPageState";
 import { fullscreenDialogClassName, getNextScheduleTimePoint } from "./programPage/utils";
 
-export { SearchField, fullscreenDialogClassName, getNextScheduleTimePoint };
+export { fullscreenDialogClassName, getNextScheduleTimePoint, SearchField };
 
 export default function ProgramPage() {
   const { data, headerProps, resultsProps, overlayProps } = useProgramPageState();
