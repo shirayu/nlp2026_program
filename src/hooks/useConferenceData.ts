@@ -1,9 +1,40 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  loadConferenceDataCache,
+  loadSlackChannelsCache,
+  saveConferenceDataCache,
+  saveSlackChannelsCache,
+} from "../lib/offlineCache";
 import { fetchConferenceData, fetchSessionSlackChannels } from "../services/conferenceService";
 import type { ConferenceData, SessionId, SlackChannelRef } from "../types";
 
 export type DataReloadStatus = "idle" | "updated" | "no_change" | "error";
+export type InitialLoadStatus = "loading" | "ready" | "error";
 export const RELOAD_STATUS_AUTO_HIDE_MS = 3000;
+
+function hasSlackChannels(channels: Partial<Record<SessionId, SlackChannelRef>> | undefined): boolean {
+  if (!channels) return false;
+  return Object.keys(channels).length > 0;
+}
+
+async function resolveSlackChannels(
+  conferenceData: ConferenceData | null,
+  fallbackSlackChannels: Partial<Record<SessionId, SlackChannelRef>>,
+): Promise<Partial<Record<SessionId, SlackChannelRef>>> {
+  const embeddedSlackChannels = conferenceData?.session_slack_channels ?? {};
+  if (hasSlackChannels(embeddedSlackChannels)) {
+    saveSlackChannelsCache(embeddedSlackChannels);
+    return embeddedSlackChannels;
+  }
+
+  try {
+    const fetchedSlackChannels = await fetchSessionSlackChannels();
+    saveSlackChannelsCache(fetchedSlackChannels);
+    return fetchedSlackChannels;
+  } catch {
+    return loadSlackChannelsCache() ?? fallbackSlackChannels;
+  }
+}
 
 export function scheduleReloadStatusReset(
   timerRef: { current: ReturnType<typeof globalThis.setTimeout> | null },
@@ -23,6 +54,7 @@ export function useConferenceData() {
   const [sessionSlackChannels, setSessionSlackChannels] = useState<Partial<Record<SessionId, SlackChannelRef>>>({});
   const [isReloading, setIsReloading] = useState(false);
   const [reloadStatus, setReloadStatus] = useState<DataReloadStatus>("idle");
+  const [initialLoadStatus, setInitialLoadStatus] = useState<InitialLoadStatus>("loading");
   const previousDataRef = useRef<ConferenceData | null>(null);
   const previousSlackChannelsRef = useRef<Partial<Record<SessionId, SlackChannelRef>>>({});
   const statusResetTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
@@ -35,10 +67,14 @@ export function useConferenceData() {
     setIsReloading(true);
     setReloadStatus("idle");
     try {
-      const [conferenceData, slackChannels] = await Promise.all([fetchConferenceData(), fetchSessionSlackChannels()]);
+      const previousData = previousDataRef.current;
+      const previousSlackChannels = previousSlackChannelsRef.current;
+      const conferenceData = await fetchConferenceData();
+      saveConferenceDataCache(conferenceData);
+      const slackChannels = await resolveSlackChannels(conferenceData, previousSlackChannels);
       const hasDataChanged =
-        JSON.stringify(conferenceData) !== JSON.stringify(previousDataRef.current) ||
-        JSON.stringify(slackChannels) !== JSON.stringify(previousSlackChannelsRef.current);
+        JSON.stringify(conferenceData) !== JSON.stringify(previousData) ||
+        JSON.stringify(slackChannels) !== JSON.stringify(previousSlackChannels);
       setData(conferenceData);
       setSessionSlackChannels(slackChannels);
       previousDataRef.current = conferenceData;
@@ -58,9 +94,38 @@ export function useConferenceData() {
     }
   }, [scheduleStatusReset]);
 
+  const loadInitialData = useCallback(async () => {
+    setInitialLoadStatus("loading");
+    let resolvedData: ConferenceData | null = null;
+    let resolvedSlackChannels: Partial<Record<SessionId, SlackChannelRef>> = {};
+
+    try {
+      resolvedData = await fetchConferenceData();
+      saveConferenceDataCache(resolvedData);
+    } catch {
+      resolvedData = loadConferenceDataCache();
+    }
+
+    resolvedSlackChannels = await resolveSlackChannels(resolvedData, {});
+
+    if (resolvedData === null) {
+      setData(null);
+      setSessionSlackChannels(resolvedSlackChannels);
+      previousSlackChannelsRef.current = resolvedSlackChannels;
+      setInitialLoadStatus("error");
+      return;
+    }
+
+    setData(resolvedData);
+    setSessionSlackChannels(resolvedSlackChannels);
+    previousDataRef.current = resolvedData;
+    previousSlackChannelsRef.current = resolvedSlackChannels;
+    setInitialLoadStatus("ready");
+  }, []);
+
   useEffect(() => {
-    void reload();
-  }, [reload]);
+    void loadInitialData();
+  }, [loadInitialData]);
 
   useEffect(
     () => () => {
@@ -71,5 +136,13 @@ export function useConferenceData() {
     [],
   );
 
-  return { data, sessionSlackChannels, isReloading, reloadStatus, reload };
+  return {
+    data,
+    sessionSlackChannels,
+    isReloading,
+    reloadStatus,
+    reload,
+    initialLoadStatus,
+    retryInitialLoad: loadInitialData,
+  };
 }

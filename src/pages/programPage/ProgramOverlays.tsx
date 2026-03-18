@@ -37,6 +37,7 @@ export function ProgramOverlays({
   isReloadingData,
   reloadDataStatus,
   useSlackAppLinks,
+  showRoomFloorLabels,
   zoomCustomUrls,
   includeSessionTitleForNoPresentationSessions,
   includeSessionTitleForPresentationSessions,
@@ -44,8 +45,9 @@ export function ProgramOverlays({
   onCloseSettings,
   onToggleShowAuthors,
   onToggleUseSlackAppLinks,
+  onToggleShowRoomFloorLabels,
   onSetZoomCustomUrls,
-  onImportZoomFromCode,
+  onImportFromCode,
   onToggleIncludeSessionTitleForNoPresentationSessions,
   onToggleIncludeSessionTitleForPresentationSessions,
   onToggleShowTimeAtPresentationLevel,
@@ -93,6 +95,7 @@ export function ProgramOverlays({
   isReloadingData: boolean;
   reloadDataStatus: DataReloadStatus;
   useSlackAppLinks: boolean;
+  showRoomFloorLabels: boolean;
   zoomCustomUrls?: ZoomCustomUrls;
   includeSessionTitleForNoPresentationSessions: boolean;
   includeSessionTitleForPresentationSessions: boolean;
@@ -100,8 +103,9 @@ export function ProgramOverlays({
   onCloseSettings: () => void;
   onToggleShowAuthors: () => void;
   onToggleUseSlackAppLinks: () => void;
+  onToggleShowRoomFloorLabels: () => void;
   onSetZoomCustomUrls: (value: ZoomCustomUrls | undefined) => void;
-  onImportZoomFromCode: (value: string) => Promise<boolean>;
+  onImportFromCode: (value: string) => Promise<boolean>;
   onToggleIncludeSessionTitleForNoPresentationSessions: () => void;
   onToggleIncludeSessionTitleForPresentationSessions: () => void;
   onToggleShowTimeAtPresentationLevel: () => void;
@@ -166,6 +170,7 @@ export function ProgramOverlays({
         data={data}
         showAuthors={showAuthors}
         useSlackAppLinks={useSlackAppLinks}
+        showRoomFloorLabels={showRoomFloorLabels}
         zoomCustomUrls={zoomCustomUrls}
         includeSessionTitleForNoPresentationSessions={includeSessionTitleForNoPresentationSessions}
         includeSessionTitleForPresentationSessions={includeSessionTitleForPresentationSessions}
@@ -173,8 +178,9 @@ export function ProgramOverlays({
         onClose={onCloseSettings}
         onToggleShowAuthors={onToggleShowAuthors}
         onToggleUseSlackAppLinks={onToggleUseSlackAppLinks}
+        onToggleShowRoomFloorLabels={onToggleShowRoomFloorLabels}
         onSetZoomCustomUrls={onSetZoomCustomUrls}
-        onImportZoomFromCode={onImportZoomFromCode}
+        onImportFromCode={onImportFromCode}
         onToggleIncludeSessionTitleForNoPresentationSessions={onToggleIncludeSessionTitleForNoPresentationSessions}
         onToggleIncludeSessionTitleForPresentationSessions={onToggleIncludeSessionTitleForPresentationSessions}
         onToggleShowTimeAtPresentationLevel={onToggleShowTimeAtPresentationLevel}

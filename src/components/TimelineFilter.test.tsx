@@ -10,6 +10,15 @@ function countMatches(text: string, pattern: RegExp) {
   return [...text.matchAll(pattern)].length;
 }
 
+function tokyoDate(year: number, month: number, day: number, hour: number, minute: number, second = 0) {
+  const monthText = String(month).padStart(2, "0");
+  const dayText = String(day).padStart(2, "0");
+  const hourText = String(hour).padStart(2, "0");
+  const minuteText = String(minute).padStart(2, "0");
+  const secondText = String(second).padStart(2, "0");
+  return new Date(`${year}-${monthText}-${dayText}T${hourText}:${minuteText}:${secondText}+09:00`);
+}
+
 describe("TimelineFilter", () => {
   beforeEach(() => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -30,6 +39,7 @@ describe("TimelineFilter", () => {
         onChange={vi.fn()}
         onSelectNow={vi.fn()}
         nowEnabled
+        nowTitle="今"
       />,
     );
 
@@ -49,6 +59,7 @@ describe("TimelineFilter", () => {
         onChange={vi.fn()}
         onSelectNow={vi.fn()}
         nowEnabled={false}
+        nowTitle="次の時点がないため利用できません"
       />,
     );
 
@@ -57,9 +68,27 @@ describe("TimelineFilter", () => {
     expect(html).toContain("border-gray-200 bg-gray-100 text-gray-400");
   });
 
+  it("今を表示中のときは今ボタンを無効化して理由を表示する", () => {
+    const html = renderToStaticMarkup(
+      <TimelineFilter
+        points={["9:00", "9:05", "9:10"]}
+        activeSegments={[true, true]}
+        selectedDate="2026-03-04"
+        selectedTime="9:00"
+        onChange={vi.fn()}
+        onSelectNow={vi.fn()}
+        nowEnabled={false}
+        nowTitle="今を表示中です"
+      />,
+    );
+
+    expect(html).toContain('disabled=""');
+    expect(html).toContain('title="今を表示中です"');
+  });
+
   it("当日の過去セグメントは緑の代わりに濃い灰色で表示する", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 2, 4, 10, 30, 0));
+    vi.setSystemTime(tokyoDate(2026, 3, 4, 10, 30, 0));
 
     const html = renderToStaticMarkup(
       <TimelineFilter
@@ -74,12 +103,12 @@ describe("TimelineFilter", () => {
     );
 
     expect(countMatches(html, /bg-gray-600/g)).toBe(2);
-    expect(countMatches(html, /bg-teal-200/g)).toBe(1);
+    expect(countMatches(html, /bg-lime-300/g)).toBe(1);
   });
 
   it("過去日ではアクティブな全セグメントを濃い灰色にする", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 2, 4, 10, 30, 0));
+    vi.setSystemTime(tokyoDate(2026, 3, 4, 10, 30, 0));
 
     const html = renderToStaticMarkup(
       <TimelineFilter
@@ -94,12 +123,12 @@ describe("TimelineFilter", () => {
     );
 
     expect(countMatches(html, /bg-gray-600/g)).toBe(3);
-    expect(html).not.toContain("bg-teal-200");
+    expect(html).not.toContain("bg-lime-300");
   });
 
   it("未来日ではアクティブなセグメントを濃い灰色にしない", () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(2026, 2, 4, 10, 30, 0));
+    vi.setSystemTime(tokyoDate(2026, 3, 4, 10, 30, 0));
 
     const html = renderToStaticMarkup(
       <TimelineFilter
@@ -114,7 +143,98 @@ describe("TimelineFilter", () => {
     );
 
     expect(html).not.toContain("bg-gray-600");
-    expect(countMatches(html, /bg-teal-200/g)).toBe(3);
+    expect(countMatches(html, /bg-lime-300/g)).toBe(3);
+  });
+
+  it("会場選択時は該当会場の色でアクティブセグメントを塗る", () => {
+    const html = renderToStaticMarkup(
+      <TimelineFilter
+        points={["10:20", "10:25", "10:30", "10:35"]}
+        activeSegments={[true, true, true]}
+        selectedRoom="A"
+        selectedDate={null}
+        selectedTime="10:35"
+        onChange={vi.fn()}
+        onSelectNow={vi.fn()}
+        nowEnabled
+      />,
+    );
+
+    expect(countMatches(html, /bg-rose-200/g)).toBe(3);
+    expect(html).not.toContain("bg-lime-300");
+  });
+
+  it("会場選択時でも過去セグメントは会場色より濃い灰色を優先する", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(tokyoDate(2026, 3, 4, 10, 30, 0));
+
+    const html = renderToStaticMarkup(
+      <TimelineFilter
+        points={["10:20", "10:25", "10:30", "10:35"]}
+        activeSegments={[true, true, true]}
+        selectedRoom="A"
+        selectedDate="2026-03-04"
+        selectedTime="10:35"
+        onChange={vi.fn()}
+        onSelectNow={vi.fn()}
+        nowEnabled
+      />,
+    );
+
+    expect(countMatches(html, /bg-gray-600/g)).toBe(2);
+    expect(countMatches(html, /bg-rose-200/g)).toBe(1);
+  });
+
+  it("未知の会場コードでは既定色（indigo）を使う", () => {
+    const html = renderToStaticMarkup(
+      <TimelineFilter
+        points={["10:20", "10:25", "10:30", "10:35"]}
+        activeSegments={[true, true, true]}
+        selectedRoom="第7会場"
+        selectedDate={null}
+        selectedTime="10:35"
+        onChange={vi.fn()}
+        onSelectNow={vi.fn()}
+        nowEnabled
+      />,
+    );
+
+    expect(countMatches(html, /bg-indigo-200/g)).toBe(3);
+  });
+
+  it("時点未指定かつ会場選択時はアクティブセグメントを薄い灰色で表示する", () => {
+    const html = renderToStaticMarkup(
+      <TimelineFilter
+        points={["10:20", "10:25", "10:30", "10:35"]}
+        activeSegments={[true, false, true]}
+        selectedRoom="A"
+        selectedDate={null}
+        selectedTime={null}
+        onChange={vi.fn()}
+        onSelectNow={vi.fn()}
+        nowEnabled
+      />,
+    );
+
+    expect(countMatches(html, /bg-gray-200/g)).toBe(2);
+    expect(html).not.toContain("bg-rose-200");
+  });
+
+  it("時点未指定かつ全会場時はアクティブセグメントを薄い灰色で表示する", () => {
+    const html = renderToStaticMarkup(
+      <TimelineFilter
+        points={["10:20", "10:25", "10:30", "10:35"]}
+        activeSegments={[true, false, true]}
+        selectedDate={null}
+        selectedTime={null}
+        onChange={vi.fn()}
+        onSelectNow={vi.fn()}
+        nowEnabled
+      />,
+    );
+
+    expect(countMatches(html, /bg-gray-200/g)).toBe(2);
+    expect(countMatches(html, /h-full flex-1 bg-slate-100/g)).toBe(1);
   });
 
   it("ドラッグ中も input ごとに onChange を確定する", () => {

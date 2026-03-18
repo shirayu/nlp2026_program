@@ -1,15 +1,19 @@
 import { RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { getRoomCode } from "../constants";
+import { getTokyoSecondsSinceMidnight, toTokyoIsoDate } from "../lib/time";
 import { ja } from "../locales/ja";
 
 type TimelineFilterProps = {
   points: string[];
   activeSegments: boolean[];
+  selectedRoom?: string | null;
   selectedDate: string | null;
   selectedTime: string | null;
   onChange: (time: string | null) => void;
   onSelectNow: () => void;
   nowEnabled: boolean;
+  nowTitle?: string;
   dataGeneratedAt?: string;
   disabled?: boolean;
 };
@@ -19,17 +23,10 @@ function toMinutes(time: string): number {
   return hour * 60 + minute;
 }
 
-function toLocalIsoDate(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
 function getPastTimeSet(points: string[], selectedDate: string | null, now: Date) {
   if (!selectedDate) return new Set<string>();
 
-  const today = toLocalIsoDate(now);
+  const today = toTokyoIsoDate(now);
   if (selectedDate < today) {
     return new Set(points);
   }
@@ -38,7 +35,7 @@ function getPastTimeSet(points: string[], selectedDate: string | null, now: Date
     return new Set<string>();
   }
 
-  const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+  const currentSeconds = getTokyoSecondsSinceMidnight(now);
   return new Set(points.filter((time) => toMinutes(time) * 60 < currentSeconds));
 }
 
@@ -77,6 +74,33 @@ function buildTimelineSegments(points: string[], activeSegments: boolean[], past
     isActive,
     past: pastTimes.has(points[index] ?? ""),
   }));
+}
+
+function getActiveSegmentClass(selectedRoom: string | null | undefined): string {
+  if (!selectedRoom) return "bg-lime-300";
+  const roomCode = selectedRoom ? getRoomCode(selectedRoom) : null;
+  if (roomCode === "A") return "bg-rose-200";
+  if (roomCode === "B") return "bg-amber-200";
+  if (roomCode === "C") return "bg-emerald-200";
+  if (roomCode === "P") return "bg-sky-200";
+  if (roomCode === "Q") return "bg-fuchsia-200";
+  if (roomCode === "M") return "bg-violet-200";
+  return "bg-indigo-200";
+}
+
+function getTimelineSegmentClass(
+  segment: { isActive: boolean; past: boolean },
+  opts: {
+    isUnspecified: boolean;
+    activeSegmentClass: string;
+  },
+): string {
+  if (!segment.isActive) return "bg-slate-100";
+  if (opts.isUnspecified) {
+    return "bg-gray-200";
+  }
+  if (segment.past) return "bg-gray-600";
+  return opts.activeSegmentClass;
 }
 
 function formatDataGeneratedAt(value?: string): { dateLabel: string; timeLabel: string } | null {
@@ -118,10 +142,11 @@ function TimelineActions({
   onChange,
   onSelectNow,
   nowEnabled,
+  nowTitle,
   dataGeneratedAt,
 }: Pick<
   TimelineFilterProps,
-  "disabled" | "selectedTime" | "onChange" | "onSelectNow" | "nowEnabled" | "dataGeneratedAt"
+  "disabled" | "selectedTime" | "onChange" | "onSelectNow" | "nowEnabled" | "nowTitle" | "dataGeneratedAt"
 >) {
   const formattedDataGeneratedAt = formatDataGeneratedAt(dataGeneratedAt);
 
@@ -149,7 +174,7 @@ function TimelineActions({
           type="button"
           onClick={onSelectNow}
           disabled={disabled || !nowEnabled}
-          title={disabled ? undefined : nowEnabled ? ja.now : ja.nowUnavailable}
+          title={disabled ? undefined : nowTitle}
           className={`rounded-full border px-3 py-1 text-xs font-semibold ${
             !disabled && nowEnabled
               ? "border-gray-300 bg-white text-gray-600"
@@ -172,11 +197,13 @@ function TimelineActions({
 export function TimelineFilter({
   points,
   activeSegments,
+  selectedRoom = null,
   selectedDate,
   selectedTime,
   onChange,
   onSelectNow,
   nowEnabled,
+  nowTitle,
   dataGeneratedAt,
   disabled = false,
 }: TimelineFilterProps) {
@@ -191,6 +218,7 @@ export function TimelineFilter({
   const pastTimes = getPastTimeSet(points, selectedDate, new Date());
   const marks = buildTimelineMarks(points, selectedTime);
   const segments = buildTimelineSegments(points, activeSegments, pastTimes);
+  const activeSegmentClass = getActiveSegmentClass(selectedRoom);
 
   useEffect(() => {
     setDraftSliderValue(sliderValue);
@@ -215,6 +243,7 @@ export function TimelineFilter({
         onChange={onChange}
         onSelectNow={onSelectNow}
         nowEnabled={nowEnabled}
+        nowTitle={nowTitle}
         dataGeneratedAt={dataGeneratedAt}
       />
 
@@ -225,9 +254,10 @@ export function TimelineFilter({
               {segments.map((segment) => (
                 <div
                   key={segment.key}
-                  className={`h-full flex-1 ${
-                    !isUnspecified && segment.isActive ? (segment.past ? "bg-gray-600" : "bg-teal-200") : "bg-slate-100"
-                  }`}
+                  className={`h-full flex-1 ${getTimelineSegmentClass(segment, {
+                    isUnspecified,
+                    activeSegmentClass,
+                  })}`}
                 />
               ))}
             </div>

@@ -1,6 +1,6 @@
 import { ChevronDown, ChevronUp, Download, Globe, MapPinned, Settings, Star } from "lucide-react";
 import { TimelineFilter } from "../../components/TimelineFilter";
-import { compareRooms, getRoomTheme, OFFICIAL_SITE_URL, VENUE_GUIDE_URL, X_SEARCH_URL } from "../../constants";
+import { compareRooms, getRoomCode, OFFICIAL_SITE_URL, VENUE_GUIDE_URL, X_SEARCH_URL } from "../../constants";
 import { formatJapaneseDate } from "../../lib/date";
 import { ja } from "../../locales/ja";
 import { HashIcon, XBrandIcon } from "./icons";
@@ -233,49 +233,174 @@ function DateTabs({
 
 function RoomChips({
   rooms,
+  activeRooms,
+  roomHasPresentationsOnSelectedDate,
+  showRoomFloorLabels = true,
+  selectedTime,
   selectedRoom,
   filtersDisabled,
   onSelectRoom,
 }: {
   rooms: string[];
+  activeRooms?: string[];
+  roomHasPresentationsOnSelectedDate?: Record<string, boolean>;
+  showRoomFloorLabels?: boolean;
+  selectedTime: string | null;
   selectedRoom: string | null;
   filtersDisabled: boolean;
   onSelectRoom: (room: string | null) => void;
 }) {
+  const activeRoomSet = new Set(activeRooms ?? rooms);
+  const groupedRoomCodes = new Set(["B", "C"]);
+  const groupedRooms = rooms.filter((room) => groupedRoomCodes.has(getRoomCode(room) ?? ""));
+  const firstGroupedRoom = groupedRooms[0] ?? null;
+
+  function hasNoPresentationsOnSelectedDate(room: string): boolean {
+    return roomHasPresentationsOnSelectedDate?.[room] === false;
+  }
+
+  function roomBorderClass(room: string): string {
+    return roomThemeBorderClass(room);
+  }
+
+  function roomThemeBorderClass(room: string): string {
+    const roomCode = getRoomCode(room);
+    if (roomCode === "A") return "border-rose-400";
+    if (roomCode === "B") return "border-amber-400";
+    if (roomCode === "C") return "border-emerald-400";
+    if (roomCode === "P") return "border-sky-400";
+    if (roomCode === "Q") return "border-fuchsia-400";
+    if (roomCode === "M") return "border-violet-400";
+    return "border-indigo-300";
+  }
+
+  function roomActiveClass(room: string): string {
+    const roomCode = getRoomCode(room);
+    if (roomCode === "A") return "bg-rose-50 text-rose-800";
+    if (roomCode === "B") return "bg-amber-50 text-amber-800";
+    if (roomCode === "C") return "bg-emerald-50 text-emerald-800";
+    if (roomCode === "P") return "bg-sky-50 text-sky-800";
+    if (roomCode === "Q") return "bg-fuchsia-50 text-fuchsia-800";
+    if (roomCode === "M") return "bg-violet-50 text-violet-800";
+    return "bg-indigo-50 text-indigo-800";
+  }
+
+  function roomSelectedClass(room: string): string {
+    const roomCode = getRoomCode(room);
+    if (roomCode === "A") return "bg-rose-600 text-white";
+    if (roomCode === "B") return "bg-amber-600 text-white";
+    if (roomCode === "C") return "bg-emerald-600 text-white";
+    if (roomCode === "P") return "bg-sky-600 text-white";
+    if (roomCode === "Q") return "bg-fuchsia-600 text-white";
+    if (roomCode === "M") return "bg-violet-600 text-white";
+    return "bg-indigo-600 text-white";
+  }
+
+  function roomInactiveClass(room: string): string {
+    const roomCode = getRoomCode(room);
+    if (roomCode === "A") return "bg-rose-50/70 text-rose-700";
+    if (roomCode === "B") return "bg-amber-50/70 text-amber-700";
+    if (roomCode === "C") return "bg-emerald-50/70 text-emerald-700";
+    if (roomCode === "P") return "bg-sky-50/70 text-sky-700";
+    if (roomCode === "Q") return "bg-fuchsia-50/70 text-fuchsia-700";
+    if (roomCode === "M") return "bg-violet-50/70 text-violet-700";
+    return "bg-indigo-50/70 text-indigo-700";
+  }
+
+  function resolveRoomChipState(isSelected: boolean, isActive: boolean, room: string) {
+    if (filtersDisabled) return "disabled" as const;
+    if (selectedTime && !isActive) return "out_of_scope" as const;
+    if (isSelected) return "selected" as const;
+    if (isActive) return "active" as const;
+    if (hasNoPresentationsOnSelectedDate(room)) return "no_presentation" as const;
+    return "inactive" as const;
+  }
+
+  function roomChipClassByState(
+    state: "disabled" | "out_of_scope" | "no_presentation" | "selected" | "active" | "inactive",
+    room: string,
+    isSelected: boolean,
+  ): string {
+    const handlers: Record<typeof state, () => string> = {
+      disabled: () => "cursor-not-allowed bg-gray-200 text-gray-400 border-gray-300",
+      out_of_scope: () =>
+        isSelected ? "border-slate-300 bg-slate-500 text-white" : "border-slate-300 bg-slate-100 text-slate-600",
+      no_presentation: () =>
+        isSelected
+          ? `${roomBorderClass(room)} ${roomSelectedClass(room)}`
+          : `${roomBorderClass(room)} ${roomInactiveClass(room)}`,
+      selected: () => `${roomBorderClass(room)} ${roomSelectedClass(room)}`,
+      active: () => `${roomBorderClass(room)} ${roomActiveClass(room)}`,
+      inactive: () => `${roomBorderClass(room)} ${roomInactiveClass(room)}`,
+    };
+    return handlers[state]();
+  }
+
+  function roomChipClass(room: string, isSelected: boolean, isActive: boolean): string {
+    const state = resolveRoomChipState(isSelected, isActive, room);
+    return roomChipClassByState(state, room, isSelected);
+  }
+
+  function renderRoomButton(room: string) {
+    const isSelected = selectedRoom === room;
+    const isActive = activeRoomSet.has(room);
+    return (
+      <button
+        key={room}
+        type="button"
+        disabled={filtersDisabled}
+        onClick={() => onSelectRoom(room)}
+        className={`shrink-0 rounded-full border px-3 py-1 text-xs font-medium ${roomChipClass(room, isSelected, isActive)}`}
+      >
+        {room}
+      </button>
+    );
+  }
+
   return (
     <div className="border-t border-gray-100 px-3 py-2">
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-end gap-2">
         <button
           type="button"
           disabled={filtersDisabled}
           onClick={() => onSelectRoom(null)}
-          className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${
+          className={`shrink-0 rounded-full border px-3 py-1 text-xs font-medium ${
             filtersDisabled
-              ? "cursor-not-allowed bg-gray-200 text-gray-400"
+              ? "cursor-not-allowed bg-gray-200 text-gray-400 border-gray-300"
               : selectedRoom === null
-                ? "bg-indigo-600 text-white"
-                : "bg-gray-100 text-gray-600"
+                ? "border-lime-300 bg-lime-200 text-lime-950"
+                : "border-lime-100 bg-lime-50 text-lime-900"
           }`}
         >
           {ja.allRooms}
         </button>
-        {rooms.map((room) => (
-          <button
-            key={room}
-            type="button"
-            disabled={filtersDisabled}
-            onClick={() => onSelectRoom(room)}
-            className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${
-              filtersDisabled
-                ? "cursor-not-allowed bg-gray-200 text-gray-400"
-                : selectedRoom === room
-                  ? getRoomTheme(room).chipActive
-                  : getRoomTheme(room).chipInactive
-            }`}
-          >
-            {room}
-          </button>
-        ))}
+        {rooms.map((room) => {
+          const roomCode = getRoomCode(room) ?? "";
+          if (groupedRoomCodes.has(roomCode)) {
+            if (room !== firstGroupedRoom) return null;
+            return (
+              <div key="grouped-bc" className="shrink-0">
+                {showRoomFloorLabels ? (
+                  <div className="pointer-events-none mb-1 text-center text-[10px] font-semibold leading-none text-gray-600">
+                    2F
+                  </div>
+                ) : null}
+                <div className="relative">
+                  {showRoomFloorLabels ? (
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute -inset-x-1 -inset-y-1 rounded-full bg-gray-200"
+                    />
+                  ) : null}
+                  <div className="relative flex flex-wrap gap-2">
+                    {groupedRooms.map((groupedRoom) => renderRoomButton(groupedRoom))}
+                  </div>
+                </div>
+              </div>
+            );
+          }
+          return renderRoomButton(room);
+        })}
         <a
           href={filtersDisabled ? undefined : VENUE_GUIDE_URL}
           target={filtersDisabled ? undefined : "_blank"}
@@ -319,9 +444,14 @@ export function ProgramHeader({
   showFilters,
   allTimes,
   timelineSegments,
+  timelineRoom,
   selectedTime,
   nowEnabled,
+  nowTitle,
   rooms,
+  activeRooms,
+  roomHasPresentationsOnSelectedDate,
+  showRoomFloorLabels = true,
   selectedRoom,
   onQueryCommit,
   onToggleSearchAll,
@@ -352,9 +482,14 @@ export function ProgramHeader({
   showFilters: boolean;
   allTimes: string[];
   timelineSegments: boolean[];
+  timelineRoom?: string | null;
   selectedTime: string | null;
   nowEnabled: boolean;
+  nowTitle?: string;
   rooms: string[];
+  activeRooms?: string[];
+  roomHasPresentationsOnSelectedDate?: Record<string, boolean>;
+  showRoomFloorLabels?: boolean;
   selectedRoom: string | null;
   onQueryCommit: (nextValue: string) => void;
   onToggleSearchAll: () => void;
@@ -403,16 +538,22 @@ export function ProgramHeader({
             <TimelineFilter
               points={allTimes}
               activeSegments={timelineSegments}
+              selectedRoom={timelineRoom ?? null}
               selectedDate={selectedDate}
               selectedTime={selectedTime}
               onChange={onSelectTime}
               onSelectNow={onSelectNow}
               nowEnabled={nowEnabled}
+              nowTitle={nowTitle}
               dataGeneratedAt={dataGeneratedAt}
               disabled={filtersDisabled}
             />
             <RoomChips
               rooms={roomSorted}
+              activeRooms={activeRooms}
+              roomHasPresentationsOnSelectedDate={roomHasPresentationsOnSelectedDate}
+              showRoomFloorLabels={showRoomFloorLabels}
+              selectedTime={selectedTime}
               selectedRoom={selectedRoom}
               filtersDisabled={filtersDisabled}
               onSelectRoom={onSelectRoom}

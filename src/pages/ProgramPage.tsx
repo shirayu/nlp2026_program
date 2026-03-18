@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS } from "../constants/network";
 import { ja } from "../locales/ja";
 import { ProgramHeader } from "./programPage/ProgramHeader";
 import { ProgramOverlays } from "./programPage/ProgramOverlays";
@@ -9,12 +11,51 @@ import { fullscreenDialogClassName, getNextScheduleTimePoint } from "./programPa
 export { fullscreenDialogClassName, getNextScheduleTimePoint, SearchField };
 
 export default function ProgramPage() {
-  const { data, headerProps, resultsProps, overlayProps } = useProgramPageState();
+  const loadingImageSrc = `${import.meta.env.BASE_URL}loading.avif`;
+  const { data, initialLoadStatus, onRetryInitialLoad, headerProps, resultsProps, overlayProps, importToast } =
+    useProgramPageState();
+  const [remainingSeconds, setRemainingSeconds] = useState(CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS);
+  const shouldShowCountdown = remainingSeconds <= CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS - 1;
 
-  if (!data) {
+  useEffect(() => {
+    if (initialLoadStatus !== "loading") {
+      return;
+    }
+
+    setRemainingSeconds(CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS);
+    const startedAt = Date.now();
+    const intervalId = window.setInterval(() => {
+      const elapsedSeconds = (Date.now() - startedAt) / 1000;
+      const nextSeconds = Math.max(0, CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS - elapsedSeconds);
+      setRemainingSeconds(nextSeconds);
+    }, 100);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [initialLoadStatus]);
+
+  if (initialLoadStatus === "loading") {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-gray-500">{ja.loading}</p>
+      <div className="flex min-h-screen flex-col items-center justify-center gap-1">
+        <p className="text-lg text-gray-500">{ja.loading}</p>
+        {shouldShowCountdown ? <p className="text-sm text-gray-400">{ja.loadingCountdown(remainingSeconds)}</p> : null}
+        <img src={loadingImageSrc} alt="読み込み画像" className="mt-3 w-36 max-w-[60vw]" />
+      </div>
+    );
+  }
+
+  if (initialLoadStatus === "error" || !data) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-4 text-center">
+        <p className="text-gray-600">{ja.loadingFailed}</p>
+        <button
+          type="button"
+          onClick={onRetryInitialLoad}
+          className="rounded border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+        >
+          {ja.retryLoading}
+        </button>
       </div>
     );
   }
@@ -24,6 +65,18 @@ export default function ProgramPage() {
       <ProgramHeader {...headerProps} />
       <ProgramResults data={data} {...resultsProps} />
       <ProgramOverlays data={data} {...overlayProps} />
+      {importToast ? (
+        <div className="pointer-events-none fixed right-4 bottom-4 z-50">
+          <div
+            role={importToast.kind === "error" ? "alert" : "status"}
+            className={`rounded-lg px-4 py-3 text-sm font-medium text-white shadow-lg ${
+              importToast.kind === "error" ? "bg-red-600" : "bg-slate-800"
+            }`}
+          >
+            {importToast.message}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

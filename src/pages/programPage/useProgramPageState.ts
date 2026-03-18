@@ -1,4 +1,5 @@
 import { startTransition, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { roomShort } from "../../constants";
 import { appSettingsStorage, useAppSettings } from "../../hooks/useAppSettings";
 import { useBookmarks } from "../../hooks/useBookmarks";
 import { RELOAD_STATUS_AUTO_HIDE_MS, useConferenceData } from "../../hooks/useConferenceData";
@@ -45,12 +46,65 @@ import {
   toMinutes,
 } from "./utils";
 
-function extractZoomEncodedFromInput(raw: string): string | null {
+function hasPresentationsInSession(
+  sessionId: SessionId,
+  session: { presentation_ids: string[] },
+  presentations: Record<string, { session_id: string }>,
+): boolean {
+  if (session.presentation_ids.length > 0) return true;
+  return Object.values(presentations).some((presentation) => presentation.session_id === sessionId);
+}
+
+function isSessionActiveAtTime(session: { start_time: string; end_time: string }, time: string): boolean {
+  return toMinutes(session.start_time) <= toMinutes(time) && toMinutes(time) < toMinutes(session.end_time);
+}
+
+function isSessionOnSelectedDate(session: { date: string }, selectedDate: string | null): boolean {
+  if (!selectedDate) return true;
+  return session.date === selectedDate;
+}
+
+function includesSelectedRoom(
+  session: { room_ids: string[] },
+  rooms: Record<string, { name: string }>,
+  selectedRoom: string | null,
+): boolean {
+  if (!selectedRoom) return true;
+  return session.room_ids.some((roomId) => {
+    const roomName = rooms[roomId]?.name ?? roomId;
+    return roomShort(roomName) === selectedRoom;
+  });
+}
+
+function isTimelineSegmentActiveBySession(
+  sessionId: SessionId,
+  session: {
+    date: string;
+    start_time: string;
+    end_time: string;
+    room_ids: string[];
+    presentation_ids: string[];
+  },
+  opts: {
+    sessionIds: SessionId[];
+    selectedDate: string | null;
+    selectedRoom: string | null;
+    time: string;
+    rooms: Record<string, { name: string }>;
+  },
+): boolean {
+  if (isWorkshopParentSession(sessionId, opts.sessionIds)) return false;
+  if (!isSessionOnSelectedDate(session, opts.selectedDate)) return false;
+  if (!isSessionActiveAtTime(session, opts.time)) return false;
+  if (!includesSelectedRoom(session, opts.rooms, opts.selectedRoom)) return false;
+  return true;
+}
+
+function extractEncodedFromInput(raw: string, prefix: string): string | null {
   const trimmed = raw.trim();
   if (!trimmed) return null;
 
   const extractByPrefix = (value: string): string | null => {
-    const prefix = "import_zoom_settings=";
     const index = value.indexOf(prefix);
     if (index < 0) return null;
     return value.slice(index + prefix.length).trim();
@@ -69,13 +123,73 @@ function extractZoomEncodedFromInput(raw: string): string | null {
   return fromRaw && fromRaw.length > 0 ? fromRaw : null;
 }
 
+function extractSettingsEncodedFromInput(raw: string): string | null {
+  return extractEncodedFromInput(raw, "import_settings=");
+}
+
+function extractZoomEncodedFromInput(raw: string): string | null {
+  return extractEncodedFromInput(raw, "import_zoom_settings=");
+}
+
+type RoomScopeSummary = { hasSession: boolean; hasPresentation: boolean };
+
+function buildRoomScopeSummaryByDateAndTime(
+  data: {
+    sessions: Record<
+      SessionId,
+      { date: string; start_time: string; end_time: string; room_ids: string[]; presentation_ids: string[] }
+    >;
+    rooms: Record<string, { name: string }>;
+    presentations: Record<string, { session_id: string }>;
+  },
+  selectedDate: string,
+  selectedTime: string | null,
+  allRooms: string[],
+): Record<string, RoomScopeSummary> {
+  const sessionIds = Object.keys(data.sessions) as SessionId[];
+  const roomToSummary: Record<string, RoomScopeSummary> = Object.fromEntries(
+    allRooms.map((room) => [room, { hasSession: false, hasPresentation: false }]),
+  );
+
+  for (const [sessionId, session] of Object.entries(data.sessions)) {
+    if (isWorkshopParentSession(sessionId as SessionId, sessionIds)) continue;
+    if (session.date !== selectedDate) continue;
+    if (selectedTime && !isSessionActiveAtTime(session, selectedTime)) continue;
+    const hasPresentation = hasPresentationsInSession(sessionId as SessionId, session, data.presentations);
+    for (const roomId of session.room_ids) {
+      const roomName = data.rooms[roomId]?.name ?? roomId;
+      const short = roomShort(roomName);
+      const summary = roomToSummary[short] ?? { hasSession: false, hasPresentation: false };
+      summary.hasSession = true;
+      if (hasPresentation) summary.hasPresentation = true;
+      roomToSummary[short] = summary;
+    }
+  }
+
+  return roomToSummary;
+}
+
+function buildRoomHasPresentationsInScope(
+  roomScopeSummary: Record<string, RoomScopeSummary>,
+  selectedTime: string | null,
+): Record<string, boolean> {
+  return Object.fromEntries(
+    Object.entries(roomScopeSummary).flatMap(([room, summary]) => {
+      if (selectedTime && !summary.hasSession) return [];
+      return [[room, summary.hasPresentation] as const];
+    }),
+  );
+}
+
 export function useProgramPageState() {
-  const { data, sessionSlackChannels, isReloading, reloadStatus, reload } = useConferenceData();
+  const { data, sessionSlackChannels, isReloading, reloadStatus, reload, initialLoadStatus, retryInitialLoad } =
+    useConferenceData();
   const {
     settings,
     setSettings,
     toggleShowAuthors,
     toggleUseSlackAppLinks,
+    toggleShowRoomFloorLabels,
     toggleIncludeSessionTitleForNoPresentationSessions,
     toggleIncludeSessionTitleForPresentationSessions,
     toggleShowTimeAtPresentationLevel,
@@ -117,10 +231,13 @@ export function useProgramPageState() {
   );
   const [showRestoreConfirm, setShowRestoreConfirm] = useState(false);
   const [showClearAllDataConfirm, setShowClearAllDataConfirm] = useState(false);
+  const [importToast, setImportToast] = useState<{ kind: "success" | "error"; message: string } | null>(null);
+  const [currentTime, setCurrentTime] = useState(() => new Date());
   const mainRef = useRef<HTMLElement | null>(null);
   const settingsDialogRef = useRef<HTMLDialogElement | null>(null);
   const installDialogRef = useRef<HTMLDialogElement | null>(null);
   const appUpdateStatusResetTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const importToastResetTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const deferredQuery = useDeferredValue(query);
   const deferredSelectedDate = useDeferredValue(selectedDate);
   const deferredSelectedRoom = useDeferredValue(selectedRoom);
@@ -142,6 +259,11 @@ export function useProgramPageState() {
 
   const allRooms = useMemo(() => {
     if (!data) return [];
+    return getAvailableRooms(data.sessions, data.rooms, null, null);
+  }, [data]);
+
+  const availableRooms = useMemo(() => {
+    if (!data) return [];
     return getAvailableRooms(data.sessions, data.rooms, selectedDate, selectedTime);
   }, [data, selectedDate, selectedTime]);
 
@@ -154,30 +276,57 @@ export function useProgramPageState() {
     if (!data || allTimes.length < 2) return [];
     const sessionIds = Object.keys(data.sessions) as SessionId[];
     return allTimes.slice(0, -1).map((time) =>
-      Object.entries(data.sessions).some(([sessionId, session]) => {
-        if (isWorkshopParentSession(sessionId as SessionId, sessionIds)) return false;
-        if (selectedDate && session.date !== selectedDate) return false;
-        return toMinutes(session.start_time) <= toMinutes(time) && toMinutes(time) < toMinutes(session.end_time);
-      }),
+      Object.entries(data.sessions).some(([sessionId, session]) =>
+        isTimelineSegmentActiveBySession(sessionId as SessionId, session, {
+          sessionIds,
+          selectedDate,
+          selectedRoom,
+          time,
+          rooms: data.rooms,
+        }),
+      ),
     );
-  }, [data, allTimes, selectedDate]);
+  }, [data, allTimes, selectedDate, selectedRoom]);
+
+  const roomScopeSummary = useMemo(() => {
+    if (!data || !deferredSelectedDate) return undefined;
+    return buildRoomScopeSummaryByDateAndTime(data, deferredSelectedDate, deferredSelectedTime, allRooms);
+  }, [allRooms, data, deferredSelectedDate, deferredSelectedTime]);
+  const roomDaySummary = useMemo(() => {
+    if (!data || !deferredSelectedDate) return undefined;
+    return buildRoomScopeSummaryByDateAndTime(data, deferredSelectedDate, null, allRooms);
+  }, [allRooms, data, deferredSelectedDate]);
+  const roomHasPresentationsOnSelectedDate = useMemo(() => {
+    if (!roomScopeSummary) return undefined;
+    return buildRoomHasPresentationsInScope(roomScopeSummary, deferredSelectedTime);
+  }, [roomScopeSummary, deferredSelectedTime]);
+
+  useEffect(() => {
+    const update = () => setCurrentTime(new Date());
+
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") update();
+    };
+
+    const intervalId = globalThis.setInterval(update, 1000);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      globalThis.clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, []);
 
   const nextScheduleTimePoint = useMemo(() => {
     if (!data) return null;
-    return getNextScheduleTimePoint(data.sessions, new Date());
-  }, [data]);
+    return getNextScheduleTimePoint(data.sessions, currentTime);
+  }, [currentTime, data]);
 
   useEffect(() => {
     if (selectedTime && allTimes.length > 0 && !allTimes.includes(selectedTime)) {
       setSelectedTime(null);
     }
   }, [allTimes, selectedTime]);
-
-  useEffect(() => {
-    if (selectedRoom && allRooms.length > 0 && !allRooms.includes(selectedRoom)) {
-      setSelectedRoom(null);
-    }
-  }, [allRooms, selectedRoom]);
 
   useEffect(() => {
     setInstallContext({
@@ -210,9 +359,23 @@ export function useProgramPageState() {
       if (appUpdateStatusResetTimerRef.current !== null) {
         globalThis.clearTimeout(appUpdateStatusResetTimerRef.current);
       }
+      if (importToastResetTimerRef.current !== null) {
+        globalThis.clearTimeout(importToastResetTimerRef.current);
+      }
     },
     [],
   );
+
+  function showImportToast(kind: "success" | "error", message: string) {
+    if (importToastResetTimerRef.current !== null) {
+      globalThis.clearTimeout(importToastResetTimerRef.current);
+    }
+    setImportToast({ kind, message });
+    importToastResetTimerRef.current = globalThis.setTimeout(() => {
+      setImportToast(null);
+      importToastResetTimerRef.current = null;
+    }, 3000);
+  }
 
   useEffect(() => {
     let canceled = false;
@@ -316,11 +479,30 @@ export function useProgramPageState() {
   const sessionsVisible = sessionsExpanded || trimmedQuery.length > 0;
   const filtersDisabled = shouldDisableFilters(searchAll, trimmedQuery, showBookmarkedOnly);
   const searchScopeLabel = searchAll ? ja.searchAll : ja.searchFiltered;
-  const nowEnabled = nextScheduleTimePoint !== null;
+  const isShowingNow =
+    nextScheduleTimePoint !== null &&
+    selectedDate === nextScheduleTimePoint.date &&
+    selectedTime === nextScheduleTimePoint.time;
+  const nowEnabled = nextScheduleTimePoint !== null && !isShowingNow;
+  const nowTitle = nowEnabled ? ja.now : isShowingNow ? ja.nowCurrent : ja.nowUnavailable;
   const bookmarkCount = bookmarkIds.length + sessionBookmarkIds.length;
   const matchedPresentationCount = useMemo(() => {
     return filteredSessions.reduce((total, item) => total + item.presIds.length, 0);
   }, [filteredSessions]);
+  const noPresentationsInSelectedRoomOnDate = useMemo(() => {
+    if (!deferredSelectedDate || !deferredSelectedRoom) return false;
+    const daySummary = roomDaySummary?.[deferredSelectedRoom];
+    if (!daySummary) return false;
+
+    // 日単位でセッション自体が無い会場は、時点指定の有無に関わらず専用メッセージ。
+    if (!daySummary.hasSession) return true;
+    if (!deferredSelectedTime) return !daySummary.hasPresentation;
+
+    // 時点指定中は、同日内の別時刻セッションを誤判定しないよう時点スコープで判断。
+    const scopeSummary = roomScopeSummary?.[deferredSelectedRoom];
+    if (!scopeSummary || !scopeSummary.hasSession) return false;
+    return !scopeSummary.hasPresentation;
+  }, [deferredSelectedDate, deferredSelectedRoom, deferredSelectedTime, roomDaySummary, roomScopeSummary]);
 
   useEffect(() => {
     if (!shouldExitBookmarkFilter(bookmarkCount, showBookmarkedOnly)) {
@@ -514,24 +696,41 @@ export function useProgramPageState() {
     setShowSettingsExport(true);
   }
 
+  function applyPendingSettingsImport(): boolean {
+    if (pendingSettingsImport === null || importTarget !== "settings") {
+      return false;
+    }
+
+    saveBeforeImport();
+    const nextSettings = { ...pendingSettingsImport.settings };
+    if (settings.zoomCustomUrls) {
+      nextSettings.zoomCustomUrls = settings.zoomCustomUrls;
+    } else {
+      Reflect.deleteProperty(nextSettings, "zoomCustomUrls");
+    }
+    setSettings(nextSettings);
+    setBookmarks(pendingSettingsImport.bookmarks);
+    setBackupEntries(listBackups());
+    return true;
+  }
+
+  function applyPendingZoomImport(): boolean {
+    if (importTarget !== "zoom" || pendingZoomImport === null) {
+      return false;
+    }
+    setSettings((current) => ({ ...current, zoomCustomUrls: pendingZoomImport || undefined }));
+    return true;
+  }
+
   function handleConfirmImport() {
-    if (pendingSettingsImport) {
-      if (importTarget === "settings") {
-        saveBeforeImport();
-        const nextSettings = { ...pendingSettingsImport.settings };
-        if (settings.zoomCustomUrls) {
-          nextSettings.zoomCustomUrls = settings.zoomCustomUrls;
-        } else {
-          Reflect.deleteProperty(nextSettings, "zoomCustomUrls");
-        }
-        setSettings(nextSettings);
-        setBookmarks(pendingSettingsImport.bookmarks);
-        setBackupEntries(listBackups());
-      }
+    const imported = applyPendingSettingsImport() || applyPendingZoomImport();
+
+    if (imported) {
+      showImportToast("success", importTarget === "settings" ? ja.importAppDataSuccess : ja.importZoomDataSuccess);
+    } else {
+      showImportToast("error", ja.importAppDataApplyFailed);
     }
-    if (importTarget === "zoom" && pendingZoomImport !== null) {
-      setSettings((current) => ({ ...current, zoomCustomUrls: pendingZoomImport || undefined }));
-    }
+
     clearImportPendingFlag();
     clearZoomImportPendingFlag();
     setShowSettingsImportConfirm(false);
@@ -572,12 +771,28 @@ export function useProgramPageState() {
     setSettings((current) => ({ ...current, zoomCustomUrls }));
   }
 
-  async function handleImportZoomFromCode(input: string): Promise<boolean> {
-    const encoded = extractZoomEncodedFromInput(input);
-    if (!encoded) {
+  async function handleImportFromCode(input: string): Promise<boolean> {
+    const settingsEncoded = extractSettingsEncodedFromInput(input);
+    if (settingsEncoded) {
+      const decoded = decodePayload(settingsEncoded);
+      setImportTarget("settings");
+      setPendingZoomImport(null);
+      if (decoded) {
+        setPendingSettingsImport(decoded);
+        setImportInvalid(false);
+      } else {
+        setPendingSettingsImport(null);
+        setImportInvalid(true);
+      }
+      setShowSettingsImportConfirm(true);
+      return decoded !== null;
+    }
+
+    const zoomEncoded = extractZoomEncodedFromInput(input);
+    if (!zoomEncoded) {
       return false;
     }
-    const decoded = await decodeZoomPayload(encoded);
+    const decoded = await decodeZoomPayload(zoomEncoded);
     setImportTarget("zoom");
     setPendingSettingsImport(null);
     if (decoded !== null) {
@@ -593,6 +808,10 @@ export function useProgramPageState() {
 
   return {
     data,
+    initialLoadStatus,
+    onRetryInitialLoad: () => {
+      void retryInitialLoad();
+    },
     headerProps: {
       query,
       isSearching,
@@ -606,15 +825,20 @@ export function useProgramPageState() {
       slackUrl: settings.useSlackAppLinks ? slackAppUrl : slackWebUrl,
       slackAppUrl,
       useSlackAppLinks: settings.useSlackAppLinks,
+      showRoomFloorLabels: settings.showRoomFloorLabels,
       allDates,
       filtersDisabled,
       selectedDate,
       showFilters,
       allTimes,
       timelineSegments,
+      timelineRoom: selectedRoom,
       selectedTime,
       nowEnabled,
+      nowTitle,
       rooms: allRooms,
+      activeRooms: availableRooms,
+      roomHasPresentationsOnSelectedDate,
       selectedRoom,
       onQueryCommit: setQuery,
       onToggleSearchAll: () => setSearchAll((value) => !value),
@@ -651,6 +875,10 @@ export function useProgramPageState() {
       onJumpToSession: handleJumpToSession,
       onToggleBookmark: toggleBookmark,
       onToggleSessionBookmark: toggleSessionBookmark,
+      emptyStateMessage:
+        noPresentationsInSelectedRoomOnDate && trimmedQuery.length === 0 && !showBookmarkedOnly
+          ? ja.noPresentationsInSelectedRoomOnDate
+          : ja.noResults,
     },
     overlayProps: {
       personModal,
@@ -680,6 +908,7 @@ export function useProgramPageState() {
       isReloadingData: isReloading,
       reloadDataStatus: reloadStatus,
       useSlackAppLinks: settings.useSlackAppLinks,
+      showRoomFloorLabels: settings.showRoomFloorLabels,
       zoomCustomUrls: settings.zoomCustomUrls,
       includeSessionTitleForNoPresentationSessions: settings.includeSessionTitleForNoPresentationSessions,
       includeSessionTitleForPresentationSessions: settings.includeSessionTitleForPresentationSessions,
@@ -690,8 +919,9 @@ export function useProgramPageState() {
       },
       onToggleShowAuthors: toggleShowAuthors,
       onToggleUseSlackAppLinks: toggleUseSlackAppLinks,
+      onToggleShowRoomFloorLabels: toggleShowRoomFloorLabels,
       onSetZoomCustomUrls: handleSetZoomCustomUrls,
-      onImportZoomFromCode: handleImportZoomFromCode,
+      onImportFromCode: handleImportFromCode,
       onToggleIncludeSessionTitleForNoPresentationSessions: toggleIncludeSessionTitleForNoPresentationSessions,
       onToggleIncludeSessionTitleForPresentationSessions: toggleIncludeSessionTitleForPresentationSessions,
       onToggleShowTimeAtPresentationLevel: toggleShowTimeAtPresentationLevel,
@@ -715,5 +945,6 @@ export function useProgramPageState() {
       onConfirmClearAllData: handleConfirmClearAllData,
       onCancelClearAllData: () => setShowClearAllDataConfirm(false),
     },
+    importToast,
   };
 }

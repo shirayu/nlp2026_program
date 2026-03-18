@@ -1,3 +1,4 @@
+import { CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS } from "../constants/network";
 import type { ConferenceData, SessionId, SlackChannelRef } from "../types";
 
 function withBuildVersion(path: string): string {
@@ -16,8 +17,7 @@ function withExplicitVersion(path: string, version?: string): string {
 export async function fetchConferenceData(): Promise<ConferenceData> {
   const basePath = `${import.meta.env.BASE_URL}${import.meta.env.VITE_CONFERENCE_DATA_FILE}`;
   const pathWithVersion = withExplicitVersion(basePath, import.meta.env.VITE_DATA_VERSION);
-  const response = await fetch(pathWithVersion);
-  return response.json();
+  return fetchJson<ConferenceData>(pathWithVersion);
 }
 
 export async function fetchSessionSlackChannels(): Promise<Partial<Record<SessionId, SlackChannelRef>>> {
@@ -25,6 +25,29 @@ export async function fetchSessionSlackChannels(): Promise<Partial<Record<Sessio
     `${import.meta.env.BASE_URL}${import.meta.env.VITE_SESSION_SLACK_FILE}`,
     import.meta.env.VITE_SLACK_VERSION,
   );
-  const response = await fetch(pathWithVersion);
-  return (await response.json()) as Partial<Record<SessionId, SlackChannelRef>>;
+  return fetchJson<Partial<Record<SessionId, SlackChannelRef>>>(pathWithVersion);
+}
+
+async function fetchJson<T>(pathWithVersion: string): Promise<T> {
+  const timeoutController = new AbortController();
+  const timeoutId = globalThis.setTimeout(() => {
+    timeoutController.abort();
+  }, CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS * 1000);
+
+  let response: Response;
+  try {
+    response = await fetch(pathWithVersion, { signal: timeoutController.signal });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error(`Request timed out after ${CONFERENCE_JSON_NETWORK_TIMEOUT_SECONDS}s: ${pathWithVersion}`);
+    }
+    throw error;
+  } finally {
+    globalThis.clearTimeout(timeoutId);
+  }
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch ${pathWithVersion}: ${response.status}`);
+  }
+  return (await response.json()) as T;
 }

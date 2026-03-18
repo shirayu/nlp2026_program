@@ -12,7 +12,7 @@ vars:
 tasks:
   default:
     cmds:
-      - task: install
+      - task: setup
       - task: extract
       - task: format
       - task: lint
@@ -21,18 +21,18 @@ tasks:
 
   ci:
     cmds:
-      - task: install
+      - task: setup
       - task: format
       - task: lint
       - task: test
       - task: build
 
 
-  install:
+  setup:
     desc: "Install project dependencies"
-    deps: [deps:python, deps:node]
+    deps: [setup:python, setup:node]
 
-  deps:python:
+  setup:python:
     desc: "Sync Python dependencies"
     sources:
       - '{{.FILE_PYPROJECT}}'
@@ -42,7 +42,7 @@ tasks:
     cmds:
       - uv sync
 
-  deps:node:
+  setup:node:
     desc: "Install Node dependencies"
     sources:
       - '{{.FILE_PACKAGE_JSON}}'
@@ -127,13 +127,20 @@ tasks:
       WORKSHOP_CONFIG: '{{.WORKSHOP_CONFIG | default "data_for_extraction/workshop.json"}}'
       INVITEDPAPERS_CONFIG: '{{.INVITEDPAPERS_CONFIG | default "data_for_extraction/invitedpapers.json"}}'
       YOUTUBE_CONFIG: '{{.YOUTUBE_CONFIG | default "data_for_extraction/youtube.json"}}'
+      SLACK_CONFIG: '{{.SLACK_CONFIG | default "data_for_extraction/slack.json"}}'
+      SLACK_OUT: '{{.SLACK_OUT | default (printf "%s/public/%s" .ROOT_DIR (.VITE_SESSION_SLACK_FILE | default "slack.json"))}}'
     cmds:
-      - 'uv run extract.py --html {{.HTML}} --out {{.OUT}} --base-url {{.BASE_URL}} --workshop-config {{.WORKSHOP_CONFIG}} --invitedpapers-config {{.INVITEDPAPERS_CONFIG}} --youtube-config {{.YOUTUBE_CONFIG}}'
+      - 'uv run extract.py --html {{.HTML}} --out {{.OUT}} --base-url {{.BASE_URL}} --workshop-config {{.WORKSHOP_CONFIG}} --invitedpapers-config {{.INVITEDPAPERS_CONFIG}} --youtube-config {{.YOUTUBE_CONFIG}} --slack-config {{.SLACK_CONFIG}} --slack-out {{.SLACK_OUT}}'
+      - 'uv run scripts/stabilize_json.py --in {{.OUT}}'
+      - 'uv run scripts/stabilize_json.py --in {{.SLACK_OUT}}'
     sources:
       - extract.py
+      - scripts/stabilize_json.py
       - "{{.HTML}}"
       - data_for_extraction/workshop.json
       - data_for_extraction/invitedpapers.json
       - data_for_extraction/youtube.json
+      - data_for_extraction/slack.json
     generates:
       - "{{.OUT}}"
+      - "{{.SLACK_OUT}}"

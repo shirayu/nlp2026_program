@@ -32,6 +32,7 @@ describe("InstallDialog", () => {
           workshop: { sha256: "bbb", time: "2026-03-05T08:00:00+09:00" },
           invitedpapers: { sha256: "ccc", time: "2026-03-05T08:10:00+09:00" },
           youtube: { sha256: "ddd", time: "2026-03-05T08:20:00+09:00" },
+          slack: { sha256: "eee", time: "2026-03-05T08:30:00+09:00" },
         }}
         isReloadingData={false}
         reloadDataStatus="idle"
@@ -53,10 +54,12 @@ describe("InstallDialog", () => {
     expect(html).toContain("Workshop");
     expect(html).toContain("Invitedpapers");
     expect(html).toContain("YouTube");
+    expect(html).toContain("Slack");
     expect(html).toContain("(aaa)");
     expect(html).toContain("(bbb)");
     expect(html).toContain("(ccc)");
     expect(html).toContain("(ddd)");
+    expect(html).toContain("(eee)");
     expect(html).toMatch(/(JST|GMT\+9|GMT\+09:00|UTC\+09:00)/);
     expect(html.indexOf("データを再取得")).toBeLessThan(html.indexOf("Main"));
   });
@@ -125,6 +128,7 @@ const defaultSettingsDialogProps = {
   },
   showAuthors: true,
   useSlackAppLinks: false,
+  showRoomFloorLabels: true,
   zoomCustomUrls: undefined,
   includeSessionTitleForNoPresentationSessions: true,
   includeSessionTitleForPresentationSessions: false,
@@ -132,8 +136,9 @@ const defaultSettingsDialogProps = {
   onClose: () => {},
   onToggleShowAuthors: () => {},
   onToggleUseSlackAppLinks: () => {},
+  onToggleShowRoomFloorLabels: () => {},
   onSetZoomCustomUrls: () => {},
-  onImportZoomFromCode: async () => true,
+  onImportFromCode: async () => true,
   onToggleIncludeSessionTitleForNoPresentationSessions: () => {},
   onToggleIncludeSessionTitleForPresentationSessions: () => {},
   onToggleShowTimeAtPresentationLevel: () => {},
@@ -168,36 +173,53 @@ describe("SettingsDialog", () => {
     const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
     expect(html).toContain("発表単位で表示（時間情報がある場合）");
+    expect(html).toContain("会場ボタンに階数表示");
     expect(html).toContain("セッションタイトルを検索対象にする");
     expect(html).toContain("発表情報が無いセッション");
     expect(html).toContain("発表情報が有るセッション");
-    expect(html.indexOf("Slack をアプリリンクで開く")).toBeLessThan(
-      html.indexOf("発表単位で表示（時間情報がある場合）"),
-    );
+    expect(html.indexOf("Slack をアプリリンクで開く")).toBeLessThan(html.indexOf("会場ボタンに階数表示"));
+    expect(html.indexOf("会場ボタンに階数表示")).toBeLessThan(html.indexOf("発表単位で表示（時間情報がある場合）"));
     expect(html.indexOf("発表単位で表示（時間情報がある場合）")).toBeLessThan(
       html.indexOf("セッションタイトルを検索対象にする"),
     );
   });
 
-  it("Zoom カスタムURL設定の起動ボタンを表示する", () => {
+  it("Zoom欄なしでカスタムURL設定の起動ボタンを表示する", () => {
     const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
-    expect(html).toContain("Zoom");
-    expect(html).toContain("コードでインポート");
-    expect(html).toContain("カスタムURLを設定");
+    expect(html).not.toContain('<h3 class="text-sm font-semibold text-gray-800">Zoom</h3>');
+    expect(html).toContain("ZoomカスタムURL");
   });
 
   it("大枠の下部にエクスポートボタンを表示する", () => {
     const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
     expect(html).toContain("エクスポート");
+    expect(html).toContain("📥 コードでインポート");
     expect(html).not.toContain("設定・ブックマークのエクスポート</h3>");
   });
 
   it("エクスポートセクションはアイコン凡例より前に表示される", () => {
     const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
-    expect(html.indexOf("データのエクスポート")).toBeLessThan(html.indexOf("アイコン凡例"));
+    expect(html.indexOf("データの入出力")).toBeLessThan(html.indexOf("アイコン凡例"));
+  });
+
+  it("バックアップがない場合は復元ボタンを無効状態で表示する", () => {
+    const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} hasBackup={false} />);
+
+    expect(html).toContain("復元");
+    expect(html).not.toContain("復元できるバックアップがありません。");
+    expect(html).toContain("cursor-not-allowed");
+  });
+
+  it("バックアップがある場合は復元ボタンを有効表示する", () => {
+    const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} hasBackup />);
+
+    expect(html).toContain("復元");
+    expect(html).not.toContain("復元できるバックアップがありません。");
+    expect(html).toContain("text-gray-600");
+    expect(html).not.toContain("text-amber-700");
   });
 
   it("全てのデータを削除ボタンを常に表示する", () => {
@@ -238,7 +260,7 @@ describe("SettingsImportConfirmDialog", () => {
 
     expect(html).toContain("上書きされます");
     expect(html).toContain("Zoom カスタムURL は上書きされず、現在の設定を維持します。");
-    expect(html).toContain("復元");
+    expect(html).toContain("「復元」ボタン");
     expect(html).toContain("インポートする");
   });
 
@@ -266,6 +288,7 @@ const backupPayload = {
   settings: {
     showAuthors: true,
     useSlackAppLinks: false,
+    showRoomFloorLabels: true,
     includeSessionTitleForNoPresentationSessions: true,
     includeSessionTitleForPresentationSessions: false,
     showTimeAtPresentationLevel: false,

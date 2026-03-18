@@ -34,6 +34,7 @@ export function ProgramResults({
   onJumpToSession,
   onToggleBookmark,
   onToggleSessionBookmark,
+  emptyStateMessage = ja.noResults,
 }: {
   data: ConferenceData;
   mainRef: RefObject<HTMLElement | null>;
@@ -59,6 +60,7 @@ export function ProgramResults({
   onJumpToSession: (sessionId: SessionId) => void;
   onToggleBookmark: (presentationId: PresentationId) => void;
   onToggleSessionBookmark: (sessionId: SessionId) => void;
+  emptyStateMessage?: string;
 }) {
   return (
     <main ref={mainRef} className="min-h-0 flex-1 overflow-y-auto">
@@ -72,7 +74,7 @@ export function ProgramResults({
             <p>{ja.searchResultCount(matchedPresentationCount)}</p>
           </div>
         )}
-        {filteredSessions.length === 0 && <p className="py-10 text-center text-gray-400">{ja.noResults}</p>}
+        {filteredSessions.length === 0 && <p className="py-10 text-center text-gray-400">{emptyStateMessage}</p>}
         {filteredSessions.map(({ sessionId, session, presIds }) => (
           <SessionCard
             key={sessionId}

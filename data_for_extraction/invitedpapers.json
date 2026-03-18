@@ -1,20 +1,38 @@
 [
   {
     "id": "invitedpapers-1",
-    "title": "招待論文1（未定）",
-    "pdf_url": null,
-    "authors": []
+    "title": "招待論文: 大規模言語モデルにおける評価バイアスの尤度に基づく緩和",
+    "pdf_url": "https://www.jstage.jst.go.jp/article/jnlp/32/2/32_480/_article/-char/ja/",
+    "authors": [
+      { "name": "大井 聖也", "affiliation": "科学大" },
+      { "name": "金子 正弘", "affiliation": "MBZUAI/科学大" },
+      { "name": "小池 隆斗", "affiliation": "科学大/ペンシルバニア大" },
+      { "name": "Mengsay Loem", "affiliation": "Sansan" },
+      { "name": "岡崎 直観", "affiliation": "東京科学大・産総研・NII LLMC" }
+    ]
   },
   {
     "id": "invitedpapers-2",
-    "title": "招待論文2（未定）",
-    "pdf_url": null,
-    "authors": []
+    "title": "招待論文: 大規模言語モデルに推論を教えるための人工論理推論コーパスを用いたアプローチ",
+    "pdf_url": "https://www.jstage.jst.go.jp/article/jnlp/32/2/32_520/_article/-char/ja/",
+    "authors": [
+      { "name": "森下 皓文", "affiliation": "日立" },
+      { "name": "森尾 学", "affiliation": "日立" },
+      { "name": "山口 篤季", "affiliation": "シェフィールド大" },
+      { "name": "十河 泰弘", "affiliation": "日立" }
+    ]
   },
   {
     "id": "invitedpapers-3",
-    "title": "招待論文3（未定）",
-    "pdf_url": null,
-    "authors": []
+    "title": "招待論文: 通時的な類似度行列に基づく単語の意味変化の分析",
+    "pdf_url": "https://www.jstage.jst.go.jp/article/jnlp/32/4/32_1189/_article/-char/ja/",
+    "authors": [
+      { "name": "木山 朔", "affiliation": "一橋大" },
+      { "name": "相田 太一", "affiliation": "都立大" },
+      { "name": "小町 守", "affiliation": "一橋大" },
+      { "name": "小木曽 智信", "affiliation": "国語研" },
+      { "name": "高村 大也", "affiliation": "産総研" },
+      { "name": "持橋 大地", "affiliation": "国語研/統数研" }
+    ]
   }
 ]

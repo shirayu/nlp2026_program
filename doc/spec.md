@@ -252,6 +252,33 @@
 - 文字列フィールドに空文字列や空白のみは指定できない
 - `task extract` では自動的に `data_for_extraction/youtube.json` も入力として扱う
 
+#### data_for_extraction/slack.json
+
+`extract.py --slack-config data_for_extraction/slack.json` で読み込む任意設定ファイル。
+引数を省略した場合は読み込まない。`task extract` では `Taskfile.yml` からこのパスを明示的に渡す。
+
+`data_for_extraction/slack.json` は「`session_id -> { team, channel_id }`」の辞書形式で、
+`data.json.session_slack_channels` に埋め込まれる。
+
+```json
+{
+  "A1": { "team": "T0AFE8T2X2M", "channel_id": "C0AFSJ7LWT0" },
+  "B1": { "team": "T0AFE8T2X2M", "channel_id": "C0AFD6X51M5" }
+}
+```
+
+| フィールド | 型 | 説明 |
+|---|---|---|
+| `キー` | `string` | セッションID（互換用途で任意のIDも可） |
+| `値.team` | `string` | Slack Team ID |
+| `値.channel_id` | `string` | Slack Channel ID |
+
+補足:
+
+- `data_for_extraction/slack.json` はオブジェクト形式
+- 空文字列や空白のみの値は指定できない
+- `task extract` では自動的に `data_for_extraction/slack.json` も入力として扱う
+
 `presentations[*]` の各要素は以下を持つ。
 
 | フィールド | 型 | 説明 |
@@ -434,3 +461,44 @@ interface ZoomCustomUrls {
 - `--session <SessionId=url>`（複数回指定可）
 - `--workshop <WSn=url>`（親Workshopセッション向け、複数回指定可）
 - `--presentation <PresentationId=url>`（複数回指定可）
+
+## Web アプリのオフライン読込仕様
+
+### 必須データと任意データ
+
+- `data.json` は必須データとして扱う
+- `data.json.session_slack_channels` があれば Slack 情報はそれを優先利用する
+- `slack.json` は後方互換の任意フォールバックとして扱う
+- `data.json` が取得不能かつローカル復元不能な場合のみ、初期表示を `error` 状態にする
+- `slack.json` が取得不能でも本体表示は継続し、Slack 導線のみ縮退させる
+
+### キャッシュとフォールバック
+
+- `data.json`:
+    - SW runtime cache（NetworkFirst）で最新取得優先
+    - 取得成功時に `localStorage` に保存
+    - ネットワーク失敗時は `localStorage` を復元に使う
+- `slack.json`:
+    - 更新頻度が低いため SW precache 寄りで配信
+    - 取得成功時に `localStorage` に保存
+    - ネットワーク失敗時は `localStorage` を復元に使う
+
+### localStorage 保存形式
+
+- 保存キー:
+    - `nlp2026-offline-conference-data`
+    - `nlp2026-offline-slack-channels`
+- 保存値:
+    - `{ schemaVersion: number, savedAt: string, payload: object }`
+- 仕様:
+    - `schemaVersion` 不一致時は無効として扱う
+    - JSON parse 失敗時は破損データとして破棄する
+    - 保存時の容量不足等は非致命として扱い、アプリは継続する
+
+### 初期表示状態
+
+- `loading`: 初期ロード中
+- `ready`: 本体表示可能
+- `error`: `data.json` の取得/復元に失敗
+
+`error` 状態では、再試行ボタンを表示し再取得を実行できること。

@@ -1,5 +1,6 @@
 import type { MouseEvent } from "react";
 import { getAvailableDates, getAvailableTimes } from "../../lib/filters";
+import { getTokyoSecondsSinceMidnight, toTokyoIsoDate } from "../../lib/time";
 import type { Session, SessionId } from "../../types";
 
 export type BeforeInstallPromptEvent = Event & {
@@ -19,13 +20,6 @@ export function isStandaloneMode() {
   if (typeof window === "undefined") return false;
   const iosNavigator = window.navigator as Navigator & { standalone?: boolean };
   return window.matchMedia("(display-mode: standalone)").matches || iosNavigator.standalone === true;
-}
-
-export function toLocalIsoDate(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
 }
 
 export function toMinutes(time: string): number {
@@ -85,8 +79,8 @@ export function getNextScheduleTimePoint(
   date: string;
   time: string;
 } | null {
-  const today = toLocalIsoDate(now);
-  const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+  const today = toTokyoIsoDate(now);
+  const currentSeconds = getTokyoSecondsSinceMidnight(now);
   const availableDates = getAvailableDates(sessions);
 
   for (const date of availableDates) {

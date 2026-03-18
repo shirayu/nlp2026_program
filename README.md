@@ -15,10 +15,12 @@ data_for_extraction/original_program.html
 data_for_extraction/workshop.json
 data_for_extraction/invitedpapers.json
 data_for_extraction/youtube.json
-public/slack.json
+data_for_extraction/slack.json
 ```
 
-`public/slack.json` は `session_id -> { team, channel_id }` の辞書形式です。
+`data_for_extraction/slack.json` は `task extract` で `data.json` に埋め込まれる Slack 設定です。
+`public/slack.json` は後方互換のフォールバックとして `task extract` で自動生成されます。
+どちらも `session_id -> { team, channel_id }` の辞書形式です。
 
 `data_for_extraction/invitedpapers.json` は `invitedpapers` セッションに差し込む発表一覧です。
 
@@ -71,7 +73,7 @@ pnpm run create:import-zoom-settings-url -- \
 ```
 
 `--workshop` は `WS1` のような親Workshopセッション向けです。  
-WebUI上のリンク置換優先順位は `発表 > セッション > 部屋 > WS` です。
+WebUI上のリンク置換優先順位は `発表 > セッション > 会場 > WS` です。
 
 - 出力の1行目 `ZOOM_IMPORT_HASH=...` を `src/constants/index.ts` の `ZOOM_IMPORT_HASHES` に追加してください。  
 - アプリ側は `SubtleCrypto (SHA-256)` で同じハッシュを再計算し、一致しない `#import_zoom_settings=` は拒否します。

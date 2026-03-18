@@ -95,11 +95,18 @@ describe("resolveSessionZoomUrl", () => {
     expect(resolved).toBe("https://zoom.us/j/101?pwd=session");
   });
 
-  it("session.zoom_url が null でも custom があれば表示する", () => {
+  it("session.zoom_url が null でも session custom があれば表示する", () => {
     const resolved = resolveSessionZoomUrl("sP", data.sessions.sP, data.rooms, {
-      venues: { P: "https://zoom.us/j/102?pwd=venue" },
+      sessions: { sP: "https://zoom.us/j/102?pwd=session" },
     });
-    expect(resolved).toBe("https://zoom.us/j/102?pwd=venue");
+    expect(resolved).toBe("https://zoom.us/j/102?pwd=session");
+  });
+
+  it("session.zoom_url がないセッションでは venue custom だけでは表示しない", () => {
+    const resolved = resolveSessionZoomUrl("sP", data.sessions.sP, data.rooms, {
+      venues: { P: "https://zoom.us/j/103?pwd=venue" },
+    });
+    expect(resolved).toBeNull();
   });
 
   it("WS子セッションは WS親の session custom URL を継承する", () => {
@@ -114,7 +121,7 @@ describe("resolveSessionZoomUrl", () => {
       venues: { A: "https://zoom.us/j/152?pwd=venue" },
       sessions: { WS1: "https://zoom.us/j/150?pwd=workshop-parent" },
     });
-    expect(resolved).toBe("https://zoom.us/j/152?pwd=venue");
+    expect(resolved).toBe("https://zoom.us/j/150?pwd=workshop-parent");
   });
 });
 
@@ -144,6 +151,13 @@ describe("resolvePresentationZoomUrl", () => {
     expect(resolved).toBe("https://zoom.us/j/103?pwd=session");
   });
 
+  it("元データに Zoom がない発表では venue custom だけでは表示しない", () => {
+    const resolved = resolvePresentationZoomUrl("pP", data.presentations.pP, data, {
+      venues: { P: "https://zoom.us/j/104?pwd=venue" },
+    });
+    expect(resolved).toBeNull();
+  });
+
   it("WS子セッション配下の発表は WS親の session custom URL を継承する", () => {
     const resolved = resolvePresentationZoomUrl("pWS", data.presentations.pWS, data, {
       sessions: { WS1: "https://zoom.us/j/151?pwd=workshop-parent" },
@@ -151,11 +165,11 @@ describe("resolvePresentationZoomUrl", () => {
     expect(resolved).toBe("https://zoom.us/j/151?pwd=workshop-parent");
   });
 
-  it("WS子セッション配下の発表で venue custom と WS親custom が両方ある場合は venue custom を優先する", () => {
+  it("WS子セッション配下の発表で元データに Zoom がない場合は venue custom より WS親custom を優先する", () => {
     const resolved = resolvePresentationZoomUrl("pWS", data.presentations.pWS, data, {
       venues: { A: "https://zoom.us/j/153?pwd=venue" },
       sessions: { WS1: "https://zoom.us/j/151?pwd=workshop-parent" },
     });
-    expect(resolved).toBe("https://zoom.us/j/153?pwd=venue");
+    expect(resolved).toBe("https://zoom.us/j/151?pwd=workshop-parent");
   });
 });
