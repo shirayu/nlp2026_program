@@ -9,8 +9,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -28,6 +26,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
 
       - name: Setup mise
         uses: jdx/mise-action@5228313ee0372e111a38da051671ca30fc5a96db # v3.6.3
@@ -107,6 +107,9 @@ jobs:
     needs: test-and-build
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -126,9 +129,11 @@ jobs:
 
       - name: Write deployed hash marker
         if: steps.deployed-hash-cache.outputs.cache-hit != 'true' && steps.deployment.outcome == 'success'
+        env:
+          ARTIFACT_HASH: ${{ needs.test-and-build.outputs.artifact_hash }}
         run: |
           mkdir -p /tmp/pages-artifact-hash
-          echo "${{ needs.test-and-build.outputs.artifact_hash }}" > /tmp/pages-artifact-hash/hash.txt
+          printf '%s\n' "$ARTIFACT_HASH" > /tmp/pages-artifact-hash/hash.txt
 
       - name: Save deployed hash cache
         if: steps.deployed-hash-cache.outputs.cache-hit != 'true' && steps.deployment.outcome == 'success'
