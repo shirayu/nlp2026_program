@@ -159,4 +159,39 @@ describe("PresentationListItem", () => {
     expect(html).toContain("オンラインポスター発表");
     expect(html).toContain("（9:45-10:15）");
   });
+
+  it("BibTeX表示設定ONのときは bibtex リンクを表示する", () => {
+    const withPdf: ConferenceData = {
+      ...data,
+      presentations: {
+        ...data.presentations,
+        pr1: {
+          ...data.presentations.pr1,
+          pdf_url: "https://example.com/pr1.pdf",
+        },
+      },
+    };
+    const html = renderToStaticMarkup(
+      <PresentationListItem
+        pid="pr1"
+        data={withPdf}
+        bookmarked={false}
+        showAuthors
+        showBibtexLinks
+        query=""
+        onToggleBookmark={vi.fn()}
+      />,
+    );
+
+    expect(html).toContain(ja.openBibtex);
+    expect(html).toContain("%40inproceedings%7Bpr1%2C");
+  });
+
+  it("BibTeX表示設定OFFのときは bibtex リンクを表示しない", () => {
+    const html = renderToStaticMarkup(
+      <PresentationListItem pid="pr1" data={data} bookmarked={false} showAuthors query="" onToggleBookmark={vi.fn()} />,
+    );
+
+    expect(html).not.toContain(ja.openBibtex);
+  });
 });

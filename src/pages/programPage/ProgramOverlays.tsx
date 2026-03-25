@@ -17,6 +17,7 @@ export function ProgramOverlays({
   data,
   bookmarkedPresentationIds,
   showAuthors,
+  showBibtexLinks,
   slackTeamId = null,
   onClosePersonModal,
   onPersonClick,
@@ -44,6 +45,7 @@ export function ProgramOverlays({
   showTimeAtPresentationLevel,
   onCloseSettings,
   onToggleShowAuthors,
+  onToggleShowBibtexLinks,
   onToggleUseSlackAppLinks,
   onToggleShowRoomFloorLabels,
   onSetZoomCustomUrls,
@@ -75,6 +77,7 @@ export function ProgramOverlays({
   data: ConferenceData;
   bookmarkedPresentationIds: Set<PresentationId>;
   showAuthors: boolean;
+  showBibtexLinks: boolean;
   slackTeamId?: string | null;
   onClosePersonModal: () => void;
   onPersonClick: (personId: PersonId | null) => void;
@@ -102,6 +105,7 @@ export function ProgramOverlays({
   showTimeAtPresentationLevel: boolean;
   onCloseSettings: () => void;
   onToggleShowAuthors: () => void;
+  onToggleShowBibtexLinks: () => void;
   onToggleUseSlackAppLinks: () => void;
   onToggleShowRoomFloorLabels: () => void;
   onSetZoomCustomUrls: (value: ZoomCustomUrls | undefined) => void;
@@ -137,6 +141,7 @@ export function ProgramOverlays({
           data={data}
           bookmarkedPresentationIds={bookmarkedPresentationIds}
           showAuthors={showAuthors}
+          showBibtexLinks={showBibtexLinks}
           useSlackAppLinks={useSlackAppLinks}
           slackTeamId={slackTeamId}
           zoomCustomUrls={zoomCustomUrls}
@@ -169,6 +174,7 @@ export function ProgramOverlays({
         open={showSettings}
         data={data}
         showAuthors={showAuthors}
+        showBibtexLinks={showBibtexLinks}
         useSlackAppLinks={useSlackAppLinks}
         showRoomFloorLabels={showRoomFloorLabels}
         zoomCustomUrls={zoomCustomUrls}
@@ -177,6 +183,7 @@ export function ProgramOverlays({
         showTimeAtPresentationLevel={showTimeAtPresentationLevel}
         onClose={onCloseSettings}
         onToggleShowAuthors={onToggleShowAuthors}
+        onToggleShowBibtexLinks={onToggleShowBibtexLinks}
         onToggleUseSlackAppLinks={onToggleUseSlackAppLinks}
         onToggleShowRoomFloorLabels={onToggleShowRoomFloorLabels}
         onSetZoomCustomUrls={onSetZoomCustomUrls}

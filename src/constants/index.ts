@@ -8,6 +8,8 @@ export const OPERATOR_WEBSITE_URL = "https://hayashibe.jp/";
 export const OPERATOR_REPOSITORY_URL = "https://github.com/shirayu/nlp2026_program";
 export const ZOOM_IMPORT_HASHES = ["8be7e8c9faa580822104f5885ede6fe8d2b8fbbbc645cf89e5eef6c2bd891bcb"];
 export const APP_LOCALSTORAGE_PREFIX = "nlp2026-";
+export const BIBTEX_BOOKTITLE = "言語処理学会第32回年次大会";
+export const BIBTEX_YEAR = "2026";
 
 // ここは変更しない ///////
 export const DEVELOPER_NAME = "Yuta Hayashibe";

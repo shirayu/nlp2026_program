@@ -15,6 +15,7 @@ import {
 
 const settingsA = {
   showAuthors: true,
+  showBibtexLinks: false,
   useSlackAppLinks: false,
   showRoomFloorLabels: true,
   includeSessionTitleForNoPresentationSessions: true,
@@ -26,6 +27,7 @@ const payloadA: ExportPayload = { settings: settingsA, bookmarks: bookmarksA };
 
 const settingsB = {
   showAuthors: false,
+  showBibtexLinks: false,
   useSlackAppLinks: true,
   showRoomFloorLabels: true,
   includeSessionTitleForNoPresentationSessions: false,

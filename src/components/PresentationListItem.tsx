@@ -1,5 +1,6 @@
-import { ChevronDown, FileText, Globe, Monitor, Star } from "lucide-react";
+import { Braces, ChevronDown, FileText, Globe, Monitor, Star } from "lucide-react";
 import { type ReactNode, useEffect, useState } from "react";
+import { BIBTEX_BOOKTITLE, BIBTEX_YEAR } from "../constants";
 import { hasPresentationHiddenSearchMatch } from "../lib/filters";
 import { toSlackMessageAppUrl } from "../lib/slack";
 import { resolvePresentationZoomUrl } from "../lib/zoom";
@@ -14,6 +15,36 @@ interface ResolvedAuthor {
   name: string;
   affiliation: string | null;
   isPresenter: boolean;
+}
+
+function escapeBibtexValue(value: string): string {
+  return value.replace(/\\/g, "\\\\").replace(/\{/g, "\\{").replace(/\}/g, "\\}");
+}
+
+function buildPresentationBibtex(data: ConferenceData, pid: PresentationId): string | null {
+  const presentation = data.presentations[pid];
+  if (!presentation) {
+    return null;
+  }
+
+  const authors = presentation.authors
+    .map((author) => data.persons[author.person_id]?.name ?? author.person_id)
+    .filter((name) => name.trim().length > 0);
+  const lines = [
+    `@inproceedings{${pid},`,
+    `  title = {${escapeBibtexValue(presentation.title)}},`,
+    authors.length > 0 ? `  author = {${escapeBibtexValue(authors.join(" and "))}},` : null,
+    `  booktitle = {${escapeBibtexValue(BIBTEX_BOOKTITLE)}},`,
+    `  year = {${escapeBibtexValue(BIBTEX_YEAR)}},`,
+    presentation.pdf_url ? `  url = {${escapeBibtexValue(presentation.pdf_url)}},` : null,
+    "}",
+  ].filter((line): line is string => line !== null);
+
+  return `${lines.join("\n")}\n`;
+}
+
+function buildBibtexDataUrl(bibtex: string): string {
+  return `data:text/plain;charset=utf-8,${encodeURIComponent(bibtex)}`;
 }
 
 function resolvePresentationMeta(
@@ -221,22 +252,44 @@ function PresentationDetails({
 }
 
 function PresentationActionLinks({
+  pid,
+  data,
+  showBibtexLinks,
   pdfUrl,
   presentationZoomUrl,
   presentationZoomAppUrl,
   useSlackAppLinks,
 }: {
+  pid: PresentationId;
+  data: ConferenceData;
+  showBibtexLinks: boolean;
   pdfUrl: string | null;
   presentationZoomUrl: string | null;
   presentationZoomAppUrl: string | null;
   useSlackAppLinks: boolean;
 }) {
-  if (!pdfUrl && !presentationZoomUrl) {
+  const bibtex = showBibtexLinks ? buildPresentationBibtex(data, pid) : null;
+  const bibtexHref = bibtex ? buildBibtexDataUrl(bibtex) : null;
+
+  if (!bibtexHref && !pdfUrl && !presentationZoomUrl) {
     return null;
   }
 
   return (
-    <div className="col-start-3 flex flex-col items-center gap-1">
+    <div className="col-start-3 flex items-center gap-1">
+      {bibtexHref && (
+        <a
+          href={bibtexHref}
+          target="_blank"
+          rel="noreferrer"
+          download={`${pid}.bib`}
+          aria-label={ja.openBibtex}
+          className="shrink-0 rounded p-1 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+          onClick={(event) => event.stopPropagation()}
+        >
+          <Braces className="h-4 w-4" />
+        </a>
+      )}
       {pdfUrl && (
         <a
           href={pdfUrl}
@@ -300,6 +353,7 @@ export function PresentationListItem({
   data,
   bookmarked,
   showAuthors,
+  showBibtexLinks = false,
   query,
   useSlackAppLinks = false,
   slackTeamId = null,
@@ -315,6 +369,7 @@ export function PresentationListItem({
   data: ConferenceData;
   bookmarked: boolean;
   showAuthors: boolean;
+  showBibtexLinks?: boolean;
   query: string;
   useSlackAppLinks?: boolean;
   slackTeamId?: string | null;
@@ -377,6 +432,9 @@ export function PresentationListItem({
           />
         </button>
         <PresentationActionLinks
+          pid={pid}
+          data={data}
+          showBibtexLinks={showBibtexLinks}
           pdfUrl={pdfUrl}
           presentationZoomUrl={presentationZoomUrl}
           presentationZoomAppUrl={presentationZoomAppUrl}

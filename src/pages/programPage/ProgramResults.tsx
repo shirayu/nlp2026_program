@@ -24,6 +24,7 @@ export function ProgramResults({
   slackTeamId = null,
   zoomCustomUrls,
   showAuthors,
+  showBibtexLinks = false,
   includeSessionTitleForNoPresentationSessions,
   includeSessionTitleForPresentationSessions,
   sessionsVisible,
@@ -50,6 +51,7 @@ export function ProgramResults({
   slackTeamId?: string | null;
   zoomCustomUrls?: ZoomCustomUrls;
   showAuthors: boolean;
+  showBibtexLinks?: boolean;
   includeSessionTitleForNoPresentationSessions: boolean;
   includeSessionTitleForPresentationSessions: boolean;
   sessionsVisible: boolean;
@@ -89,6 +91,7 @@ export function ProgramResults({
             presIds={presIds}
             data={data}
             showAuthors={showAuthors}
+            showBibtexLinks={showBibtexLinks}
             query={trimmedQuery}
             includeSessionTitleForNoPresentationSessions={includeSessionTitleForNoPresentationSessions}
             includeSessionTitleForPresentationSessions={includeSessionTitleForPresentationSessions}

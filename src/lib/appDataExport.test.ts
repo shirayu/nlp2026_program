@@ -25,6 +25,7 @@ import {
 const fullPayload: ExportPayload = {
   settings: {
     showAuthors: true,
+    showBibtexLinks: false,
     useSlackAppLinks: false,
     showRoomFloorLabels: true,
     includeSessionTitleForNoPresentationSessions: false,
@@ -46,6 +47,7 @@ const fullPayloadWithoutZoomCustomUrls = {
   ...fullPayload,
   settings: {
     showAuthors: true,
+    showBibtexLinks: false,
     useSlackAppLinks: false,
     showRoomFloorLabels: true,
     includeSessionTitleForNoPresentationSessions: false,
@@ -81,6 +83,7 @@ describe("encodePayload / decodePayload", () => {
     const result = decodePayload(encoded);
     expect(result?.settings).toEqual({
       showAuthors: false,
+      showBibtexLinks: false,
       useSlackAppLinks: true,
       showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: true,

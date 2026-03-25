@@ -10,6 +10,7 @@ describe("appSettingsStorage", () => {
   it("保存済み設定がなければデフォルト値を返す", () => {
     expect(appSettingsStorage.parseAppSettings(null)).toEqual({
       showAuthors: true,
+      showBibtexLinks: false,
       useSlackAppLinks: true,
       showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: true,
@@ -21,6 +22,7 @@ describe("appSettingsStorage", () => {
   it("不正な JSON はデフォルト値にフォールバックする", () => {
     expect(appSettingsStorage.parseAppSettings("{broken")).toEqual({
       showAuthors: true,
+      showBibtexLinks: false,
       useSlackAppLinks: true,
       showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: true,
@@ -32,6 +34,7 @@ describe("appSettingsStorage", () => {
   it("不足している項目はデフォルト値で補う", () => {
     expect(appSettingsStorage.parseAppSettings('{"showAuthors":false}')).toEqual({
       showAuthors: false,
+      showBibtexLinks: false,
       useSlackAppLinks: true,
       showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: true,
@@ -55,6 +58,7 @@ describe("appSettingsStorage", () => {
 
     expect(appSettingsStorage.readAppSettings()).toEqual({
       showAuthors: false,
+      showBibtexLinks: false,
       useSlackAppLinks: false,
       showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: false,
@@ -79,6 +83,7 @@ describe("appSettingsStorage", () => {
 
     expect(appSettingsStorage.readAppSettings()).toEqual({
       showAuthors: false,
+      showBibtexLinks: false,
       useSlackAppLinks: false,
       showRoomFloorLabels: false,
       includeSessionTitleForNoPresentationSessions: false,
@@ -95,6 +100,7 @@ describe("appSettingsStorage", () => {
       ),
     ).toEqual({
       showAuthors: true,
+      showBibtexLinks: false,
       useSlackAppLinks: true,
       showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: true,
@@ -111,6 +117,7 @@ describe("appSettingsStorage", () => {
   it("旧 venueZoomUrls は受理しない", () => {
     expect(appSettingsStorage.parseAppSettings('{"venueZoomUrls":{"A":"https://example.com/a"}}')).toEqual({
       showAuthors: true,
+      showBibtexLinks: false,
       useSlackAppLinks: true,
       showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: true,

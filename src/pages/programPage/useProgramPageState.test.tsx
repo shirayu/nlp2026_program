@@ -2132,6 +2132,7 @@ describe("useProgramPageState", () => {
     mockDecodePayload.mockReturnValue({
       settings: {
         showAuthors: true,
+        showBibtexLinks: false,
         useSlackAppLinks: false,
         showRoomFloorLabels: true,
         includeSessionTitleForNoPresentationSessions: false,
@@ -2202,6 +2203,7 @@ describe("useProgramPageState", () => {
   it("インポート確認で setSettings・setBookmarks が呼ばれ、ダイアログが閉じる", async () => {
     const decodedSettings = {
       showAuthors: true,
+      showBibtexLinks: false,
       useSlackAppLinks: false,
       showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: false,
@@ -2216,6 +2218,7 @@ describe("useProgramPageState", () => {
     mockUseAppSettings.mockReturnValue({
       settings: {
         showAuthors: false,
+        showBibtexLinks: false,
         useSlackAppLinks: false,
         showRoomFloorLabels: true,
         includeSessionTitleForNoPresentationSessions: true,
@@ -2224,6 +2227,7 @@ describe("useProgramPageState", () => {
       },
       setSettings,
       toggleShowAuthors: vi.fn(),
+      toggleShowBibtexLinks: vi.fn(),
       toggleUseSlackAppLinks: vi.fn(),
       toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
       toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
@@ -2257,6 +2261,7 @@ describe("useProgramPageState", () => {
     vi.useFakeTimers();
     const decodedSettings = {
       showAuthors: true,
+      showBibtexLinks: false,
       useSlackAppLinks: false,
       showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: false,
@@ -2291,6 +2296,7 @@ describe("useProgramPageState", () => {
   it("設定インポート時は既存 zoomCustomUrls を維持し、インポート値を上書きしない", async () => {
     const decodedSettings = {
       showAuthors: true,
+      showBibtexLinks: false,
       useSlackAppLinks: false,
       showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: false,
@@ -2314,6 +2320,7 @@ describe("useProgramPageState", () => {
     mockUseAppSettings.mockReturnValue({
       settings: {
         showAuthors: false,
+        showBibtexLinks: false,
         useSlackAppLinks: false,
         showRoomFloorLabels: true,
         includeSessionTitleForNoPresentationSessions: true,
@@ -2323,6 +2330,7 @@ describe("useProgramPageState", () => {
       },
       setSettings,
       toggleShowAuthors: vi.fn(),
+      toggleShowBibtexLinks: vi.fn(),
       toggleUseSlackAppLinks: vi.fn(),
       toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
       toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
@@ -2364,6 +2372,7 @@ describe("useProgramPageState", () => {
     mockUseAppSettings.mockReturnValue({
       settings: {
         showAuthors: false,
+        showBibtexLinks: false,
         useSlackAppLinks: false,
         showRoomFloorLabels: true,
         includeSessionTitleForNoPresentationSessions: true,
@@ -2372,6 +2381,7 @@ describe("useProgramPageState", () => {
       },
       setSettings,
       toggleShowAuthors: vi.fn(),
+      toggleShowBibtexLinks: vi.fn(),
       toggleUseSlackAppLinks: vi.fn(),
       toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
       toggleIncludeSessionTitleForPresentationSessions: vi.fn(),
@@ -2427,6 +2437,7 @@ describe("useProgramPageState", () => {
     mockDecodePayload.mockReturnValue({
       settings: {
         showAuthors: true,
+        showBibtexLinks: false,
         useSlackAppLinks: false,
         showRoomFloorLabels: true,
         includeSessionTitleForNoPresentationSessions: true,
@@ -2473,6 +2484,7 @@ describe("useProgramPageState", () => {
     mockDecodePayload.mockReturnValue({
       settings: {
         showAuthors: true,
+        showBibtexLinks: false,
         useSlackAppLinks: false,
         showRoomFloorLabels: true,
         includeSessionTitleForNoPresentationSessions: false,
@@ -2499,6 +2511,7 @@ describe("useProgramPageState", () => {
     mockDecodePayload.mockReturnValue({
       settings: {
         showAuthors: true,
+        showBibtexLinks: false,
         useSlackAppLinks: false,
         showRoomFloorLabels: true,
         includeSessionTitleForNoPresentationSessions: false,
@@ -2525,6 +2538,7 @@ describe("useProgramPageState", () => {
     mockDecodePayload.mockReturnValue({
       settings: {
         showAuthors: true,
+        showBibtexLinks: false,
         useSlackAppLinks: false,
         showRoomFloorLabels: true,
         includeSessionTitleForNoPresentationSessions: false,
@@ -2549,6 +2563,7 @@ describe("useProgramPageState", () => {
   it("before_restore から復元すると before_restore は上書きされず状態Aに戻れる", async () => {
     const settingsA = {
       showAuthors: true,
+      showBibtexLinks: false,
       useSlackAppLinks: false,
       showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: false,
@@ -2557,6 +2572,7 @@ describe("useProgramPageState", () => {
     };
     const settingsB = {
       showAuthors: false,
+      showBibtexLinks: false,
       useSlackAppLinks: true,
       showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: true,
@@ -2579,6 +2595,7 @@ describe("useProgramPageState", () => {
       settings: settingsB,
       setSettings,
       toggleShowAuthors: vi.fn(),
+      toggleShowBibtexLinks: vi.fn(),
       toggleUseSlackAppLinks: vi.fn(),
       toggleShowRoomFloorLabels: vi.fn(),
       toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
@@ -2607,6 +2624,7 @@ describe("useProgramPageState", () => {
   it("before_import から復元すると before_restore に復元前の状態が保存される", async () => {
     const settingsA = {
       showAuthors: true,
+      showBibtexLinks: false,
       useSlackAppLinks: false,
       showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: false,
@@ -2615,6 +2633,7 @@ describe("useProgramPageState", () => {
     };
     const settingsB = {
       showAuthors: false,
+      showBibtexLinks: false,
       useSlackAppLinks: true,
       showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: true,
@@ -2637,6 +2656,7 @@ describe("useProgramPageState", () => {
       settings: settingsB,
       setSettings,
       toggleShowAuthors: vi.fn(),
+      toggleShowBibtexLinks: vi.fn(),
       toggleUseSlackAppLinks: vi.fn(),
       toggleShowRoomFloorLabels: vi.fn(),
       toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
@@ -2681,6 +2701,7 @@ describe("useProgramPageState", () => {
     mockUseAppSettings.mockReturnValue({
       settings: {
         showAuthors: false,
+        showBibtexLinks: false,
         useSlackAppLinks: false,
         showRoomFloorLabels: true,
         includeSessionTitleForNoPresentationSessions: false,
@@ -2689,6 +2710,7 @@ describe("useProgramPageState", () => {
       },
       setSettings: vi.fn(),
       toggleShowAuthors: vi.fn(),
+      toggleShowBibtexLinks: vi.fn(),
       toggleUseSlackAppLinks: vi.fn(),
       toggleShowRoomFloorLabels: vi.fn(),
       toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),
@@ -2715,6 +2737,7 @@ describe("useProgramPageState", () => {
   describe("復元の行き来シナリオ", () => {
     const settingsA = {
       showAuthors: true,
+      showBibtexLinks: false,
       useSlackAppLinks: false,
       showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: false,
@@ -2723,6 +2746,7 @@ describe("useProgramPageState", () => {
     };
     const settingsB = {
       showAuthors: false,
+      showBibtexLinks: false,
       useSlackAppLinks: true,
       showRoomFloorLabels: true,
       includeSessionTitleForNoPresentationSessions: true,
@@ -2742,6 +2766,7 @@ describe("useProgramPageState", () => {
           localStorage.setItem(appSettingsStorageKey, JSON.stringify(next));
         }),
         toggleShowAuthors: vi.fn(),
+        toggleShowBibtexLinks: vi.fn(),
         toggleUseSlackAppLinks: vi.fn(),
         toggleShowRoomFloorLabels: vi.fn(),
         toggleIncludeSessionTitleForNoPresentationSessions: vi.fn(),

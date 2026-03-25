@@ -207,6 +207,7 @@ function SessionPresentationList({
   data,
   bookmarkedPresentationIds,
   showAuthors,
+  showBibtexLinks,
   query,
   useSlackAppLinks,
   slackTeamId,
@@ -220,6 +221,7 @@ function SessionPresentationList({
   data: ConferenceData;
   bookmarkedPresentationIds: Set<PresentationId>;
   showAuthors: boolean;
+  showBibtexLinks: boolean;
   query: string;
   useSlackAppLinks: boolean;
   slackTeamId: string | null;
@@ -242,6 +244,7 @@ function SessionPresentationList({
             data={data}
             bookmarked={bookmarkedPresentationIds.has(pid)}
             showAuthors={showAuthors}
+            showBibtexLinks={showBibtexLinks}
             query={query}
             useSlackAppLinks={useSlackAppLinks}
             slackTeamId={slackTeamId}
@@ -273,6 +276,7 @@ export const SessionCard = memo(
       presIds: PresentationId[];
       data: ConferenceData;
       showAuthors: boolean;
+      showBibtexLinks?: boolean;
       query: string;
       includeSessionTitleForNoPresentationSessions: boolean;
       includeSessionTitleForPresentationSessions: boolean;
@@ -297,6 +301,7 @@ export const SessionCard = memo(
       presIds,
       data,
       showAuthors,
+      showBibtexLinks = false,
       query,
       includeSessionTitleForNoPresentationSessions,
       includeSessionTitleForPresentationSessions,
@@ -375,6 +380,7 @@ export const SessionCard = memo(
           data={data}
           bookmarkedPresentationIds={bookmarkedPresentationIds}
           showAuthors={showAuthors}
+          showBibtexLinks={showBibtexLinks}
           query={query}
           useSlackAppLinks={useSlackAppLinks}
           slackTeamId={slackTeamId}

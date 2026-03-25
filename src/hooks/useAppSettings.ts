@@ -6,6 +6,7 @@ const APP_SETTINGS_STORAGE_KEY = `${APP_LOCALSTORAGE_PREFIX}settings`;
 
 const DEFAULT_APP_SETTINGS: AppSettings = {
   showAuthors: true,
+  showBibtexLinks: false,
   useSlackAppLinks: true,
   showRoomFloorLabels: true,
   includeSessionTitleForNoPresentationSessions: true,
@@ -76,6 +77,7 @@ function parseAppSettings(value: string | null): AppSettings {
 
     return {
       showAuthors: parseBoolean(parsed.showAuthors, DEFAULT_APP_SETTINGS.showAuthors),
+      showBibtexLinks: parseBoolean(parsed.showBibtexLinks, DEFAULT_APP_SETTINGS.showBibtexLinks),
       useSlackAppLinks: parseBoolean(parsed.useSlackAppLinks, DEFAULT_APP_SETTINGS.useSlackAppLinks),
       showRoomFloorLabels: parseBoolean(parsed.showRoomFloorLabels, DEFAULT_APP_SETTINGS.showRoomFloorLabels),
       includeSessionTitleForNoPresentationSessions: parseBoolean(
@@ -119,6 +121,11 @@ export function useAppSettings() {
       setSettings((current) => ({
         ...current,
         showAuthors: !current.showAuthors,
+      })),
+    toggleShowBibtexLinks: () =>
+      setSettings((current) => ({
+        ...current,
+        showBibtexLinks: !current.showBibtexLinks,
       })),
     toggleUseSlackAppLinks: () =>
       setSettings((current) => ({

@@ -10,6 +10,7 @@ export function PersonModal({
   data,
   bookmarkedPresentationIds,
   showAuthors,
+  showBibtexLinks = false,
   useSlackAppLinks = false,
   slackTeamId = null,
   zoomCustomUrls,
@@ -22,6 +23,7 @@ export function PersonModal({
   data: ConferenceData;
   bookmarkedPresentationIds: Set<PresentationId>;
   showAuthors: boolean;
+  showBibtexLinks?: boolean;
   useSlackAppLinks?: boolean;
   slackTeamId?: string | null;
   zoomCustomUrls?: ZoomCustomUrls;
@@ -58,6 +60,7 @@ export function PersonModal({
                 data={data}
                 bookmarked={bookmarkedPresentationIds.has(pid as PresentationId)}
                 showAuthors={showAuthors}
+                showBibtexLinks={showBibtexLinks}
                 query=""
                 useSlackAppLinks={useSlackAppLinks}
                 slackTeamId={slackTeamId}

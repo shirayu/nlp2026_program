@@ -1127,11 +1127,31 @@ export function SettingsImportConfirmDialog({
   );
 }
 
+function SettingsSwitchRow({ label, checked, onToggle }: { label: string; checked: boolean; onToggle: () => void }) {
+  return (
+    <label className="flex items-center justify-between">
+      <span className="text-sm text-gray-700">{label}</span>
+      <button
+        type="button"
+        onClick={onToggle}
+        className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${checked ? "bg-indigo-600" : "bg-gray-300"}`}
+        aria-pressed={checked}
+        aria-label={label}
+      >
+        <span
+          className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${checked ? "translate-x-4" : "translate-x-0"}`}
+        />
+      </button>
+    </label>
+  );
+}
+
 export function SettingsDialog({
   dialogRef,
   open,
   data,
   showAuthors,
+  showBibtexLinks,
   useSlackAppLinks,
   showRoomFloorLabels,
   zoomCustomUrls,
@@ -1140,6 +1160,7 @@ export function SettingsDialog({
   showTimeAtPresentationLevel,
   onClose,
   onToggleShowAuthors,
+  onToggleShowBibtexLinks,
   onToggleUseSlackAppLinks,
   onToggleShowRoomFloorLabels,
   onSetZoomCustomUrls,
@@ -1156,6 +1177,7 @@ export function SettingsDialog({
   open: boolean;
   data: ConferenceData;
   showAuthors: boolean;
+  showBibtexLinks: boolean;
   useSlackAppLinks: boolean;
   showRoomFloorLabels: boolean;
   zoomCustomUrls?: ZoomCustomUrls;
@@ -1164,6 +1186,7 @@ export function SettingsDialog({
   showTimeAtPresentationLevel: boolean;
   onClose: () => void;
   onToggleShowAuthors: () => void;
+  onToggleShowBibtexLinks: () => void;
   onToggleUseSlackAppLinks: () => void;
   onToggleShowRoomFloorLabels: () => void;
   onSetZoomCustomUrls: (value: ZoomCustomUrls | undefined) => void;
@@ -1207,58 +1230,27 @@ export function SettingsDialog({
           </div>
           <div className="min-h-0 space-y-2 overflow-y-auto px-4 py-4" style={{ scrollbarGutter: "stable" }}>
             <section className="space-y-3 rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
-              <label className="flex items-center justify-between">
-                <span className="text-sm text-gray-700">{ja.showAuthors}</span>
-                <button
-                  type="button"
-                  onClick={onToggleShowAuthors}
-                  className={`relative inline-flex h-5 w-9 rounded-full transition-colors ${showAuthors ? "bg-indigo-600" : "bg-gray-300"}`}
-                  aria-pressed={showAuthors}
-                >
-                  <span
-                    className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showAuthors ? "translate-x-4" : "translate-x-0"}`}
-                  />
-                </button>
-              </label>
-              <label className="flex items-center justify-between">
-                <span className="text-sm text-gray-700">{ja.useSlackAppLinks}</span>
-                <button
-                  type="button"
-                  onClick={onToggleUseSlackAppLinks}
-                  className={`relative inline-flex h-5 w-9 rounded-full transition-colors ${useSlackAppLinks ? "bg-indigo-600" : "bg-gray-300"}`}
-                  aria-pressed={useSlackAppLinks}
-                >
-                  <span
-                    className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${useSlackAppLinks ? "translate-x-4" : "translate-x-0"}`}
-                  />
-                </button>
-              </label>
-              <label className="flex items-center justify-between">
-                <span className="text-sm text-gray-700">{ja.showRoomFloorLabels}</span>
-                <button
-                  type="button"
-                  onClick={onToggleShowRoomFloorLabels}
-                  className={`relative inline-flex h-5 w-9 rounded-full transition-colors ${showRoomFloorLabels ? "bg-indigo-600" : "bg-gray-300"}`}
-                  aria-pressed={showRoomFloorLabels}
-                >
-                  <span
-                    className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showRoomFloorLabels ? "translate-x-4" : "translate-x-0"}`}
-                  />
-                </button>
-              </label>
-              <label className="flex items-center justify-between">
-                <span className="text-sm text-gray-700">{ja.showTimeAtPresentationLevel}</span>
-                <button
-                  type="button"
-                  onClick={onToggleShowTimeAtPresentationLevel}
-                  className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${showTimeAtPresentationLevel ? "bg-indigo-600" : "bg-gray-300"}`}
-                  aria-pressed={showTimeAtPresentationLevel}
-                >
-                  <span
-                    className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showTimeAtPresentationLevel ? "translate-x-4" : "translate-x-0"}`}
-                  />
-                </button>
-              </label>
+              <SettingsSwitchRow label={ja.showAuthors} checked={showAuthors} onToggle={onToggleShowAuthors} />
+              <SettingsSwitchRow
+                label={ja.showBibtexLinks}
+                checked={showBibtexLinks}
+                onToggle={onToggleShowBibtexLinks}
+              />
+              <SettingsSwitchRow
+                label={ja.useSlackAppLinks}
+                checked={useSlackAppLinks}
+                onToggle={onToggleUseSlackAppLinks}
+              />
+              <SettingsSwitchRow
+                label={ja.showRoomFloorLabels}
+                checked={showRoomFloorLabels}
+                onToggle={onToggleShowRoomFloorLabels}
+              />
+              <SettingsSwitchRow
+                label={ja.showTimeAtPresentationLevel}
+                checked={showTimeAtPresentationLevel}
+                onToggle={onToggleShowTimeAtPresentationLevel}
+              />
               <section className="rounded-lg border border-gray-200 bg-white px-3 py-3">
                 <h3 className="text-sm font-semibold text-gray-800">{ja.sessionTitleSearchSettings}</h3>
                 <div className="mt-2 space-y-2">

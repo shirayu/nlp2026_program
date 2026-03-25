@@ -53,6 +53,7 @@ function renderSettingsDialog(props?: Partial<Parameters<typeof SettingsDialog>[
     open: true,
     data: { persons: {}, affiliations: {}, rooms: {}, sessions: {}, presentations: {} },
     showAuthors: true,
+    showBibtexLinks: false,
     useSlackAppLinks: false,
     showRoomFloorLabels: true,
     zoomCustomUrls: undefined,
@@ -61,6 +62,7 @@ function renderSettingsDialog(props?: Partial<Parameters<typeof SettingsDialog>[
     showTimeAtPresentationLevel: false,
     onClose: vi.fn(),
     onToggleShowAuthors: vi.fn(),
+    onToggleShowBibtexLinks: vi.fn(),
     onToggleUseSlackAppLinks: vi.fn(),
     onToggleShowRoomFloorLabels: vi.fn(),
     onSetZoomCustomUrls: vi.fn(),
@@ -141,6 +143,18 @@ describe("SettingsDialog import button state", () => {
     });
 
     expect(onToggleShowRoomFloorLabels).toHaveBeenCalledTimes(1);
+    page.unmount();
+  });
+
+  it("BibTeX表示トグル行を押すとハンドラを呼ぶ", () => {
+    const onToggleShowBibtexLinks = vi.fn();
+    const page = renderSettingsDialog({ onToggleShowBibtexLinks });
+
+    act(() => {
+      findToggleButtonByLabel(page.container, ja.showBibtexLinks).click();
+    });
+
+    expect(onToggleShowBibtexLinks).toHaveBeenCalledTimes(1);
     page.unmount();
   });
 });

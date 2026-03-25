@@ -6,6 +6,7 @@ export function PresentationCard({
   data,
   bookmarked,
   showAuthors,
+  showBibtexLinks,
   query,
   useSlackAppLinks,
   slackTeamId,
@@ -18,6 +19,7 @@ export function PresentationCard({
   data: ConferenceData;
   bookmarked: boolean;
   showAuthors: boolean;
+  showBibtexLinks?: boolean;
   query: string;
   useSlackAppLinks?: boolean;
   slackTeamId?: string | null;
@@ -32,6 +34,7 @@ export function PresentationCard({
       data={data}
       bookmarked={bookmarked}
       showAuthors={showAuthors}
+      showBibtexLinks={showBibtexLinks}
       query={query}
       useSlackAppLinks={useSlackAppLinks}
       slackTeamId={slackTeamId}

@@ -127,6 +127,7 @@ const defaultSettingsDialogProps = {
     presentations: {},
   },
   showAuthors: true,
+  showBibtexLinks: false,
   useSlackAppLinks: false,
   showRoomFloorLabels: true,
   zoomCustomUrls: undefined,
@@ -135,6 +136,7 @@ const defaultSettingsDialogProps = {
   showTimeAtPresentationLevel: false,
   onClose: () => {},
   onToggleShowAuthors: () => {},
+  onToggleShowBibtexLinks: () => {},
   onToggleUseSlackAppLinks: () => {},
   onToggleShowRoomFloorLabels: () => {},
   onSetZoomCustomUrls: () => {},
@@ -173,10 +175,12 @@ describe("SettingsDialog", () => {
     const html = renderToStaticMarkup(<SettingsDialog {...defaultSettingsDialogProps} />);
 
     expect(html).toContain("発表単位で表示（時間情報がある場合）");
+    expect(html).toContain("BibTeXを表示する");
     expect(html).toContain("会場ボタンに階数表示");
     expect(html).toContain("セッションタイトルを検索対象にする");
     expect(html).toContain("発表情報が無いセッション");
     expect(html).toContain("発表情報が有るセッション");
+    expect(html.indexOf("BibTeXを表示する")).toBeLessThan(html.indexOf("Slack をアプリリンクで開く"));
     expect(html.indexOf("Slack をアプリリンクで開く")).toBeLessThan(html.indexOf("会場ボタンに階数表示"));
     expect(html.indexOf("会場ボタンに階数表示")).toBeLessThan(html.indexOf("発表単位で表示（時間情報がある場合）"));
     expect(html.indexOf("発表単位で表示（時間情報がある場合）")).toBeLessThan(
@@ -287,6 +291,7 @@ describe("SettingsImportConfirmDialog", () => {
 const backupPayload = {
   settings: {
     showAuthors: true,
+    showBibtexLinks: false,
     useSlackAppLinks: false,
     showRoomFloorLabels: true,
     includeSessionTitleForNoPresentationSessions: true,
