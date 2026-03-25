@@ -1,4 +1,4 @@
-import { AlertTriangle, X as CloseIcon, Github, Globe, Monitor, RefreshCw } from "lucide-react";
+import { AlertTriangle, X as CloseIcon, Globe, Monitor, RefreshCw } from "lucide-react";
 import type { RefObject } from "react";
 import { useEffect, useState } from "react";
 import {
@@ -40,6 +40,14 @@ const dialogFramePaddingStyle = {
   paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
   paddingLeft: "max(1rem, env(safe-area-inset-left))",
 } as const;
+
+function GitHubIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+      <path d="M12 .5a12 12 0 0 0-3.794 23.385c.6.111.82-.26.82-.577v-2.234c-3.338.726-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.082-.73.082-.73 1.204.085 1.838 1.236 1.838 1.236 1.07 1.835 2.807 1.305 3.492.998.108-.775.418-1.305.762-1.605-2.665-.303-5.466-1.333-5.466-5.93 0-1.31.468-2.382 1.235-3.222-.123-.303-.535-1.524.118-3.176 0 0 1.008-.322 3.3 1.23a11.44 11.44 0 0 1 6.01 0c2.29-1.552 3.297-1.23 3.297-1.23.655 1.652.243 2.873.12 3.176.77.84 1.233 1.912 1.233 3.222 0 4.609-2.806 5.624-5.479 5.92.43.37.814 1.102.814 2.222v3.293c0 .32.216.694.825.576A12.001 12.001 0 0 0 12 .5Z" />
+    </svg>
+  );
+}
 
 export function formatBuildGitDate(value: string, locale?: string | string[], timeZone?: string): string {
   if (value === "unknown") return value;
@@ -1396,7 +1404,7 @@ export function SettingsDialog({
                       aria-label={ja.projectRepository}
                       className="ml-2 inline-flex align-middle text-gray-500 transition-colors hover:text-gray-700"
                     >
-                      <Github className="h-4 w-4" />
+                      <GitHubIcon className="h-4 w-4" />
                     </a>
                   </dd>
                 </div>
